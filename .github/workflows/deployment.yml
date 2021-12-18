@@ -18,6 +18,9 @@ jobs:
         
       - name: Update Dependencies
         run: npm update
+        
+      - name: TailwindCSS Generation
+        run: npx tailwindcss -i ./src/styles/global.css -o ./src/styles/output.css --watch
 
       - name: Build Static Website
         run: npm run build
