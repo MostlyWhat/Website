@@ -1,0 +1,35 @@
+{
+    "name": "@types/resolve",
+    "version": "1.20.1",
+    "description": "TypeScript definitions for resolve",
+    "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/resolve",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "Mario Nebl",
+            "url": "https://github.com/marionebl",
+            "githubUsername": "marionebl"
+        },
+        {
+            "name": "Klaus Meinhardt",
+            "url": "https://github.com/ajafff",
+            "githubUsername": "ajafff"
+        },
+        {
+            "name": "Jordan Harband",
+            "url": "https://github.com/ljharb",
+            "githubUsername": "ljharb"
+        }
+    ],
+    "main": "",
+    "types": "index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/resolve"
+    },
+    "scripts": {},
+    "dependencies": {},
+    "typesPublisherContentHash": "e92d9e45088364bf1bf56f1c71ef284e2912e03f7f78b88546f2b5e1eed08e5f",
+    "typeScriptVersion": "3.6"
+}

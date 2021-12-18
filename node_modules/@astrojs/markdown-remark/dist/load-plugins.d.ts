@@ -1,0 +1,3 @@
+import * as unified from 'unified';
+import type { Plugin } from './types';
+export declare function loadPlugins(items: Plugin[]): Promise<[unified.Plugin] | [unified.Plugin, any]>[];

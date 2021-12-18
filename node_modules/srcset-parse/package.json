@@ -1,0 +1,33 @@
+{
+  "name": "srcset-parse",
+  "description": "Extra tiny parser of srcset definitions",
+  "license": "MIT",
+  "author": "Alexey Taktarov <molefrog@gmail.com>",
+  "version": "1.1.0",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "main": "dist-cjs/index.js",
+  "files": [
+    "dist",
+    "dist-cjs"
+  ],
+  "size-limit": [
+    {
+      "path": "dist/index.js",
+      "limit": "160 B"
+    }
+  ],
+  "scripts": {
+    "test": "uvu -r ts-node/register",
+    "build": "tsc --module es2015 && tsc --module commonjs --outDir dist-cjs",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@size-limit/preset-small-lib": "4.5.4",
+    "size-limit": "4.5.4",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.6",
+    "uvu": "0.2.1"
+  }
+}
