@@ -37,3 +37,19 @@
   font-weight: 700;
   src: local('IBM Plex Mono Bold'), url('/assets/fonts/ibm-plex-mono/ibm-plex-mono-v7-latin-700.woff2') format('woff2');
 }
+
+/* Regular Font */
+@font-face {
+  font-family: 'Industry-Book';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Industry Book'), url('/assets/fonts/Industry/Industry-Book.woff') format('woff');
+}
+
+/* Bold */
+@font-face {
+  font-family: 'Industry-Bold';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Industry Bold'), url('/assets/fonts/Industry/Industry-Bold.woff') format('woff');
+}
