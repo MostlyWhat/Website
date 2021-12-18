@@ -15,6 +15,9 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
+        
+      - name: Update Dependencies
+        run: npm update
 
       - name: Build Static Website
         run: npm run build
