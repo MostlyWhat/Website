@@ -1,0 +1,94 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Space from '../components/Space.astro';
+import Main from '../components/Main.astro';
+import Article from '../components/Article.astro';
+import Tagline from '../components/Tagline.astro';
+import MainHeader from '../components/MainHeader.astro';
+import Sponsors from '../components/Sponsors.astro';
+import GoogleAnalytics from '../components/GoogleAnalytics.astro';
+import YouTube from '../components/YouTube.astro';
+import "../components/YouTube.css";
+import "../styles/output.css";
+
+let title = 'Home | MostlyWhat';
+let description = "Hello, I'm MostlyWhat, a Freelancer Developer and a Minimalist Designer.";
+let permalink = '/';
+let lang = 'en';
+---
+
+<html lang={ lang ?? 'en' }>
+  <head>
+    <BaseHead title={title} description={description} canonicalURL={permalink} />
+    <link rel="stylesheet" href={Astro.resolve('../scss/global.scss')} />
+    <link rel="stylesheet" href={Astro.resolve('../styles/output.css')}>
+  </head>
+
+  <body>
+    <Space />
+
+    <Main>
+      <MainHeader />
+      <Article>
+
+        <YouTube v="dsTXcSeAZq8" alt="Astro in 100 Seconds" />
+        <br>
+        <Tagline />
+        <br>
+        <p>
+          I am an designer/developer with more than 5 years of experience. My goal is to provide quality services in the field of design and code, in order to fulfill the needs of my clients. I can provide a wide range of design services such as logo, code and more.
+        </p>
+        <br>
+        <p><b>Beware Maintenance Down-Times! Keep your eyes on the <a href="https://status.mostlywhat.cf">Statuses</a>.</b></p>
+        <a class="action-button" href="/blog/new-website/">
+          New Blog Post - New Website
+          <span style="float: right;">&#8594;</span>
+        </a>
+
+        <div class="hint">
+          <p>Psst... <a href="https://discord.gg/THmTE3Y9ag">contact me</a> by joining our Discord community.</p>
+        </div>
+      </Article>
+      <Sponsors />
+    </Main>
+
+    <style lang="scss">
+      .hint {
+        font-size: 13px;
+        opacity: 0.8;
+        margin-top: 2em;
+        padding: 2em 0;
+      }
+      .hint > p:first-child {
+        margin-bottom: 2em;
+      }
+      .action-button {
+        border: 1px solid var(--color-green);
+        padding: 1rem;
+        font-weight: 600;
+      }
+      code {
+        font-size: 11px;
+        font-family: var(--font-mono);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 2px;
+        padding: 0.1em 0.2em;
+      }
+      .videoWrapper {
+        position: relative;
+        padding-bottom: 56.25%; /* 16:9 */
+        height: 0;
+        background:rgba(255, 255, 255, 0.1);
+        margin-bottom: 1rem;
+      }
+      .videoWrapper > iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <GoogleAnalytics />
+  </body>
+</html>

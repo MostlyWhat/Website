@@ -1,0 +1,102 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Space from '../components/Space.astro';
+import Main from '../components/Main.astro';
+import Article from '../components/Article.astro';
+import MainHeader from '../components/MainHeader.astro';
+import Sponsors from '../components/Sponsors.astro';
+import GoogleAnalytics from '../components/GoogleAnalytics.astro';
+import "../components/YouTube.css";
+import "../styles/output.css";
+
+let title = 'Success | MostlyWhat';
+let description = "Successful Message submission";
+let permalink = '/success/';
+let lang = 'en';
+---
+
+<html lang={ lang ?? 'en' }>
+  <head>
+    <BaseHead title={title} description={description} canonicalURL={permalink} />
+    <link rel="stylesheet" href={Astro.resolve('../scss/global.scss')} />
+    <link rel="stylesheet" href={Astro.resolve('../styles/output.css')}>
+  </head>
+
+  <body>
+    <Space />
+    <Main>
+      <MainHeader />
+      <Article>
+        <br>
+        <br>
+        <h1 class="font-bold text-2xl">Successful Message Submission!</h1>
+        <p>
+          Thanks for sending me the message! I will respond as soon as possible.
+        </p>
+        <br>
+        <p><b>Meanwhile, you can visit one of my official social accounts!</b></p>
+        <div>
+          <a class="action-button full-expand" href="https://www.instagram.com/mostly.what/">
+            Official Instagram
+            <span style="float: right;">&#8594;</span>
+          </a>
+          <br>
+          <a class="action-button full-expand" href="https://twitter.com/mostlywhat">
+            Official Twitter
+            <span style="float: right;">&#8594;</span>
+          </a>
+          <br>
+          <a class="action-button full-expand" href="https://discord.gg/THmTE3Y9ag">
+            Join Discord Server
+            <span style="float: right;">&#8594;</span>
+          </a>
+          <br>
+        </div>
+      </Article>
+      <Sponsors />
+    </Main>
+
+    <style lang="scss">
+      .full-expand {
+          width:100%;
+          padding:20px;
+      }
+      .hint {
+        font-size: 13px;
+        opacity: 0.8;
+        margin-top: 2em;
+        padding: 2em 0;
+      }
+      .hint > p:first-child {
+        margin-bottom: 2em;
+      }
+      .action-button {
+        border: 1px solid var(--color-green);
+        padding: 1rem;
+        font-weight: 600;
+      }
+      code {
+        font-size: 11px;
+        font-family: var(--font-mono);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 2px;
+        padding: 0.1em 0.2em;
+      }
+      .videoWrapper {
+        position: relative;
+        padding-bottom: 56.25%; /* 16:9 */
+        height: 0;
+        background:rgba(255, 255, 255, 0.1);
+        margin-bottom: 1rem;
+      }
+      .videoWrapper > iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <GoogleAnalytics />
+  </body>
+</html>
