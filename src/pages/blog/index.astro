@@ -4,7 +4,7 @@ import Space from '../../components/Space.astro';
 import Main from '../../components/Main.astro';
 import Article from '../../components/Article.astro';
 import MainHeader from '../../components/MainHeader.astro';
-import Sponsors from '../../components/Sponsors.astro';
+import Copyright from '../../components/Copyright.astro';
 import GoogleAnalytics from '../../components/GoogleAnalytics.astro';
 import BlogPostPreview from '../../components/BlogPostPreview.astro';
 import "../../components/YouTube.css";
@@ -91,7 +91,7 @@ const posts = Astro.fetchContent('../../data/blog-posts/*.md').sort((a, b) => (n
                 </main>
             </div>
         </Article>
-      <Sponsors />
+      <Copyright />
     </Main>
 
     <style lang="scss">

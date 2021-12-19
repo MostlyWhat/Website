@@ -5,12 +5,17 @@ interface Props {
 }
 const { url, title } = Astro.props
 ---
-<a class="not-prose" href={url}>
+<a class="action-button not-prose" href={url}>
     &leftarrow; {title}
 </a>
 <style>
 a {
     display: block;
     margin-top: 2rem;
+}
+.action-button {
+    border: 1px solid var(--color-green);
+    padding: 1rem;
+    font-weight: 600;
 }
 </style>
