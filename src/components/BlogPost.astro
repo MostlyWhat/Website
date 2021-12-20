@@ -23,9 +23,9 @@ const { title, author, publishDate, heroImage, heroImageAlt } = Astro.props;
       <img width="720" height="420" class="hero-image" loading="lazy" src={heroImage || '/social.jpg'} alt={heroImageAlt || ""} />
       <p class="publish-date">{publishDate}</p>
       <h1 class="title">{title}</h1>
-      {author && <Author authorId={author} />}
+      {author && <Author authorId={author}/>}
     </header>
-    <main class="content prose prose-a:no-underline prose-a:text-[#ff5d01] dark:prose-invert">
+    <main class="content prose prose-a:no-underline prose-a:text-[#ff5d01] prose-code:bg-grey-100 dark:prose-invert">
       <slot />
       <BackArrow url={'/blog/'} title={'Back to all blog posts'}/>
       <Copyright />
