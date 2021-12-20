@@ -5,12 +5,15 @@ export interface Props {
   title: string;
   publishDate: string;
   href: string;
+  heroImage?: string;
 }
 
-const { title, publishDate, href } = Astro.props;
+const { title, publishDate, href, heroImage } = Astro.props;
 ---
 <article class="post-preview">
   <header>
+    <img width="100%" height="100%" class="hero-image" loading="lazy" src={heroImage || '/social.jpg'}/>
+    <br>
     <p class="publish-date">{publishDate}</p>
     <a href={href}><h1 class="title">{title}</h1></a>
   </header>
