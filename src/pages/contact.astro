@@ -29,13 +29,17 @@ let lang = 'en';
       <MainHeader />
       <Article>
         <br>
-        <h1 class="font-bold text-2xl latest py-4">Contacting MostlyWhat!</h1>
-        <p>
-          Please fill the the form to send me the message or email me in the addresses below. I will respond usually within 1-2 days.
-        </p>
+        <div class="bold-divider">
+          <h1 class="font-bold text-2xl latest pb-4">Contacting MostlyWhat!</h1>
+          <p>
+            Please fill the the form to send me the message or email me in the addresses below. I will respond usually within 1-2 days.
+          </p>
+          <br>
+        </div>
+        <hr class="pb-2">
         <br>
         <form action="https://formsubmit.co/mostlywhat@astronavix.cf" method="POST">
-          <input type="hidden" name="_next" value="https://www.mostlywhat.cf/success">
+          <input type="hidden" name="_next" value="https://www.mostlywhat.cf/success/">
           <input type="hidden" name="_captcha" value="true">
           <input type="hidden" name="_subject" value="New Message!">
           <div class="mb-6">
@@ -77,6 +81,9 @@ let lang = 'en';
     </Main>
 
     <style lang="scss">
+      .bold-divider {
+        border-bottom: 4px solid var(--theme-divider);
+      }
       .latest {
         font-size: 2.5rem;
         font-weight: 700;
