@@ -42,7 +42,7 @@ const projects = Astro.fetchContent('../../data/projects/*.md').sort((a, b) => a
         <br>
         <section aria-label="Blog post list">
         {projects.map(p => {
-        const href = `/blog/${p.file.pathname.split('/').pop().split('.').shift()}`;
+        const href = `/projects/${p.file.pathname.split('/').pop().split('.').shift()}`;
         return (
             <ProjectPreview title={p.title} category={p.category} href={href}>
             <span>{p.description}</span>

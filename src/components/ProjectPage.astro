@@ -19,7 +19,7 @@ const { title, author, publishDate, heroImage, heroImageAlt } = Astro.props;
 <div class="layout">
   <article>
     <header>
-      <BackArrow url={'/blog/'} title={'Back to all blog posts'}/>
+      <BackArrow url={'/blog/'} title={'Back to all projects'}/>
       <img width="720" height="420" class="hero-image" loading="lazy" src={heroImage || '/social.jpg'} alt={heroImageAlt || ""} />
       <p class="publish-date">{publishDate}</p>
       <h1 class="title">{title}</h1>
@@ -27,7 +27,7 @@ const { title, author, publishDate, heroImage, heroImageAlt } = Astro.props;
     </header>
     <main class="content prose prose-a:no-underline prose-a:text-[#ff5d01] dark:prose-invert">
       <slot />
-      <BackArrow url={'/blog/'} title={'Back to all blog posts'}/>
+      <BackArrow url={'/blog/'} title={'Back to all projects'}/>
       <Copyright />
     </main>
   </article>
@@ -55,10 +55,6 @@ const { title, author, publishDate, heroImage, heroImageAlt } = Astro.props;
 
   :global(> * + *) {
     margin-top: 1rem;
-  }
-
-  :global(h2) {
-    margin-top: 4rem;
   }
 
   :global(img) {
