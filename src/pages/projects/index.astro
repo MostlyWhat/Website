@@ -6,6 +6,7 @@ import Article from '../../components/Article.astro';
 import MainHeader from '../../components/MainHeader.astro';
 import Sponsors from '../../components/Sponsors.astro';
 import GoogleAnalytics from '../../components/GoogleAnalytics.astro';
+import ProjectPreview from '../../components/ProjectPreview.astro';
 import "../../components/YouTube.css";
 import "../../styles/output.css";
 
@@ -13,6 +14,8 @@ let title = 'Projects | MostlyWhat';
 let description = "All projects done by MostlyWhat!";
 let permalink = '/projects/';
 let lang = 'en';
+
+const projects = Astro.fetchContent('../../data/blog-posts/*.md').sort((a, b) => (new Date(b.publishDate) - new Date(a.publishDate)));
 ---
 
 <html lang={ lang ?? 'en' }>
@@ -29,11 +32,28 @@ let lang = 'en';
       <MainHeader />
       <Article>
         <br>
-        <h1 class="font-bold text-2xl latest py-4">Projects by MostlyWhat</h1>
-        <p>
-          These are the projects that I have done, both for personal and for clients.
-        </p>
+        <div class="bold-divider">
+          <h1 class="font-bold text-2xl latest pb-4">Projects by MostlyWhat</h1>
+          <p>
+            These are the projects that I have done, both for personal and for clients.
+          </p>
+          <br>
+        </div>
+        <hr class="pb-2">
+        <section aria-label="Blog post list">
+        {projects.map(p => {
+        const href = `/blog/${p.file.pathname.split('/').pop().split('.').shift()}`;
+        return (
+            <ProjectPreview title={p.title} publishDate={p.publishDate} href={href}>
+            <span>{p.description}</span>
+            </ProjectPreview>
+        );
+        })}
+        </section>
+        <br>
         <div>
+          <h1 class="font-bold text-2xl">Access Official Social Media</h1>
+          <br>
           <a class="action-button full-expand" href="https://www.instagram.com/mostly.what/">
             Official Instagram
             <span style="float: right;">&#8594;</span>
@@ -55,6 +75,9 @@ let lang = 'en';
     </Main>
 
     <style lang="scss">
+      .bold-divider {
+        border-bottom: 4px solid var(--theme-divider);
+      }
       .latest {
         font-size: 2.5rem;
         font-weight: 700;
