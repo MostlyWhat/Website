@@ -3,18 +3,18 @@ import Author from './Author.astro';
 
 export interface Props {
   title: string;
-  publishDate: string;
+  category: string;
   href: string;
   heroImage?: string;
 }
 
-const { title, publishDate, href, heroImage } = Astro.props;
+const { title, category, href, heroImage } = Astro.props;
 ---
 <article class="post-preview">
   <header>
     <img width="100%" height="100%" class="hero-image" loading="lazy" src={heroImage || '/social.jpg'}/>
     <br>
-    <p class="publish-date">{publishDate}</p>
+    <p class="category-class">&gt; Category: {category}</p>
     <a href={href}><h1 class="title">{title}</h1></a>
   </header>
   <slot />{' '}<a href={href}>Read more →</a>
@@ -45,7 +45,7 @@ header {
   margin: 0;
 }
 
-.publish-date,
+.category-class,
 .author {
   font-size: 1.25rem;
   color: var(--theme-text-lighter);

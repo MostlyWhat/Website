@@ -9,7 +9,7 @@ description: |
 publishDate: 'December 31, 2021'
 author: 'mostlywhat'
 heroImage: '/social.jpg'
-permalink: 'https://www.mostlywhat.cf/blog/new-website/'
+permalink: '/blog/typography/'
 lang: 'en'
 ---
 ### Headings

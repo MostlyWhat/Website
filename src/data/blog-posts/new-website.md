@@ -9,7 +9,7 @@ description: |
 publishDate: 'January 1, 2022'
 author: 'mostlywhat'
 heroImage: '/social.jpg'
-permalink: 'https://www.mostlywhat.cf/blog/new-website/'
+permalink: '/blog/new-website/'
 lang: 'en'
 ---
 There's a simple secret to building a faster website — *just ship less*. 

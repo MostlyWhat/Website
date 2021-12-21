@@ -6,12 +6,12 @@ import Article from '../../components/Article.astro';
 import MainHeader from '../../components/MainHeader.astro';
 import Copyright from '../../components/Copyright.astro';
 import GoogleAnalytics from '../../components/GoogleAnalytics.astro';
-import BlogPost from '../../components/BlogPost.astro';
+import ProjectPage from '../../components/ProjectPage.astro';
 import "../../components/YouTube.css";
 import "../../styles/output.css";
 
 export function getStaticPaths() {
-  const posts = Astro.fetchContent('../../data/blog-posts/*.md');
+  const posts = Astro.fetchContent('../../data/projects/*.md');
   return posts.map(p => ({
     params: { slug: p.file.pathname.split('/').pop().split('.').shift() },
     props: { post: p },
@@ -32,9 +32,9 @@ const { Content, title, author, description, publishDate, heroImage, heroImageAl
     <Main>
       <MainHeader />
         <Article>
-            <BlogPost title={title} author={author} publishDate={publishDate}  heroImage={heroImage}  heroImageAlt={heroImageAlt}>
+            <ProjectPage title={title} author={author} publishDate={publishDate}  heroImage={heroImage}  heroImageAlt={heroImageAlt}>
                 <Content />
-            </BlogPost>
+            </ProjectPage>
         </Article>
     </Main>
 

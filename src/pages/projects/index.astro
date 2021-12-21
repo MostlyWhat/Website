@@ -15,7 +15,7 @@ let description = "All projects done by MostlyWhat!";
 let permalink = '/projects/';
 let lang = 'en';
 
-const projects = Astro.fetchContent('../../data/blog-posts/*.md').sort((a, b) => (new Date(b.publishDate) - new Date(a.publishDate)));
+const projects = Astro.fetchContent('../../data/projects/*.md').sort((a, b) => a.title.localeCompare(b.title));
 ---
 
 <html lang={ lang ?? 'en' }>
@@ -44,7 +44,7 @@ const projects = Astro.fetchContent('../../data/blog-posts/*.md').sort((a, b) =>
         {projects.map(p => {
         const href = `/blog/${p.file.pathname.split('/').pop().split('.').shift()}`;
         return (
-            <ProjectPreview title={p.title} publishDate={p.publishDate} href={href}>
+            <ProjectPreview title={p.title} category={p.category} href={href}>
             <span>{p.description}</span>
             </ProjectPreview>
         );

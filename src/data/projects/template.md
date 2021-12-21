@@ -6,10 +6,10 @@ setup: |
 title: "Markdown Typography Template"
 description: | 
   This is a page specifically used for referencing Markdown Typography!.
-publishDate: 'December 31, 2021'
+category: testing
 author: 'mostlywhat'
 heroImage: '/social.jpg'
-permalink: 'https://www.mostlywhat.cf/blog/new-website/'
+permalink: '/projects/template/'
 lang: 'en'
 ---
 ### Headings
