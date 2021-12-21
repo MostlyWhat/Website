@@ -77,12 +77,12 @@ const posts = Astro.fetchContent('../../data/blog-posts/*.md').sort((a, b) => (n
       <MainHeader />
         <Article>
           <br>
-          <div class="bold-divider">
+          <div class="bold-divider pb-4">
             <h1 class="font-bold text-2xl latest pb-4">MostlyWhat's Blog</h1>
             <p>{description}</p>
             <br>
           </div>
-          <hr class="pb-2">
+          <br>
           <section aria-label="Blog post list">
           {posts.map(p => {
           const href = `/blog/${p.file.pathname.split('/').pop().split('.').shift()}`;
