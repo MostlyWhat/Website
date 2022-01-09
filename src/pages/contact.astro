@@ -28,52 +28,57 @@ let lang = 'en';
     <Main>
       <MainHeader />
       <Article>
-        <br>
-        <div class="bold-divider pb-4">
-          <h1 class="font-bold text-2xl latest pb-4">Contacting MostlyWhat!</h1>
-          <p>
-            Please fill the the form to send me the message or email me in the addresses below. I will respond usually within 1-2 days.
-          </p>
-        </div>
-        <br>
-        <h2 class="font-bold text-xl">Contact Form</h2>
-        <form action="https://formsubmit.co/mostlywhat@astronavix.cf" method="POST">
-          <input type="hidden" name="_next" value="https://www.mostlywhat.cf/success/">
-          <input type="hidden" name="_captcha" value="true">
-          <input type="hidden" name="_subject" value="New Message!">
-          <div class="mb-6">
-            <label class="block mb-2 text-sm font-bold text-gray-900 dark:text-gray-300">Email Address</label>
-            <input id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@example.com" required>
-          </div>
-          <div class="mb-6">
-            <label class="block mb-2 text-sm font-bold text-gray-900 dark:text-gray-300">Message</label>
-            <textarea id="content" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" rows="3" placeholder="Hello! MostlyWhat, ..." required></textarea>
-          </div>
-          <button type="submit" class="full-expand text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit Message</button>
-        </form>
-        <br>
-        <br>
-        <h1 class="font-bold text-2xl">Other Ways to Contact!</h1>
-        <br>
-        <p>
-        <b>Discord DM:</b> MostlyWhat™#2453
-        </p>
         <div>
-          <a class="action-button full-expand" href="https://www.instagram.com/mostly.what/">
-            Official Instagram
-            <span style="float: right;">&#8594;</span>
-          </a>
           <br>
-          <a class="action-button full-expand" href="https://twitter.com/mostlywhat">
-            Official Twitter
-            <span style="float: right;">&#8594;</span>
-          </a>
+          <div class="bold-divider p-6">
+            <h1 class="font-bold text-2xl latest pb-4">Contacting MostlyWhat!</h1>
+            <p class="pb-4">
+              Please fill the the form to send me the message or email me in the addresses below. I will respond usually within 1-2 days.
+            </p>
+          </div>
           <br>
-          <a class="action-button full-expand" href="https://discord.gg/THmTE3Y9ag">
-            Join Discord Server
-            <span style="float: right;">&#8594;</span>
-          </a>
-          <br>
+          <div class="grid grid-cols-2">
+            <div class="p-6 bg-gray-800 rounded-xl">
+              <h2 class="font-bold text-xl pb-4">Contact Form</h2>
+              <form action="https://formsubmit.co/mostlywhat@astronavix.cf" method="POST">
+                <input type="hidden" name="_next" value="https://www.mostlywhat.cf/success/">
+                <input type="hidden" name="_captcha" value="true">
+                <input type="hidden" name="_subject" value="New Message!">
+                <div class="mb-6">
+                  <label class="block mb-2 text-sm font-bold text-gray-900 dark:text-gray-300">Email Address</label>
+                  <input id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@example.com" required>
+                </div>
+                <div class="mb-6">
+                  <label class="block mb-2 text-sm font-bold text-gray-900 dark:text-gray-300">Message</label>
+                  <textarea id="content" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" rows="3" placeholder="Hello! MostlyWhat, ..." required></textarea>
+                </div>
+                <button type="submit" class="full-expand text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit Message</button>
+              </form>
+            </div>
+            <div class="p-6">
+              <h1 class="font-bold text-2xl">Other Ways to Contact!</h1>
+              <br>
+              <p class="pb-4">
+                <b>Discord DM:</b> MostlyWhat™#2453
+              </p>
+              <div>
+                <a class="action-button full-expand" href="https://www.instagram.com/mostly.what/">
+                  Official Instagram
+                  <span style="float: right;">&#8594;</span>
+                </a>
+                <br>
+                <a class="action-button full-expand" href="https://twitter.com/mostlywhat">
+                  Official Twitter
+                  <span style="float: right;">&#8594;</span>
+                </a>
+                <br>
+                <a class="action-button full-expand" href="https://discord.gg/THmTE3Y9ag">
+                  Join Discord Server
+                  <span style="float: right;">&#8594;</span>
+                </a>
+              </div>
+            </div>
+          </div> 
         </div>
       </Article>
       <Sponsors />
