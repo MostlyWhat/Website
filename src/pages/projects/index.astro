@@ -1,10 +1,10 @@
 ---
 import BaseHead from '../../components/BaseHead.astro';
 import Space from '../../components/Space.astro';
-import Main from '../../components/Main.astro';
+import Projects from '../../components/Projects.astro';
 import Article from '../../components/Article.astro';
 import MainHeader from '../../components/MainHeader.astro';
-import Sponsors from '../../components/Sponsors.astro';
+import Copyright from '../../components/Copyright.astro';
 import GoogleAnalytics from '../../components/GoogleAnalytics.astro';
 import ProjectPreview from '../../components/ProjectPreview.astro';
 import "../../components/YouTube.css";
@@ -27,18 +27,15 @@ const projects = Astro.fetchContent('../../data/projects/*.md').sort((a, b) => a
 
   <body>
     <Space />
-
-    <Main>
-      <MainHeader />
+    <MainHeader />
+    <div class="bold-divider p-6">
+      <h1 class="font-bold text-2xl latest pb-4">Projects by MostlyWhat</h1>
+      <p>
+        These are the projects that I have done, both for personal and for clients.
+      </p>
+    </div>
+    <Projects>
       <Article>
-        <br>
-        <div class="bold-divider pb-4">
-          <h1 class="font-bold text-2xl latest pb-4">Projects by MostlyWhat</h1>
-          <p>
-            These are the projects that I have done, both for personal and for clients.
-          </p>
-          <br>
-        </div>
         <br>
         <section aria-label="Blog post list">
         {projects.map(p => {
@@ -71,8 +68,8 @@ const projects = Astro.fetchContent('../../data/projects/*.md').sort((a, b) => a
           <br>
         </div>
       </Article>
-      <Sponsors />
-    </Main>
+      <Copyright />
+    </Projects>
 
     <style lang="scss">
       .bold-divider {

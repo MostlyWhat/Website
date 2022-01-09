@@ -1,10 +1,10 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
 import Space from '../components/Space.astro';
-import Main from '../components/Main.astro';
+import Blog from '../components/Blog.astro';
 import Article from '../components/Article.astro';
 import MainHeader from '../components/MainHeader.astro';
-import Sponsors from '../components/Sponsors.astro';
+import Copyright from '../components/Copyright.astro';
 import GoogleAnalytics from '../components/GoogleAnalytics.astro';
 import "../components/YouTube.css";
 import "../styles/output.css";
@@ -24,8 +24,8 @@ let lang = 'en';
 
   <body>
     <Space />
-    <Main>
-      <MainHeader />
+    <MainHeader />
+    <Blog>
       <Article>
         <br>
         <br>
@@ -53,8 +53,8 @@ let lang = 'en';
           <br>
         </div>
       </Article>
-      <Sponsors />
-    </Main>
+      <Copyright />
+    </Blog>
 
     <style lang="scss">
       .full-expand {

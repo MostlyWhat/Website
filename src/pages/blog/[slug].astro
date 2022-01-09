@@ -1,7 +1,7 @@
 ---
 import BaseHead from '../../components/BaseHead.astro';
 import Space from '../../components/Space.astro';
-import Main from '../../components/Main.astro';
+import Blog from '../../components/Blog.astro';
 import Article from '../../components/Article.astro';
 import MainHeader from '../../components/MainHeader.astro';
 import Copyright from '../../components/Copyright.astro';
@@ -29,14 +29,15 @@ const { Content, title, author, description, publishDate, heroImage, heroImageAl
   </head>
   <body>
     <Space />
-    <Main>
+    <Blog>
       <MainHeader />
         <Article>
             <BlogPost title={title} author={author} publishDate={publishDate}  heroImage={heroImage}  heroImageAlt={heroImageAlt}>
                 <Content />
             </BlogPost>
         </Article>
-    </Main>
+        <Copyright />
+    </Blog>
 
     <style lang="scss">
       .full-expand {

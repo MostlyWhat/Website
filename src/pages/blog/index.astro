@@ -1,7 +1,7 @@
 ---
 import BaseHead from '../../components/BaseHead.astro';
 import Space from '../../components/Space.astro';
-import Main from '../../components/Main.astro';
+import Blog from '../../components/Blog.astro';
 import Article from '../../components/Article.astro';
 import MainHeader from '../../components/MainHeader.astro';
 import Copyright from '../../components/Copyright.astro';
@@ -72,16 +72,13 @@ const posts = Astro.fetchContent('../../data/blog-posts/*.md').sort((a, b) => (n
   </style>
   <body>
     <Space />
-
-    <Main>
-      <MainHeader />
+    <MainHeader />
+    <div class="bold-divider p-6">
+      <h1 class="font-bold text-2xl latest pb-4">MostlyWhat's Blog</h1>
+      <p>{description}</p>
+    </div>
+    <Blog>
         <Article>
-          <br>
-          <div class="bold-divider pb-4">
-            <h1 class="font-bold text-2xl latest pb-4">MostlyWhat's Blog</h1>
-            <p>{description}</p>
-            <br>
-          </div>
           <br>
           <section aria-label="Blog post list">
           {posts.map(p => {
@@ -95,7 +92,7 @@ const posts = Astro.fetchContent('../../data/blog-posts/*.md').sort((a, b) => (n
           </section>
         </Article>
       <Copyright />
-    </Main>
+    </Blog>
 
     <style lang="scss">
       .bold-divider {
