@@ -1,18 +1,14 @@
-// Full Astro Configuration API Documentation:
-// https://docs.astro.build/reference/configuration-reference
-
-// @type-check enabled!
-// VSCode and other TypeScript-enabled text editors will provide auto-completion,
-// helpful tooltips, and warnings if your exported object is invalid.
-// You can disable this by removing "@ts-check" and `@type` comments below.
-
-// @ts-check
-export default /** @type {import('astro').AstroUserConfig} */ ({
+export default {
+  devOptions: {
+    tailwindConfig: './tailwind.config.js',
+  },
   buildOptions: {
+    site: 'http://www.mostlywhat.cf',
     sitemap: true,
-    site: 'https://www.mostlywhat.cf',
   },
   devOptions: {
-    tailwindConfig: './tailwind.config.js'
-  }
-});
+    // hostname: 'localhost',  // The hostname to run the dev server on.
+    // port: 3000,             // The port to run the dev server on.
+  },
+  renderers: [],
+};

@@ -1,0 +1,122 @@
+<header class="sticky top-0 inset-x-0 z-50">
+  <nav>
+    <div class="logoWrapper pl-4" itemscope itemtype="https://schema.org/Organization">
+      <a href="/" itemprop="url">
+        <div class="items-center content-center justify-center pl-2">
+          <svg class="logo" width="32" height="32" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-labelledby="astroSvgTitle astroSvgDesc" role="img" itemprop="logo">
+            <title id="astroSvgTitle">MostlyWhat logo</title>
+            <desc id="astroSvgDesc">A white terminal logo</desc>
+            <style>
+              #a {
+                fill: white;
+              }
+            </style>
+            <path
+              id="a"
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M0 3a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3zm9.5 5.5h-3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1zm-6.354-.354a.5.5 0 1 0 .708.708l2-2a.5.5 0 0 0 0-.708l-2-2a.5.5 0 1 0-.708.708L4.793 6.5 3.146 8.146z"
+            />
+          </svg>
+        </div>
+        <span itemprop="name">MostlyWhat</span>
+      </a>
+    </div>
+    <div class="flex space-x-4 pr-4">
+      <ul role="list">
+        <li>
+          <a class="header-subitem header-subitem-secondary" href="/projects/">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+            Projects
+          </a>
+        </li>
+        <li>
+          <a class="header-subitem header-subitem-secondary" href="/blog/">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor"  viewBox="0 0 16 16">
+              <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+              <path d="M6.854 4.646a.5.5 0 0 1 0 .708L4.207 8l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0zm2.292 0a.5.5 0 0 0 0 .708L11.793 8l-2.647 2.646a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708 0z"/>
+            </svg>
+            Blog
+          </a>
+        </li>
+        <li>
+          <a class="header-subitem header-subitem-secondary" href="/contact/">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor"  viewBox="0 0 16 16">
+              <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4.414a1 1 0 0 0-.707.293L.854 15.146A.5.5 0 0 1 0 14.793V2zm5 4a1 1 0 1 0-2 0 1 1 0 0 0 2 0zm4 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0zm3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+            </svg>
+            Contact
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</header>
+
+<style>
+header {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+    height: 5rem;
+}
+
+
+nav,
+nav ul {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+nav ul {
+  list-style: none;
+}
+.header-subitem {
+  display: flex;
+  flex-grow: 0;
+  gap: 0.5em;
+  align-items: center;
+  justify-content: center;
+  color: var(--theme-text-lighter);
+  font-size: initial;
+  padding: 0.5rem;
+  margin-top: 0;
+}
+.header-subitem:hover {
+  color: var(--theme-accent);
+}
+.header-subitem svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+@media (max-width: 40em) {
+  .header-subitem-secondary {
+    display: none;
+  }
+}
+@media (max-width: 20em) {
+  .header-subitem {
+    display: none;
+  }
+}
+.logoWrapper {
+  margin: 0;
+  font-size: 1.5rem;
+  max-width: 100%;
+  display: flex;
+  flex-grow: 1;
+}
+.logoWrapper a {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 0.5rem 0 0;
+}
+.logo {
+  transform: translateY(0.25rem);
+}
+svg {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+</style>
