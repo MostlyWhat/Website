@@ -4,13 +4,13 @@ import Space from '../components/Space.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 
-let title = 'My Astro Site';
+let page_title = 'Home';
 ---
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
-	<title>{title}</title>
+	<title>{page_title} | MostlyWhat</title>
 	<link rel="icon" type="image/x-icon" href="/favicon.ico" />
 	<style global lang="scss">
 			@import "../styles/global.scss";
@@ -22,60 +22,38 @@ let title = 'My Astro Site';
 	<Main>
 		<section class="body-font">
 			<div class="content-center text-center h-screen justify-center pt-15">
-				<h1 class="pt-10 text-6xl font-bold font-weight-1000 bg-gradient-to-r from-cyan-500 to-blue-500 text-transparent bg-clip-text">Hello! I'm MostlyWhat</h1>
-				<p class="px-5">euhfeiuhwfhuiwhuifhueiwhhfuih</p>
+				<h1 class="pt-10 text-8xl font-bold font-weight-1000 text-[#ff5d01]">DESIGN.</h1>
+				<h1 class="pt-10 text-8xl font-bold font-weight-1000 text-yellow-500">CREATE.</h1>
+				<h1 class="pt-10 text-8xl font-bold font-weight-1000 text-blue-500">DEPLOY.</h1>
+			</div>
+		</section>
+		<section id="design" class="body-font">
+			<div class="content-center text-center h-screen justify-center pt-15">
+				<h1 class="pt-10 text-8xl font-bold font-weight-1000 text-[#ff5d01]">&#9656; DESIGN &#9666;</h1>
+				<p class="p-5">eeihgfhuehueig</p>
+				<a href="/contact/" class="p-5">&#9656; GO TO CONTACT &#9666;</a>
+			</div>
+		</section>
+		<section id="create" class="body-font">
+			<div class="content-center text-center h-screen justify-center pt-15">
+				<h1 class="pt-10 text-8xl font-bold font-weight-1000 text-yellow-500">&#9656; CREATE &#9666;</h1>
+				<p class="p-5">eeihgfhuehueig</p>
+				<a href="/contact/" class="p-5">&#9656; GO TO CONTACT &#9666;</a>
+			</div>
+		</section>
+		<section id="deploy" class="body-font">
+			<div class="content-center text-center h-screen justify-center pt-15">
+				<h1 class="pt-10 text-8xl font-bold font-weight-1000 text-blue-500">&#9656; DEPLOY &#9666;</h1>
+				<p class="p-5">eeihgfhuehueig</p>
+				<a href="/projects/" class="p-5">&#9656; GO TO PROJECTS &#9666;</a>
 			</div>
 		</section>
 		<section class="body-font">
-		<div class="container px-5 py-24 mx-auto">
-			<div class="flex flex-col">
-			<div class="h-1 bg-gray-200 rounded overflow-hidden">
-				<div class="w-24 h-full bg-indigo-500"></div>
+			<div class="content-center text-center h-screen justify-center pt-15">
+				<h1 class="pt-10 text-8xl font-bold font-weight-1000 text-blue-500">&#9656; CONTACT &#9666;</h1>
+				<p class="p-5">eeihgfhuehueig</p>
+				<a href="/contact/" class="p-5">&#9656; GO TO CONTACT &#9666;</a>
 			</div>
-			<div class="flex flex-wrap sm:flex-row flex-col py-6 mb-12">
-				<h1 class="sm:w-2/5 font-medium title-font text-2xl mb-2 sm:mb-0">Space The Final Frontier</h1>
-				<p class="sm:w-3/5 leading-relaxed text-base sm:pl-10 pl-0">Street art subway tile salvia four dollar toast bitters selfies quinoa yuccie synth meditation iPhone intelligentsia prism tofu. Viral gochujang bitters dreamcatcher.</p>
-			</div>
-			</div>
-			<div class="flex flex-wrap sm:-m-4 -mx-4 -mb-10 -mt-4">
-			<div class="p-4 md:w-1/3 sm:mb-0 mb-6">
-				<div class="rounded-lg h-64 overflow-hidden">
-				<img alt="content" class="object-cover object-center h-full w-full" src="https://dummyimage.com/1203x503">
-				</div>
-				<h2 class="text-xl font-medium title-font mt-5">Shooting Stars</h2>
-				<p class="text-base leading-relaxed mt-2">Swag shoivdigoitch literally meditation subway tile tumblr cold-pressed. Gastropub street art beard dreamcatcher neutra, ethical XOXO lumbersexual.</p>
-				<a class="inline-flex items-center mt-3">Learn More
-				<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4 ml-2" viewBox="0 0 24 24">
-					<path d="M5 12h14M12 5l7 7-7 7"></path>
-				</svg>
-				</a>
-			</div>
-			<div class="p-4 md:w-1/3 sm:mb-0 mb-6">
-				<div class="rounded-lg h-64 overflow-hidden">
-				<img alt="content" class="object-cover object-center h-full w-full" src="https://dummyimage.com/1204x504">
-				</div>
-				<h2 class="text-xl font-medium title-font mt-5">The Catalyzer</h2>
-				<p class="text-base leading-relaxed mt-2">Swag shoivdigoitch literally meditation subway tile tumblr cold-pressed. Gastropub street art beard dreamcatcher neutra, ethical XOXO lumbersexual.</p>
-				<a class="inline-flex items-center mt-3">Learn More
-				<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4 ml-2" viewBox="0 0 24 24">
-					<path d="M5 12h14M12 5l7 7-7 7"></path>
-				</svg>
-				</a>
-			</div>
-			<div class="p-4 md:w-1/3 sm:mb-0 mb-6">
-				<div class="rounded-lg h-64 overflow-hidden">
-				<img alt="content" class="object-cover object-center h-full w-full" src="https://dummyimage.com/1205x505">
-				</div>
-				<h2 class="text-xl font-medium title-font mt-5">The 400 Blows</h2>
-				<p class="text-base leading-relaxed mt-2">Swag shoivdigoitch literally meditation subway tile tumblr cold-pressed. Gastropub street art beard dreamcatcher neutra, ethical XOXO lumbersexual.</p>
-				<a class="inline-flex items-center mt-3">Learn More
-				<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4 ml-2" viewBox="0 0 24 24">
-					<path d="M5 12h14M12 5l7 7-7 7"></path>
-				</svg>
-				</a>
-			</div>
-			</div>
-		</div>
 		</section>
 	</Main>
 	<Footer />
