@@ -4,7 +4,7 @@ import Space from '../components/Space.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 
-let page_title = 'Home';
+let page_title = '404';
 ---
 <html lang="en">
 <head>
@@ -20,9 +20,9 @@ let page_title = 'Home';
 	<Space />
     <Header />
 	<Main>
-		<section class="body-font">
-			<div class="h-screen content-center text-center justify-center">
-				<h1 class="pt-10 text-6xl font-bold font-weight-1000 text-blue-500">&#9656; 404 NOT FOUND &#9666;</h1>
+		<section class="body-font snap-start h-screen content-center text-center justify-center flex">
+			<div class="m-auto">
+				<h1 class="text-6xl font-bold font-weight-1000 text-blue-500">404 NOT FOUND</h1>
 				<p class="p-5">THIS PAGE DOESN'T EXIST OR YOU DON'T HAVE ACCESS TO IT!</p>
 				<a href="/" class="p-5">&#9656; RETURN TO HOME &#9666;</a>
 			</div>

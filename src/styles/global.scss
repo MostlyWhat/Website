@@ -1,13 +1,18 @@
-@use './fonts.scss';
+@use "./fonts.scss";
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
 :root {
-	--font-sans: "Industry", -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
-	font-size: 1rem;
-	--user-font-scale: 1rem - 16px;
-	font-size: clamp(0.875rem, 0.4626rem + 1.0309vw + var(--user-font-scale), 1.125rem);
+  --font-sans: "Industry", -apple-system, BlinkMacSystemFont, Segoe UI,
+    Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+  font-size: 1rem;
+  --user-font-scale: 1rem - 16px;
+  font-size: clamp(
+    0.875rem,
+    0.4626rem + 1.0309vw + var(--user-font-scale),
+    1.125rem
+  );
   --color-accent: #ff5d01;
   --theme-divider: white;
   --theme-code-inline-bg: var(--color-gray-100);
@@ -19,8 +24,8 @@
 }
 
 * {
-	box-sizing: border-box;
-	margin: 0;
+  box-sizing: border-box;
+  margin: 0;
   font-family: var(--font-sans);
 }
 
@@ -77,7 +82,7 @@ a {
 
   &::before {
     transform-origin: bottom center;
-    content: '';
+    content: "";
     display: block;
     position: absolute;
     top: 0;
@@ -88,7 +93,8 @@ a {
     background: var(--color-accent);
     pointer-events: none;
     transform: scaleY(0.05);
-    transition: transform 120ms cubic-bezier(0.23, 1, 0.32, 1), background 120ms cubic-bezier(0.23, 1, 0.32, 1);
+    transition: transform 120ms cubic-bezier(0.23, 1, 0.32, 1),
+      background 120ms cubic-bezier(0.23, 1, 0.32, 1);
     z-index: -1;
   }
 }
@@ -98,8 +104,8 @@ a + a {
 }
 
 .action-button {
-  width:100%;
-  padding:20px;
+  width: 100%;
+  padding: 20px;
   font-weight: 600;
 }
 
