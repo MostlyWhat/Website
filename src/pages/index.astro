@@ -2,62 +2,55 @@
 import Space from '../components/Space.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-
-let page_title = 'Home';
+import HeadConfig from '../components/HeadConfig.astro'
 ---
-<html lang="en" class="scroll-smooth">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width">
-	<title>{page_title} | MostlyWhat</title>
-	<link rel="icon" type="image/x-icon" href="/favicon.ico" />
-	<style global lang="scss">
-			@import "../styles/global.scss";
-	</style>
-</head>
+<html lang="en">
+<HeadConfig page_title="Home" page_description="Hello, I'm MostlyWhat, a Freelancer Developer and a Minimalist Designer currently based in Thailand. I can do Graphic Design, Website Design and More!" />
 <body>
-	<Space />
-    <Header />
-	<div class="snap snap-y snap-mandatory overflow-scroll h-screen scrollbar-hide">
-		<section class="snap-center h-screen content-center text-center justify-center flex">
-			<div class="m-auto">
-				<h1 class="text-8xl font-bold font-weight-1000 text-[#ff5d01]">DESIGN.</h1>
-				<h1 class="pt-10 text-8xl font-bold font-weight-1000 text-yellow-300">DEVELOP.</h1>
-				<h1 class="pt-10 text-8xl font-bold font-weight-1000 text-blue-500">DEPLOY.</h1>
-			</div>
-		</section>
-		<section id="design" class="snap-center h-screen content-center text-center justify-center flex">
-			<div class="m-auto">
-				<h1 class="text-8xl font-bold font-weight-1000 text-[#ff5d01]">DESIGN</h1>
-				<p class="p-5">eeihgfhuehueig</p>
-				<a href="/contact" class="p-5">&#9656; GO TO BLOG &#9666;</a>
-			</div>
-		</section>
-		<section class="snap-center h-screen content-center text-center justify-center flex">
-			<div class="m-auto">
-				<h1 class="text-8xl font-bold font-weight-1000 text-yellow-300">DEVELOP</h1>
-				<p class="p-5">eeihgfhuehueig</p>
-				<a href="/contact" class="p-5">&#9656; GO TO CONTACT &#9666;</a>
-			</div>
-		</section>
-		<section class="snap-center h-screen content-center text-center justify-center flex">
-			<div class="m-auto">
-				<h1 class="text-8xl font-bold font-weight-1000 text-blue-500">DEPLOY</h1>
-				<p class="p-5">eeihgfhuehueig</p>
-				<a href="/projects" class="p-5">&#9656; GO TO PROJECTS &#9666;</a>
-			</div>
-		</section>
-		<section class="snap-center h-screen content-center text-center justify-center flex">
-			<div class="m-auto">
-				<h1 class="text-8xl font-bold font-weight-1000 text-green-500">CONTACT</h1>
-				<p class="p-5">eeihgfhuehueig</p>
-				<a href="/contact" class="p-5">&#9656; GO TO CONTACT &#9666;</a>
-			</div>
-		</section>
-		<section class="snap-end">
-			<Footer />
-		</section>
-	</div>
-	<script src="../../node_modules/flowbite/dist/flowbite.js"></script>
+	<main>
+		<Space />
+		<Header />
+		<div class="snap snap-y snap-mandatory overflow-scroll h-screen scrollbar-hide">
+			<section class="snap-center h-screen content-center text-center justify-center flex">
+				<div class="m-auto">
+					<h1 class="text-8xl font-bold font-weight-1000 text-[#ff5d01]">DESIGN.</h1>
+					<h1 class="pt-10 text-8xl font-bold font-weight-1000 text-yellow-300">DEVELOP.</h1>
+					<h1 class="pt-10 text-8xl font-bold font-weight-1000 text-blue-500">DEPLOY.</h1>
+				</div>
+			</section>
+			<section id="design" class="snap-center h-screen content-center text-center justify-center flex">
+				<div class="m-auto">
+					<h1 class="text-8xl font-bold font-weight-1000 text-[#ff5d01]">DESIGN</h1>
+					<p class="p-5">eeihgfhuehueig</p>
+					<a href="/about" class="p-5">&#9656; GO TO ABOUT &#9666;</a>
+				</div>
+			</section>
+			<section class="snap-center h-screen content-center text-center justify-center flex">
+				<div class="m-auto">
+					<h1 class="text-8xl font-bold font-weight-1000 text-yellow-300">DEVELOP</h1>
+					<p class="p-5">eeihgfhuehueig</p>
+					<a href="/blog" class="p-5">&#9656; GO TO BLOG &#9666;</a>
+				</div>
+			</section>
+			<section class="snap-center h-screen content-center text-center justify-center flex">
+				<div class="m-auto">
+					<h1 class="text-8xl font-bold font-weight-1000 text-blue-500">DEPLOY</h1>
+					<p class="p-5">eeihgfhuehueig</p>
+					<a href="/projects" class="p-5">&#9656; GO TO PROJECTS &#9666;</a>
+				</div>
+			</section>
+			<section class="snap-center h-screen content-center text-center justify-center flex">
+				<div class="m-auto">
+					<h1 class="text-8xl font-bold font-weight-1000 text-green-500">CONTACT</h1>
+					<p class="p-5">eeihgfhuehueig</p>
+					<a href="/contact" class="p-5">&#9656; GO TO CONTACT &#9666;</a>
+				</div>
+			</section>
+			<section class="snap-end">
+				<Footer />
+			</section>
+		</div>
+		<script src="../../node_modules/flowbite/dist/flowbite.js"></script>
+	</main>
 </body>
 </html>

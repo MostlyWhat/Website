@@ -1,0 +1,20 @@
+---
+export interface Props {
+  page_title: string;
+  page_description: string;
+}
+
+const { page_title, page_description } = Astro.props;
+---
+<head>
+	<meta charset="UTF-8">
+	<meta name="description" content={page_description}>
+	<meta name="keywords" content="MostlyWhat, Mostly What, Mostly, What, Website, Official, MW, MWS">
+	<meta name="author" content="MostlyWhat, MostlyWhat Systems">
+	<meta name="viewport" content="width=device-width">
+	<title>{page_title} | MostlyWhat</title>
+	<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+	<style global lang="scss">
+			@import "../styles/global.scss";
+	</style>
+</head>

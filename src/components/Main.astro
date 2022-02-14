@@ -1,0 +1,14 @@
+---
+import Space from '../components/Space.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+<body>
+    <main>
+        <Space />
+        <Header />
+        <slot />
+        <Footer />
+        <script src="../../node_modules/flowbite/dist/flowbite.js"></script>
+    </main>
+</body>
