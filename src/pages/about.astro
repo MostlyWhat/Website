@@ -1,13 +1,168 @@
 ---
 import Main from '../components/Main.astro'
 import HeadConfig from '../components/HeadConfig.astro'
+import FullSection from '../components/FullSection.astro'
 ---
 <html lang="en">
 <HeadConfig page_title="About" page_description="About me, my skills and previous experiences in fields of designing and developing." />
 <Main>
-	<section class="body-font h-screen content-center text-center justify-center flex">
-		<div class="m-auto">
-			<h1 class="text-8xl font-bold font-weight-1000 text-[#ff5d01]">ABOUT</h1>
+	<FullSection>
+		<h1 class="text-8xl font-bold font-weight-1000 text-[#ff5d01]">ABOUT</h1>
+	</FullSection>
+	<section class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20">
+		<div class="grid gap-5 row-gap-10 lg:grid-cols-2">
+			<div class="flex flex-col justify-center">
+			<div class="max-w-xl mb-6">
+				<h2 class="max-w-lg mb-6 text-3xl font-bold tracking-tight sm:text-4xl sm:leading-none">Hello! I'm MostlyWhat</h2>
+				<p class="text-base text-gray-200 md:text-lg">
+				I am a Freelancer Developer and a Minimalist Designer currently based in Thailand. I can do Graphic Design, Website Design and More!
+				</p>
+			</div>
+			<p class="mb-4 text-sm font-bold tracking-widest uppercase">Current Skills</p>
+			<div class="grid space-y-3 sm:gap-2 sm:grid-cols-2 sm:space-y-0">
+				<ul class="space-y-3">
+				<li class="flex">
+					<span class="mr-1">
+					<svg class="w-5 h-5 mt-px text-deep-purple-accent-400" stroke="currentColor" viewBox="0 0 52 52">
+						<polygon stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none" points="29 13 14 29 25 29 23 39 38 23 27 23"></polygon>
+					</svg>
+					</span>
+					Website Design and Hosting
+				</li>
+				<li class="flex">
+					<span class="mr-1">
+					<svg class="w-5 h-5 mt-px text-deep-purple-accent-400" stroke="currentColor" viewBox="0 0 52 52">
+						<polygon stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none" points="29 13 14 29 25 29 23 39 38 23 27 23"></polygon>
+					</svg>
+					</span>
+					Brand and Graphics Design
+				</li>
+				<li class="flex">
+					<span class="mr-1">
+					<svg class="w-5 h-5 mt-px text-deep-purple-accent-400" stroke="currentColor" viewBox="0 0 52 52">
+						<polygon stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none" points="29 13 14 29 25 29 23 39 38 23 27 23"></polygon>
+					</svg>
+					</span>
+					Marketing and Ecommerce
+				</li>
+				</ul>
+				<ul class="space-y-3">
+				<li class="flex">
+					<span class="mr-1">
+					<svg class="w-5 h-5 mt-px text-deep-purple-accent-400" stroke="currentColor" viewBox="0 0 52 52">
+						<polygon stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none" points="29 13 14 29 25 29 23 39 38 23 27 23"></polygon>
+					</svg>
+					</span>
+					Computer Troubleshooting
+				</li>
+				<li class="flex">
+					<span class="mr-1">
+					<svg class="w-5 h-5 mt-px text-deep-purple-accent-400" stroke="currentColor" viewBox="0 0 52 52">
+						<polygon stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none" points="29 13 14 29 25 29 23 39 38 23 27 23"></polygon>
+					</svg>
+					</span>
+					Software Development
+				</li>
+				<li class="flex">
+					<span class="mr-1">
+					<svg class="w-5 h-5 mt-px text-deep-purple-accent-400" stroke="currentColor" viewBox="0 0 52 52">
+						<polygon stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none" points="29 13 14 29 25 29 23 39 38 23 27 23"></polygon>
+					</svg>
+					</span>
+					Video Editing
+				</li>
+				</ul>
+			</div>
+			</div>
+			<div>
+			<img class="object-cover w-full h-56 rounded shadow-lg sm:h-96" src="https://images.pexels.com/photos/927022/pexels-photo-927022.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=3&amp;h=750&amp;w=1260" alt="" />
+			</div>
+		</div>
+	</section>
+	<section class="body-font">
+		<div class="container px-5 py-24 mx-auto">
+			<div class="text-center mb-20">
+			<h1 class="sm:text-3xl text-2xl font-bold text-center title-font mb-4">The Skills</h1>
+			<p class="text-base leading-relaxed xl:w-2/4 lg:w-3/4 mx-auto">Blue bottle crucifix vinyl post-ironic four dollar toast vegan taxidermy. Gastropub indxgo juice poutine, ramps microdosing banh mi pug.</p>
+			</div>
+			<div class="flex flex-wrap lg:w-4/5 sm:mx-auto sm:mb-2 -mx-2 text-gray-600">
+				<div class="p-2 sm:w-1/2 w-full">
+					<div class="bg-gray-100 rounded flex p-4 h-full items-center">
+						<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" class="text-indigo-500 w-6 h-6 flex-shrink-0 mr-4" viewBox="0 0 24 24">
+							<path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
+							<path d="M22 4L12 14.01l-3-3"></path>
+						</svg>
+						<span class="title-font font-medium">Graphics Design</span>
+					</div>
+				</div>
+				<div class="p-2 sm:w-1/2 w-full">
+					<div class="bg-gray-100 rounded flex p-4 h-full items-center">
+					<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" class="text-indigo-500 w-6 h-6 flex-shrink-0 mr-4" viewBox="0 0 24 24">
+						<path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
+						<path d="M22 4L12 14.01l-3-3"></path>
+					</svg>
+					<span class="title-font font-medium">Website Design and Hosting</span>
+					</div>
+				</div>
+				<div class="p-2 sm:w-1/2 w-full">
+					<div class="bg-gray-100 rounded flex p-4 h-full items-center">
+					<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" class="text-indigo-500 w-6 h-6 flex-shrink-0 mr-4" viewBox="0 0 24 24">
+						<path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
+						<path d="M22 4L12 14.01l-3-3"></path>
+					</svg>
+					<span class="title-font font-medium">Product Marketing</span>
+					</div>
+				</div>
+				<div class="p-2 sm:w-1/2 w-full">
+					<div class="bg-gray-100 rounded flex p-4 h-full items-center">
+					<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" class="text-indigo-500 w-6 h-6 flex-shrink-0 mr-4" viewBox="0 0 24 24">
+						<path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
+						<path d="M22 4L12 14.01l-3-3"></path>
+					</svg>
+					<span class="title-font font-medium">Music Production</span>
+					</div>
+				</div>
+				<div class="p-2 sm:w-1/2 w-full">
+					<div class="bg-gray-100 rounded flex p-4 h-full items-center">
+					<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" class="text-indigo-500 w-6 h-6 flex-shrink-0 mr-4" viewBox="0 0 24 24">
+						<path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
+						<path d="M22 4L12 14.01l-3-3"></path>
+					</svg>
+					<span class="title-font font-medium">Application Development</span>
+					</div>
+				</div>
+				<div class="p-2 sm:w-1/2 w-full">
+					<div class="bg-gray-100 rounded flex p-4 h-full items-center">
+						<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" class="text-indigo-500 w-6 h-6 flex-shrink-0 mr-4" viewBox="0 0 24 24">
+							<path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
+							<path d="M22 4L12 14.01l-3-3"></path>
+						</svg>
+						<span class="title-font font-medium">Game Development</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="body-font">
+		<div class="container px-5 py-24 mx-auto">
+			<div class="flex flex-wrap -m-4 text-center">
+				<div class="p-4 sm:w-1/4 w-1/2">
+					<h2 class="title-font font-medium sm:text-4xl text-3xl">5</h2>
+					<p class="leading-relaxed">Clients</p>
+				</div>
+				<div class="p-4 sm:w-1/4 w-1/2">
+					<h2 class="title-font font-medium sm:text-4xl text-3xl">10</h2>
+					<p class="leading-relaxed">Projects</p>
+				</div>
+				<div class="p-4 sm:w-1/4 w-1/2">
+					<h2 class="title-font font-medium sm:text-4xl text-3xl">5</h2>
+					<p class="leading-relaxed">Downloads</p>
+				</div>
+				<div class="p-4 sm:w-1/4 w-1/2">
+					<h2 class="title-font font-medium sm:text-4xl text-3xl">4</h2>
+					<p class="leading-relaxed">Products</p>
+				</div>
+			</div>
 		</div>
 	</section>
 </Main>

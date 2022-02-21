@@ -1,16 +1,15 @@
 ---
 import Main from '../components/Main.astro'
 import HeadConfig from '../components/HeadConfig.astro'
+import FullSection from '../components/FullSection.astro'
 ---
 <html lang="en">
 <HeadConfig page_title="Submitted" page_description="Form has successfully been sent to me" />
 <Main>
-	<section class="body-font h-screen content-center text-center justify-center flex">
-		<div class="m-auto">
-			<h1 class="text-6xl font-bold font-weight-1000 text-blue-500">LOUD & CLEAR</h1>
-			<p class="p-5">THANKS FOR THE MESSAGE, I WILL RESPOND WITHIN 1-3 DAYS.</p>
-			<a href="/" class="p-5">&#9656; RETURN TO HOME &#9666;</a>
-		</div>
-	</section>
+	<FullSection>
+		<h1 class="text-6xl font-bold font-weight-1000 text-blue-500">LOUD & CLEAR</h1>
+		<p class="p-5">THANKS FOR THE MESSAGE, I WILL RESPOND WITHIN 1-3 DAYS.</p>
+		<a href="/" class="p-5">&#9656; RETURN TO HOME &#9666;</a>
+	</FullSection>
 </Main>
 </html>
