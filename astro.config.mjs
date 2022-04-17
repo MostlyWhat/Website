@@ -1,4 +1,7 @@
-export default {
+import { defineConfig } from 'astro/config';
+import vercel from '@astrojs/vercel';
+
+export default defineConfig({
   devOptions: {
     tailwindConfig: './tailwind.config.js',
   },
@@ -11,4 +14,5 @@ export default {
     // port: 3000,             // The port to run the dev server on.
   },
   renderers: [],
-};
+  adapter: vercel(),
+});
