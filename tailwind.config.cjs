@@ -1,13 +1,10 @@
 module.exports = {
-    content: [
-        './public/**/*.html',
-        './node_modules/flowbite/**/*.js',
-        './src/**/*.{astro,js,jsx,svelte,ts,tsx,vue}'],
-    theme: {
-        extend: {},
-    },
-    plugins: [
-        require('tailwind-scrollbar-hide'),
-        require('flowbite/plugin'),
-    ],
+	content: [
+		'./src/**/*.{astro,html,js,jsx,svelte,ts,tsx,vue}',
+		'./node_modules/flowbite/**/*.js'
+	],
+	theme: {
+		extend: {},
+	},
+	plugins: [],
 }
