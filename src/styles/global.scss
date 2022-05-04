@@ -1,7 +1,7 @@
-@use "./fonts.scss";
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+@use "./fonts.scss";
 
 :root {
   --font-sans: "Industry", -apple-system, BlinkMacSystemFont, Segoe UI,
@@ -52,7 +52,7 @@ body {
   width: 1px;
 }
 
-a {
+.action-link {
   position: relative;
   text-decoration: none;
   color: var(--color-accent);
@@ -101,12 +101,6 @@ a {
 
 a + a {
   margin-left: 2px;
-}
-
-.action-button {
-  width: 100%;
-  padding: 20px;
-  font-weight: 600;
 }
 
 .bold-divider {
