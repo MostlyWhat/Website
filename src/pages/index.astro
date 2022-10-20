@@ -1,57 +1,33 @@
 ---
-import Space from '../components/Space.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import HeadConfig from '../components/HeadConfig.astro'
-import FullSection from '../components/FullSection.astro'
+import { SITE } from '~/config.mjs';
+import { getCanonical, getHomePermalink } from '~/utils/permalinks';
+import Layout from '~/layouts/PageLayout.astro';
+
+import Hero from '~/components/widgets/Hero.astro';
+import Features from '~/components/widgets/Features.astro';
+import Features2 from '~/components/widgets/Features2.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import Features3 from '~/components/widgets/Features3.astro';
+import HighlightedPosts from '~/components/blog/HighlightedPosts.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import Stats from '~/components/widgets/Stats.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+
+const meta = {
+	title: SITE.title,
+	description: SITE.description,
+	canonical: getCanonical(getHomePermalink()),
+};
 ---
-<html lang="en">
-<HeadConfig page_title="Home" page_description="Hello, I'm MostlyWhat, a Freelancer Developer and a Minimalist Designer currently based in Thailand. I can do Graphic Design, Website Design and More!" />
-<body>
-	<main>
-		<Space />
-		<Header />
-		<div class="snap snap-y snap-mandatory overflow-scroll h-screen scrollbar-hide">
-			<section class="snap-always snap-center h-screen content-center text-center justify-center flex">
-				<div class="m-auto">
-					<h1 class="text-8xl font-bold font-weight-1000 text-[#ff5d01]">DESIGN.</h1>
-					<h1 class="pt-10 text-8xl font-bold font-weight-1000 text-yellow-300">DEVELOP.</h1>
-					<h1 class="pt-10 text-8xl font-bold font-weight-1000 text-blue-500">DEPLOY.</h1>
-				</div>
-			</section>
-			<section class="snap-always snap-center h-screen content-center text-center justify-center flex">
-				<div class="m-auto">
-					<h1 class="text-8xl font-bold font-weight-1000 text-[#ff5d01]">DESIGN</h1>
-					<p class="p-5 mx-40">We are a team of designers, developers, and makers who are passionate about creating beautiful and useful things. We believe that good design should be accessible to everyone, and we are committed to creating products that are both aesthetically pleasing and easy to use.</p>
-					<a href="/about" class="p-5 action-link">&#9656; GO TO ABOUT &#9666;</a>
-				</div>
-			</section>
-			<section class="snap-always snap-center h-screen content-center text-center justify-center flex">
-				<div class="m-auto">
-					<h1 class="text-8xl font-bold font-weight-1000 text-yellow-300">DEVELOP</h1>
-					<p class="p-5 mx-40">Come to us with an idea for a new product, and it is our job to bring that product to life. We start by understanding the your vision for the product and what they hope to achieve with it. We then work on developing a prototype of the product, which we will iterate on based on your feedback.</p>
-					<a href="/blog" class="p-5 action-link">&#9656; GO TO BLOG &#9666;</a>
-				</div>
-			</section>
-			<section class="snap-always snap-center h-screen content-center text-center justify-center flex">
-				<div class="m-auto">
-					<h1 class="text-8xl font-bold font-weight-1000 text-blue-500">DEPLOY</h1>
-					<p class="p-5 mx-40">We will be happy to deploy your project for you. We will take care of all the necessary steps to get your project up and running. We will also provide you with all the necessary support to ensure that your project is a success.</p>
-					<a href="/projects" class="p-5 action-link">&#9656; GO TO PROJECTS &#9666;</a>
-				</div>
-			</section>
-			<section class="snap-always snap-center h-screen content-center text-center justify-center flex">
-				<div class="m-auto">
-					<h1 class="text-8xl font-bold font-weight-1000 text-green-500">CONTACT</h1>
-					<p class="p-5 mx-40">We would love to hear from you! If you have any questions or comments, please don't hesitate to contact us.</p>
-					<a href="/contact" class="p-5 action-link">&#9656; GO TO CONTACT &#9666;</a>
-				</div>
-			</section>
-			<section class="snap-always snap-end">
-				<Footer />
-			</section>
-		</div>
-	</main>
-	<style is:global></style>
-</body>
-</html>
+
+<Layout {meta}>
+	<Hero />
+	<Features />
+	<Steps />
+	<Features2 />
+	<Features3 />
+	<HighlightedPosts />
+	<FAQs />
+	<Stats />
+	<CallToAction />
+</Layout>
