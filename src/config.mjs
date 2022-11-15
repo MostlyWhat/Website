@@ -1,14 +1,14 @@
 export const SITE = {
-	name: 'AstroWind',
+	name: 'MostlyWhat Systems',
 
-	origin: 'https://astrowind.vercel.app',
+	origin: 'https://www.mostlywhat.systems',
 	basePathname: '/',
 	trailingSlash: false,
 
-	title: 'AstroWind — Your website with Astro + Tailwind CSS',
-	description: '🚀 AstroWind is a free and ready to start template to make your website using Astro and Tailwind CSS.',
+	title: 'MostlyWhat Systems — Design, Develop, Deploy.',
+	description: "🚀 Hi I'm MostlyWhat! I am a Freelancer Developer and a Minimalist Designer currently based in Thailand.",
 
-	googleAnalyticsId: false, // or "G-XXXXXXXXXX",
+	googleAnalyticsId: "G-JWPBL12SNZ", // or "G-XXXXXXXXXX",
 	googleSiteVerificationId: 'orcPxI47GSa-cRvY11tUe6iGg2IO_RPvnA1q95iEM3M',
 };
 
@@ -23,7 +23,7 @@ export const BLOG = {
 
 	post: {
 		disabled: false,
-		pathname: '', // empty for /some-post, value for /pathname/some-post
+		pathname: 'blog', // empty for /some-post, value for /pathname/some-post
 	},
 
 	category: {

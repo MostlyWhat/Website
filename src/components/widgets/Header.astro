@@ -29,14 +29,14 @@ import { getPermalink, getBlogPermalink, getHomePermalink } from '~/utils/permal
 				<li>
 					<a
 						class="font-medium hover:text-gray-900 dark:hover:text-white px-4 py-3 flex items-center transition duration-150 ease-in-out"
-						href="#">Pages</a
+						href="/about">About</a
 					>
 				</li>
 				<li>
 					<a
 						class="font-medium hover:text-gray-900 dark:hover:text-white px-4 py-3 flex items-center transition duration-150 ease-in-out"
-						href={getPermalink('useful-resources-to-create-websites', 'post')}
-						>Resources
+						href="/projects"
+						>Projects
 					</a>
 				</li>
 				<li>
@@ -45,11 +45,18 @@ import { getPermalink, getBlogPermalink, getHomePermalink } from '~/utils/permal
 						href={getBlogPermalink()}>Blog</a
 					>
 				</li>
+				<li>
+					<a
+						class="font-medium hover:text-gray-900 dark:hover:text-white px-4 py-3 flex items-center transition duration-150 ease-in-out"
+						href="/contact"
+						>Contact
+					</a>
+				</li>
 				<li class="md:hidden">
 					<a
 						class="font-bold hover:text-gray-900 dark:hover:text-white px-4 py-3 flex items-center transition duration-150 ease-in-out"
-						href="https://github.com/onwidget/astrowind"
-						>Github
+						href="https://github.com/mostlywhat"
+						>GitHub
 					</a>
 				</li>
 			</ul>
@@ -66,7 +73,7 @@ import { getPermalink, getBlogPermalink, getHomePermalink } from '~/utils/permal
 					<a
 						href="https://github.com/onwidget/astrowind"
 						class="inline-block text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5"
-						aria-label="Astrowind Github"
+						aria-label="GitHub"
 					>
 						<Icon name="tabler:brand-github" class="w-5 h-5" />
 					</a>
