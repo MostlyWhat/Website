@@ -1,7 +1,7 @@
 {
-  "name": "@onwidget/astrowind",
-  "description": "A template to make your website using Astro + Tailwind CSS.",
-  "version": "0.7.0",
+  "name": "@mostlywhat/website",
+  "description": "MostlyWhat System's Website",
+  "version": "0.0.2",
   "private": true,
   "scripts": {
     "dev": "astro dev",
@@ -43,5 +43,10 @@
   },
   "engines": {
     "node": "^14.15.0 || >=16.0.0"
+  },
+  "dependencies": {
+    "@fontsource/dm-sans": "^4.5.9",
+    "sass": "^1.56.1",
+    "scss": "^0.2.4"
   }
 }
