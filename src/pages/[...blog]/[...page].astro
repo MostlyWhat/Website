@@ -25,9 +25,9 @@ const currentPage = page.currentPage ?? 1;
 const meta = {
 	title: `Blog ${currentPage > 1 ? `— Page ${currentPage} ` : ''}— ${SITE.name}`,
 	description: SITE.description,
-	canonical: getCanonical(getPermalink(page.url.current)),
-	ogType: "blog",
-	noindex: currentPage > 1
+	canonical: getCanonical(getPermalink(BLOG?.blog?.pathname)),
+	ogType: 'blog',
+	noindex: currentPage > 1,
 };
 ---
 

@@ -7,22 +7,28 @@
 
 ## Features
 
-- ✅ Integration with **Tailwind CSS** ([@astrojs/tailwind](https://docs.astro.build/en/guides/integrations-guide/tailwind/)).
-- ✅ Supports **Dark mode**.
-- ✅ **Fast and SEO friendly blog** with automatic **RSS feed** ([@astrojs/rss](https://docs.astro.build/en/guides/rss/)) and [**MDX** support](https://docs.astro.build/en/guides/integrations-guide/mdx/).
-- ✅ **Image optimization** ([@astrojs/images](https://docs.astro.build/en/guides/integrations-guide/image/)).
+- ✅ Integration with **Tailwind CSS** ([@astrojs/tailwind](https://docs.astro.build/en/guides/integrations-guide/tailwind/)) supporting **Dark mode**.
+- ✅ **Production-ready** scores in [Lighthouse](https://web.dev/measure/) and [PageSpeed Insights](https://pagespeed.web.dev/) reports.
+- ✅ **Fast and SEO friendly blog** with automatic **RSS feed** ([@astrojs/rss](https://docs.astro.build/en/guides/rss/)), [**MDX** support](https://docs.astro.build/en/guides/integrations-guide/mdx/), **Categories & Tags**, **Social Share** buttons, ...
+- ✅ **Image optimization** ([@astrojs/images](https://docs.astro.build/en/guides/integrations-guide/image/)) and **Font optimization**.
 - ✅ Generation of **project sitemap** based on your routes ([@astrojs/sitemap](https://docs.astro.build/en/guides/integrations-guide/sitemap/)).
-- ✅ **Open Graph tags** for social media sharing
-- ✅ **Fonts optimization** at build time ([subfont](https://www.npmjs.com/package/subfont)).
-- ✅ **Production-ready** scores in [Lighthouse](https://web.dev/measure/) and [PageSpeed Insights](https://pagespeed.web.dev/) reports
+- ✅ **Open Graph tags** for social media sharing.
+- ✅ **Analytics** built-in Google Analytics, and Splitbee integration.
 
 <br>
 
 <img src="./screenshot.png" alt="AstroWind Theme Screenshot">
 
+[![License](https://img.shields.io/github/license/onwidget/astrowind?style=flat-square&color=eeeeee&labelColor=000000)](https://github.com/onwidget/astrowind/blob/main/LICENSE.md)
+[![Maintained](https://img.shields.io/badge/maintained%3F-yes-brightgreen.svg?style=flat-square)](https://github.com/onwidget)
+[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat-square)](https://github.com/onwidget/astrowind#contributing)
+[![Known Vulnerabilities](https://snyk.io/test/github/onwidget/astrowind/badge.svg?style=flat-square)](https://snyk.io/test/github/onwidget/astrowind)
+![Prettier](https://img.shields.io/badge/prettier-1A2C34?style=flat-square&logo=prettier&logoColor=F7BA3E)
+![Eslint](https://img.shields.io/badge/eslint-3A33D1?style=flat-square&logo=eslint&logoColor=white)
+
 <br>
 
-<details>
+<details open>
 <summary>Table of Contents</summary>
 
 - [Demo](#demo)
@@ -43,10 +49,9 @@
 
 ## Demo
 
-[🌀 astrowind.vercel.app](https://astrowind.vercel.app/) 
+📌 [https://astrowind.vercel.app/](https://astrowind.vercel.app/)
 
 <br>
-
 
 ## Getting started
 
@@ -107,7 +112,7 @@ Any static assets, like images, can be placed in the `public/` directory if they
 
 [![Edit AstroWind on CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://githubbox.com/onwidget/astrowind/tree/main)
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Update `config.mjs` and contents. Have fun!
 
 <br>
 
@@ -115,12 +120,15 @@ Any static assets, like images, can be placed in the `public/` directory if they
 
 All commands are run from the root of the project, from a terminal:
 
-| Command           | Action                                       |
-| :---------------- | :------------------------------------------- |
-| `npm install`     | Installs dependencies                        |
-| `npm run dev`     | Starts local dev server at `localhost:3000`  |
-| `npm run build`   | Build your production site to `./dist/`      |
-| `npm run preview` | Preview your build locally, before deploying |
+| Command               | Action                                             |
+| :-------------------- | :------------------------------------------------- |
+| `npm install`         | Installs dependencies                              |
+| `npm run dev`         | Starts local dev server at `localhost:3000`        |
+| `npm run build`       | Build your production site to `./dist/`            |
+| `npm run preview`     | Preview your build locally, before deploying       |
+| `npm run format`      | Format codes with Prettier                         |
+| `npm run lint:eslint` | Run Eslint                                         |
+| `npm run astro ...`   | Run CLI commands like `astro add`, `astro preview` |
 
 <br>
 
@@ -130,16 +138,17 @@ Basic configuration file: `./src/config.mjs`
 
 ```javascript
 export const SITE = {
-  name: "Example",
+  name: 'Example',
 
-  origin: "https://example.com",
-  basePathname: "/", // Change this if you need to deploy to Github Pages, for example
+  origin: 'https://example.com',
+  basePathname: '/', // Change this if you need to deploy to Github Pages, for example
+  trailingSlash: false, // Generate permalinks with or without "/" at the end
 
-  title: "Example - This is the homepage title of Example",
-  description: "This is the homepage description of Example",
+  title: 'Example - This is the homepage title of Example',
+  description: 'This is the homepage description of Example',
 
   googleAnalyticsId: false, // or "G-XXXXXXXXXX",
-  googleSiteVerificationId: false // or some value,
+  googleSiteVerificationId: false, // or some value,
 };
 
 export const BLOG = {
@@ -153,7 +162,7 @@ export const BLOG = {
 
   post: {
     disabled: false,
-    pathname: '', // empty for /some-post, value for /pathname/some-post 
+    pathname: '', // empty for /some-post, value for /pathname/some-post
   },
 
   category: {
@@ -166,8 +175,6 @@ export const BLOG = {
     pathname: 'tag', // set empty to change from /tag/some-tag to /some-tag
   },
 };
-
-
 ```
 
 <br>
@@ -198,46 +205,35 @@ Clone this repository on own GitHub account and deploy to Vercel:
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fonwidget%2Fastrowind)
 
-
 <br>
 
 ## Roadmap
 
-- *Project*:
-  - **(DONE)** Reduce the complexity in the components folder and simplify the other folders to make it very easy to use.
+- _Project_:
   - Create simple and clear strategy to get template updates
-  - Move specific configurations to a specialized file
-  - Fix some bugs with prettier
-  - Make the use of images clean and intuitive
-- *SEO*:
-  - **(DONE)** Add support to easily manage SEO meta-tags (title, description, canonical, social sharing, ...)
-- *Blog*:
-  - **(DONE)** Support to Fast and SEO friendly blog
-  - **(DONE)** Add support for categories and tags.
+- _Blog_:
   - Improve blog design
-  - Create component or utilities for latest posts
   - Create component or utilities for related posts
-  - Add more *shortcodes* or *embed* functions to posts in Markdown: (eg video, tweet...)
-- *More widgets*:
-  - ~~Add more Tailwind components useful for most scenarios (Features, Contact, Call to Actions, Content, FAQs ...)~~
+  - Add more _shortcodes_ or _embed_ functions to posts in Markdown: (eg video, tweet...)
+- _More widgets_:
+  - Add more Tailwind components useful for most scenarios (Features, Contact, Call to Actions, Content, FAQs ...)
   - Create external library or place with useful Tailwind components
-- *More Examples*: Add commonly used example pages (Ex: About, Terms, Services...)
-- *Documentation*: Create detailed documentation with best practices and redesign tips
+- _More Examples_: Add commonly used example pages (Ex: About, Terms, Services...)
+- _Documentation_: Create detailed documentation with best practices and redesign tips
 
 <br>
 
 ## Frequently Asked Questions
 
 - Why?
-- 
 -
-
+-
 
 <br>
 
 ## Contributing
 
-If you have any idea, suggestions or find any bugs, feel free to open a discussion, an issue or create a pull request. 
+If you have any idea, suggestions or find any bugs, feel free to open a discussion, an issue or create a pull request.
 That would be very useful for all of us and we would be happy to listen and take action.
 
 ## Acknowledgements
