@@ -1,9 +1,9 @@
-# 🚀 AstroWind
+# 🚀 MostlyWhat Systems
 
 <img src="lighthouse-score.png" align="right"
      alt="AstroWind Lighthouse Score" width="100" height="358">
 
-**AstroWind** is a free and open-source template to make your website using **Astro + Tailwind CSS**. Ready to start a new project and designed taking into account best practices.
+**Introducting** the next-generation website for the [MostlyWhat Systems](https://mostlywhat.systems) company.
 
 ## Features
 
@@ -16,8 +16,6 @@
 - ✅ **Analytics** built-in Google Analytics, and Splitbee integration.
 
 <br>
-
-<img src="./screenshot.png" alt="AstroWind Theme Screenshot">
 
 [![License](https://img.shields.io/github/license/onwidget/astrowind?style=flat-square&color=eeeeee&labelColor=000000)](https://github.com/onwidget/astrowind/blob/main/LICENSE.md)
 [![Maintained](https://img.shields.io/badge/maintained%3F-yes-brightgreen.svg?style=flat-square)](https://github.com/onwidget)
@@ -47,17 +45,11 @@
 
 <br>
 
-## Demo
-
-📌 [https://astrowind.vercel.app/](https://astrowind.vercel.app/)
-
-<br>
-
 ## Getting started
 
 ### Project structure
 
-Inside AstroWind template, you'll see the following folders and files:
+Inside, you'll see the following folders and files:
 
 ```
 /
@@ -110,7 +102,7 @@ There's nothing special about `src/components/`, but that's where we like to put
 
 Any static assets, like images, can be placed in the `public/` directory if they do not require any transformation or in the `assets/` directory if they are imported directly.
 
-[![Edit AstroWind on CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://githubbox.com/onwidget/astrowind/tree/main)
+[![Edit on CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://githubbox.com/mostlywhat/website/tree/main)
 
 > 🧑‍🚀 **Seasoned astronaut?** Delete this file. Update `config.mjs` and contents. Have fun!
 
@@ -123,6 +115,7 @@ All commands are run from the root of the project, from a terminal:
 | Command               | Action                                             |
 | :-------------------- | :------------------------------------------------- |
 | `npm install`         | Installs dependencies                              |
+| `npm run host`        | Starts the development server at current ip        |
 | `npm run dev`         | Starts local dev server at `localhost:3000`        |
 | `npm run build`       | Build your production site to `./dist/`            |
 | `npm run preview`     | Preview your build locally, before deploying       |
@@ -197,20 +190,20 @@ prefer.
 
 Clone this repository on own GitHub account and deploy to Netlify:
 
-[![Netlify Deploy button](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/onwidget/astrowind)
+[![Netlify Deploy button](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/mostlywhat/website)
 
 #### Deploy to Vercel
 
 Clone this repository on own GitHub account and deploy to Vercel:
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fonwidget%2Fastrowind)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fmostlywhatt%2Fwebsite)
 
 <br>
 
 ## Roadmap
 
 - _Project_:
-  - Create simple and clear strategy to get template updates
+  - Create simple and clear strategy for updates
 - _Blog_:
   - Improve blog design
   - Create component or utilities for related posts
@@ -225,9 +218,7 @@ Clone this repository on own GitHub account and deploy to Vercel:
 
 ## Frequently Asked Questions
 
-- Why?
--
--
+- None
 
 <br>
 
@@ -242,4 +233,4 @@ Initially created by [onWidget](https://onwidget.com) and maintained by a commun
 
 ## License
 
-**AstroWind** is licensed under the Unlicense license — see the [LICENSE](https://github.com/onwidget/astrowind/blob/main/LICENSE.md) file for details.
+**This website** is licensed under the AGPL-3 license — see the [LICENSE](https://github.com/mostlywhat/website/blob/main/LICENSE.md) file for details.
