@@ -28,3 +28,12 @@
 [data-aw-toggle-menu].expanded g > path:last-child {
 	@apply rotate-45 translate-y-[-8px] translate-x-[14px];
 }
+
+:target:before {
+	content: "";
+	display: block;
+	height: 120px;
+	/* fixed header height*/
+	margin: -120px 0 0;
+	/* negative fixed header height */
+}
