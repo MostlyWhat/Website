@@ -1,0 +1,4 @@
+// text gradient
+.gradient-primary {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-accent-blue to-accent-yellow
+}
