@@ -44,11 +44,26 @@ const { post, url } = Astro.props;
 		</div>
 		<div class="container mx-auto px-6 sm:px-6 max-w-3xl mt-8 flex justify-between flex-col sm:flex-row">
 			<PostTags tags={post.tags} class="mr-5" />
-			<SocialShare
-				url={url}
-				text={post.title}
-				class="mt-5 sm:mt-1 align-middle text-gray-400 dark:text-slate-600"
-			/>
+			<SocialShare url={url} text={post.title} class="mt-5 sm:mt-1 align-middle text-gray-400 dark:text-slate-600" />
+		</div>
+		<div class="container mx-auto px-6 sm:px-6 max-w-3xl mt-8 flex justify-between flex-col sm:flex-row">
+			<script
+				src="https://giscus.app/client.js"
+				data-repo="mostlywhat/website"
+				data-repo-id="MDEwOlJlcG9zaXRvcnk0MDE2MjY2MTg="
+				data-category="Announcements"
+				data-category-id="DIC_kwDOF_BV-s4CTM6q"
+				data-mapping="title"
+				data-strict="0"
+				data-reactions-enabled="1"
+				data-emit-metadata="0"
+				data-input-position="top"
+				data-theme="preferred_color_scheme"
+				data-lang="en"
+				data-loading="lazy"
+				crossorigin="anonymous"
+				async
+			></script>
 		</div>
 	</article>
 </section>
