@@ -3,7 +3,7 @@ import { Icon } from 'astro-icon';
 import { getHomePermalink } from '~/utils/permalinks';
 ---
 
-<footer class="border-t bg-bg_light dark:bg-bg_dark border-gray-200 dark:border-slate-800 md:backdrop-blur-sm">
+<footer class="border-t bg-bg_dark border-slate-800 md:backdrop-blur-sm">
 	<div class="max-w-6xl mx-auto px-4 sm:px-6">
 		<div class="grid grid-cols-12 gap-4 gap-y-8 sm:gap-8 py-8 md:py-12">
 			<div class="col-span-12 lg:col-span-4">
@@ -12,103 +12,79 @@ import { getHomePermalink } from '~/utils/permalinks';
 				</div>
 				<div class="text-sm text-gray-600">
 					<a
-						class="text-gray-600 hover:text-gray-700 dark:text-gray-400 hover:underline transition duration-150 ease-in-out"
+						class="hover:text-gray-700 text-gray-400 transition duration-150 ease-in-out"
 						href="/legal/terms-and-conditions">Terms & Conditions</a
 					> ·
-					<a
-						class="text-gray-600 hover:text-gray-700 dark:text-gray-400 hover:underline transition duration-150 ease-in-out"
-						href="/legal/privacy-policy">Privacy Policy</a
+					<a class="hover:text-gray-700 text-gray-400 transition duration-150 ease-in-out" href="/legal/privacy-policy"
+						>Privacy Policy</a
 					>
 				</div>
 			</div>
 			<div class="col-span-6 md:col-span-3 lg:col-span-2">
-				<div class="text-gray-800 dark:text-gray-300 font-medium mb-2">Products</div>
+				<div class="text-gray-300 font-medium mb-2">Products</div>
 				<ul class="text-sm">
 					<li class="mb-2">
-						<a class="text-gray-600 hover:text-gray-700 dark:text-gray-400 transition duration-150 ease-in-out" href="#"
-							>Unos Project</a
-						>
+						<a class="hover:text-gray-700 text-gray-400 transition duration-150 ease-in-out" href="#">Unos Project</a>
 					</li>
 					<li class="mb-2">
-						<a class="text-gray-600 hover:text-gray-700 dark:text-gray-400 transition duration-150 ease-in-out" href="#"
+						<a class="hover:text-gray-700 text-gray-400 transition duration-150 ease-in-out" href="#"
 							>128BB yuzu Installer</a
 						>
 					</li>
 					<li class="mb-2">
-						<a class="text-gray-600 hover:text-gray-700 dark:text-gray-400 transition duration-150 ease-in-out" href="#"
-							>View More</a
-						>
+						<a class="hover:text-gray-700 text-gray-400 transition duration-150 ease-in-out" href="#">View More</a>
 					</li>
 				</ul>
 			</div>
 			<div class="col-span-6 md:col-span-3 lg:col-span-2">
-				<div class="text-gray-800 dark:text-gray-300 font-medium mb-2">Platforms</div>
+				<div class="text-gray-300 font-medium mb-2">Platforms</div>
 				<ul class="text-sm">
 					<li class="mb-2">
-						<a class="text-gray-600 hover:text-gray-700 dark:text-gray-400 transition duration-150 ease-in-out" href="#"
-							>Developer API</a
-						>
+						<a class="hover:text-gray-700 text-gray-400 transition duration-150 ease-in-out" href="#">Developer API</a>
 					</li>
 					<li class="mb-2">
-						<a class="text-gray-600 hover:text-gray-700 dark:text-gray-400 transition duration-150 ease-in-out" href="#"
-							>Partners</a
-						>
+						<a class="hover:text-gray-700 text-gray-400 transition duration-150 ease-in-out" href="#">Partners</a>
 					</li>
 				</ul>
 			</div>
 			<div class="col-span-6 md:col-span-3 lg:col-span-2">
-				<div class="text-gray-800 dark:text-gray-300 font-medium mb-2">Support</div>
+				<div class="text-gray-300 font-medium mb-2">Support</div>
 				<ul class="text-sm">
 					<li class="mb-2">
-						<a class="text-gray-600 hover:text-gray-700 dark:text-gray-400 transition duration-150 ease-in-out" href="#"
-							>Docs</a
+						<a class="hover:text-gray-700 text-gray-400 transition duration-150 ease-in-out" href="#">Docs</a>
+					</li>
+					<li class="mb-2">
+						<a class="hover:text-gray-700 text-gray-400 transition duration-150 ease-in-out" href="#">Community Forum</a
 						>
 					</li>
 					<li class="mb-2">
-						<a class="text-gray-600 hover:text-gray-700 dark:text-gray-400 transition duration-150 ease-in-out" href="#"
-							>Community Forum</a
-						>
-					</li>
-					<li class="mb-2">
-						<a class="text-gray-600 hover:text-gray-700 dark:text-gray-400 transition duration-150 ease-in-out" href="#"
-							>Services</a
-						>
+						<a class="hover:text-gray-700 text-gray-400 transition duration-150 ease-in-out" href="#">Services</a>
 					</li>
 					<li class="mb-2">
 						<a
-							class="text-gray-600 hover:text-gray-700 dark:text-gray-400 transition duration-150 ease-in-out"
+							class="hover:text-gray-700 text-gray-400 transition duration-150 ease-in-out"
 							href="https://status.mostlywhat.systems">Status</a
 						>
 					</li>
 				</ul>
 			</div>
 			<div class="col-span-6 md:col-span-3 lg:col-span-2">
-				<div class="text-gray-800 dark:text-gray-300 font-medium mb-2">Company</div>
+				<div class="text-gray-300 font-medium mb-2">Company</div>
 				<ul class="text-sm">
 					<li class="mb-2">
-						<a class="text-gray-600 hover:text-gray-700 dark:text-gray-400 transition duration-150 ease-in-out" href="#"
-							>About</a
-						>
+						<a class="hover:text-gray-700 text-gray-400 transition duration-150 ease-in-out" href="#">About</a>
 					</li>
 					<li class="mb-2">
-						<a class="text-gray-600 hover:text-gray-700 dark:text-gray-400 transition duration-150 ease-in-out" href="#"
-							>Blog</a
-						>
+						<a class="hover:text-gray-700 text-gray-400 transition duration-150 ease-in-out" href="#">Blog</a>
 					</li>
 					<li class="mb-2">
-						<a class="text-gray-600 hover:text-gray-700 dark:text-gray-400 transition duration-150 ease-in-out" href="#"
-							>Careers</a
-						>
+						<a class="hover:text-gray-700 text-gray-400 transition duration-150 ease-in-out" href="#">Careers</a>
 					</li>
 					<li class="mb-2">
-						<a class="text-gray-600 hover:text-gray-700 dark:text-gray-400 transition duration-150 ease-in-out" href="#"
-							>Press</a
-						>
+						<a class="hover:text-gray-700 text-gray-400 transition duration-150 ease-in-out" href="#">Press</a>
 					</li>
 					<li class="mb-2">
-						<a class="text-gray-600 hover:text-gray-700 dark:text-gray-400 transition duration-150 ease-in-out" href="#"
-							>Store</a
-						>
+						<a class="hover:text-gray-700 text-gray-400 transition duration-150 ease-in-out" href="#">Store</a>
 					</li>
 				</ul>
 			</div>

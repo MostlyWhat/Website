@@ -1,14 +1,13 @@
 ---
 import { Icon } from 'astro-icon';
 import Logo from '~/components/atoms/Logo.astro';
-// import ToggleTheme from '~/components/core/ToggleTheme.astro';
 import ToggleMenu from '~/components/core/ToggleMenu.astro';
 
 import { getBlogPermalink, getHomePermalink } from '~/utils/permalinks';
 ---
 
 <header
-	class="sticky top-0 z-40 flex-none mx-auto w-full backdrop-blur-sm bg-bg_light dark:bg-bg_dark border-b border-gray-200 dark:border-slate-800"
+	class="sticky top-0 z-40 flex-none mx-auto w-full backdrop-blur-sm bg-bg_dark border-b border-slate-800"
 	id="header"
 >
 	<div class="py-3 px-3 mx-auto w-full md:flex md:justify-between max-w-6xl md:px-4">
@@ -22,46 +21,46 @@ import { getBlogPermalink, getHomePermalink } from '~/utils/permalinks';
 			</div>
 		</div>
 		<nav
-			class="items-center w-full md:w-auto hidden md:flex text-gray-600 dark:text-slate-200 h-screen md:h-auto"
+			class="items-center w-full md:w-auto hidden md:flex text-slate-200 h-screen md:h-auto"
 			aria-label="Main navigation"
 		>
 			<ul class="flex flex-col pt-8 md:pt-0 md:flex-row md:self-center w-full md:w-auto text-xl md:text-base">
 				<li>
 					<a
-						class="font-medium hover:text-gray-900 dark:hover:text-white px-4 py-3 flex items-center transition duration-150 ease-in-out"
+						class="font-medium hover:text-white px-4 py-3 flex items-center transition duration-150 ease-in-out"
 						href="/about">About</a
 					>
 				</li>
 				<li>
 					<a
-						class="font-medium hover:text-gray-900 dark:hover:text-white px-4 py-3 flex items-center transition duration-150 ease-in-out"
+						class="font-medium hover:text-white px-4 py-3 flex items-center transition duration-150 ease-in-out"
 						href="/partners"
 						>Partners
 					</a>
 				</li>
 				<li>
 					<a
-						class="font-medium hover:text-gray-900 dark:hover:text-white px-4 py-3 flex items-center transition duration-150 ease-in-out"
+						class="font-medium hover:text-white px-4 py-3 flex items-center transition duration-150 ease-in-out"
 						href="/projects"
 						>Projects
 					</a>
 				</li>
 				<li>
 					<a
-						class="font-medium hover:text-gray-900 dark:hover:text-white px-4 py-3 flex items-center transition duration-150 ease-in-out"
+						class="font-medium hover:text-white px-4 py-3 flex items-center transition duration-150 ease-in-out"
 						href={getBlogPermalink()}>Blog</a
 					>
 				</li>
 				<li>
 					<a
-						class="font-medium hover:text-gray-900 dark:hover:text-white px-4 py-3 flex items-center transition duration-150 ease-in-out"
+						class="font-medium hover:text-white px-4 py-3 flex items-center transition duration-150 ease-in-out"
 						href="/contact"
 						>Contact
 					</a>
 				</li>
 				<li class="md:hidden">
 					<a
-						class="font-bold hover:text-gray-900 dark:hover:text-white px-4 py-3 flex items-center transition duration-150 ease-in-out"
+						class="font-bold hover:text-white px-4 py-3 flex items-center transition duration-150 ease-in-out"
 						href="https://github.com/mostlywhat"
 						>GitHub
 					</a>
@@ -71,7 +70,7 @@ import { getBlogPermalink, getHomePermalink } from '~/utils/permalinks';
 				<div class="hidden items-center md:flex">
 					<!-- <ToggleTheme iconClass="w-5 h-5" /> -->
 					<a
-						class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center"
+						class="text-gray-400 hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center"
 						aria-label="RSS Feed"
 						href="/rss.xml"
 					>
@@ -79,7 +78,7 @@ import { getBlogPermalink, getHomePermalink } from '~/utils/permalinks';
 					</a>
 					<a
 						href="https://github.com/mostlywhat"
-						class="inline-block text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5"
+						class="text-gray-400 hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center"
 						aria-label="GitHub"
 					>
 						<Icon name="tabler:brand-github" class="w-5 h-5" />
