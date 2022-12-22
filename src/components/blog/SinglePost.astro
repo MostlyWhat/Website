@@ -42,10 +42,11 @@ const { post, url } = Astro.props;
 		>
 			{post.Content ? <post.Content /> : <Fragment set:html={post.body} />}
 		</div>
-		<div class="container mx-auto px-6 sm:px-6 max-w-3xl mt-8 flex justify-between flex-col sm:flex-row">
+		<div class="container mx-auto px-6 sm:px-6 max-w-3xl my-8 flex justify-between flex-col sm:flex-row">
 			<PostTags tags={post.tags} class="mr-5" />
 			<SocialShare url={url} text={post.title} class="mt-5 sm:mt-1 align-middle text-gray-400 dark:text-slate-600" />
 		</div>
+		<hr class="solid mx-auto px-6 sm:px-6 max-w-3xl my-8 flex justify-between flex-col sm:flex-row" />
 		<div class="container mx-auto px-6 sm:px-6 max-w-3xl mt-8 flex justify-between flex-col sm:flex-row">
 			<script
 				src="https://giscus.app/client.js"
