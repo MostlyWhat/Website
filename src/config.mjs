@@ -6,9 +6,10 @@ export const SITE = {
 	trailingSlash: false,
 
 	title: 'MostlyWhat Systems — Design, Develop, Deploy.',
-	description: "🚀 Hi I'm MostlyWhat! I am a Freelancer Developer and a Minimalist Designer currently based in Thailand.",
+	description:
+		"🚀 Hi I'm MostlyWhat! I am a Freelancer Developer and a Minimalist Designer currently based in Thailand.",
 
-	googleAnalyticsId: "G-JWPBL12SNZ", // or "G-XXXXXXXXXX",
+	googleAnalyticsId: 'G-JWPBL12SNZ', // or "G-XXXXXXXXXX",
 	googleSiteVerificationId: 'orcPxI47GSa-cRvY11tUe6iGg2IO_RPvnA1q95iEM3M',
 };
 

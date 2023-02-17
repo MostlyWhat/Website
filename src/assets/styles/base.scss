@@ -1,7 +1,7 @@
-@use "fonts.scss";
-@use "colors.scss";
-@use "pace.scss";
-@use "buttons.scss";
+@use 'fonts.scss';
+@use 'colors.scss';
+@use 'pace.scss';
+@use 'buttons.scss';
 
 @tailwind base;
 @tailwind components;
@@ -33,7 +33,7 @@
 }
 
 :target:before {
-	content: "";
+	content: '';
 	display: block;
 	height: 120px;
 	/* fixed header height*/
