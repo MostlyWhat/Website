@@ -50,7 +50,7 @@ module.exports = {
 				success: '#A5BE00',
 				warning: '#FF6700',
 				danger: '#DD1C1A',
-				bg_dark: '#000814',
+				background: '#000814',
 			},
 		},
 	},

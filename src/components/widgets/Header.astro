@@ -7,7 +7,7 @@ import { getBlogPermalink, getHomePermalink } from '~/utils/permalinks';
 ---
 
 <header
-	class="sticky top-0 z-40 flex-none mx-auto w-full backdrop-blur-sm bg-bg_dark border-b border-slate-800"
+	class="sticky top-0 z-40 flex-none mx-auto w-full backdrop-blur-sm bg-background border-b border-slate-800"
 	id="header"
 >
 	<div class="py-3 px-3 mx-auto w-full md:flex md:justify-between max-w-6xl md:px-4">
@@ -70,7 +70,7 @@ import { getBlogPermalink, getHomePermalink } from '~/utils/permalinks';
 				<div class="hidden items-center md:flex">
 					<!-- <ToggleTheme iconClass="w-5 h-5" /> -->
 					<a
-						class="text-gray-400 hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center"
+						class="text-gray-400 hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-700 text-sm p-2.5 inline-flex items-center border-4 border-background hover:border-4 hover:border-background hover:border-b-secondary-500"
 						aria-label="RSS Feed"
 						href="/rss.xml"
 					>
@@ -78,13 +78,15 @@ import { getBlogPermalink, getHomePermalink } from '~/utils/permalinks';
 					</a>
 					<a
 						href="https://github.com/mostlywhat"
-						class="text-gray-400 hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center"
+						class="text-gray-400 hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-700 text-sm p-2.5 inline-flex items-center border-4 border-background hover:border-4 hover:border-background hover:border-b-secondary-500"
 						aria-label="GitHub"
 					>
 						<Icon name="tabler:brand-github" class="w-5 h-5" />
 					</a>
 				</div>
 			</div>
+
+			<!-- About Megamenu Dropdown -->
 		</nav>
 	</div>
 </header>
