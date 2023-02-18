@@ -20,10 +20,9 @@ export interface Props {
 	secondaryLinks: Array<Link>;
 	socialLinks: Array<Link>;
 	footNote?: string;
-	theme?: string;
 }
 
-const { socialLinks = [], secondaryLinks = [], links = [], footNote = '', theme = 'light' } = Astro.props;
+const { socialLinks = [], secondaryLinks = [], links = [], footNote = '' } = Astro.props;
 ---
 
 <footer class="border-t bg-background border-slate-800 md:backdrop-blur-sm">

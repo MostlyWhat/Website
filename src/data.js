@@ -3,7 +3,7 @@ import { getPermalink, getBlogPermalink, getAsset } from './utils/permalinks';
 export const headerData = {
 	links: [
 		{
-			text: 'Landing',
+			text: 'About',
 			links: [
 				{
 					text: 'Sass',
@@ -63,7 +63,7 @@ export const headerData = {
 export const footerData = {
 	links: [
 		{
-			title: 'Product',
+			title: 'Projects',
 			links: [
 				{ text: 'Features', href: '#' },
 				{ text: 'Security', href: '#' },
@@ -75,7 +75,7 @@ export const footerData = {
 			],
 		},
 		{
-			title: 'Platform',
+			title: 'Products',
 			links: [
 				{ text: 'Developer API', href: '#' },
 				{ text: 'Partners', href: '#' },

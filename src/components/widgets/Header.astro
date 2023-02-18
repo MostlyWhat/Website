@@ -34,7 +34,7 @@ const { links = [], actions = [], isSticky = false, showRssFeed = false, positio
 <header
 	class:list={[
 		{ sticky: isSticky, relative: !isSticky },
-		'top-0 z-40 flex-none mx-auto w-full backdrop-blur-sm bg-background border-b border-slate-800 transition-all ease-in duration-100',
+		'top-0 z-40 flex-none mx-auto w-full',
 	]}
 	id="header"
 >
@@ -60,13 +60,10 @@ const { links = [], actions = [], isSticky = false, showRssFeed = false, positio
 									<button class="font-medium hover:text-white px-4 py-3 flex items-center transition duration-150 ease-in-out">
 										{text} <Icon name="tabler:chevron-down" class="w-3.5 h-3.5 ml-0.5 hidden md:inline" />
 									</button>
-									<ul class="dropdown-menu md:backdrop-blur-md md:bg-dark rounded md:absolute pl-4 md:pl-0 md:hidden font-medium md:bg-white/90 md:min-w-[200px] drop-shadow-xl">
+									<ul class="dropdown-menu md:backdrop-blur-md md:bg-dark md:absolute pl-4 md:pl-0 md:hidden font-medium md:bg-background md:min-w-[200px] drop-shadow-xl">
 										{links.map(({ text: text2, href: href2 }) => (
 											<li>
-												<a
-													class="first:rounded-t last:rounded-b md:hover:bg-gray-200 hover:bg-gray-700 py-2 px-5 block whitespace-no-wrap"
-													href={href2}
-												>
+												<a class="hover:bg-gray-700 py-2 px-5 block whitespace-no-wrap" href={href2}>
 													{text2}
 												</a>
 											</li>
