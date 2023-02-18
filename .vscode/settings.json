@@ -1,4 +1,5 @@
 {
+  "css.customData": ["./vscode.tailwind.json"],
   "eslint.validate": [
     "javascript",
     "javascriptreact",
@@ -6,6 +7,9 @@
     "typescript", // Enable .ts
     "typescriptreact" // Enable .tsx
   ],
+  "files.associations": {
+    "*.mdx": "markdown"
+  },
   "prettier.documentSelectors": ["**/*.astro"],
   "[astro]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"

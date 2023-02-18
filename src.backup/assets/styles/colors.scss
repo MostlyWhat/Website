@@ -1,0 +1,12 @@
+// text gradient
+.gradient-primary {
+	@apply bg-clip-text text-transparent bg-gradient-to-r from-accent-blue to-accent-yellow;
+}
+
+.gradient-secondary {
+	@apply bg-clip-text text-transparent bg-gradient-to-r from-accent-yellow to-accent-red;
+}
+
+.gradient-tertiary {
+	@apply bg-clip-text text-transparent bg-gradient-to-r from-accent-red to-accent-blue;
+}

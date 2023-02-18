@@ -71,14 +71,14 @@ Inside the Project, you'll see the following folders and files:
 │   ├── assets/
 │   │   ├── images/
 │   │   └── styles/
-│   │       └── base.css
+│   │       └── base.scss
 │   ├── components/
 │   │   ├── blog/
 │   │   ├── common/
 │   │   ├── widgets/
 │   │   │   ├── Header.astro
 │   │   │   └── ...
-│   │   ├── CustomStyles.astro
+│   │   ├── Fonts.astro
 │   │   └── Logo.astro
 │   ├── content/
 │   │   ├── post/
