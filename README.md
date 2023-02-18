@@ -1,7 +1,7 @@
 # 🚀 MostlyWhat Systems
 
 <img src="lighthouse-score.png" align="right"
-     alt="AstroWind Lighthouse Score" width="100" height="358">
+     alt="Lighthouse Score" width="100" height="358">
 
 **Introducting** the next-generation website for the [MostlyWhat Systems](https://mostlywhat.systems) company.
 
@@ -17,10 +17,10 @@
 
 <br>
 
-[![License](https://img.shields.io/github/license/onwidget/astrowind?style=flat-square&color=eeeeee&labelColor=000000)](https://github.com/onwidget/astrowind/blob/main/LICENSE.md)
+[![License](https://img.shields.io/github/license/mostlywhat/website?style=flat-square&color=eeeeee&labelColor=000000)](https://github.com/mostlywhat/website/blob/main/LICENSE.md)
 [![Maintained](https://img.shields.io/badge/maintained%3F-yes-brightgreen.svg?style=flat-square)](https://github.com/onwidget)
-[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat-square)](https://github.com/onwidget/astrowind#contributing)
-[![Known Vulnerabilities](https://snyk.io/test/github/onwidget/astrowind/badge.svg?style=flat-square)](https://snyk.io/test/github/onwidget/astrowind)
+[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat-square)](https://github.com/mostlywhat/website#contributing)
+[![Known Vulnerabilities](https://snyk.io/test/github/mostlywhat/website/badge.svg?style=flat-square)](https://snyk.io/test/github/mostlywhat/website)
 ![Prettier](https://img.shields.io/badge/prettier-1A2C34?style=flat-square&logo=prettier&logoColor=F7BA3E)
 ![Eslint](https://img.shields.io/badge/eslint-3A33D1?style=flat-square&logo=eslint&logoColor=white)
 
@@ -45,54 +45,65 @@
 
 <br>
 
+## Live Preview of Releases
+
+📌 [Live Release](https://www.mostlywhat.systems/)\
+🧪 [Staging Release](https://beta.mostlywhat.systems/)
+
+<br>
+
 ## Getting started
+
+**MostlyWhat System's Website** is a website that uses [Astro 2.0](https://astro.build/blog/astro-2/) + [Tailwind CSS](https://tailwindcss.com/). The website focuses on simplicity, good practices and high performance.
+
+Very little vanilla javascript is used only to provide basic functionality so that in the future developers can select other frameworks (React, Vue, Svelte, Solid JS...) to use and to continue to develop the project.
 
 ### Project structure
 
-Inside, you'll see the following folders and files:
+Inside the Project, you'll see the following folders and files:
 
 ```
 /
-├── data/
-|   └── blog/
-|       ├── post-slug-1.md
-|       ├── post-slug-2.mdx
-|       └── ...
 ├── public/
 │   ├── robots.txt
 │   └── favicon.ico
 ├── src/
 │   ├── assets/
 │   │   ├── images/
-|   |   └── styles/
-|   |       └── base.css
+│   │   └── styles/
+│   │       └── base.css
 │   ├── components/
-│   │   ├── atoms/
 │   │   ├── blog/
-│   │   ├── core/
-|   |   └── widgets/
-|   |       ├── Header.astro
-|   |       ├── Footer.astro
-|   |       └── ...
+│   │   ├── common/
+│   │   ├── widgets/
+│   │   │   ├── Header.astro
+│   │   │   └── ...
+│   │   ├── CustomStyles.astro
+│   │   └── Logo.astro
+│   ├── content/
+│   │   ├── post/
+│   │   │   ├── post-slug-1.md
+│   │   │   ├── post-slug-2.mdx
+│   │   │   └── ...
+│   │   └-- config.ts
 │   ├── layouts/
-│   |   |── BaseLayout.astro
-│   |   └── ...
+│   │   ├── BaseLayout.astro
+│   │   └── ...
 │   ├── pages/
-│   |   ├── [...blog]/
-|   |   |   ├── [...page].astro
-|   |   |   └── [slug].astro
-│   |   ├── [...categories]/
-|   |   |   └── [category]/
-|   |   |       └── [...page].astro
-│   |   ├── [...tags]/
-|   |   |   └── [tag]/
-|   |   |       └── [...page].astro
-│   |   ├── index.astro
-|   |   ├── 404.astro
-|   |   └-- rss.xml.js
+│   │   ├── [...blog]/
+│   │   │   ├── [category]/
+│   │   │   ├── [tag]/
+│   │   │   ├── [...page].astro
+│   │   │   └── index.astro
+│   │   ├── index.astro
+│   │   ├── 404.astro
+│   │   ├-- rss.xml.ts
+│   │   └── ...
 │   ├── utils/
-│   └── config.mjs
+│   ├── config.mjs
+│   └── data.js
 ├── package.json
+├── astro.config.mjs
 └── ...
 ```
 
@@ -122,6 +133,7 @@ All commands are run from the root of the project, from a terminal:
 | `npm run format`      | Format codes with Prettier                         |
 | `npm run lint:eslint` | Run Eslint                                         |
 | `npm run astro ...`   | Run CLI commands like `astro add`, `astro preview` |
+| `npm run release`     | Run Github Actions to release on Github Release    |
 
 <br>
 
@@ -130,51 +142,73 @@ All commands are run from the root of the project, from a terminal:
 Basic configuration file: `./src/config.mjs`
 
 ```javascript
-export const SITE = {
-  name: 'Example',
+const CONFIG = {
+  name: 'MostlyWhat Website',
 
-  origin: 'https://example.com',
+  origin: 'https://www.mostlywhat.systems',
   basePathname: '/', // Change this if you need to deploy to Github Pages, for example
   trailingSlash: false, // Generate permalinks with or without "/" at the end
 
-  title: 'Example - This is the homepage title of Example',
-  description: 'This is the homepage description of Example',
+  title: 'Example - This is the homepage title of Example', // Default seo title
+  description: 'This is the homepage description of Example', // Default seo description
+  defaultImage: 'image.jpg', // Default seo image
 
-  googleAnalyticsId: false, // or "G-XXXXXXXXXX",
-  googleSiteVerificationId: false, // or some value,
-};
+  defaultTheme: 'dark', // Values: "system" | "light" | "dark" | "light:only" | "dark:only"
 
-export const BLOG = {
-  disabled: false,
-  postsPerPage: 4,
+  language: 'en', // Default language
+  textDirection: 'ltr', // Default html text direction (Left-to-right) Values: "ltr" | "rtl"
+
+  dateFormatter: new Intl.DateTimeFormat('en', {
+    // Date format
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    timeZone: 'UTC',
+  }),
+
+  googleAnalyticsId: false, // Or "G-XXXXXXXXXX",
+  googleSiteVerificationId: false, // Or some value,
 
   blog: {
     disabled: false,
-    pathname: 'blog', // blog main path, you can change this to "articles" (/articles)
-  },
+    postsPerPage: 4,
 
-  post: {
-    disabled: false,
-    pathname: '', // empty for /some-post, value for /pathname/some-post
-  },
+    post: {
+      permalink: '/%slug%', // variables: %slug%, %year%, %month%, %day%, %hour%, %minute%, %second%, %category%
+      noindex: false,
+      disabled: false,
+    },
 
-  category: {
-    disabled: false,
-    pathname: 'category', // set empty to change from /category/some-category to /some-category
-  },
+    list: {
+      pathname: 'blog', // Blog main path, you can change this to "articles" (/articles)
+      noindex: false,
+      disabled: false,
+    },
 
-  tag: {
-    disabled: false,
-    pathname: 'tag', // set empty to change from /tag/some-tag to /some-tag
+    category: {
+      pathname: 'category', // Category main path /category/some-category
+      noindex: true,
+      disabled: false,
+    },
+
+    tag: {
+      pathname: 'tag', // Tag main path /tag/some-tag
+      noindex: true,
+      disabled: false,
+    },
   },
 };
 ```
 
 <br>
 
-### Deploy
+### Deployment
 
-#### Deploy to production (manual)
+#### Deploy to Production (Automatic)
+
+The project should be ready to deploy to production with a push to the `main` branch. The project uses Vercel to build and deploy to the cloud. The project also uses Github Actions to run tests and linting on every push.
+
+#### Deploy to Production (Manual)
 
 You can create an optimized production build with:
 
@@ -203,16 +237,14 @@ Clone this repository on own GitHub account and deploy to Vercel:
 ## Roadmap
 
 - _Project_:
-  - Create simple and clear strategy for updates
+  - Optimize and Refractor Code for better performance and readability
 - _Blog_:
-  - Improve blog design
-  - Create component or utilities for related posts
-  - Add more _shortcodes_ or _embed_ functions to posts in Markdown: (eg video, tweet...)
-- _More widgets_:
-  - Add more Tailwind components useful for most scenarios (Features, Contact, Call to Actions, Content, FAQs ...)
-  - Create external library or place with useful Tailwind components
-- _More Examples_: Add commonly used example pages (Ex: About, Terms, Services...)
-- _Documentation_: Create detailed documentation with best practices and redesign tips
+  - Improve Blog Design
+  - Implement Searching Feature
+  -
+- _Site-wide_:
+  - Group Components according to their location and usage
+- _Documentation_: Create detailed documentation with examples for each component and feature.
 
 <br>
 
@@ -225,11 +257,15 @@ Clone this repository on own GitHub account and deploy to Vercel:
 ## Contributing
 
 If you have any idea, suggestions or find any bugs, feel free to open a discussion, an issue or create a pull request.
-That would be very useful for all of us and we would be happy to listen and take action.
+That would be very useful for me and I would be happy to listen and take action.
+
+<br>
 
 ## Acknowledgements
 
-Initially created by [onWidget](https://onwidget.com) and maintained by a community of [contributors](https://github.com/onwidget/astrowind/graphs/contributors).
+Heavily modified from template initially created by [onWidget](https://onwidget.com) and maintained by [MostlyWhat](https://github.com/mostlywhat) and [contributors](https://github.com/mostlywhat/website/graphs/contributors).
+
+<br>
 
 ## License
 
