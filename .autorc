@@ -1,9 +1,11 @@
 {
-  "plugins": [
-    "git-tag"
-  ],
   "owner": "MostlyWhat",
   "repo": "website",
   "name": "MostlyWhat",
-  "email": "mostlywhatstudios@gmail.com"
+  "email": "mostlywhatstudios@gmail.com",
+  "prereleaseBranches": [
+    "alpha",
+    "beta",
+    "next"
+  ]
 }
