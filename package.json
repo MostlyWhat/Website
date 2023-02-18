@@ -1,7 +1,7 @@
 {
   "name": "@mostlywhat/website",
   "description": "MostlyWhat System's Website",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "private": true,
   "scripts": {
     "host": "astro dev --host",
