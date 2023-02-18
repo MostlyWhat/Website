@@ -2,20 +2,20 @@
 
 /* width */
 ::-webkit-scrollbar {
-  width: 10px;
+	width: 10px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: theme('colors.primary.700') !important; 
+	background: theme('colors.primary.700') !important;
 }
- 
+
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: theme('colors.accent.yellow');; 
+	background: theme('colors.accent.yellow');
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: theme('colors.secondary.600'); 
+	background: theme('colors.secondary.600');
 }
