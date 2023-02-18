@@ -1,7 +1,7 @@
 {
   "name": "@mostlywhat/website",
   "description": "MostlyWhat System's Website",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "scripts": {
     "host": "astro dev --host",
@@ -11,7 +11,8 @@
     "astro": "astro",
     "format": "prettier -w .",
     "lint:eslint": "eslint . --ext .js,.ts,.astro",
-    "subfont": "subfont -ir --no-fallbacks --silent --root dist"
+    "subfont": "subfont -ir --no-fallbacks --silent --root dist",
+    "release": "auto shipit"
   },
   "devDependencies": {
     "@astrojs/image": "^0.14.1",
