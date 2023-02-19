@@ -30,13 +30,13 @@ const CONFIG = {
 		postsPerPage: 4,
 
 		post: {
-			permalink: '/%slug%', // Variables: %slug%, %year%, %month%, %day%, %hour%, %minute%, %second%, %category%
+			permalink: '/transmissions/%year%/%month%/%day%/%slug%', // Variables: %slug%, %year%, %month%, %day%, %hour%, %minute%, %second%, %category%
 			noindex: false,
 			disabled: false,
 		},
 
 		list: {
-			pathname: 'blog', // Blog main path, you can change this to "articles" (/articles)
+			pathname: 'transmissions', // Blog main path, you can change this to "articles" (/articles)
 			noindex: false,
 			disabled: false,
 		},

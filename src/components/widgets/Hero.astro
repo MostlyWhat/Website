@@ -50,7 +50,7 @@ const {
 										<Fragment set:html={callToAction} />
 									) : (
 										<a
-											class="btn-primary w-full inline-flex items-center"
+											class="btn-primary w-full inline-flex items-center whitespace-nowrap"
 											href={callToAction?.href}
 											target="_blank"
 											rel="noopener"
@@ -72,7 +72,10 @@ const {
 									{typeof callToAction2 === 'string' ? (
 										<Fragment set:html={callToAction2} />
 									) : (
-										<a class="btn-secondary w-full inline-flex items-center text-center" href={callToAction2?.href}>
+										<a
+											class="btn-secondary w-full inline-flex items-center text-center whitespace-nowrap"
+											href={callToAction2?.href}
+										>
 											{callToAction2?.icon && (
 												<>
 													<Icon name={callToAction2.icon} class="w-5 h-5 mr-1 -ml-1.5" />{' '}
