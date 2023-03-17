@@ -1,3 +1,5 @@
+const defaultTheme = require('tailwindcss/defaultTheme');
+
 module.exports = {
 	content: ['./src/**/*.{astro,html,js,jsx,md,svelte,ts,tsx,vue}'],
 	theme: {
@@ -48,6 +50,11 @@ module.exports = {
 				warning: '#FF6700',
 				danger: '#DD1C1A',
 				background: '#000814',
+			},
+			fontFamily: {
+				sans: ['DM Sans', ...defaultTheme.fontFamily.sans, 'sans-serif'],
+				serif: ['DM Sans', ...defaultTheme.fontFamily.serif, 'serif'],
+				heading: ['DM Sans', ...defaultTheme.fontFamily.sans, 'sans-serif'],
 			},
 		},
 	},

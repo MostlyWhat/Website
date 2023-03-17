@@ -1,3 +1,5 @@
 body {
-	font-family: 'DM Sans', sans-serif;
+	--font-sans: 'DM Sans';
+	--font-serif: var(--font-sans);
+	--font-heading: var(--font-sans);
 }
