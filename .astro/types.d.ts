@@ -66,7 +66,30 @@ declare module 'astro:content' {
 	};
 
 	const entryMap: {
-		"post": {
+		"legal": {
+"cookies.md": {
+  id: "cookies.md",
+  slug: "cookies",
+  body: string,
+  collection: "legal",
+  data: InferEntrySchema<"legal">
+},
+"privacy.md": {
+  id: "privacy.md",
+  slug: "privacy",
+  body: string,
+  collection: "legal",
+  data: InferEntrySchema<"legal">
+},
+"terms.md": {
+  id: "terms.md",
+  slug: "terms",
+  body: string,
+  collection: "legal",
+  data: InferEntrySchema<"legal">
+},
+},
+"post": {
 "astrowind-template-in-depth.md": {
   id: "astrowind-template-in-depth.md",
   slug: "astrowind-template-in-depth",
@@ -102,8 +125,6 @@ declare module 'astro:content' {
   collection: "post",
   data: InferEntrySchema<"post">
 },
-},
-"services": {
 },
 
 	};
