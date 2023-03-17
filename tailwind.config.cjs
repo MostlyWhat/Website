@@ -53,8 +53,7 @@ module.exports = {
 			},
 			fontFamily: {
 				sans: ['DM Sans', ...defaultTheme.fontFamily.sans, 'sans-serif'],
-				serif: ['DM Sans', ...defaultTheme.fontFamily.serif, 'serif'],
-				heading: ['DM Sans', ...defaultTheme.fontFamily.sans, 'sans-serif'],
+				mono: ['DM Mono', ...defaultTheme.fontFamily.mono, 'monospace'],
 			},
 		},
 	},

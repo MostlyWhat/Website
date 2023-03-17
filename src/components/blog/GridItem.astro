@@ -16,7 +16,7 @@ const image = await findImage(post.image);
 ---
 
 <article class="mb-6 transition">
-	<div class="relative md:h-64 bg-gray-400 dark:bg-slate-700 rounded shadow-lg mb-6">
+	<div class="relative md:h-64 bg-slate-700 rounded shadow-lg mb-6">
 		{
 			image && (
 				<Picture
@@ -48,5 +48,5 @@ const image = await findImage(post.image);
 			)
 		}
 	</h3>
-	<p class="text-muted dark:text-slate-400 text-lg">{post.excerpt || post.description}</p>
+	<p class="text-slate-400 text-lg">{post.excerpt || post.description}</p>
 </article>

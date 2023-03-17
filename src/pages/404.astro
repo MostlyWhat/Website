@@ -11,13 +11,25 @@ const title = `Error 404`;
 			<div class="max-w-md text-center">
 				<h2 class="mb-8 font-bold text-9xl">
 					<span class="sr-only">Error</span>
-					<span class="text-primary">404</span>
+					<span class="gradient-primary">404</span>
 				</h2>
-				<p class="text-3xl font-semibold md:text-3xl">Sorry, we couldn't find this page.</p>
-				<p class="mt-4 mb-8 text-lg text-muted dark:text-slate-400">
-					But dont worry, you can find plenty of other things on our homepage.
-				</p>
-				<a rel="noopener noreferrer" href={getHomePermalink()} class="btn ml-4">Back to homepage</a>
+				<p class="text-3xl font-semibold md:text-3xl">Cannot Find This Resource</p>
+				<p class="mt-4 mb-8 text-lg text-slate-400">But dont worry, you can warp to somewhere else!</p>
+				<div class="grid grid-cols-3 gap-4">
+					<a rel="noopener noreferrer" href="../" class="btn-primary w-full inline-flex items-center whitespace-nowrap"
+						>Backwards</a
+					>
+					<a
+						rel="noopener noreferrer"
+						href={getHomePermalink()}
+						class="btn-secondary w-full inline-flex items-center whitespace-nowrap">Homebase</a
+					>
+					<a
+						rel="noopener noreferrer"
+						href="/report"
+						class="btn-tertiary w-full inline-flex items-center whitespace-nowrap">Report</a
+					>
+				</div>
 			</div>
 		</div>
 	</section>

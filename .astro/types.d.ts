@@ -103,6 +103,8 @@ declare module 'astro:content' {
   data: InferEntrySchema<"post">
 },
 },
+"services": {
+},
 
 	};
 

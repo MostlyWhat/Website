@@ -54,10 +54,13 @@ const { links = [], actions = [], isSticky = false, showRssFeed = false, positio
 									<button class="font-medium hover:text-white px-4 py-3 flex items-center transition duration-150 ease-in-out">
 										{text} <Icon name="tabler:chevron-down" class="w-3.5 h-3.5 ml-0.5 hidden md:inline" />
 									</button>
-									<ul class="dropdown-menu md:backdrop-blur-md md:bg-dark md:absolute pl-4 md:pl-0 md:hidden font-medium md:bg-background md:min-w-[200px] drop-shadow-xl">
+									<ul class="dropdown-menu md:backdrop-blur-md md:bg-dark md:absolute pl-4 md:pl-0 md:hidden font-medium md:bg-background md:min-w-[200px] drop-shadow-xl transition-color duration-500">
 										{links.map(({ text: text2, href: href2 }) => (
 											<li>
-												<a class="hover:bg-gray-700 py-2 px-5 block whitespace-no-wrap" href={href2}>
+												<a
+													class="hover:bg-accent-yellow hover:text-background py-2 px-5 block whitespace-no-wrap"
+													href={href2}
+												>
 													{text2}
 												</a>
 											</li>

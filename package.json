@@ -51,6 +51,7 @@
     "node": ">=16.12.0"
   },
   "dependencies": {
+    "@fontsource/dm-mono": "^4.5.10",
     "@fontsource/dm-sans": "^4.5.9"
   }
 }
