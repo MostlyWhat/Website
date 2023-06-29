@@ -11,12 +11,12 @@ export interface Props {
 const {
   label = 'Opens a search modal',
   class:
-    className = 'dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center',
+    className = 'ml-1.5 text-gray-200 hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-700 text-sm p-2.5 inline-flex items-center border-b-4 border-transparent hover:border-secondary-500 w-full transition duration-150 ease-in-out',
   iconClass = 'w-6 h-6',
   iconName = 'tabler:search',
 } = Astro.props;
 ---
 
-<button type="button" class={className} aria-label={label} data-aw-toggle-color-scheme>
+<a href="/search" class={className} aria-label={label}>
     <Icon name={iconName} class={iconClass} />
-</button>
+</a>

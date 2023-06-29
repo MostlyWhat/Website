@@ -212,30 +212,9 @@ declare module 'astro:content' {
 } & { render(): Render[".md"] };
 };
 "post": {
-"astrowind-template-in-depth.md": {
-	id: "astrowind-template-in-depth.md";
-  slug: "astrowind-template-in-depth";
-  body: string;
-  collection: "post";
-  data: InferEntrySchema<"post">
-} & { render(): Render[".md"] };
-"get-started-website-with-astro-tailwind-css.md": {
-	id: "get-started-website-with-astro-tailwind-css.md";
-  slug: "get-started-website-with-astro-tailwind-css";
-  body: string;
-  collection: "post";
-  data: InferEntrySchema<"post">
-} & { render(): Render[".md"] };
-"how-to-customize-astrowind-to-your-brand.md": {
-	id: "how-to-customize-astrowind-to-your-brand.md";
-  slug: "how-to-customize-astrowind-to-your-brand";
-  body: string;
-  collection: "post";
-  data: InferEntrySchema<"post">
-} & { render(): Render[".md"] };
-"useful-resources-to-create-websites.md": {
-	id: "useful-resources-to-create-websites.md";
-  slug: "useful-resources-to-create-websites";
+"the-next-phase-on-mostlywhat-systems-horizon.md": {
+	id: "the-next-phase-on-mostlywhat-systems-horizon.md";
+  slug: "the-next-phase-on-mostlywhat-systems-horizon";
   body: string;
   collection: "post";
   data: InferEntrySchema<"post">

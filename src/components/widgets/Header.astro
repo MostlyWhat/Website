@@ -30,7 +30,7 @@ export interface Props {
 	position?: string;
 }
 
-const { links = [], actions = [], isSticky = false, showRssFeed = true, position = 'right' } = Astro.props;
+const { links = [], actions = [], isSticky = false, showRssFeed = true, position = 'middle' } = Astro.props;
 ---
 
 <header class:list={[{ sticky: isSticky, relative: !isSticky }, 'top-0 z-40 flex-none mx-auto w-full']} id="header">
@@ -55,7 +55,7 @@ const { links = [], actions = [], isSticky = false, showRssFeed = true, position
 						<li class={links?.length ? 'dropdown' : ''}>
 							{links?.length ? (
 								<>
-									<button class="font-medium hover:text-white px-4 py-3 flex items-center transition duration-150 ease-in-out">
+									<button class="font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-700 border-b-4 border-transparent hover:border-secondary-500 w-full px-4 py-3 flex items-center transition duration-150 ease-in-out">
 										{text} <Icon name="tabler:chevron-down" class="w-3.5 h-3.5 ml-0.5 hidden md:inline" />
 									</button>
 									<ul class="dropdown-menu md:backdrop-blur-md md:bg-dark md:absolute pl-4 md:pl-0 md:hidden font-medium md:bg-background md:min-w-[200px] drop-shadow-xl transition-color duration-500">
@@ -73,7 +73,7 @@ const { links = [], actions = [], isSticky = false, showRssFeed = true, position
 								</>
 							) : (
 								<a
-									class="font-medium hover:text-white px-4 py-3 flex items-center transition duration-150 ease-in-out"
+									class="font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-700 border-b-4 border-transparent hover:border-secondary-500 w-full px-4 py-3 flex items-center transition duration-150 ease-in-out"
 									href={href}
 								>
 									{text}
@@ -92,7 +92,7 @@ const { links = [], actions = [], isSticky = false, showRssFeed = true, position
 			  {
 				showRssFeed && (
 				  <a
-					class="dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center"
+					class="ml-1.5 text-gray-200 hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-700 text-sm p-2.5 inline-flex items-center border-b-4 border-transparent hover:border-secondary-500 w-full"
 					aria-label="RSS Feed"
 					href={getAsset('/rss.xml')}
 				  >
