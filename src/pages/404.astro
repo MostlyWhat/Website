@@ -13,9 +13,9 @@ const title = `Error 404`;
 					<span class="sr-only">Error</span>
 					<span class="gradient-primary">404</span>
 				</h2>
-				<p class="text-3xl font-semibold md:text-3xl">Cannot Find This Resource</p>
+				<p class="text-3xl font-semibold md:text-3xl">UNABLE_TO_LOCATE_RESOURCE</p>
 				<p class="mt-4 mb-8 text-lg text-slate-400">But dont worry, you can warp to somewhere else!</p>
-				<div class="grid grid-cols-3 gap-4">
+				<div class="grid grid-cols-2 grid-rows-2 gap-4">
 					<a rel="noopener noreferrer" href="../" class="btn-primary w-full inline-flex items-center whitespace-nowrap"
 						>Backwards</a
 					>
@@ -23,6 +23,11 @@ const title = `Error 404`;
 						rel="noopener noreferrer"
 						href={getHomePermalink()}
 						class="btn-secondary w-full inline-flex items-center whitespace-nowrap">Homebase</a
+					>
+					<a
+						rel="noopener noreferrer"
+						href="/report"
+						class="btn-quaternary w-full inline-flex items-center whitespace-nowrap">Search</a
 					>
 					<a
 						rel="noopener noreferrer"

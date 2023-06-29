@@ -37,7 +37,7 @@ const { socialLinks = [], secondaryLinks = [], links = [], footNote = '' } = Ast
 					{
 						secondaryLinks.map(({ text, href }) => (
 							<a
-								class="text-muted hover:text-gray-200 text-gray-400 transition duration-100 ease-in-out mr-2"
+								class="hover:text-gray-200 text-gray-400 transition duration-100 ease-in-out mr-2"
 								href={href}
 								set:html={text}
 							/>
@@ -54,7 +54,7 @@ const { socialLinks = [], secondaryLinks = [], links = [], footNote = '' } = Ast
 								{links.map(({ text, href, ariaLabel }) => (
 									<li class="mb-2">
 										<a
-											class="text-muted hover:text-gray-200 text-gray-400 transition duration-100 ease-in-out"
+											class="hover:text-gray-200 text-gray-400 transition duration-100 ease-in-out"
 											href={href}
 											aria-label={ariaLabel}
 										>
@@ -75,7 +75,7 @@ const { socialLinks = [], secondaryLinks = [], links = [], footNote = '' } = Ast
 						{socialLinks.map(({ ariaLabel, href, text, icon }) => (
 							<li>
 								<a
-									class="text-muted text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 text-sm p-2.5 inline-flex items-center border-4 border-background hover:border-4 hover:border-background hover:border-b-secondary-500"
+									class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 text-sm p-2.5 inline-flex items-center border-4 border-background hover:border-4 hover:border-background hover:border-b-secondary-500"
 									aria-label={ariaLabel}
 									href={href}
 								>

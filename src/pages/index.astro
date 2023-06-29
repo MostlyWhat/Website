@@ -3,10 +3,6 @@ import { SITE } from '~/config.mjs';
 import Layout from '~/layouts/PageLayout.astro';
 
 import Hero from '~/components/widgets/Hero.astro';
-import Note from '~/components/widgets/Note.astro';
-import Features from '~/components/widgets/Features.astro';
-import Features2 from '~/components/widgets/Features2.astro';
-import Steps from '~/components/widgets/Steps.astro';
 import Content from '~/components/widgets/Content.astro';
 import LatestPosts from '~/components/blog/LatestPosts.astro';
 import FAQs from '~/components/widgets/FAQs.astro';
@@ -24,9 +20,9 @@ const meta = {
 	<!-- Hero Widget ******************* -->
 
 	<Hero
-		callToAction={{ text: 'Contact Me', href: 'https://github.com/onwidget/astrowind', icon: 'tabler:at' }}
-		callToAction2={{ text: 'Previous Projects', href: '#features', icon: 'tabler:brand-github' }}
-		image={{ src: import('~/assets/images/hero.png'), alt: 'AstroWind Hero Image' }}
+		callToAction={{ text: 'Contact Me', href: '/contact', icon: 'tabler:at' }}
+		callToAction2={{ text: 'Previous Projects', href: '/projects', icon: 'tabler:brand-github' }}
+		image={{ src: import('~/assets/images/hero.png'), alt: 'Hero Image' }}
 	>
 		<Fragment slot="title">
 			<h1 class="text-5xl md:text-[3.50rem] font-bold leading-tighter tracking-tighter mb-4 font-heading">
@@ -42,65 +38,7 @@ const meta = {
 		</Fragment>
 	</Hero>
 
-	<!-- Note Widget ******************* -->
-
-	<Note />
-
-	<!-- Features Widget *************** -->
-
-	<Features
-		highlight="Features"
-		title="What you get with AstroWind"
-		subtitle="Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque rem aperiam, eaque ipsa quae."
-		items={[
-			[
-				{
-					title: 'Astro + Tailwind CSS Integration',
-					description:
-						'A seamless integration between two great frameworks that offer high productivity, performance and versatility.',
-					icon: 'tabler:brand-tailwind',
-				},
-				{
-					title: 'Ready-to-use Components',
-					description:
-						'Widgets made with Tailwind CSS ready to be used in Marketing Websites, SaaS, Blogs, Personal Profiles, Small Business...',
-					icon: 'tabler:components',
-				},
-				{
-					title: 'Best Practices',
-					description:
-						'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sagittis, quam nec venenatis lobortis, mi risus tempus nulla.',
-					icon: 'tabler:list-check',
-				},
-			],
-			[
-				{
-					title: 'Excellent Page Speed',
-					description:
-						'Having a good page speed impacts organic search ranking, improves user experience (UI/UX) and increase conversion rates.',
-					icon: 'tabler:rocket',
-				},
-				{
-					title: 'Search Engine Optimization (SEO)',
-					description:
-						'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sagittis, quam nec venenatis lobortis, mi risus tempus nulla.',
-					icon: 'tabler:arrows-right-left',
-				},
-				{
-					title: 'Open to new ideas and contributions',
-					description:
-						'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sagittis, quam nec venenatis lobortis, mi risus tempus nulla.',
-					icon: 'tabler:bulb',
-				},
-			],
-		]}
-	/>
-
-	<!-- Content Widget **************** -->
-
 	<Content
-		highlight="Inside template"
-		title="And what's inside? ..."
 		items={[
 			{
 				title: 'Per ei quaeque sensibus',
@@ -124,154 +62,22 @@ const meta = {
 		}}
 	>
 		<Fragment slot="content">
-			<h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">Ad vix debet docendi</h3>
+			<h1 class="text-5xl font-bold tracking-tight text-accent-red mb-2">Design.</h1>
 			Ne dicta praesent ocurreret has, diam theophrastus at pro. Eos etiam regione ut, persius eripuit quo id. Sit te euismod
 			tacimates.
 		</Fragment>
 	</Content>
 
-	<!-- Content Widget **************** -->
-
-	<Content
-		isReversed
-		isAfterContent
-		items={[
-			{
-				title: 'Per ei quaeque sensibus',
-			},
-			{
-				title: 'Cu imperdiet posidonium sed',
-			},
-			{
-				title: 'Nulla omittam sadipscing mel ne',
-			},
-			{
-				title: 'Per ei quaeque sensibus',
-			},
-			{
-				title: 'Cu imperdiet posidonium sed',
-			},
-			{
-				title: 'Nulla omittam sadipscing mel ne',
-			},
-		]}
-		image={{
-			src: import('~/assets/images/vintage.jpg'),
-			alt: 'Vintage Image',
-		}}
-	/>
-
-	<!-- Steps Widget ****************** -->
-
-	<Steps
-		title="Get your dream website up and running in no time with AstroWind."
-		items={[
-			{
-				title: 'Step 1: <span class="font-medium">Download</span>',
-				description:
-					'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sagittis, quam nec venenatis lobortis, mirisus tempus nulla, sed porttitor est nibh at nulla. Praesent placerat enim ut ex tincidunt vehicula.',
-				icon: 'tabler:package',
-			},
-			{
-				title: 'Step 2: <span class="font-medium">Add content</em>',
-				description:
-					'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sagittis, quam nec venenatis lobortis, mirisus tempus nulla, sed porttitor est nibh at nulla.',
-				icon: 'tabler:letter-case',
-			},
-			{
-				title: 'Step 3: <span class="font-medium">Customize styles</span>',
-				description:
-					'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sagittis, quam nec venenatis lobortis, mirisus tempus nulla, sed porttitor est nibh at nulla. Praesent placerat enim ut ex tincidunt vehicula. Fusce sit amet dui tellus.',
-				icon: 'tabler:paint',
-			},
-			{
-				title: 'Ready!',
-				icon: 'tabler:check',
-			},
-		]}
-		image={{
-			src: import('~/assets/images/creativity.jpg'),
-			alt: 'Steps image',
-		}}
-	/>
-
-	<!-- Features2 Widget ************** -->
-
-	<Features2
-		title="Most used widgets"
-		subtitle="Provides frequently used components for building websites using Tailwind CSS"
-		highlight="Components"
-		items={[
-			{
-				title: 'Headers',
-				description:
-					'In general, Headers contain information that makes it easier for visitors to interact with the website.',
-				icon: 'flat-color-icons:template',
-			},
-			{
-				title: 'Heros',
-				description:
-					'If you want your website to get more than its fair share of visitors, the Hero section needs to be stellar.',
-				icon: 'flat-color-icons:gallery',
-			},
-			{
-				title: 'Features',
-				description:
-					'Display your product in action and how the Features actually create a solution for your target customer.',
-				icon: 'flat-color-icons:todo-list',
-			},
-			{
-				title: 'Content',
-				description:
-					'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.',
-				icon: 'flat-color-icons:document',
-			},
-			{
-				title: 'Call-to-Action',
-				description:
-					'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.',
-				icon: 'flat-color-icons:advertising',
-			},
-			{
-				title: 'Pricing',
-				description:
-					'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.',
-				icon: 'flat-color-icons:currency-exchange',
-			},
-			{
-				title: 'Testimonial',
-				description:
-					'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.',
-				icon: 'flat-color-icons:voice-presentation',
-			},
-			{
-				title: 'Contact',
-				description:
-					'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.',
-				icon: 'flat-color-icons:business-contact',
-			},
-			{
-				title: 'Footers',
-				description:
-					'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.',
-				icon: 'icon-park:page-template',
-			},
-		]}
-	/>
-
 	<!-- HighlightedPosts Widget ******* -->
 
 	<LatestPosts
-		title="Find out more content in our Blog"
-		information={`The blog is used to display AstroWind documentation.
-			Each new article will be an important step that you will need to know to be an expert in creating a website using Astro + Tailwind CSS.
-			Astro is a very interesting technology. Thanks.
+		title="Latest Transmissions"
+		information={`TBD
 		`}
 		postIds={[
 			'get-started-website-with-astro-tailwind-css.md',
 			'how-to-customize-astrowind-to-your-brand.md',
 			'useful-resources-to-create-websites.md',
-			'astrowind-template-in-depth.md',
 		]}
 	/>
 

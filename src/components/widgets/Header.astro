@@ -2,6 +2,8 @@
 import { Icon } from 'astro-icon';
 import Logo from '~/components/Logo.astro';
 import ToggleMenu from '~/components/common/ToggleMenu.astro';
+import ToggleSearch from '~/components/common/ToggleSearch.astro';
+import ToggleLang from '~/components/common/ToggleLang.astro';
 
 import { getHomePermalink, getAsset } from '~/utils/permalinks';
 
@@ -28,7 +30,7 @@ export interface Props {
 	position?: string;
 }
 
-const { links = [], actions = [], isSticky = false, showRssFeed = false, position = 'right' } = Astro.props;
+const { links = [], actions = [], isSticky = false, showRssFeed = true, position = 'right' } = Astro.props;
 ---
 
 <header class:list={[{ sticky: isSticky, relative: !isSticky }, 'top-0 z-40 flex-none mx-auto w-full']} id="header">
@@ -38,6 +40,8 @@ const { links = [], actions = [], isSticky = false, showRssFeed = false, positio
 				<Logo />
 			</a>
 			<div class="flex items-center md:hidden">
+				<ToggleSearch />
+				<ToggleLang />
 				<ToggleMenu />
 			</div>
 		</div>
@@ -82,30 +86,39 @@ const { links = [], actions = [], isSticky = false, showRssFeed = false, positio
 		</nav>
 		<div class:list={[{ 'ml-auto': position === 'left' }, 'md:self-center flex items-center md:mb-0']}>
 			<div class="hidden items-center md:flex">
-				{
-					actions?.length ? (
-						<span class="ml-4">
-							{actions.map(({ text, href, type }) => (
-								<a class="btn-primary-filler w-full inline-flex items-center whitespace-nowrap " href={href}>
-									<Fragment set:html={text} />
-								</a>
-							))}
-						</span>
-					) : (
-						''
-					)
-				}
-				{
-					showRssFeed && (
-						<a
-							class="text-muted text-gray-400 hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center"
-							aria-label="RSS Feed"
-							href={getAsset('/rss.xml')}
-						>
-							<Icon name="tabler:rss" class="w-5 h-5" />
-						</a>
-					)
-				}
+			  <ToggleSearch />
+			  <ToggleLang />
+	  
+			  {
+				showRssFeed && (
+				  <a
+					class="dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center"
+					aria-label="RSS Feed"
+					href={getAsset('/rss.xml')}
+				  >
+					<Icon name="tabler:rss" class="w-5 h-5" />
+				  </a>
+				)
+			  }
+			  {
+				actions?.length ? (
+				  <span class="ml-4">
+					{actions.map(({ text, href, type }) => (
+					  <a
+						class:list={[
+						  'btn ml-2 py-2.5 px-5.5 md:px-6 font-semibold shadow-none text-sm',
+						  { 'btn-ghost': type === 'ghost', 'btn-primary': type === 'primary' },
+						]}
+						href={href}
+					  >
+						<Fragment set:html={text} />
+					  </a>
+					))}
+				  </span>
+				) : (
+				  ''
+				)
+			  }
 			</div>
 		</div>
 	</div>

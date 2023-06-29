@@ -73,7 +73,7 @@ const link = !BLOG?.post?.disabled ? getPermalink(post.permalink, 'post') : '';
 			</h2>
 		</header>
 
-		{post.excerpt && <p class="flex-grow text-muted dark:text-slate-400 text-lg">{post.excerpt}</p>}
+		{post.excerpt && <p class="flex-grow dark:text-slate-400 text-lg">{post.excerpt}</p>}
 		<footer class="mt-5">
 			<PostTags tags={post.tags} />
 		</footer>

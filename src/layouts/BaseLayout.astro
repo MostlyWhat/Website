@@ -8,8 +8,9 @@ import '@fontsource/dm-mono';
 // Import Astro components
 import MetaTags from '~/components/common/MetaTags.astro';
 import BasicScripts from '~/components/common/BasicScripts.astro';
-import Background from '~/components/backgrounds/Space.astro';
+import Background from '~/components/core/backgrounds/Space.astro';
 
+// The code is importing two objects, `MetaSEO` and `SITE`, from two different files.
 import { MetaSEO } from '~/types';
 import { SITE } from '~/config.mjs';
 
@@ -40,4 +41,7 @@ const { language = 'en', textDirection = 'ltr' } = SITE;
 			}
 		</style>
 	</body>
+	<script>
+		
+	</script>
 </html>
