@@ -7,36 +7,81 @@ import Hero from '~/components/widgets/Hero.astro';
 	<Hero>
 		<Fragment slot="title">
 			<h1 class="text-5xl md:text-[3.50rem] font-bold leading-tighter tracking-tighter mb-4 font-heading">
-				<span class="text-accent-green">Search</span>
+				<span class="text-accent-green">Search Engine</span>
 			</h1>
 		</Fragment>
 
 		<Fragment slot="subtitle">
 			Search for anything on the website. You can search for a blog post, a project, a page or a person.
 
-			<div class="mx-auto px-6 sm:px-6 max-w-3xl content-center grid grid-row items-center mb-10">
-				<!-- A styled text box for searching the site and list the results from pagefind -->
+			<!-- Search Box and Search Anchor next to each other with search anchor being smaller -->
+			<div class="flex flex-row items-center justify-center">
 				<input
 					id="search"
-					type="text"
-					placeholder="Search..."
-					class="px-12 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-accent-green focus:border-transparent"
+					type="search"
+					name="search"
+					placeholder="Search"
+					class="w-full p-4 border text-black border-gray-300 focus:outline-none focus:ring-2 focus:ring-accent-green focus:border-transparent"
 				/>
+				<a id="search_anchor" href="#results" class="w-10 p-4 ml-2 btn-quaternary">Query</a>
 			</div>
+
+			<style>
+				#search {
+					width: calc(100% - 10rem);
+				}
+
+				#search_anchor {
+					width: 10rem;
+				}
+			</style>
 		</Fragment>
 	</Hero>
 
-	<div id="search_result" class="mx-auto px-6 sm:px-6 max-w-3xl content-center grid grid-row items-center mb-10">
+	<div id="results" class="mx-auto px-6 sm:px-6 max-w-3xl content-center grid grid-row items-center mb-10">
 		<h1 class="text-5xl md:text-[3.50rem] font-bold leading-tighter tracking-tighter mb-4 font-heading p-4">
 			<span class="text-accent-green">Search Results</span>
 		</h1>
 
-		<div id="results">
+		<div id="not_found" class="p-6 btn-quaternary">
+			<h3 id="not_found_header" class="text-3xl pb-2">No Results Found</h3>
+			<p id="not_found_hint">Try searching for something else.</p>
+		</div>
+
+		<div id="search_results">
 			<!-- The search results will be added here -->
 		</div>
+
+		<br />
 	</div>
 
 	<script is:inline>
+		document.querySelector('#results').style.display = 'none'; // Hide the search_result element by default
+
+		// check if the search box is empty, if so disable the search_anchor when clicked
+		document.querySelector('#search_anchor').addEventListener('click', (e) => {
+			if (document.querySelector('#search').value.trim() === '') {
+				// disable the search anchor
+				e.preventDefault(); // Prevent the default anchor behaviour
+				document.querySelector('#search').focus(); // Focus the search box when the search anchor is clicked
+				document.querySelector('#search_anchor').classList.add('btn-tertiary');
+				document.querySelector('#search_anchor').classList.remove('btn-quaternary');
+			}
+		});
+
+		// check if the search box is being used, if so enable the search_anchor while typing
+		document.querySelector('#search').addEventListener('input', () => {
+			if (document.querySelector('#search').value.trim() !== '') {
+				// Enable the search anchor
+				document.querySelector('#search_anchor').classList.add('btn-quaternary');
+				document.querySelector('#search_anchor').classList.remove('btn-tertiary');
+			} else {
+				// Disable the search anchor
+				document.querySelector('#search_anchor').classList.add('btn-tertiary');
+				document.querySelector('#search_anchor').classList.remove('btn-quaternary');
+			}
+		});
+
 		document.querySelector('#search')?.addEventListener('input', async (e) => {
 			// only load the pagefind script once
 			if (e.target.dataset.loaded !== 'true') {
@@ -49,16 +94,74 @@ import Hero from '~/components/widgets/Hero.astro';
 			const search = await window.pagefind.search(e.target.value);
 
 			// clear the old results
-			document.querySelector('#results').innerHTML = '';
+			document.querySelector('#search_results').innerHTML = '';
 
 			const searchQuery = document.querySelector('#search').value.trim(); // Get the value of the search box and trim whitespace
 
-			document.querySelector('#search_result').style.display = searchQuery ? 'block' : 'none'; // Show or hide the search_result element based on the searchQuery value
+			document.querySelector('#results').style.display = searchQuery ? 'block' : 'none'; // Show or hide the search_result element based on the searchQuery value
 
-			const displayedURLs = [];
+			const displayedURLs = []; // Create an empty array to store the URLs of the displayed search results
 
 			if (searchQuery && search.results.length === 0) {
-				document.querySelector('#results').innerHTML = 'Not Found'; // Display "Not found" message if there are no results and the search box is not empty
+				// If the searchQuery value exists and there are no results found
+				// Randomise the not found header and hint with a different message each time
+				// Creative Headers
+				const notFoundHeaders = [
+					'Mission Report: No Results Found',
+					'Operation Failure: Unable to Locate Results',
+					'Warning: Data Unavailable',
+					'Transmission Interference: No Results Detected',
+					'Code Red: Data Not Found',
+					'System Alert: Search Results Inaccessible',
+					'Error 404: Information Not Found',
+					'Target Lost: No Results Detected',
+					'Search Operation Aborted: No Data Found',
+					'Critical Data Failure: Results Not Found',
+					'Attention: Insufficient Data Found',
+					'Anomaly Detected: No Results Located',
+					'Abort Mission: Results Unattainable',
+					'Redacted: Results Not Disclosed',
+					'Information Blackout: No Results Obtained',
+					'Search Grid Offline: No Results Identified',
+					'Emergency Override: Results Unrecoverable',
+					'Data Lockdown: Results Beyond Reach',
+					'Insufficient Intel: Results Unavailable',
+					'Encryption Breach: No Results Deciphered',
+				];
+
+				// Creative, Military and Scifi Sounding Hints
+				const notFoundHints = [
+					'Try recalibrating your search parameters.',
+					'Expand your search horizon and explore different keywords.',
+					'Consider refining your search criteria for more accurate results.',
+					'Explore alternative search terms to uncover relevant information.',
+					'Broaden your search scope and try different combinations of keywords.',
+					'Check your spelling and ensure accurate input for a successful search.',
+					"Experiment with various search strategies to find what you're looking for.",
+					'Consider adjusting your search filters for more targeted results.',
+					'Explore related topics or related search suggestions.',
+					'Try a different search engine or platform for a fresh perspective.',
+					'Consider reaching out to online communities or forums for assistance.',
+					'Check if the information you seek is available in a different format or medium.',
+					'Double-check the availability of the information from reliable sources.',
+					'Consider consulting experts or professionals in the field for guidance.',
+					'Refine your search query by including specific details or parameters.',
+					'Experiment with advanced search operators or syntax for precise results.',
+					'Verify the accessibility of the information based on its publication date.',
+					'Consider expanding your search beyond the current time frame for comprehensive results.',
+					'Review your search strategy and make adjustments to improve your chances.',
+					'Revisit your search query and approach it from a different angle.',
+					'Consider exploring alternative sources or references for the desired information.',
+				];
+
+				const randomNotFoundHeader = notFoundHeaders[Math.floor(Math.random() * notFoundHeaders.length)];
+				const randomNotFoundHint = notFoundHints[Math.floor(Math.random() * notFoundHints.length)];
+
+				document.querySelector('#not_found_header').innerHTML = randomNotFoundHeader;
+				document.querySelector('#not_found_hint').innerHTML = randomNotFoundHint;
+
+				// make not_found visible if there are no results and the search box is not empty
+				document.querySelector('#not_found').style.display = 'block';
 			} else {
 				for (const result of search.results) {
 					const data = await result.data();
@@ -71,7 +174,7 @@ import Hero from '~/components/widgets/Hero.astro';
 
 					displayedURLs.push(url); // Add the URL to the displayedURLs array
 
-					document.querySelector('#results').innerHTML += `
+					document.querySelector('#search_results').innerHTML += `
 						<div class="p-4">
 							<a href="${data.url}" class="btn-quaternary p-6">
 								<h3 class="text-3xl pb-2">${data.meta.title}</h3>
