@@ -37,8 +37,6 @@ import Hero from '~/components/widgets/Hero.astro';
 	</div>
 
 	<script is:inline>
-		document.querySelector('#search_result').style.display = 'none'; // Hide the search_result element initially
-
 		document.querySelector('#search')?.addEventListener('input', async (e) => {
 			// only load the pagefind script once
 			if (e.target.dataset.loaded !== 'true') {
