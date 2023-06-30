@@ -89,7 +89,7 @@ import Hero from '~/components/widgets/Hero.astro';
 		search_element.addEventListener('input', async (e) => {
 			if (e.target.dataset.loaded !== 'true') {
 				e.target.dataset.loaded = 'true';
-				window.pagefind = await import('/scripts/search-engine.js');
+				window.pagefind = await import('/pagefind/pagefind.js');
 			}
 	
 			const search = await window.pagefind.search(e.target.value);
