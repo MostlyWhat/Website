@@ -196,6 +196,13 @@ declare module 'astro:content' {
   collection: "legal";
   data: InferEntrySchema<"legal">
 } & { render(): Render[".md"] };
+"eula.md": {
+	id: "eula.md";
+  slug: "eula";
+  body: string;
+  collection: "legal";
+  data: InferEntrySchema<"legal">
+} & { render(): Render[".md"] };
 "privacy.md": {
 	id: "privacy.md";
   slug: "privacy";

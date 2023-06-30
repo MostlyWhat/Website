@@ -13,12 +13,23 @@ import Hero from '~/components/widgets/Hero.astro';
 
 		<Fragment slot="subtitle">
 			Search for anything on the website. You can search for a blog post, a project, a page or a person.
-		</Fragment>
-	</Hero>
-	<!-- A styled text box for searching the site and list the results from pagefind -->
-	<input id="search" type="text" placeholder="Search..." />
 
-	<div id="results"></div>
+			<div class="mx-auto px-6 sm:px-6 max-w-3xl content-center grid grid-row items-center mb-10">
+				<!-- A styled text box for searching the site and list the results from pagefind -->
+				<input id="search" type="text" placeholder="Search..." class="px-12 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-accent-green focus:border-transparent" />			
+			</div>
+		</Fragment>		
+	</Hero>
+
+	<div class="mx-auto px-6 sm:px-6 max-w-3xl content-center grid grid-row items-center mb-10">
+		<h1 class="text-5xl md:text-[3.50rem] font-bold leading-tighter tracking-tighter mb-4 font-heading p-4">
+			<span class="text-accent-green">Search Results</span>
+		</h1>
+
+		<div id="results">
+			<!-- The search results will be added here -->
+		</div>
+	</div>
 
 	<script is:inline>
 		document.querySelector('#search')?.addEventListener('input', async (e) => {
@@ -39,8 +50,8 @@ import Hero from '~/components/widgets/Hero.astro';
 			for (const result of search.results) {
 				const data = await result.data();
 				document.querySelector('#results').innerHTML += `
-                    <a href="${data.url}">
-                    <h3>${data.meta.title}</h3>
+                    <a href="${data.url}" class="btn-quaternary">
+                    <h3 class="text-3xl">${data.meta.title}</h3>
                     <p>${data.excerpt}</p>
                     </a>`;
 			}
