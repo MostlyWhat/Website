@@ -56,15 +56,21 @@ import Hero from '~/components/widgets/Hero.astro';
 			// add the new results
 			const displayedURLs = [];
 
-			if (search.results.length === 0) {
+			if (e.target.value === '') {
+				document.querySelector('#search_result').style.display = 'none'; // Hide the search_result element
+			} 
+
+			else if (search.results.length === 0) {
 				document.querySelector('#results').innerHTML = 'Not found'; // Display "Not found" message
-			} else {
+			} 
+			
+			else {
 				for (const result of search.results) {
 					const data = await result.data();
 					const url = data.url;
 
 					// Check if the URL has already been displayed
-					if (displayedURLs.includes(url)) {
+					if (displayedURLs.includes(url)) || (displayedURLs.includes(data.meta.title)) {
 						continue; // Skip this result
 					}
 
