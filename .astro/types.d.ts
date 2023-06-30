@@ -227,11 +227,17 @@ declare module 'astro:content' {
   data: InferEntrySchema<"post">
 } & { render(): Render[".md"] };
 };
+"projects": {
+};
+"services": {
+};
 
 	};
 
 	type DataEntryMap = {
-		
+		"product": {
+};
+
 	};
 
 	type AnyEntryMap = ContentEntryMap & DataEntryMap;
