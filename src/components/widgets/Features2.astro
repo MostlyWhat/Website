@@ -29,12 +29,7 @@ const {
 			{
 				(title || subtitle || highlight) && (
 					<div class="mb-8 md:mx-auto text-center max-w-3xl">
-						{highlight && (
-							<p
-								class="text-base-200 font-semibold tracking-wide uppercase"
-								set:html={highlight}
-							/>
-						)}
+						{highlight && <p class="text-base-200 font-semibold tracking-wide uppercase" set:html={highlight} />}
 						{title && (
 							<h2
 								class="text-4xl md:text-5xl font-bold leading-tighter tracking-tighter mb-4 font-heading"
@@ -49,7 +44,7 @@ const {
 			<div class={`grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 my-12 text-white items-stretch`}>
 				{
 					items.map(({ title, description, icon }) => (
-						<div class="relative flex flex-col p-6 bg-slate-900 rounded shadow-lg hover:shadow-md transition border border-transparent border-slate-800">
+						<div class="relative flex flex-col p-6 bg-slate-900 hover:shadow-md transition border border-transparent border-slate-800">
 							<div class="flex items-center">
 								<Icon name={icon} class="w-10 h-10" />
 								<div class="ml-4 text-xl font-bold">{title}</div>
