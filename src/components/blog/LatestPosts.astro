@@ -17,7 +17,7 @@ const {
 	allPostsText = 'View Latest Transmissions',
 	allPostsLink = getBlogPermalink(),
 	information = await Astro.slots.render('information'),
-	count = 3,
+	count = 4,
 } = Astro.props;
 
 const posts = await findLatestPosts({ count });
@@ -37,7 +37,7 @@ const posts = await findLatestPosts({ count });
 			{
 				allPostsText && allPostsLink && (
 					<a
-						class="dark:text-slate-400 hover:text-primary transition ease-in duration-200 block mb-6 lg:mb-0"
+						class="text-slate-400 hover:text-primary transition ease-in duration-200 block mb-6 lg:mb-0"
 						href={allPostsLink}
 					>
 						{allPostsText}
@@ -46,7 +46,7 @@ const posts = await findLatestPosts({ count });
 			}
 		</div>
 
-		{information && <p class="dark:text-slate-400 lg:text-sm lg:max-w-md" set:html={information} />}
+		{information && <p class="text-slate-400 lg:text-sm lg:max-w-md" set:html={information} />}
 	</div>
 
 	<Grid posts={posts} />

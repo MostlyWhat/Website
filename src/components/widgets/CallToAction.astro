@@ -24,7 +24,7 @@ const {
 	<div class="max-w-6xl mx-auto px-4 sm:px-6">
 		<div class="py-12 md:py-20">
 			<div
-				class="max-w-3xl mx-auto text-center p-6 rounded-md shadow-xl dark:shadow-none dark:border dark:border-slate-600"
+				class="max-w-3xl mx-auto text-center p-6 border border-slate-600"
 			>
 				{
 					title && (
@@ -34,7 +34,7 @@ const {
 						/>
 					)
 				}
-				{subtitle && <p class="text-xl dark:text-slate-400" set:html={subtitle} />}
+				{subtitle && <p class="text-xl text-slate-400" set:html={subtitle} />}
 				{
 					typeof callToAction === 'string' ? (
 						<Fragment set:html={callToAction} />
