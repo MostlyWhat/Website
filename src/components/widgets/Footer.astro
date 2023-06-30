@@ -1,98 +1,59 @@
 ---
 import { Icon } from 'astro-icon';
-import { SITE } from '~/config.mjs';
-import { getHomePermalink } from '~/utils/permalinks';
 
-interface Link {
-	text?: string;
-	href?: string;
-	ariaLabel?: string;
+interface Item {
+	title?: string;
+	description?: string;
 	icon?: string;
 }
 
-interface Links {
-	title?: string;
-	links: Array<Link>;
-}
-
 export interface Props {
-	links: Array<Links>;
-	secondaryLinks: Array<Link>;
-	socialLinks: Array<Link>;
-	footNote?: string;
+	title?: string;
+	subtitle?: string;
+	highlight?: string;
+	items: Array<Item>;
 }
 
-const { socialLinks = [], secondaryLinks = [], links = [], footNote = '' } = Astro.props;
+const {
+	title = await Astro.slots.render('title'),
+	subtitle = await Astro.slots.render('subtitle'),
+	highlight,
+	items = [],
+} = Astro.props;
 ---
 
-<footer class="border-t bg-background border-slate-800 md:backdrop-blur-sm">
-	<div class="bg-background absolute inset-0 pointer-events-none" aria-hidden="true"></div>
-	<div class="relative max-w-7xl mx-auto px-4 sm:px-6 text-slate-300">
-		<div class="grid grid-cols-12 gap-4 gap-y-8 sm:gap-8 py-8 md:py-12">
-			<div class="col-span-12 lg:col-span-4">
-				<div class="mb-2">
-					<a class="inline-block font-bold text-xl" href={getHomePermalink()}>{SITE?.name}</a>
-				</div>
-				<div class="text-sm text-muted">
-					{
-						secondaryLinks.map(({ text, href }) => (
-							<a
-								class="hover:text-gray-200 text-gray-400 transition duration-100 ease-in-out mr-2"
-								href={href}
-								set:html={text}
+<section class="relative">
+	<div class="absolute inset-0 bg-slate-800 pointer-events-none mb-32" aria-hidden="true"></div>
+	<div class="relative max-w-7xl mx-auto px-4 sm:px-6 -mb-12">
+		<div class="py-4 pt-8 sm:py-6 lg:py-8 lg:pt-12">
+			{
+				(title || subtitle || highlight) && (
+					<div class="mb-8 md:mx-auto text-center max-w-3xl">
+						{highlight && <p class="text-base-200 font-semibold tracking-wide uppercase" set:html={highlight} />}
+						{title && (
+							<h2
+								class="text-4xl md:text-5xl font-bold leading-tighter tracking-tighter mb-4 font-heading"
+								set:html={title}
 							/>
-						))
-					}
-				</div>
-			</div>
-			{
-				links.map(({ title, links }) => (
-					<div class="col-span-6 md:col-span-3 lg:col-span-2">
-						<div class="text-gray-300 font-medium mb-2">{title}</div>
-						{links && Array.isArray(links) && links.length > 0 && (
-							<ul class="text-sm">
-								{links.map(({ text, href, ariaLabel }) => (
-									<li class="mb-2">
-										<a
-											class="hover:text-gray-200 text-gray-400 transition duration-100 ease-in-out"
-											href={href}
-											aria-label={ariaLabel}
-										>
-											<Fragment set:html={text} />
-										</a>
-									</li>
-								))}
-							</ul>
 						)}
+
+						{subtitle && <p class="max-w-3xl mx-auto sm:text-center text-xl text-slate-400" set:html={subtitle} />}
 					</div>
-				))
-			}
-		</div>
-		<div class="md:flex md:items-center md:justify-between py-6 md:py-8">
-			{
-				socialLinks?.length ? (
-					<ul class="flex mb-4 md:order-1 -ml-2 md:ml-4 md:mb-0">
-						{socialLinks.map(({ ariaLabel, href, text, icon }) => (
-							<li>
-								<a
-									class="text-gray-400 hover:bg-gray-700 hover:text-grey-200 focus:outline-none focus:ring-4 focus:ring-gray-700 text-sm p-2.5 inline-flex items-center border-b-4 border-transparent hover:border-secondary-500 w-full transition duration-150 ease-in-out"
-									aria-label={ariaLabel}
-									href={href}
-								>
-									{icon && <Icon name={icon} class="w-5 h-5" />}
-									<Fragment set:html={text} />
-								</a>
-							</li>
-						))}
-					</ul>
-				) : (
-					''
 				)
 			}
-
-			<div class="text-sm mr-4 text-slate-400">
-				<Fragment set:html={footNote} />
+			<div class={`grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 my-12 text-white items-stretch`}>
+				{
+					items.map(({ title, description, icon }) => (
+						<div class="relative flex flex-col p-6 bg-slate-900 rounded shadow-lg hover:shadow-md transition border border-transparent border-slate-800">
+							<div class="flex items-center">
+								<Icon name={icon} class="w-10 h-10" />
+								<div class="ml-4 text-xl font-bold">{title}</div>
+							</div>
+							{description && <p class="text-gray-400 text-md mt-4" set:html={description} />}
+						</div>
+					))
+				}
 			</div>
 		</div>
 	</div>
-</footer>
+</section>

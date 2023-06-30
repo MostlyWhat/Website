@@ -174,14 +174,14 @@ import Hero from '~/components/widgets/Hero.astro';
 						const section = document.createElement('div');
 						section.classList.add('p-4');
 						section.innerHTML = `
-							<a href="${data.url}" class="btn-quaternary p-6">
-								<h3 class="text-3xl pb-2">${data.meta.title}</h3>
-								<div>
-									<h4 class="text-xl pt-2">${data.meta.title}</h4>
-									<p>${data.excerpt}</p>
-								</div>
-							</a>
-							`;
+				  <a href="${data.url}" class="btn-quaternary p-6">
+					<h3 class="text-3xl pb-2">${data.meta.title}</h3>
+					<div>
+					  <h4 class="text-xl pt-2">${data.meta.title}</h4>
+					  <p>${data.excerpt}</p>
+					</div>
+				  </a>
+				`;
 						search_results.appendChild(section);
 						pageMap.set(url, section.querySelector('div'));
 					}

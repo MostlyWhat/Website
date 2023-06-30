@@ -202,8 +202,9 @@
 	}
 }
 
+
 .underline-highlight {
-	@apply px-6 py-2 text-white font-medium hover:decoration-accent-yellow hover:decoration-4 hover:underline hover:underline-offset-4 transition duration-500 ease-in-out;
+	@apply  px-6 py-2 text-white font-medium hover:decoration-accent-yellow hover:decoration-4 hover:underline hover:underline-offset-4 transition duration-500 ease-in-out;
 }
 
 a + a {

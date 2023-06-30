@@ -2,21 +2,21 @@
 import { Icon } from 'astro-icon';
 
 export interface Props {
-	label?: string;
-	class?: string;
-	iconClass?: string;
-	iconName?: string;
+  label?: string;
+  class?: string;
+  iconClass?: string;
+  iconName?: string;
 }
 
 const {
-	label = 'Opens a language selector',
-	class:
-		className = 'ml-1.5 text-gray-200 hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-700 text-sm p-2.5 inline-flex items-center border-b-4 border-transparent hover:border-secondary-500 w-full transition duration-150 ease-in-out',
-	iconClass = 'w-6 h-6',
-	iconName = 'tabler:language',
+  label = 'Opens a language selector',
+  class:
+    className = 'ml-1.5 text-gray-200 hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-700 text-sm p-2.5 inline-flex items-center border-b-4 border-transparent hover:border-secondary-500 w-full transition duration-150 ease-in-out',
+  iconClass = 'w-6 h-6',
+  iconName = 'tabler:language',
 } = Astro.props;
 ---
 
 <button type="button" class={className} aria-label={label} data-aw-toggle-color-scheme>
-	<Icon name={iconName} class={iconClass} />
+    <Icon name={iconName} class={iconClass} />
 </button>
