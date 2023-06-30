@@ -106,7 +106,7 @@ const { links = [], actions = [], isSticky = false, showRssFeed = true, position
 							{actions.map(({ text, href, type }) => (
 								<a
 									class:list={[
-										'btn ml-2 py-2.5 px-5.5 md:px-6 font-semibold shadow-none text-sm',
+										'btn ml-2 py-2.5 px-5.5 md:px-6 font-semibold text-sm',
 										{ 'btn-ghost': type === 'ghost', 'btn-primary': type === 'primary' },
 									]}
 									href={href}
