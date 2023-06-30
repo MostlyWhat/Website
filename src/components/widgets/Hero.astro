@@ -35,13 +35,13 @@ const {
 				{
 					title && (
 						<h1
-							class="text-5xl md:text-6xl font-bold leading-tighter tracking-tighter mb-4 font-heading text-gray-200"
+							class="text-5xl md:text-6xl font-bold leading-tighter tracking-tighter mb-4 font-heading dark:text-gray-200"
 							set:html={title}
 						/>
 					)
 				}
 				<div class="max-w-3xl mx-auto">
-					{subtitle && <p class="text-xl mb-6 text-slate-300" set:html={subtitle} />}
+					{subtitle && <p class="text-xl mb-6 dark:text-slate-300" set:html={subtitle} />}
 					<div class="max-w-xs sm:max-w-md m-auto flex flex-nowrap flex-col sm:flex-row sm:justify-center gap-4">
 						{
 							callToAction && (
@@ -98,7 +98,7 @@ const {
 								<Fragment set:html={image} />
 							) : (
 								<Picture
-									class="mx-auto w-full"
+									class="mx-auto rounded-md w-full"
 									widths={[400, 768, 1024, 2040]}
 									sizes="(max-width: 767px) 400px, (max-width: 1023px) 768px, (max-width: 2039px) 1024px, 2040px"
 									aspectRatio={1024 / 576}

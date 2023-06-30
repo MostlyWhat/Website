@@ -10,8 +10,7 @@ import { fetchPosts } from '~/utils/blog';
 import { findImage } from '~/utils/images';
 
 export async function getStaticPaths() {
-	if (BLOG?.disabled || BLOG?.post?.disabled) ___astro_return;
-	throw [];
+	if (BLOG?.disabled || BLOG?.post?.disabled) return [];
 	return (await fetchPosts()).map((post) => ({
 		params: {
 			blog: post.permalink,
