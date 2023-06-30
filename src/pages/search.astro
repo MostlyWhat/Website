@@ -51,30 +51,25 @@ import Hero from '~/components/widgets/Hero.astro';
 			// clear the old results
 			document.querySelector('#results').innerHTML = '';
 
-			// add the new results
+			const searchQuery = document.querySelector('#search_query').value.trim(); // Get the value of the search box and trim whitespace
+
+			document.querySelector('#search_result').style.display = searchQuery ? 'block' : 'none'; // Show or hide the search_result element based on the searchQuery value
+
 			const displayedURLs = [];
 
-			if (e.target.value === '') {
-				document.querySelector('#search_result').style.display = 'none'; // Hide the search_result element
-			} 
-
-			else if (search.results.length === 0) {
-				document.querySelector('#results').innerHTML = 'Not found'; // Display "Not found" message
-			} 
-			
-			else {
+			if (searchQuery && search.results.length === 0) {
+				document.querySelector('#results').innerHTML = 'Not found'; // Display "Not found" message if there are no results and the search box is not empty
+			} else {
 				for (const result of search.results) {
 					const data = await result.data();
 					const url = data.url;
 
 					// Check if the URL has already been displayed
-					if (displayedURLs.includes(url)) || (displayedURLs.includes(data.meta.title)) {
+					if (displayedURLs.includes(url)) {
 						continue; // Skip this result
 					}
 
 					displayedURLs.push(url); // Add the URL to the displayedURLs array
-
-					document.querySelector('#search_result').style.display = 'block'; // Show the search_result element
 
 					document.querySelector('#results').innerHTML += `
 						<div class="p-4">
