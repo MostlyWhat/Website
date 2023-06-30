@@ -51,14 +51,14 @@ import Hero from '~/components/widgets/Hero.astro';
 			// clear the old results
 			document.querySelector('#results').innerHTML = '';
 
-			const searchQuery = document.querySelector('#search_query').value.trim(); // Get the value of the search box and trim whitespace
+			const searchQuery = document.querySelector('#search').value.trim(); // Get the value of the search box and trim whitespace
 
 			document.querySelector('#search_result').style.display = searchQuery ? 'block' : 'none'; // Show or hide the search_result element based on the searchQuery value
 
 			const displayedURLs = [];
 
 			if (searchQuery && search.results.length === 0) {
-				document.querySelector('#results').innerHTML = 'Not found'; // Display "Not found" message if there are no results and the search box is not empty
+				document.querySelector('#results').innerHTML = 'Not Found'; // Display "Not found" message if there are no results and the search box is not empty
 			} else {
 				for (const result of search.results) {
 					const data = await result.data();
