@@ -16,12 +16,17 @@ import Hero from '~/components/widgets/Hero.astro';
 
 			<div class="mx-auto px-6 sm:px-6 max-w-3xl content-center grid grid-row items-center mb-10">
 				<!-- A styled text box for searching the site and list the results from pagefind -->
-				<input id="search" type="text" placeholder="Search..." class="px-12 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-accent-green focus:border-transparent" />			
+				<input
+					id="search"
+					type="text"
+					placeholder="Search..."
+					class="px-12 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-accent-green focus:border-transparent"
+				/>
 			</div>
-		</Fragment>		
+		</Fragment>
 	</Hero>
 
-	<div class="mx-auto px-6 sm:px-6 max-w-3xl content-center grid grid-row items-center mb-10">
+	<div id="search_result" class="mx-auto px-6 sm:px-6 max-w-3xl content-center grid grid-row items-center mb-10">
 		<h1 class="text-5xl md:text-[3.50rem] font-bold leading-tighter tracking-tighter mb-4 font-heading p-4">
 			<span class="text-accent-green">Search Results</span>
 		</h1>
@@ -32,6 +37,8 @@ import Hero from '~/components/widgets/Hero.astro';
 	</div>
 
 	<script is:inline>
+		document.querySelector('#search_result').style.display = 'none'; // Hide the search_result element initially
+
 		document.querySelector('#search')?.addEventListener('input', async (e) => {
 			// only load the pagefind script once
 			if (e.target.dataset.loaded !== 'true') {
@@ -47,13 +54,32 @@ import Hero from '~/components/widgets/Hero.astro';
 			document.querySelector('#results').innerHTML = '';
 
 			// add the new results
-			for (const result of search.results) {
-				const data = await result.data();
-				document.querySelector('#results').innerHTML += `
-                    <a href="${data.url}" class="btn-quaternary p-6">
-                    <h3 class="text-3xl pb-2">${data.meta.title}</h3>
-                    <p>${data.excerpt}</p>
-                    </a>`;
+			const displayedURLs = [];
+
+			if (search.results.length === 0) {
+				document.querySelector('#results').innerHTML = 'Not found'; // Display "Not found" message
+			} else {
+				for (const result of search.results) {
+					const data = await result.data();
+					const url = data.url;
+
+					// Check if the URL has already been displayed
+					if (displayedURLs.includes(url)) {
+						continue; // Skip this result
+					}
+
+					displayedURLs.push(url); // Add the URL to the displayedURLs array
+
+					document.querySelector('#search_result').style.display = 'block'; // Show the search_result element
+
+					document.querySelector('#results').innerHTML += `
+						<div class="p-4">
+							<a href="${data.url}" class="btn-quaternary p-6">
+								<h3 class="text-3xl pb-2">${data.meta.title}</h3>
+								<p>${data.excerpt}</p>
+							</a>
+						</div>`;
+				}
 			}
 		});
 	</script>
