@@ -153,7 +153,7 @@ const CONFIG = {
   description: 'This is the homepage description of Example', // Default seo description
   defaultImage: 'image.jpg', // Default seo image
 
-  defaultTheme: 'dark', // Values: "system" | "light" | "dark" | "light:only" | "dark:only"
+  defaultTheme: 'dark', // We only use dark mode but, Possible Values: "system" | "light" | "dark" | "light:only" | "dark:only"
 
   language: 'en', // Default language
   textDirection: 'ltr', // Default html text direction (Left-to-right) Values: "ltr" | "rtl"
