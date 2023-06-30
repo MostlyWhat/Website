@@ -86,39 +86,39 @@ const { links = [], actions = [], isSticky = false, showRssFeed = true, position
 		</nav>
 		<div class:list={[{ 'ml-auto': position === 'left' }, 'md:self-center flex items-center md:mb-0']}>
 			<div class="hidden items-center md:flex">
-			  <ToggleSearch />
-			  <ToggleLang />
-	  
-			  {
-				showRssFeed && (
-				  <a
-					class="ml-1.5 text-gray-200 hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-700 text-sm p-2.5 inline-flex items-center border-b-4 border-transparent hover:border-secondary-500 w-full"
-					aria-label="RSS Feed"
-					href={getAsset('/rss.xml')}
-				  >
-					<Icon name="tabler:rss" class="w-5 h-5" />
-				  </a>
-				)
-			  }
-			  {
-				actions?.length ? (
-				  <span class="ml-4">
-					{actions.map(({ text, href, type }) => (
-					  <a
-						class:list={[
-						  'btn ml-2 py-2.5 px-5.5 md:px-6 font-semibold shadow-none text-sm',
-						  { 'btn-ghost': type === 'ghost', 'btn-primary': type === 'primary' },
-						]}
-						href={href}
-					  >
-						<Fragment set:html={text} />
-					  </a>
-					))}
-				  </span>
-				) : (
-				  ''
-				)
-			  }
+				<ToggleSearch />
+				<ToggleLang />
+
+				{
+					showRssFeed && (
+						<a
+							class="ml-1.5 text-gray-200 hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-700 text-sm p-2.5 inline-flex items-center border-b-4 border-transparent hover:border-secondary-500 w-full"
+							aria-label="RSS Feed"
+							href={getAsset('/rss.xml')}
+						>
+							<Icon name="tabler:rss" class="w-5 h-5" />
+						</a>
+					)
+				}
+				{
+					actions?.length ? (
+						<span class="ml-4">
+							{actions.map(({ text, href, type }) => (
+								<a
+									class:list={[
+										'btn ml-2 py-2.5 px-5.5 md:px-6 font-semibold shadow-none text-sm',
+										{ 'btn-ghost': type === 'ghost', 'btn-primary': type === 'primary' },
+									]}
+									href={href}
+								>
+									<Fragment set:html={text} />
+								</a>
+							))}
+						</span>
+					) : (
+						''
+					)
+				}
 			</div>
 		</div>
 	</div>
