@@ -1,14 +1,14 @@
 .dropdown:hover .dropdown-menu {
-	display: block;
+  display: block;
 }
 
 [data-aw-toggle-menu] path {
-	@apply transition;
+  @apply transition;
 }
 [data-aw-toggle-menu].expanded g > path:first-child {
-	@apply -rotate-45 translate-y-[15px] translate-x-[-3px];
+  @apply -rotate-45 translate-y-[15px] translate-x-[-3px];
 }
 
 [data-aw-toggle-menu].expanded g > path:last-child {
-	@apply rotate-45 translate-y-[-8px] translate-x-[14px];
+  @apply rotate-45 translate-y-[-8px] translate-x-[14px];
 }

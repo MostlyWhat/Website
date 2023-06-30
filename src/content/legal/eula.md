@@ -7,10 +7,9 @@ color: red
 
 ## 1. Acknowledgment
 
-THIS END-USER LICENSE AGREEMENT ("EULA") IS A LEGAL AGREEMENT BETWEEN YOU AND MOSTLYWHAT SYSTEMS ("WE," "US," OR "OUR"), as well as its subsidiaries, for the use of its Intellectual Properties, Software, Hardware, Games and other related services ("Software and related offerings").
+THIS END-USER LICENSE AGREEMENT ("EULA") IS A LEGAL AGREEMENT BETWEEN YOU AND MOSTLYWHAT SYSTEMS ("WE," "US," OR "OUR"), as well as its subsidiaries, for the use of its Intellectual Properties, Software, Hardware, Games and other related services ("Software and related offerings"). 
 
 ## 2. Scope of Rights and Limitations
-
 1. **License**: Upon your acceptance of this EULA, we grant you a limited, non-exclusive, non-transferable license to use our Software and related offerings. You do not have the right to sublicense your rights.
 2. **Restrictions**: You must not reverse engineer, decompile, or disassemble the Software and related offerings or attempt to gain unauthorized access to any services or databases connected to them.
 3. **Intellectual Property Rights**: Our Software, any printed materials, and any online or electronic documentation ("Documentation") belong to us, and this EULA does not give you any intellectual property rights in the Software or Documentation.

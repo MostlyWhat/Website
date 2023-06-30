@@ -28,7 +28,7 @@ const {
 	image = await Astro.slots.render('image'),
 	isReversed = false,
 	isAfterContent = false,
-	background = 'bg-primary-500',
+	background = 'bg-primary-500'
 } = Astro.props;
 ---
 
@@ -38,7 +38,10 @@ const {
 			(title || subtitle || highlight) && (
 				<div class="mb-10 md:mx-auto text-center md:mb-12 max-w-3xl">
 					{highlight && (
-						<p class="text-base text-accent-blue font-semibold tracking-wide uppercase" set:html={highlight} />
+						<p
+							class="text-base text-accent-blue font-semibold tracking-wide uppercase"
+							set:html={highlight}
+						/>
 					)}
 					{title && (
 						<h2
@@ -47,7 +50,9 @@ const {
 						/>
 					)}
 
-					{subtitle && <p class="max-w-3xl mx-auto sm:text-center text-xl text-slate-400" set:html={subtitle} />}
+					{subtitle && (
+						<p class="max-w-3xl mx-auto sm:text-center text-xl text-slate-400" set:html={subtitle} />
+					)}
 				</div>
 			)
 		}
@@ -63,7 +68,7 @@ const {
 							{items.map(({ title: title2, description, icon }) => (
 								<div class="flex">
 									<div class="flex-shrink-0">
-										<div class="flex h-7 w-7 items-center justify-center bg-primary text-gray-50">
+										<div class="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-gray-50">
 											<Icon name={icon ? icon : 'tabler:check'} class="w-5 h-5" />
 										</div>
 									</div>
@@ -85,7 +90,7 @@ const {
 								<Fragment set:html={image} />
 							) : (
 								<Picture
-									class="mx-auto w-full bg-gray-500"
+									class="mx-auto w-full rounded-lg bg-gray-500 shadow-lg"
 									width={500}
 									height={500}
 									widths={[400, 768]}
