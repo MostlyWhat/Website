@@ -63,9 +63,9 @@ import Hero from '~/components/widgets/Hero.astro';
 		const not_found = document.querySelector('#not_found');
 		const not_found_header = document.querySelector('#not_found_header');
 		const not_found_hint = document.querySelector('#not_found_hint');
-	
+
 		results_element.style.display = 'none';
-	
+
 		search_anchor.addEventListener('click', (e) => {
 			if (search_element.value.trim() === '') {
 				e.preventDefault();
@@ -74,7 +74,7 @@ import Hero from '~/components/widgets/Hero.astro';
 				search_anchor.classList.remove('btn-quaternary');
 			}
 		});
-	
+
 		search_element.addEventListener('input', () => {
 			const has_value = search_element.value.trim() !== '';
 			if (has_value) {
@@ -85,19 +85,19 @@ import Hero from '~/components/widgets/Hero.astro';
 				search_anchor.classList.remove('btn-quaternary');
 			}
 		});
-	
+
 		search_element.addEventListener('input', async (e) => {
 			if (e.target.dataset.loaded !== 'true') {
 				e.target.dataset.loaded = 'true';
 				window.pagefind = await import('/pagefind/pagefind.js');
 			}
-	
+
 			const search = await window.pagefind.search(e.target.value);
 			search_results.innerHTML = '';
 			const searchQuery = search_element.value.trim();
 			results_element.style.display = searchQuery ? 'block' : 'none';
 			const displayedURLs = [];
-	
+
 			if (searchQuery && search.results.length === 0) {
 				const notFoundHeaders = [
 					'Mission Report: No Results Found',
@@ -144,28 +144,47 @@ import Hero from '~/components/widgets/Hero.astro';
 					'Revisit your search query and approach it from a different angle.',
 					'Consider exploring alternative sources or references for the desired information.',
 				];
-				
+
 				const randomNotFoundHeader = notFoundHeaders[Math.floor(Math.random() * notFoundHeaders.length)];
 				const randomNotFoundHint = notFoundHints[Math.floor(Math.random() * notFoundHints.length)];
-				
+
 				not_found_header.innerHTML = randomNotFoundHeader;
 				not_found_hint.innerHTML = randomNotFoundHint;
 				not_found.style.display = 'block';
 			} else {
+				not_found.style.display = 'none';
+
+				const pageMap = new Map();
+
 				for (const result of search.results) {
 					const data = await result.data();
 					const url = data.url;
-					if (displayedURLs.includes(url)) {
-						continue;
+					const displayedURL = displayedURLs.find((displayedURL) => displayedURL === url);
+
+					if (displayedURL) {
+						const section = pageMap.get(url);
+						section.innerHTML += `
+				  <div>
+					<h4 class="text-xl pt-2">${data.meta.title}</h4>
+					<p>${data.excerpt}</p>
+				  </div>
+				`;
+					} else {
+						displayedURLs.push(url);
+						const section = document.createElement('div');
+						section.classList.add('p-4');
+						section.innerHTML = `
+				  <a href="${data.url}" class="btn-quaternary p-6">
+					<h3 class="text-3xl pb-2">${data.meta.title}</h3>
+					<div>
+					  <h4 class="text-xl pt-2">${data.meta.title}</h4>
+					  <p>${data.excerpt}</p>
+					</div>
+				  </a>
+				`;
+						search_results.appendChild(section);
+						pageMap.set(url, section.querySelector('div'));
 					}
-					displayedURLs.push(url);
-					search_results.innerHTML += `
-						<div class="p-4">
-								<a href="${data.url}" class="btn-quaternary p-6">
-									<h3 class="text-3xl pb-2">${data.meta.title}</h3>
-									<p>${data.excerpt}</p>
-								</a>
-						</div>`;
 				}
 			}
 		});
