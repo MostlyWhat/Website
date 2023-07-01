@@ -52,23 +52,38 @@ const { post, url } = Astro.props;
 					</div>
 				)
 			}
-			<div class="flex justify-between flex-col sm:flex-row max-w-3xl mx-auto mt-0 mb-2 px-4 sm:px-6 sm:items-center">
-				<p>
-					<Icon name="tabler:clock" class="w-4 h-4 inline-block -mt-0.5 text-gray-400" />
-					<time datetime={String(post.publishDate)}>{getFormattedDate(post.publishDate)}</time>
-					{
-						post.category && (
-							<>
-								{' '}
-								·{' '}
+			<div
+				class="flex justify-between flex-col sm:flex-row max-w-3xl mx-auto mt-0 mb-2 p-4 sm:px-6 sm:items-center border-4 border-accent-yellow"
+			>
+				
+				<ul>
+					<h2 class="text-xl md:text-2xl font-bold leading-tighter tracking-tighter font-heading pb-2">
+						Transmission Details
+					</h2>
+					<li>
+						Date of Transmission: <time datetime={String(post.publishDate)}>{getFormattedDate(post.publishDate)}</time>
+					</li>
+					<li>
+						Category: 
+						{
+							post.category && (
 								<a class="capitalize hover:underline" href={getPermalink(post.category, 'category')}>
+									{' '}
 									{post.category.replaceAll('-', ' ')}
 								</a>
-							</>
-						)
-					}
-					{post.readingTime && <> · {post.readingTime} min read</>}
-				</p>
+							)
+						}
+					</li>
+					<li>
+						{
+							post.readingTime && (
+								<p>
+									Estimated Reading Time: {post.readingTime} Minutes
+								</p>
+							)
+						}
+					</li>
+				</ul>
 			</div>
 		</header>
 		<div
