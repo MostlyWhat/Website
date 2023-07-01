@@ -5,8 +5,6 @@ import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
 import Content from '~/components/widgets/Content.astro';
 import LatestPosts from '~/components/blog/LatestPosts.astro';
-import FAQs from '~/components/widgets/FAQs.astro';
-import Stats from '~/components/widgets/Stats.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 
 const meta = {
@@ -25,7 +23,7 @@ const meta = {
 		image={{ src: import('~/assets/images/hero.png'), alt: 'Hero Image' }}
 	>
 		<Fragment slot="title">
-			<h1 class="text-5xl md:text-[3.50rem] font-bold leading-tighter tracking-tighter mb-4 font-heading">
+			<h1 class="text-8xl md:text-7xl font-bold leading-tighter tracking-tighter mb-4 font-heading">
 				<span class="text-accent-red">Design.</span>
 				<span class="text-accent-yellow">Develop.</span>
 				<span class="text-accent-blue">Deploy.</span>
@@ -41,19 +39,19 @@ const meta = {
 	<Content
 		items={[
 			{
-				title: 'Per ei quaeque sensibus',
+				title: 'User-Centered Design',
 				description:
-					'Ex usu illum iudico molestie. Pro ne agam facete mediocritatem, ridens labore facete mea ei. Pro id apeirian dignissim.',
+					'Creating interface-focused designs that promote effortless end-user interactions.',
 			},
 			{
-				title: 'Cu imperdiet posidonium sed',
+				title: 'Innovation & Customization',
 				description:
-					'Amet utinam aliquando ut mea, malis admodum ocurreret nec et, elit tibique cu nec. Nec ex maluisset inciderint, ex quis.',
+					'Tailoring exceptional design solutions aligned with client needs and current trends.',
 			},
 			{
-				title: 'Nulla omittam sadipscing mel ne',
+				title: 'Quality Control and Performance',
 				description:
-					'At sed possim oporteat probatus, justo graece ne nec, minim commodo legimus ut vix. Ut eos iudico quando soleat, nam modus.',
+					'Upholding robust, efficient designs through strict quality control mechanisms.',
 			},
 		]}
 		image={{
@@ -62,9 +60,67 @@ const meta = {
 		}}
 	>
 		<Fragment slot="content">
-			<h1 class="text-5xl font-bold tracking-tight text-accent-red mb-2">Design.</h1>
-			Ne dicta praesent ocurreret has, diam theophrastus at pro. Eos etiam regione ut, persius eripuit quo id. Sit te euismod
-			tacimates.
+			<h1 class="text-8xl font-bold tracking-tight text-accent-red mb-4">Design.</h1>
+			Pioneering the Way in Transforming Creative Concepts into User-Centered, Functional Software Solutions
+		</Fragment>
+	</Content>
+
+	<Content
+		isReversed
+		items={[
+			{
+				title: 'Adaptive Software Development',
+				description:
+					'Committed to crafting adaptable solutions for diverse client needs.',
+			},
+			{
+				title: 'Emerging Technology Integration',
+				description:
+					'Employing the latest technologies for future-oriented solutions.',
+			},
+			{
+				title: 'Code Quality and Performance',
+				description:
+					'Ensuring elite code standards for optimized application performance.',
+			},
+		]}
+		image={{
+			src: import('~/assets/images/caos.jpg'),
+			alt: 'Colorful Image',
+		}}
+	>
+		<Fragment slot="content">
+			<h1 class="text-8xl font-bold tracking-tight text-accent-yellow mb-4">Develop.</h1>
+			Leading the Industry with Advanced, Tailored Software Development & Robust Process Management 
+		</Fragment>
+	</Content>
+
+	<Content
+		items={[
+			{
+				title: 'Efficient Deployment Process',
+				description:
+					'Achieving swift and reliable software rollout to minimize business disruption.',
+			},
+			{
+				title: 'Seamless Integration',
+				description:
+					'Ensuring optimal compatibility with existing system infrastructure for uninterrupted operations.',
+			},
+			{
+				title: 'Post-Deployment Support',
+				description:
+					'Providing comprehensive and dedicated support post-deployment to continuously meet client needs.',
+			},
+		]}
+		image={{
+			src: import('~/assets/images/caos.jpg'),
+			alt: 'Colorful Image',
+		}}
+	>
+		<Fragment slot="content">
+			<h1 class="text-8xl font-bold tracking-tight text-accent-blue mb-4">Deploy.</h1>
+			Delivering Exceptional, High-Performance Software Solutions with Flawless Execution and Seamless Integration.
 		</Fragment>
 	</Content>
 
@@ -81,77 +137,21 @@ const meta = {
 		]}
 	/>
 
-	<!-- FAQs Widget ******************* -->
-
-	<FAQs
-		title="Frequently Asked Questions"
-		subtitle="Duis turpis dui, fringilla mattis sem nec, fringilla euismod neque. Morbi tincidunt lacus nec tortor scelerisque pulvinar."
-		highlight="FAQs"
-		items={[
-			[
-				{
-					question: 'What do I need to start?',
-					answer:
-						'Space, the final frontier. These are the voyages of the Starship Enterprise. Its five-year mission: to explore strange new worlds. Many say exploration is part of our destiny, but it’s actually our duty to future generations.',
-				},
-				{
-					question: 'How to install the Astro + Tailwind CSS template?',
-					answer:
-						"Well, the way they make shows is, they make one show. That show's called a pilot. Then they show that show to the people who make shows, and on the strength of that one show they decide if they're going to make more shows. Some pilots get picked and become television programs. Some don't, become nothing. She starred in one of the ones that became nothing.",
-				},
-				{
-					question: "What's something that you don't understand?",
-					answer:
-						"A flower in my garden, a mystery in my panties. Heart attack never stopped old Big Bear. I didn't even know we were calling him Big Bear.",
-				},
-			],
-			[
-				{
-					question: "What's an example of when you changed your mind?",
-					answer:
-						"Michael Knight a young loner on a crusade to champion the cause of the innocent. The helpless. The powerless in a world of criminals who operate above the law. Here he comes Here comes Speed Racer. He's a demon on wheels.",
-				},
-				{
-					question: 'What is something that you would like to try again?',
-					answer:
-						"A business big enough that it could be listed on the NASDAQ goes belly up. Disappears! It ceases to exist without me. No, you clearly don't know who you're talking to, so let me clue you in.",
-				},
-				{
-					question: 'If you could only ask one question to each person you meet, what would that question be?',
-					answer:
-						"This is not about revenge. This is about justice. A lot of things can change in twelve years, Admiral. Well, that's certainly good to know. About four years. I got tired of hearing how young I looked.",
-				},
-			],
-		]}
-	/>
-
-	<!-- Stats Widget ****************** -->
-
-	<Stats
-		items={[
-			{ name: 'Downloads', value: '132K' },
-			{ name: 'Stars', value: '24.8K' },
-			{ name: 'Forks', value: '10.3K' },
-			{ name: 'Users', value: '48.4K' },
-		]}
-	/>
-
 	<!-- CallToAction Widget *********** -->
 
 	<CallToAction
 		callToAction={{
-			text: 'Get template',
-			href: 'https://github.com/onwidget/astrowind',
-			icon: 'tabler:download',
+			text: 'Contact Me',
+			href: '/contact',
+			icon: 'tabler:satellite',
 		}}
 	>
 		<Fragment slot="title">
-			Astro + <br class="block sm:hidden" /><span class="sm:whitespace-nowrap">Tailwind CSS</span>
+			What are you waiting for?
 		</Fragment>
 
 		<Fragment slot="subtitle">
-			Be very surprised by these huge fake numbers you are seeing on this page. <br class="hidden md:inline" />Don't
-			waste more time! :P
+			Contact me now to get started on your next project.
 		</Fragment>
 	</CallToAction>
 </Layout>
