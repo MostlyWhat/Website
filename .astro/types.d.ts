@@ -53,14 +53,9 @@ declare module 'astro:content' {
 		| import('astro/zod').AnyZodObject
 		| import('astro/zod').ZodUnion<import('astro/zod').AnyZodObject[]>
 		| import('astro/zod').ZodDiscriminatedUnion<string, import('astro/zod').AnyZodObject[]>
-		| import('astro/zod').ZodIntersection<
-				import('astro/zod').AnyZodObject,
-				import('astro/zod').AnyZodObject
-		  >;
+		| import('astro/zod').ZodIntersection<import('astro/zod').AnyZodObject, import('astro/zod').AnyZodObject>;
 
-	type BaseSchema =
-		| BaseSchemaWithoutEffects
-		| import('astro/zod').ZodEffects<BaseSchemaWithoutEffects>;
+	type BaseSchema = BaseSchemaWithoutEffects | import('astro/zod').ZodEffects<BaseSchemaWithoutEffects>;
 
 	export type SchemaContext = { image: ImageFunction };
 
@@ -76,25 +71,16 @@ declare module 'astro:content' {
 
 	type CollectionConfig<S> = ContentCollectionConfig<S> | DataCollectionConfig<S>;
 
-	export function defineCollection<S extends BaseSchema>(
-		input: CollectionConfig<S>
-	): CollectionConfig<S>;
+	export function defineCollection<S extends BaseSchema>(input: CollectionConfig<S>): CollectionConfig<S>;
 
 	type AllValuesOf<T> = T extends any ? T[keyof T] : never;
-	type ValidContentEntrySlug<C extends keyof ContentEntryMap> = AllValuesOf<
-		ContentEntryMap[C]
-	>['slug'];
+	type ValidContentEntrySlug<C extends keyof ContentEntryMap> = AllValuesOf<ContentEntryMap[C]>['slug'];
 
-	export function getEntryBySlug<
-		C extends keyof ContentEntryMap,
-		E extends ValidContentEntrySlug<C> | (string & {})
-	>(
+	export function getEntryBySlug<C extends keyof ContentEntryMap, E extends ValidContentEntrySlug<C> | (string & {})>(
 		collection: C,
 		// Note that this has to accept a regular string too, for SSR
 		entrySlug: E
-	): E extends ValidContentEntrySlug<C>
-		? Promise<CollectionEntry<C>>
-		: Promise<CollectionEntry<C> | undefined>;
+	): E extends ValidContentEntrySlug<C> ? Promise<CollectionEntry<C>> : Promise<CollectionEntry<C> | undefined>;
 
 	export function getDataEntryById<C extends keyof DataEntryMap, E extends keyof DataEntryMap[C]>(
 		collection: C,
@@ -110,42 +96,22 @@ declare module 'astro:content' {
 		filter?: (entry: CollectionEntry<C>) => unknown
 	): Promise<CollectionEntry<C>[]>;
 
-	export function getEntry<
-		C extends keyof ContentEntryMap,
-		E extends ValidContentEntrySlug<C> | (string & {})
-	>(entry: {
+	export function getEntry<C extends keyof ContentEntryMap, E extends ValidContentEntrySlug<C> | (string & {})>(entry: {
 		collection: C;
 		slug: E;
-	}): E extends ValidContentEntrySlug<C>
-		? Promise<CollectionEntry<C>>
-		: Promise<CollectionEntry<C> | undefined>;
-	export function getEntry<
-		C extends keyof DataEntryMap,
-		E extends keyof DataEntryMap[C] | (string & {})
-	>(entry: {
+	}): E extends ValidContentEntrySlug<C> ? Promise<CollectionEntry<C>> : Promise<CollectionEntry<C> | undefined>;
+	export function getEntry<C extends keyof DataEntryMap, E extends keyof DataEntryMap[C] | (string & {})>(entry: {
 		collection: C;
 		id: E;
-	}): E extends keyof DataEntryMap[C]
-		? Promise<DataEntryMap[C][E]>
-		: Promise<CollectionEntry<C> | undefined>;
-	export function getEntry<
-		C extends keyof ContentEntryMap,
-		E extends ValidContentEntrySlug<C> | (string & {})
-	>(
+	}): E extends keyof DataEntryMap[C] ? Promise<DataEntryMap[C][E]> : Promise<CollectionEntry<C> | undefined>;
+	export function getEntry<C extends keyof ContentEntryMap, E extends ValidContentEntrySlug<C> | (string & {})>(
 		collection: C,
 		slug: E
-	): E extends ValidContentEntrySlug<C>
-		? Promise<CollectionEntry<C>>
-		: Promise<CollectionEntry<C> | undefined>;
-	export function getEntry<
-		C extends keyof DataEntryMap,
-		E extends keyof DataEntryMap[C] | (string & {})
-	>(
+	): E extends ValidContentEntrySlug<C> ? Promise<CollectionEntry<C>> : Promise<CollectionEntry<C> | undefined>;
+	export function getEntry<C extends keyof DataEntryMap, E extends keyof DataEntryMap[C] | (string & {})>(
 		collection: C,
 		id: E
-	): E extends keyof DataEntryMap[C]
-		? Promise<DataEntryMap[C][E]>
-		: Promise<CollectionEntry<C> | undefined>;
+	): E extends keyof DataEntryMap[C] ? Promise<DataEntryMap[C][E]> : Promise<CollectionEntry<C> | undefined>;
 
 	/** Resolve an array of entry references from the same collection */
 	export function getEntries<C extends keyof ContentEntryMap>(
@@ -188,59 +154,53 @@ declare module 'astro:content' {
 	>;
 
 	type ContentEntryMap = {
-		"legal": {
-"cookies.md": {
-	id: "cookies.md";
-  slug: "cookies";
-  body: string;
-  collection: "legal";
-  data: InferEntrySchema<"legal">
-} & { render(): Render[".md"] };
-"eula.md": {
-	id: "eula.md";
-  slug: "eula";
-  body: string;
-  collection: "legal";
-  data: InferEntrySchema<"legal">
-} & { render(): Render[".md"] };
-"privacy.md": {
-	id: "privacy.md";
-  slug: "privacy";
-  body: string;
-  collection: "legal";
-  data: InferEntrySchema<"legal">
-} & { render(): Render[".md"] };
-"terms.md": {
-	id: "terms.md";
-  slug: "terms";
-  body: string;
-  collection: "legal";
-  data: InferEntrySchema<"legal">
-} & { render(): Render[".md"] };
-};
-"post": {
-"the-next-phase-on-mostlywhat-systems-horizon.md": {
-	id: "the-next-phase-on-mostlywhat-systems-horizon.md";
-  slug: "the-next-phase-on-mostlywhat-systems-horizon";
-  body: string;
-  collection: "post";
-  data: InferEntrySchema<"post">
-} & { render(): Render[".md"] };
-};
-"products": {
-};
-"projects": {
-};
-"services": {
-};
-
+		legal: {
+			'cookies.md': {
+				id: 'cookies.md';
+				slug: 'cookies';
+				body: string;
+				collection: 'legal';
+				data: InferEntrySchema<'legal'>;
+			} & { render(): Render['.md'] };
+			'eula.md': {
+				id: 'eula.md';
+				slug: 'eula';
+				body: string;
+				collection: 'legal';
+				data: InferEntrySchema<'legal'>;
+			} & { render(): Render['.md'] };
+			'privacy.md': {
+				id: 'privacy.md';
+				slug: 'privacy';
+				body: string;
+				collection: 'legal';
+				data: InferEntrySchema<'legal'>;
+			} & { render(): Render['.md'] };
+			'terms.md': {
+				id: 'terms.md';
+				slug: 'terms';
+				body: string;
+				collection: 'legal';
+				data: InferEntrySchema<'legal'>;
+			} & { render(): Render['.md'] };
+		};
+		post: {
+			'the-next-phase-on-mostlywhat-systems-horizon.md': {
+				id: 'the-next-phase-on-mostlywhat-systems-horizon.md';
+				slug: 'the-next-phase-on-mostlywhat-systems-horizon';
+				body: string;
+				collection: 'post';
+				data: InferEntrySchema<'post'>;
+			} & { render(): Render['.md'] };
+		};
+		products: {};
+		projects: {};
+		services: {};
 	};
 
-	type DataEntryMap = {
-		
-	};
+	type DataEntryMap = {};
 
 	type AnyEntryMap = ContentEntryMap & DataEntryMap;
 
-	type ContentConfig = typeof import("../src/content/config");
+	type ContentConfig = typeof import('../src/content/config');
 }
