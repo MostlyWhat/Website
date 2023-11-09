@@ -1,13 +1,35 @@
 ---
-import { SITE } from '~/config.mjs';
-import { getCanonical, getHomePermalink } from '~/utils/permalinks';
+import { getCollection } from 'astro:content';
 import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
 
-const meta = {
-	title: SITE.title,
-	description: SITE.description,
-	canonical: getCanonical(getHomePermalink()),
-};
+const legalEntries = await getCollection('legal');
 ---
 
-<Layout {meta} />
+<Layout>
+	<Hero>
+		<Fragment slot="title">
+			<h1 class="text-5xl md:text-[3.50rem] font-bold leading-tighter tracking-tighter mb-4 font-heading">
+				<span class="text-accent-red">Legal</span>
+			</h1>
+		</Fragment>
+
+		<Fragment slot="subtitle">Find legal documents and statements from MostlyWhat Systems.</Fragment>
+	</Hero>
+	<div>
+		<div class="mx-auto px-6 sm:px-6 max-w-3xl content-center grid grid-row items-center mb-10">
+			<h1 class="text-5xl md:text-[3.50rem] font-bold leading-tighter tracking-tighter mb-4 font-heading p-4">
+				<span class="text-accent-red">Documents</span>
+			</h1>
+			{
+				legalEntries.map((legalEntry) => (
+					<ui class="p-4">
+						<a class="btn-tertiary" href={`/legal/${legalEntry.slug}`}>
+							{legalEntry.data.title}
+						</a>
+					</ui>
+				))
+			}
+		</div>
+	</div>
+</Layout>

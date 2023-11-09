@@ -1,0 +1,51 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '~/layouts/PageLayout.astro';
+
+export async function getStaticPaths() {
+	const legalEntries = await getCollection('legal');
+	return legalEntries.map((entry) => ({
+		params: { slug: entry.slug },
+		props: { entry },
+	}));
+}
+
+const { entry } = Astro.props;
+const fontColor = 'text-' + entry.data.color + '-500';
+const { Content } = await entry.render();
+---
+
+<Layout>
+	<section>
+		<div class="max-w-6xl mx-auto px-4 sm:px-6">
+			<div class="py-12 md:py-20">
+				<div class="text-center pb-4 md:pb-4 max-w-5xl mx-auto">
+					<h1
+						id="header"
+						class="text-5xl md:text-[3.50rem] font-bold leading-tighter tracking-tighter mb-4 font-heading text-accent-red"
+					>
+						{entry.data.title}
+					</h1>
+					<div class="max-w-3xl mx-auto">
+						<p class="text-xl text-slate-400">
+							{entry.data.description}
+						</p>
+						<p class="text-xl text-slate-400 pt-4">Last Updated on {entry.data.publishDate}</p>
+					</div>
+				</div>
+			</div>
+			<div
+			class="mx-auto prose prose-lg max-w-4xl prose-invert prose-headings:text-accent-red prose-md prose-headings:font-heading prose-headings:leading-tighter prose-headings:tracking-tighter prose-headings:font-bold prose-a:text-primary-400 prose-img:rounded-md prose-img:shadow-lg mt-8"
+			>
+				<Content />
+				<br>
+			</div>
+		</div>
+	</section>
+	<script define:vars={{ fontColor }}>
+		// get header element
+		const header = document.querySelector('header');
+		// apply class fontColor to header
+		header.classList.add(fontColor);
+	</script>
+</Layout>

@@ -1,23 +1,37 @@
 ---
 import '~/assets/styles/base.scss';
 
-import MetaTags from '~/components/core/MetaTags.astro';
-import BasicScripts from '~/components/core/BasicScripts.astro';
-import Space from '~/components/backgrounds/Space.astro';
-// import HeaderScripts from '~/components/core/HeaderScripts.astro';
+// Import DM fonts from Fontsource
+import '@fontsource/dm-sans';
+import '@fontsource/dm-mono';
+
+// Import Astro components
+import MetaTags from '~/components/common/MetaTags.astro';
+import BasicScripts from '~/components/common/BasicScripts.astro';
+import Background from '~/components/core/backgrounds/Space.astro';
+
+// The code is importing two objects, `MetaSEO` and `SITE`, from two different files.
+import { MetaSEO } from '~/types';
+import { SITE } from '~/config.mjs';
+
+export interface Props {
+	meta?: MetaSEO;
+}
 
 const { meta = {} } = Astro.props;
+const { language = 'en', textDirection = 'ltr' } = SITE;
 ---
 
 <!DOCTYPE html>
-<html lang="en" class="motion-safe:scroll-smooth font-light 2xl:text-[20px]">
+<html lang={language} dir={textDirection} class="motion-safe:scroll-smooth font-light 2xl:text-[20px]">
 	<head>
 		<MetaTags {...meta} />
 		<script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css" />
 	</head>
-	<body class="antialiased text-slate-300 tracking-tight bg-background scroll-pt-1">
-		<Space />
+
+	<body class="antialiased text-page text-slate-300 bg-background tracking-tight">
+		<Background />
 		<slot />
 		<BasicScripts />
 		<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.3/flowbite.min.js"></script>

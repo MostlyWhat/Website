@@ -1,27 +1,157 @@
 ---
 import { SITE } from '~/config.mjs';
-import { getCanonical, getHomePermalink } from '~/utils/permalinks';
 import Layout from '~/layouts/PageLayout.astro';
 
 import Hero from '~/components/widgets/Hero.astro';
-import Why from '~/components/widgets/Why.astro';
-import Features3 from '~/components/widgets/Features3.astro';
-import HighlightedPosts from '~/components/blog/HighlightedPosts.astro';
-import FAQs from '~/components/widgets/FAQs.astro';
-import Stats from '~/components/widgets/Stats.astro';
+import Content from '~/components/widgets/Content.astro';
+import LatestPosts from '~/components/blog/LatestPosts.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 
 const meta = {
 	title: SITE.title,
 	description: SITE.description,
-	canonical: getCanonical(getHomePermalink()),
+	dontUseTitleTemplate: true,
 };
 ---
 
 <Layout {meta}>
-	<Hero />
-	<Why />
-	<Features3 />
-	<HighlightedPosts />
-	<CallToAction />
+	<!-- Hero Widget ******************* -->
+
+	<Hero
+		callToAction={{ text: 'Contact Me', href: '/contact', icon: 'tabler:at' }}
+		callToAction2={{ text: 'Previous Projects', href: '/projects', icon: 'tabler:brand-github' }}
+		image={{ src: import('~/assets/images/hero.png'), alt: 'Hero Image' }}
+	>
+		<Fragment slot="title">
+			<h1 class="text-8xl md:text-7xl font-bold leading-tighter tracking-tighter mb-4 font-heading">
+				<span class="text-accent-red">Design.</span>
+				<span class="text-accent-yellow">Develop.</span>
+				<span class="text-accent-blue">Deploy.</span>
+			</h1>
+		</Fragment>
+
+		<Fragment slot="subtitle">
+			Hi I'm MostlyWhat! I am a Freelancer Developer and a Minimalist Designer currently based in Thailand. I am a
+			self-taught developer and designer who loves to create things that are fast, useful and beautiful.
+		</Fragment>
+	</Hero>
+
+	<Content
+		items={[
+			{
+				title: 'User-Centered Design',
+				description:
+					'Creating interface-focused designs that promote effortless end-user interactions.',
+			},
+			{
+				title: 'Innovation & Customization',
+				description:
+					'Tailoring exceptional design solutions aligned with client needs and current trends.',
+			},
+			{
+				title: 'Quality Control and Performance',
+				description:
+					'Upholding robust, efficient designs through strict quality control mechanisms.',
+			},
+		]}
+		image={{
+			src: import('~/assets/images/caos.jpg'),
+			alt: 'Colorful Image',
+		}}
+	>
+		<Fragment slot="content">
+			<h1 class="text-8xl font-bold tracking-tight text-accent-red mb-4">Design.</h1>
+			Pioneering the Way in Transforming Creative Concepts into User-Centered, Functional Software Solutions
+		</Fragment>
+	</Content>
+
+	<Content
+		isReversed
+		items={[
+			{
+				title: 'Adaptive Software Development',
+				description:
+					'Committed to crafting adaptable solutions for diverse client needs.',
+			},
+			{
+				title: 'Emerging Technology Integration',
+				description:
+					'Employing the latest technologies for future-oriented solutions.',
+			},
+			{
+				title: 'Code Quality and Performance',
+				description:
+					'Ensuring elite code standards for optimized application performance.',
+			},
+		]}
+		image={{
+			src: import('~/assets/images/caos.jpg'),
+			alt: 'Colorful Image',
+		}}
+	>
+		<Fragment slot="content">
+			<h1 class="text-8xl font-bold tracking-tight text-accent-yellow mb-4">Develop.</h1>
+			Leading the Industry with Advanced, Tailored Software Development & Robust Process Management 
+		</Fragment>
+	</Content>
+
+	<Content
+		items={[
+			{
+				title: 'Efficient Deployment Process',
+				description:
+					'Achieving swift and reliable software rollout to minimize business disruption.',
+			},
+			{
+				title: 'Seamless Integration',
+				description:
+					'Ensuring optimal compatibility with existing system infrastructure for uninterrupted operations.',
+			},
+			{
+				title: 'Post-Deployment Support',
+				description:
+					'Providing comprehensive and dedicated support post-deployment to continuously meet client needs.',
+			},
+		]}
+		image={{
+			src: import('~/assets/images/caos.jpg'),
+			alt: 'Colorful Image',
+		}}
+	>
+		<Fragment slot="content">
+			<h1 class="text-8xl font-bold tracking-tight text-accent-blue mb-4">Deploy.</h1>
+			Delivering Exceptional, High-Performance Software Solutions with Flawless Execution and Seamless Integration.
+		</Fragment>
+	</Content>
+
+	<!-- HighlightedPosts Widget ******* -->
+
+	<LatestPosts
+		title="Latest Transmissions"
+		information={`TBD
+		`}
+		postIds={[
+			'get-started-website-with-astro-tailwind-css.md',
+			'how-to-customize-astrowind-to-your-brand.md',
+			'useful-resources-to-create-websites.md',
+		]}
+	/>
+
+	<!-- CallToAction Widget *********** -->
+
+	<CallToAction
+		callToAction={{
+			text: 'Contact Me',
+			href: '/contact',
+			icon: 'tabler:satellite',
+		}}
+	>
+		<Fragment slot="title">
+			What are you waiting for?
+		</Fragment>
+
+		<Fragment slot="subtitle">
+			Contact me now to get started on your next project.
+		</Fragment>
+	</CallToAction>
 </Layout>

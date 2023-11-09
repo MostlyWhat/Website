@@ -1,31 +1,54 @@
 ---
 import { Icon } from 'astro-icon';
+
+interface CallToAction {
+	text: string;
+	href: string;
+	icon?: string;
+}
+
+export interface Props {
+	title?: string;
+	description?: string;
+	callToAction?: string | CallToAction;
+}
+
+const {
+	title = await Astro.slots.render('title'),
+	subtitle = await Astro.slots.render('subtitle'),
+	callToAction = await Astro.slots.render('callToAction'),
+} = Astro.props;
 ---
 
 <section class="relative">
-	<div class="max-w-6xl mx-auto px-4 sm:px-6">
+	<div class="mx-auto px-4 sm:px-6">
 		<div class="py-12 md:py-20">
-			<div class="max-w-3xl mx-auto text-center p-6 rounded-md shadow-xl dark:shadow-none">
-				<h2 class="text-4xl md:text-4xl font-bold leading-tighter tracking-tighter mb-4 font-heading">
-					<span class="text-accent-red">Let's</span>
-					<span class="text-accent-yellow">Work</span>
-					<span class="text-accent-blue">Together</span>
-				</h2>
-				<p class="text-xl text-gray-600 dark:text-slate-400 mb-4">
-					I am always looking for new projects to work on. If you have a project that you would like to discuss, please
-					get in touch. I'm always happy to help.
-				</p>
-
-				<div class="max-w-3xl mx-auto">
-					<div class="max-w-none px-6 flex flex-nowrap flex-col sm:flex-row sm:justify-center gap-4">
-						<div class="flex w-full sm:w-auto">
-							<a class="btn-primary" href="/contact">Contact&nbsp;Us</a>
-						</div>
-						<div class="flex w-full sm:w-auto">
-							<a class="btn-secondary" href="/projects">Previous&nbsp;Projects</a>
-						</div>
-					</div>
-				</div>
+			<div class="max-w-3xl mx-auto text-center p-6 border-4 border-accent-blue bg-primary-800 bg-opacity-10">
+				{
+					title && (
+						<h2
+							class="text-4xl md:text-4xl font-bold leading-tighter tracking-tighter mb-4 font-heading text-accent-blue"
+							set:html={title}
+						/>
+					)
+				}
+				{subtitle && <p class="text-xl text-slate-400" set:html={subtitle} />}
+				{
+					typeof callToAction === 'string' ? (
+						<Fragment set:html={callToAction} />
+					) : (
+						callToAction &&
+						callToAction.text &&
+						callToAction.href && (
+							<div class="mt-6 max-w-xs mx-auto">
+								<a class="btn btn-secondary w-full sm:w-auto" href={callToAction.href} target="_blank" rel="noopener">
+									{callToAction.icon && <Icon name={callToAction.icon} class="w-5 h-5 mr-1 -ml-1.5" />}
+									{callToAction.text}
+								</a>
+							</div>
+						)
+					)
+				}
 			</div>
 		</div>
 	</div>

@@ -1,0 +1,16 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+---
+
+<Layout>
+	<Hero>
+		<Fragment slot="title">
+			<h1 class="text-5xl md:text-[3.50rem] font-bold leading-tighter tracking-tighter mb-4 font-heading">
+				<span class="text-accent-red">Report</span>
+			</h1>
+		</Fragment>
+
+		<Fragment slot="subtitle">Help me fix the website with bug reports or unexpected behaviors!</Fragment>
+	</Hero>
+</Layout>

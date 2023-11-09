@@ -1,0 +1,59 @@
+---
+import { BLOG } from '~/config.mjs';
+
+import Layout from '~/layouts/PageLayout.astro';
+import SinglePost from '~/components/blog/SinglePost.astro';
+import ToBlogLink from '~/components/blog/ToBlogLink.astro';
+
+import { getCanonical, getPermalink } from '~/utils/permalinks';
+import { fetchPosts } from '~/utils/blog';
+import { findImage } from '~/utils/images';
+
+export async function getStaticPaths() {
+	if (BLOG?.disabled || BLOG?.post?.disabled) return [];
+	return (await fetchPosts()).map((post) => ({
+		params: {
+			blog: post.permalink,
+		},
+		props: { post },
+	}));
+}
+
+const { post } = Astro.props;
+const url = getCanonical(getPermalink(post.permalink, 'post'));
+
+const meta = {
+	title: post.title,
+	description: post.description,
+	canonical: post.canonical || url,
+	image: await findImage(post.image),
+	noindex: BLOG?.post?.noindex,
+	ogType: 'article',
+};
+---
+
+<Layout {meta}>
+	<SinglePost post={{ ...post, image: meta.image }} url={url} />
+	<ToBlogLink />
+	<hr class="solid mx-auto px-6 sm:px-6 max-w-3xl my-8 flex justify-between flex-col sm:flex-row" />
+	<div class="mx-auto px-6 sm:px-6 max-w-3xl mt-8 flex justify-between flex-col sm:flex-row">
+		<script
+			src="https://giscus.app/client.js"
+			data-repo="mostlywhat/website"
+			data-repo-id="MDEwOlJlcG9zaXRvcnk0MDE2MjY2MTg="
+			data-category="Announcements"
+			data-category-id="DIC_kwDOF_BV-s4CTM6q"
+			data-mapping="URL"
+			data-strict="0"
+			data-reactions-enabled="1"
+			data-emit-metadata="0"
+			data-input-position="top"
+			data-theme="dark_protanopia"
+			data-lang="en"
+			data-loading="lazy"
+			crossorigin="anonymous"
+			async
+		></script>
+	</div>
+	<br />
+</Layout>
