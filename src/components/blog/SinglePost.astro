@@ -57,14 +57,14 @@ const { post, url } = Astro.props;
 			>
 				
 				<ul>
-					<h2 class="text-xl md:text-2xl font-bold leading-tighter tracking-tighter font-heading pb-2">
+					<h2 class="text-xl md:text-2xl font-bold leading-tighter tracking-tighter font-heading pb-2 text-accent-yellow">
 						Transmission Details
 					</h2>
 					<li>
-						Date of Transmission: <time datetime={String(post.publishDate)}>{getFormattedDate(post.publishDate)}</time>
+						<span class="font-bold">Date of Transmission:</span> <time datetime={String(post.publishDate)}>{getFormattedDate(post.publishDate)}</time>
 					</li>
 					<li>
-						Category: 
+						<span class="font-bold">Category: </span>
 						{
 							post.category && (
 								<a class="capitalize hover:underline" href={getPermalink(post.category, 'category')}>
@@ -78,7 +78,7 @@ const { post, url } = Astro.props;
 						{
 							post.readingTime && (
 								<p>
-									Estimated Reading Time: {post.readingTime} Minutes
+									<span class="font-bold">Estimated Reading Time:</span> {post.readingTime} Minutes
 								</p>
 							)
 						}

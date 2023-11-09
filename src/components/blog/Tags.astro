@@ -16,11 +16,14 @@ const { tags, class: className = 'text-sm' } = Astro.props;
 	tags && Array.isArray(tags) && (
 		<ul class={className}>
 			{tags.map((tag) => (
-				<li class="bg-secondary-800 hover:bg-primary-800 hover:bg-opacity-10 bg-opacity-10 border-2 border-accent-yellow hover:border-accent-blue inline-block mr-2 mb-2 py-0.5 px-2 lowercase font-medium">
+				<li class="group bg-secondary-800 hover:bg-primary-800 hover:bg-opacity-10 bg-opacity-10 border-2 border-accent-yellow hover:border-accent-blue inline-block mr-2 mb-2 py-0.5 px-2 lowercase font-medium transition-colors duration-300">
 					{BLOG?.tag?.disabled ? (
 						tag
 					) : (
-						<a href={getPermalink(tag, 'tag')} class="text-accent-yellow hover:text-accent-blue">
+						<a
+							href={getPermalink(tag, 'tag')}
+							class="text-accent-yellow group-hover:text-accent-blue transition-colors duration-300"
+						>
 							{tag}
 						</a>
 					)}
