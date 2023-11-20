@@ -3,68 +3,86 @@ import { fileURLToPath } from 'url';
 
 import { defineConfig } from 'astro/config';
 
-import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
-import image from '@astrojs/image';
+import tailwind from '@astrojs/tailwind';
 import mdx from '@astrojs/mdx';
 import partytown from '@astrojs/partytown';
 import compress from 'astro-compress';
+import icon from 'astro-icon';
+import tasks from './src/utils/tasks';
+
 import { readingTimeRemarkPlugin } from './src/utils/frontmatter.mjs';
 
-import { SITE } from './src/config.mjs';
+import { ANALYTICS, SITE } from './src/utils/config.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const whenExternalScripts = (items = []) =>
-	SITE.googleAnalyticsId ? (Array.isArray(items) ? items.map((item) => item()) : [items()]) : [];
+  ANALYTICS.vendors.googleAnalytics.id && ANALYTICS.vendors.googleAnalytics.partytown
+    ? Array.isArray(items)
+      ? items.map((item) => item())
+      : [items()]
+    : [];
 
 export default defineConfig({
-	site: SITE.origin,
-	base: SITE.basePathname,
-	trailingSlash: SITE.trailingSlash ? 'always' : 'never',
+  site: SITE.site,
+  base: SITE.base,
+  trailingSlash: SITE.trailingSlash ? 'always' : 'never',
 
-	output: 'static',
+  output: 'static',
 
-	markdown: {
-		remarkPlugins: [readingTimeRemarkPlugin],
-	},
+  integrations: [
+    tailwind({
+      applyBaseStyles: false,
+    }),
+    sitemap(),
+    mdx(),
+    icon({
+      include: {
+        tabler: ['*'],
+        'flat-color-icons': [
+          'template',
+          'gallery',
+          'approval',
+          'document',
+          'advertising',
+          'currency-exchange',
+          'voice-presentation',
+          'business-contact',
+          'database',
+        ],
+      },
+    }),
 
-	integrations: [
-		tailwind({
-			config: {
-				applyBaseStyles: false,
-			},
-		}),
-		sitemap(),
-		image({
-			serviceEntryPoint: '@astrojs/image/sharp',
-		}),
-		mdx(),
+    ...whenExternalScripts(() =>
+      partytown({
+        config: { forward: ['dataLayer.push'] },
+      })
+    ),
 
-		...whenExternalScripts(() =>
-			partytown({
-				config: { forward: ['dataLayer.push'] },
-			})
-		),
+    tasks(),
 
-		compress({
-			css: true,
-			html: {
-				removeAttributeQuotes: false,
-			},
-			img: false,
-			js: true,
-			svg: false,
+    compress({
+      CSS: true,
+      HTML: {
+        removeAttributeQuotes: false,
+      },
+      Image: false,
+      JavaScript: true,
+      SVG: true,
+      Logger: 1,
+    }),
+  ],
 
-			logger: 1,
-		}),
-	],
+  markdown: {
+    remarkPlugins: [readingTimeRemarkPlugin],
+  },
 
-	vite: {
-		resolve: {
-			alias: {
-				'~': path.resolve(__dirname, './src'),
-			},
-		},
-	},
+  vite: {
+    resolve: {
+      alias: {
+        '~': path.resolve(__dirname, './src'),
+      },
+    },
+  },
 });

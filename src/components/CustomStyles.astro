@@ -1,0 +1,60 @@
+---
+import '@fontsource-variable/inter';
+
+// 'DM Sans'
+// Nunito
+// Dosis
+// Outfit
+// Roboto
+// Literata
+// 'IBM Plex Sans'
+// Karla
+// Poppins
+// 'Fira Sans'
+// 'Libre Franklin'
+// Inconsolata
+// Raleway
+// Oswald
+// 'Space Grotesk'
+// Urbanist
+---
+
+<style is:inline is:global>
+  :root {
+    --trajectory-font-sans: 'Inter Variable';
+    --trajectory-font-serif: var(--trajectory-font-sans);
+    --trajectory-font-heading: var(--trajectory-font-sans);
+
+    --trajectory-color-primary: rgb(30 64 175);
+    --trajectory-color-secondary: rgb(30 58 138);
+    --trajectory-color-accent: rgb(109 40 217);
+
+    --trajectory-color-text-heading: rgb(0 0 0); 
+    --trajectory-color-text-default: rgb(16 16 16);
+    --trajectory-color-text-muted: rgb(16 16 16 / 66%);
+    --trajectory-color-bg-page: rgb(255 255 255);
+
+    --trajectory-color-bg-page-dark: rgb(3 6 32);
+
+    ::selection {background-color: lavender;}
+
+  }
+
+  .dark {
+    --trajectory-font-sans: 'Inter Variable';
+    --trajectory-font-serif: var(--trajectory-font-sans);
+    --trajectory-font-heading: var(--trajectory-font-sans);
+
+    --trajectory-color-primary: rgb(30 64 175);
+    --trajectory-color-secondary: rgb(30 58 138);
+    --trajectory-color-accent: rgb(109 40 217);
+
+    --trajectory-color-text-heading: rgb(0 0 0); 
+    --trajectory-color-text-default: rgb(229 236 246);
+    --trajectory-color-text-muted: rgb(229 236 246 / 66%);
+    --trajectory-color-bg-page: var(--trajectory-color-bg-page-dark);
+
+    ::selection {background-color: black; color: snow}
+
+  }
+</style>

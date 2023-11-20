@@ -1,76 +1,23 @@
 const defaultTheme = require('tailwindcss/defaultTheme');
 
 module.exports = {
-	content: ['./src/**/*.{astro,html,js,jsx,md,svelte,ts,tsx,vue}'],
-	theme: {
-		extend: {
-			colors: {
-				primary: {
-					50: '#f2f9ff',
-					100: '#e6f4ff',
-					200: '#cfeaff',
-					300: '#b5e0ff',
-					400: '#8fd6ff',
-					500: '#00A3FF',
-					600: '#0088D8',
-					700: '#006EB3',
-					800: '#00538D',
-					900: '#003966',
-				},
-				secondary: {
-					50: '#f9f9f9',
-					100: '#f3f3f3',
-					200: '#e6e6e6',
-					300: '#d9d9d9',
-					400: '#bfbfbf',
-					500: '#FFD500',
-					600: '#d8b800',
-					700: '#b39900',
-					800: '#8d7a00',
-					900: '#665c00',
-				},
-				tertiary: {
-					50: '#f9f9f9',
-					100: '#f3f3f3',
-					200: '#e6e6e6',
-					300: '#d9d9d9',
-					400: '#bfbfbf',
-					500: '#EF4444',
-					600: '#d83a3a',
-					700: '#b32d2d',
-					800: '#8d2121',
-					900: '#661616',
-				},
-				// Quaternary is Green
-				quaternary: {
-					50: '#f2f9ff',
-					100: '#e6f4ff',
-					200: '#cfeaff',
-					300: '#b5e0ff',
-					400: '#8fd6ff',
-					500: '#A5BE00',
-					600: '#8dab00',
-					700: '#738c00',
-					800: '#5a6d00',
-					900: '#3f4f00',
-				},
-				accent: {
-					yellow: '#FFD500',
-					blue: '#00A3FF',
-					red: '#EF4444',
-					green: '#A5BE00',
-				},
-				success: '#A5BE00',
-				warning: '#FF6700',
-				danger: '#DD1C1A',
-				background: '#000814',
-			},
-			fontFamily: {
-				sans: ['DM Sans', ...defaultTheme.fontFamily.sans, 'sans-serif'],
-				mono: ['DM Mono', ...defaultTheme.fontFamily.mono, 'monospace'],
-			},
-		},
-	},
-	plugins: [require('@tailwindcss/typography')],
-	darkMode: 'class',
+  content: ['./src/**/*.{astro,html,js,jsx,md,svelte,ts,tsx,vue}'],
+  theme: {
+    extend: {
+      colors: {
+        primary: 'var(--trajectory-color-primary)',
+        secondary: 'var(--trajectory-color-secondary)',
+        accent: 'var(--trajectory-color-accent)',
+        default: 'var(--trajectory-color-text-default)',
+        muted: 'var(--trajectory-color-text-muted)',
+      },
+      fontFamily: {
+        sans: ['var(--trajectory-font-sans)', ...defaultTheme.fontFamily.sans],
+        serif: ['var(--trajectory-font-serif)', ...defaultTheme.fontFamily.serif],
+        heading: ['var(--trajectory-font-heading)', ...defaultTheme.fontFamily.sans],
+      },
+    },
+  },
+  plugins: [require('@tailwindcss/typography')],
+  darkMode: 'class',
 };

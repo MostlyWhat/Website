@@ -1,351 +1,228 @@
 ---
-import { SITE } from '~/config.mjs';
+import Features2 from '~/components/widgets/Features2.astro';
+import Features3 from '~/components/widgets/Features3.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Stats from '~/components/widgets/Stats.astro';
+import Steps2 from '~/components/widgets/Steps2.astro';
 import Layout from '~/layouts/PageLayout.astro';
 
-import Hero from '~/components/widgets/Hero.astro';
-import Note from '~/components/widgets/Note.astro';
-import Features from '~/components/widgets/Features.astro';
-import Features2 from '~/components/widgets/Features2.astro';
-import Steps from '~/components/widgets/Steps.astro';
-import Content from '~/components/widgets/Content.astro';
-import LatestPosts from '~/components/blog/LatestPosts.astro';
-import FAQs from '~/components/widgets/FAQs.astro';
-import Stats from '~/components/widgets/Stats.astro';
-import CallToAction from '~/components/widgets/CallToAction.astro';
-
-const meta = {
-	title: SITE.title,
-	description: SITE.description,
-	dontUseTitleTemplate: true,
+const metadata = {
+  title: 'About us',
 };
 ---
 
-<Layout {meta}>
-	<!-- Hero Widget ******************* -->
+<Layout metadata={metadata}>
+  <!-- Hero Widget ******************* -->
 
-	<Hero
-		callToAction={{ text: 'Contact Me', href: '/contact', icon: 'tabler:at' }}
-		callToAction2={{ text: 'Previous Projects', href: '/projects', icon: 'tabler:brand-github' }}
-		image={{ src: import('~/assets/images/hero.png'), alt: 'Hero Image' }}
-	>
-		<Fragment slot="title">
-			<h1 class="text-5xl md:text-[3.50rem] font-bold leading-tighter tracking-tighter mb-4 font-heading">
-				<span class="text-accent-red">Design.</span>
-				<span class="text-accent-yellow">Develop.</span>
-				<span class="text-accent-blue">Deploy.</span>
-			</h1>
-		</Fragment>
+  <Hero
+    tagline="About us"
+    image={{
+      src: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      alt: 'Caos Image',
+    }}
+  >
+    <Fragment slot="title">
+      Elevate your online presence with our <br />
+      <span class="text-accent dark:text-white highlight"> Beautiful Website Templates</span>
+    </Fragment>
 
-		<Fragment slot="subtitle">
-			Hi I'm MostlyWhat! I am a Freelancer Developer and a Minimalist Designer currently based in Thailand. I am a
-			self-taught developer and designer who loves to create things that are fast, useful and beautiful.
-		</Fragment>
-	</Hero>
+    <Fragment slot="subtitle">
+      Donec efficitur, ipsum quis congue luctus, mauris magna convallis mauris, eu auctor nisi lectus non augue. Donec
+      quis lorem non massa vulputate efficitur ac at turpis. Sed tincidunt ex a nunc convallis, et lobortis nisi tempus.
+      Suspendisse vitae nisi eget tortor luctus maximus sed non lectus.
+    </Fragment>
+  </Hero>
 
-	<!-- Note Widget ******************* -->
+  <!-- Stats Widget ****************** -->
 
-	<Note />
+  <Stats
+    title="Statistics about us"
+    stats={[
+      { title: 'Offices', amount: '4' },
+      { title: 'Employees', amount: '248' },
+      { title: 'Templates', amount: '12' },
+      { title: 'Awards', amount: '24' },
+    ]}
+  />
 
-	<!-- Features Widget *************** -->
+  <!-- Features3 Widget ************** -->
 
-	<Features
-		highlight="Features"
-		title="What you get with AstroWind"
-		subtitle="Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque rem aperiam, eaque ipsa quae."
-		items={[
-			[
-				{
-					title: 'Astro + Tailwind CSS Integration',
-					description:
-						'A seamless integration between two great frameworks that offer high productivity, performance and versatility.',
-					icon: 'tabler:brand-tailwind',
-				},
-				{
-					title: 'Ready-to-use Components',
-					description:
-						'Widgets made with Tailwind CSS ready to be used in Marketing Websites, SaaS, Blogs, Personal Profiles, Small Business...',
-					icon: 'tabler:components',
-				},
-				{
-					title: 'Best Practices',
-					description:
-						'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sagittis, quam nec venenatis lobortis, mi risus tempus nulla.',
-					icon: 'tabler:list-check',
-				},
-			],
-			[
-				{
-					title: 'Excellent Page Speed',
-					description:
-						'Having a good page speed impacts organic search ranking, improves user experience (UI/UX) and increase conversion rates.',
-					icon: 'tabler:rocket',
-				},
-				{
-					title: 'Search Engine Optimization (SEO)',
-					description:
-						'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sagittis, quam nec venenatis lobortis, mi risus tempus nulla.',
-					icon: 'tabler:arrows-right-left',
-				},
-				{
-					title: 'Open to new ideas and contributions',
-					description:
-						'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sagittis, quam nec venenatis lobortis, mi risus tempus nulla.',
-					icon: 'tabler:bulb',
-				},
-			],
-		]}
-	/>
+  <Features3
+    title="Our templates"
+    subtitle="Etiam scelerisque, enim eget vestibulum luctus, nibh mauris blandit nulla, nec vestibulum risus justo ut enim. Praesent lacinia diam et ante imperdiet euismod."
+    columns={3}
+    isBeforeContent={true}
+    items={[
+      {
+        title: 'Educational',
+        description:
+          'Morbi faucibus luctus quam, sit amet aliquet felis tempor id. Cras augue massa, ornare quis dignissim a, molestie vel nulla.',
+        icon: 'tabler:template',
+      },
+      {
+        title: 'Interior Design',
+        description:
+          'Vivamus porttitor, tortor convallis aliquam pretium, turpis enim consectetur elit, vitae egestas purus erat ac nunc nulla.',
+        icon: 'tabler:template',
+      },
+      {
+        title: 'Photography',
+        description:
+          'Duis sed lectus in nisl vehicula porttitor eget quis odio. Aliquam erat volutpat. Nulla eleifend nulla id sem fermentum.',
+        icon: 'tabler:template',
+      },
+    ]}
+  />
 
-	<!-- Content Widget **************** -->
+  <!-- Features3 Widget ************** -->
 
-	<Content
-		highlight="Inside template"
-		title="And what's inside? ..."
-		items={[
-			{
-				title: 'Per ei quaeque sensibus',
-				description:
-					'Ex usu illum iudico molestie. Pro ne agam facete mediocritatem, ridens labore facete mea ei. Pro id apeirian dignissim.',
-			},
-			{
-				title: 'Cu imperdiet posidonium sed',
-				description:
-					'Amet utinam aliquando ut mea, malis admodum ocurreret nec et, elit tibique cu nec. Nec ex maluisset inciderint, ex quis.',
-			},
-			{
-				title: 'Nulla omittam sadipscing mel ne',
-				description:
-					'At sed possim oporteat probatus, justo graece ne nec, minim commodo legimus ut vix. Ut eos iudico quando soleat, nam modus.',
-			},
-		]}
-		image={{
-			src: import('~/assets/images/caos.jpg'),
-			alt: 'Colorful Image',
-		}}
-	>
-		<Fragment slot="content">
-			<h3 class="text-2xl font-bold tracking-tight text-white sm:text-3xl mb-2">Ad vix debet docendi</h3>
-			Ne dicta praesent ocurreret has, diam theophrastus at pro. Eos etiam regione ut, persius eripuit quo id. Sit te euismod
-			tacimates.
-		</Fragment>
-	</Content>
+  <Features3
+    columns={3}
+    isAfterContent={true}
+    items={[
+      {
+        title: 'E-commerce',
+        description:
+          'Rutrum non odio at vehicula. Proin ipsum justo, dignissim in vehicula sit amet, dignissim id quam. Sed ac tincidunt sapien.',
+        icon: 'tabler:template',
+      },
+      {
+        title: 'Blog',
+        description:
+          'Nullam efficitur volutpat sem sed fringilla. Suspendisse et enim eu orci volutpat laoreet ac vitae libero.',
+        icon: 'tabler:template',
+      },
+      {
+        title: 'Business',
+        description:
+          'Morbi et elit finibus, facilisis justo ut, pharetra ipsum. Donec efficitur, ipsum quis congue luctus, mauris magna.',
+        icon: 'tabler:template',
+      },
+      {
+        title: 'Branding',
+        description:
+          'Suspendisse vitae nisi eget tortor luctus maximus sed non lectus. Cras malesuada pretium placerat. Nullam venenatis dolor a ante rhoncus.',
+        icon: 'tabler:template',
+      },
+      {
+        title: 'Medical',
+        description:
+          'Vestibulum malesuada lacus id nibh posuere feugiat. Nam volutpat nulla a felis ultrices, id suscipit mauris congue. In hac habitasse platea dictumst.',
+        icon: 'tabler:template',
+      },
+      {
+        title: 'Fashion Design',
+        description:
+          'Maecenas eu tellus eget est scelerisque lacinia et a diam. Aliquam velit lorem, vehicula id fermentum et, rhoncus et purus.',
+        icon: 'tabler:template',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80',
+      alt: 'Colorful Image',
+    }}
+  />
 
-	<!-- Content Widget **************** -->
+  <!-- Steps2 Widget ****************** -->
 
-	<Content
-		isReversed
-		isAfterContent
-		items={[
-			{
-				title: 'Per ei quaeque sensibus',
-			},
-			{
-				title: 'Cu imperdiet posidonium sed',
-			},
-			{
-				title: 'Nulla omittam sadipscing mel ne',
-			},
-			{
-				title: 'Per ei quaeque sensibus',
-			},
-			{
-				title: 'Cu imperdiet posidonium sed',
-			},
-			{
-				title: 'Nulla omittam sadipscing mel ne',
-			},
-		]}
-		image={{
-			src: import('~/assets/images/vintage.jpg'),
-			alt: 'Vintage Image',
-		}}
-	/>
+  <Steps2
+    title="Our values"
+    subtitle="Maecenas eu tellus eget est scelerisque lacinia et a diam. Aliquam velit lorem, vehicula id fermentum et, rhoncus et purus. Nulla facilisi. Vestibulum malesuada lacus."
+    items={[
+      {
+        title: 'Customer-centric approach',
+        description:
+          'Donec id nibh neque. Quisque et fermentum tortor. Fusce vitae dolor a mauris dignissim commodo. Ut eleifend luctus condimentum.',
+      },
+      {
+        title: 'Constant Improvement',
+        description:
+          'Phasellus laoreet fermentum venenatis. Vivamus dapibus pulvinar arcu eget mattis. Fusce eget mauris leo.',
+      },
+      {
+        title: 'Ethical Practices',
+        description:
+          'Vestibulum imperdiet libero et lectus molestie, et maximus augue porta. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
+      },
+    ]}
+  />
 
-	<!-- Steps Widget ****************** -->
+  <!-- Steps2 Widget ****************** -->
 
-	<Steps
-		title="Get your dream website up and running in no time with AstroWind."
-		items={[
-			{
-				title: 'Step 1: <span class="font-medium">Download</span>',
-				description:
-					'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sagittis, quam nec venenatis lobortis, mirisus tempus nulla, sed porttitor est nibh at nulla. Praesent placerat enim ut ex tincidunt vehicula.',
-				icon: 'tabler:package',
-			},
-			{
-				title: 'Step 2: <span class="font-medium">Add content</em>',
-				description:
-					'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sagittis, quam nec venenatis lobortis, mirisus tempus nulla, sed porttitor est nibh at nulla.',
-				icon: 'tabler:letter-case',
-			},
-			{
-				title: 'Step 3: <span class="font-medium">Customize styles</span>',
-				description:
-					'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sagittis, quam nec venenatis lobortis, mirisus tempus nulla, sed porttitor est nibh at nulla. Praesent placerat enim ut ex tincidunt vehicula. Fusce sit amet dui tellus.',
-				icon: 'tabler:paint',
-			},
-			{
-				title: 'Ready!',
-				icon: 'tabler:check',
-			},
-		]}
-		image={{
-			src: import('~/assets/images/creativity.jpg'),
-			alt: 'Steps image',
-		}}
-	/>
+  <Steps2
+    title="Achievements"
+    subtitle="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sagittis, quam nec venenatis lobortis, mi risus tempus nulla, sed porttitor est nibh at nulla."
+    isReversed={true}
+    callToAction={{
+      text: 'See more',
+      href: '/',
+    }}
+    items={[
+      {
+        title: 'Global reach',
+        description: 'Nam malesuada urna in enim imperdiet tincidunt. Phasellus non tincidunt nisi, at elementum mi.',
+        icon: 'tabler:globe',
+      },
+      {
+        title: 'Positive customer feedback and reviews',
+        description:
+          'Cras semper nulla leo, eget laoreet erat cursus sed. Praesent faucibus massa in purus iaculis dictum.',
+        icon: 'tabler:message-star',
+      },
+      {
+        title: 'Awards and recognition as industry experts',
+        description:
+          'Phasellus lacinia cursus velit, eu malesuada magna pretium eu. Etiam aliquet tellus purus, blandit lobortis ex rhoncus vitae.',
+        icon: 'tabler:award',
+      },
+    ]}
+  />
 
-	<!-- Features2 Widget ************** -->
+  <!-- Features2 Widget ************** -->
 
-	<Features2
-		title="Most used widgets"
-		subtitle="Provides frequently used components for building websites using Tailwind CSS"
-		highlight="Components"
-		items={[
-			{
-				title: 'Headers',
-				description:
-					'In general, Headers contain information that makes it easier for visitors to interact with the website.',
-				icon: 'flat-color-icons:template',
-			},
-			{
-				title: 'Heros',
-				description:
-					'If you want your website to get more than its fair share of visitors, the Hero section needs to be stellar.',
-				icon: 'flat-color-icons:gallery',
-			},
-			{
-				title: 'Features',
-				description:
-					'Display your product in action and how the Features actually create a solution for your target customer.',
-				icon: 'flat-color-icons:todo-list',
-			},
-			{
-				title: 'Content',
-				description:
-					'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.',
-				icon: 'flat-color-icons:document',
-			},
-			{
-				title: 'Call-to-Action',
-				description:
-					'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.',
-				icon: 'flat-color-icons:advertising',
-			},
-			{
-				title: 'Pricing',
-				description:
-					'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.',
-				icon: 'flat-color-icons:currency-exchange',
-			},
-			{
-				title: 'Testimonial',
-				description:
-					'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.',
-				icon: 'flat-color-icons:voice-presentation',
-			},
-			{
-				title: 'Contact',
-				description:
-					'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.',
-				icon: 'flat-color-icons:business-contact',
-			},
-			{
-				title: 'Footers',
-				description:
-					'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.',
-				icon: 'icon-park:page-template',
-			},
-		]}
-	/>
+  <Features2
+    title="Our locations"
+    tagline="Find us"
+    columns={4}
+    items={[
+      {
+        title: 'EE.UU',
+        description: '1234 Lorem Ipsum St, 12345, Miami',
+      },
+      {
+        title: 'Spain',
+        description: '5678 Lorem Ipsum St, 56789, Madrid',
+      },
+      {
+        title: 'Australia',
+        description: '9012 Lorem Ipsum St, 90123, Sydney',
+      },
+      {
+        title: 'Brazil',
+        description: '3456 Lorem Ipsum St, 34567, São Paulo',
+      },
+    ]}
+  />
 
-	<!-- HighlightedPosts Widget ******* -->
+  <!-- Features2 Widget ************** -->
 
-	<LatestPosts
-		title="Find out more content in our Blog"
-		information={`The blog is used to display AstroWind documentation.
-			Each new article will be an important step that you will need to know to be an expert in creating a website using Astro + Tailwind CSS.
-			Astro is a very interesting technology. Thanks.
-		`}
-		postIds={[
-			'get-started-website-with-astro-tailwind-css.md',
-			'how-to-customize-astrowind-to-your-brand.md',
-			'useful-resources-to-create-websites.md',
-			'astrowind-template-in-depth.md',
-		]}
-	/>
-
-	<!-- FAQs Widget ******************* -->
-
-	<FAQs
-		title="Frequently Asked Questions"
-		subtitle="Duis turpis dui, fringilla mattis sem nec, fringilla euismod neque. Morbi tincidunt lacus nec tortor scelerisque pulvinar."
-		highlight="FAQs"
-		items={[
-			[
-				{
-					question: 'What do I need to start?',
-					answer:
-						'Space, the final frontier. These are the voyages of the Starship Enterprise. Its five-year mission: to explore strange new worlds. Many say exploration is part of our destiny, but it’s actually our duty to future generations.',
-				},
-				{
-					question: 'How to install the Astro + Tailwind CSS template?',
-					answer:
-						"Well, the way they make shows is, they make one show. That show's called a pilot. Then they show that show to the people who make shows, and on the strength of that one show they decide if they're going to make more shows. Some pilots get picked and become television programs. Some don't, become nothing. She starred in one of the ones that became nothing.",
-				},
-				{
-					question: "What's something that you don't understand?",
-					answer:
-						"A flower in my garden, a mystery in my panties. Heart attack never stopped old Big Bear. I didn't even know we were calling him Big Bear.",
-				},
-			],
-			[
-				{
-					question: "What's an example of when you changed your mind?",
-					answer:
-						"Michael Knight a young loner on a crusade to champion the cause of the innocent. The helpless. The powerless in a world of criminals who operate above the law. Here he comes Here comes Speed Racer. He's a demon on wheels.",
-				},
-				{
-					question: 'What is something that you would like to try again?',
-					answer:
-						"A business big enough that it could be listed on the NASDAQ goes belly up. Disappears! It ceases to exist without me. No, you clearly don't know who you're talking to, so let me clue you in.",
-				},
-				{
-					question: 'If you could only ask one question to each person you meet, what would that question be?',
-					answer:
-						"This is not about revenge. This is about justice. A lot of things can change in twelve years, Admiral. Well, that's certainly good to know. About four years. I got tired of hearing how young I looked.",
-				},
-			],
-		]}
-	/>
-
-	<!-- Stats Widget ****************** -->
-
-	<Stats
-		items={[
-			{ name: 'Downloads', value: '132K' },
-			{ name: 'Stars', value: '24.8K' },
-			{ name: 'Forks', value: '10.3K' },
-			{ name: 'Users', value: '48.4K' },
-		]}
-	/>
-
-	<!-- CallToAction Widget *********** -->
-
-	<CallToAction
-		callToAction={{
-			text: 'Get template',
-			href: 'https://github.com/onwidget/astrowind',
-			icon: 'tabler:download',
-		}}
-	>
-		<Fragment slot="title">
-			Astro + <br class="block sm:hidden" /><span class="sm:whitespace-nowrap">Tailwind CSS</span>
-		</Fragment>
-
-		<Fragment slot="subtitle">
-			Be very surprised by these huge fake numbers you are seeing on this page. <br class="hidden md:inline" />Don't
-			waste more time! :P
-		</Fragment>
-	</CallToAction>
+  <Features2
+    title="Technical Support"
+    tagline="Contact us"
+    columns={2}
+    items={[
+      {
+        title: 'Chat with us',
+        description:
+          'Integer luctus laoreet libero, auctor varius purus rutrum sit amet. Ut nec molestie nisi, quis eleifend mi.',
+        icon: 'tabler:messages',
+      },
+      {
+        title: 'Call us',
+        description:
+          'Mauris faucibus finibus orci, in posuere elit viverra non. In hac habitasse platea dictumst. Cras lobortis metus a hendrerit congue.',
+        icon: 'tabler:headset',
+      },
+    ]}
+  />
 </Layout>
