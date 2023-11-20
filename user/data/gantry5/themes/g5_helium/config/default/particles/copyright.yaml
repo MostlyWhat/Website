@@ -1,0 +1,11 @@
+enabled: '1'
+date:
+  start: '2018'
+  end: now
+owner: 'MostlyWhat Systems'
+link: ''
+target: _blank
+additional:
+  text: 'All Rights Reserved.'
+css:
+  class: ''

@@ -1,0 +1,8 @@
+1699604736
+a:2:{s:7:"content";s:421:"<h3 style="color:red">ERROR: <code>modular/hero.html.twig</code> template not found for page: <code>/home/_hero</code></h3>
+<h1>Homepage Hero</h1>
+<h1>Say Hello to Grav</h1>
+<h2>Fast, Simple, Powerful...</h2>
+<p>Grav is a modern flat-file CMS system that focuses on making web development fun again.</p>
+<p><a href="https://learn.getgrav.org" class="btn btn-primary btn-lg" target="_blank">Read the documentation</a></p>
+";s:12:"content_meta";N;}

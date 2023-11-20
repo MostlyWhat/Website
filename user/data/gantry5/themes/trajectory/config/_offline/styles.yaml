@@ -1,0 +1,6 @@
+preset: preset1
+base:
+  background: '#000814'
+  text-color: '#ffffff'
+header:
+  background-image: 'gantry-media://header/moon.jpg'

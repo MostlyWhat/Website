@@ -1,0 +1,16 @@
+1699000718
+O:39:"Grav\Common\Flex\Types\Pages\PageObject":4:{s:4:"type";s:5:"pages";s:3:"key";s:10:"home/_hero";s:8:"elements";a:4:{s:4:"root";b:0;s:6:"header";a:4:{s:5:"title";s:13:"Homepage Hero";s:4:"menu";s:3:"Top";s:12:"hero_classes";s:19:"parallax text-light";s:10:"hero_image";s:10:"header.jpg";}s:11:"frontmatter";s:89:"title: 'Homepage Hero'
+menu: Top
+hero_classes: parallax text-light
+hero_image: header.jpg";s:8:"markdown";s:241:"# Say Hello to Grav
+## Fast, Simple, Powerful...
+
+Grav is a modern flat-file CMS system that focuses on making web development fun again.
+
+[Read the documentation](https://learn.getgrav.org?classes=btn,btn-primary,btn-lg&target=_blank)
+
+
+
+
+
+";}s:7:"storage";a:6:{s:3:"key";s:10:"home/_hero";s:11:"storage_key";s:16:"01.home/01._hero";s:8:"template";s:4:"hero";s:17:"storage_timestamp";i:1698999930;s:8:"markdown";a:1:{s:0:"";a:1:{s:4:"hero";i:1614204100;}}s:8:"checksum";s:32:"a6e34188f3d7fe83c793ee076e1e17c2";}}

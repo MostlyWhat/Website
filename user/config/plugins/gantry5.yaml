@@ -1,0 +1,11 @@
+enabled: true
+production: false
+use_media_folder: false
+offline: false
+offline_message: 'SYSTEM IS UNDER MAINTENANCE, PLEASE TRY AGAIN LATER'
+asset_timestamps: true
+asset_timestamps_period: !!float 7
+debug: false
+compile_yaml: true
+compile_twig: true
+_redirect: null

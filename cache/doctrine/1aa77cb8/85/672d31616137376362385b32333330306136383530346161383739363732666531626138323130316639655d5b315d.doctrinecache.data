@@ -1,0 +1,104 @@
+1699604736
+a:2:{s:7:"content";s:4890:"<div class="modular-row features small">
+    <h1>Stuffed Full of Features</h1>
+<h2><strong>Check out small smattering...</strong></h2>
+    <div class="feature-items">
+               <div class="feature">
+                        <i class="fa fa-fw fa-fa fa-text-height" aria-hidden="true"></i>
+            <div class="feature-content icon-offset">
+                                    <h4>Markdown Syntax</h4>
+                                    </div>
+        </div>
+               <div class="feature">
+                        <i class="fa fa-fw fa-fa fa-code" aria-hidden="true"></i>
+            <div class="feature-content icon-offset">
+                                    <h4>Twig Templating</h4>
+                                    </div>
+        </div>
+               <div class="feature">
+                        <i class="fa fa-fw fa-fa fa-rocket" aria-hidden="true"></i>
+            <div class="feature-content icon-offset">
+                                    <h4>Smart Caching</h4>
+                                    </div>
+        </div>
+               <div class="feature">
+                        <i class="fa fa-fw fa-fa fa-tags" aria-hidden="true"></i>
+            <div class="feature-content icon-offset">
+                                    <h4>Flexible Taxonomies</h4>
+                                    </div>
+        </div>
+               <div class="feature">
+                        <i class="fa fa-fw fa-fa fa-cloud-download" aria-hidden="true"></i>
+            <div class="feature-content icon-offset">
+                                    <h4>Simple Install</h4>
+                                    </div>
+        </div>
+               <div class="feature">
+                        <i class="fa fa-fw fa-fa fa-cogs" aria-hidden="true"></i>
+            <div class="feature-content icon-offset">
+                                    <h4>Powerful Plugins</h4>
+                                    </div>
+        </div>
+               <div class="feature">
+                        <i class="fa fa-fw fa-fa fa-dashboard" aria-hidden="true"></i>
+            <div class="feature-content icon-offset">
+                                    <h4>Intuitive UI</h4>
+                                    </div>
+        </div>
+               <div class="feature">
+                        <i class="fa fa-fw fa-fa fa-file-text" aria-hidden="true"></i>
+            <div class="feature-content icon-offset">
+                                    <h4>File-Based</h4>
+                                    </div>
+        </div>
+               <div class="feature">
+                        <i class="fa fa-fw fa-fa fa-language" aria-hidden="true"></i>
+            <div class="feature-content icon-offset">
+                                    <h4>Multi-Language</h4>
+                                    </div>
+        </div>
+               <div class="feature">
+                        <i class="fa fa-fw fa-fa fa-users" aria-hidden="true"></i>
+            <div class="feature-content icon-offset">
+                                    <h4>Users &amp; Roles</h4>
+                                    </div>
+        </div>
+               <div class="feature">
+                        <i class="fa fa-fw fa-fa fa-image" aria-hidden="true"></i>
+            <div class="feature-content icon-offset">
+                                    <h4>Image Processing</h4>
+                                    </div>
+        </div>
+               <div class="feature">
+                        <i class="fa fa-fw fa-fa fa-bookmark" aria-hidden="true"></i>
+            <div class="feature-content icon-offset">
+                                    <h4>Documentation</h4>
+                                    </div>
+        </div>
+               <div class="feature">
+                        <i class="fa fa-fw fa-fa fa-github" aria-hidden="true"></i>
+            <div class="feature-content icon-offset">
+                                    <h4>On Github</h4>
+                                    </div>
+        </div>
+               <div class="feature">
+                        <i class="fa fa-fw fa-fa fa-html5" aria-hidden="true"></i>
+            <div class="feature-content icon-offset">
+                                    <h4>Responsive Design</h4>
+                                    </div>
+        </div>
+               <div class="feature">
+                        <i class="fa fa-fw fa-fa fa-terminal" aria-hidden="true"></i>
+            <div class="feature-content icon-offset">
+                                    <h4>CLI Power</h4>
+                                    </div>
+        </div>
+               <div class="feature">
+                        <i class="fa fa-fw fa-fa fa-heart-o" aria-hidden="true"></i>
+            <div class="feature-content icon-offset">
+                                    <h4>Awesomazing</h4>
+                                    </div>
+        </div>
+        </div>
+</div>
+";s:12:"content_meta";N;}

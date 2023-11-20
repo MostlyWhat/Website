@@ -1,0 +1,39 @@
+1699000718
+O:39:"Grav\Common\Flex\Types\Pages\PageObject":4:{s:4:"type";s:5:"pages";s:3:"key";s:14:"home/_features";s:8:"elements";a:4:{s:4:"root";b:0;s:6:"header";a:4:{s:5:"title";s:17:"Homepage Features";s:4:"menu";s:8:"Features";s:5:"class";s:5:"small";s:8:"features";a:16:{i:0;a:2:{s:6:"header";s:15:"Markdown Syntax";s:4:"icon";s:17:"fa fa-text-height";}i:1;a:2:{s:6:"header";s:15:"Twig Templating";s:4:"icon";s:10:"fa fa-code";}i:2;a:2:{s:6:"header";s:13:"Smart Caching";s:4:"icon";s:12:"fa fa-rocket";}i:3;a:2:{s:6:"header";s:19:"Flexible Taxonomies";s:4:"icon";s:10:"fa fa-tags";}i:4;a:2:{s:6:"header";s:14:"Simple Install";s:4:"icon";s:20:"fa fa-cloud-download";}i:5;a:2:{s:6:"header";s:16:"Powerful Plugins";s:4:"icon";s:10:"fa fa-cogs";}i:6;a:2:{s:6:"header";s:12:"Intuitive UI";s:4:"icon";s:15:"fa fa-dashboard";}i:7;a:2:{s:6:"header";s:10:"File-Based";s:4:"icon";s:15:"fa fa-file-text";}i:8;a:2:{s:6:"header";s:14:"Multi-Language";s:4:"icon";s:14:"fa fa-language";}i:9;a:2:{s:6:"header";s:13:"Users & Roles";s:4:"icon";s:11:"fa fa-users";}i:10;a:2:{s:6:"header";s:16:"Image Processing";s:4:"icon";s:11:"fa fa-image";}i:11;a:2:{s:6:"header";s:13:"Documentation";s:4:"icon";s:14:"fa fa-bookmark";}i:12;a:2:{s:6:"header";s:9:"On Github";s:4:"icon";s:12:"fa fa-github";}i:13;a:2:{s:6:"header";s:17:"Responsive Design";s:4:"icon";s:11:"fa fa-html5";}i:14;a:2:{s:6:"header";s:9:"CLI Power";s:4:"icon";s:14:"fa fa-terminal";}i:15;a:2:{s:6:"header";s:11:"Awesomazing";s:4:"icon";s:13:"fa fa-heart-o";}}}s:11:"frontmatter";s:942:"title: Homepage Features
+menu: Features
+class: small
+features:
+    - header: Markdown Syntax
+      icon: fa fa-text-height
+    - header: Twig Templating
+      icon: fa fa-code
+    - header: Smart Caching
+      icon: fa fa-rocket
+    - header: Flexible Taxonomies
+      icon: fa fa-tags
+    - header: Simple Install
+      icon: fa fa-cloud-download
+    - header: Powerful Plugins
+      icon: fa fa-cogs
+    - header: Intuitive UI
+      icon: fa fa-dashboard
+    - header: File-Based
+      icon: fa fa-file-text
+    - header: Multi-Language
+      icon: fa fa-language
+    - header: Users & Roles
+      icon: fa fa-users  
+    - header: Image Processing
+      icon: fa fa-image   
+    - header: Documentation
+      icon: fa fa-bookmark
+    - header: On Github
+      icon: fa fa-github
+    - header: Responsive Design
+      icon: fa fa-html5
+    - header: CLI Power
+      icon: fa fa-terminal  
+    - header: Awesomazing
+      icon: fa fa-heart-o";s:8:"markdown";s:64:"# Stuffed Full of Features
+## **Check out small smattering...**
+";}s:7:"storage";a:6:{s:3:"key";s:14:"home/_features";s:11:"storage_key";s:20:"01.home/04._features";s:8:"template";s:8:"features";s:17:"storage_timestamp";i:1698999930;s:8:"markdown";a:1:{s:0:"";a:1:{s:8:"features";i:1614204100;}}s:8:"checksum";s:32:"e2ce055c2e396c78e40800a905a65a04";}}

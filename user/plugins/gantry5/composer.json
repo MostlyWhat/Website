@@ -1,0 +1,34 @@
+{
+    "name": "rockettheme/gantry5",
+    "type": "grav-plugin",
+    "description": "Gantry Framework",
+    "keywords": ["gantry"],
+    "license": "MIT",
+
+    "require": {
+        "php": ">=7.3.6",
+        "scssphp/scssphp": "~1.10",
+        "leafo/scssphp": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Gantry\\": "src/classes/Gantry"
+        },
+        "classmap":  [
+            "gantry5.php",
+            "Debugger.php",
+            "src/Loader.php"
+        ]
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/rockettheme/scssphp"
+          }
+    ],
+    "config": {
+        "platform": {
+            "php": "7.3.6"
+        }
+    }
+}

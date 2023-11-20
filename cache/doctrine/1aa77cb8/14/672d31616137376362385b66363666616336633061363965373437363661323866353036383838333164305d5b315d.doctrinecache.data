@@ -1,0 +1,51 @@
+1699604736
+a:2:{s:7:"content";s:2753:"<div class="modular-row features offset-box">
+    <h1>Why Grav?</h1>
+<h2><strong>build sites better</strong></h2>
+<p>We believe the best recipe to make something great, is to bake with <a href="#features">quality ingredients</a> and add dollops of <a href="#features">cool stuff</a>. </p>
+    <div class="feature-items">
+               <div class="feature">
+                        <i class="fa fa-fw fa-fa fa-fighter-jet" aria-hidden="true"></i>
+            <div class="feature-content icon-offset">
+                                    <h4>Crazy Fast</h4>
+                                    <p>Performance is not just an afterthought, we baked it in from the start!</p>
+                        </div>
+        </div>
+               <div class="feature">
+                        <i class="fa fa-fw fa-fa fa-database" aria-hidden="true"></i>
+            <div class="feature-content icon-offset">
+                                    <h4>Easy to build</h4>
+                                    <p>Simple text files means Grav is trivial to install, and easy to maintain</p>
+                        </div>
+        </div>
+               <div class="feature">
+                        <i class="fa fa-fw fa-fa fa-cubes" aria-hidden="true"></i>
+            <div class="feature-content icon-offset">
+                                    <h4>Awesome Technology</h4>
+                                    <p>Grav employs best-in-class technologies such as Twig, Markdown &amp;amp; Yaml</p>
+                        </div>
+        </div>
+               <div class="feature">
+                        <i class="fa fa-fw fa-fa fa-object-ungroup" aria-hidden="true"></i>
+            <div class="feature-content icon-offset">
+                                    <h4>Super Flexible</h4>
+                                    <p>From the ground up, with many plugin hooks, Grav is extremely extensible</p>
+                        </div>
+        </div>
+               <div class="feature">
+                        <i class="fa fa-fw fa-fa fa-puzzle-piece" aria-hidden="true"></i>
+            <div class="feature-content icon-offset">
+                                    <h4>Abundant Plugins</h4>
+                                    <p>A vibrant developer community means 200+ plugins available to download</p>
+                        </div>
+        </div>
+               <div class="feature">
+                        <i class="fa fa-fw fa-fa fa-money" aria-hidden="true"></i>
+            <div class="feature-content icon-offset">
+                                    <h4>Free / Open Source</h4>
+                                    <p>Grav is an open source project, so you can spend your money on other stuff</p>
+                        </div>
+        </div>
+        </div>
+</div>
+";s:12:"content_meta";N;}

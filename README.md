@@ -1,236 +1,156 @@
-# 🚀 MostlyWhat Systems
+# ![](https://avatars1.githubusercontent.com/u/8237355?v=2&s=50) Grav
 
-<img src="lighthouse-score.png" align="right"
-     alt="AstroWind Lighthouse Score" width="100" height="358">
+[![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat)](https://github.com/phpstan/phpstan)
+[![Discord](https://img.shields.io/discord/501836936584101899.svg?logo=discord&colorB=728ADA&label=Discord%20Chat)](https://chat.getgrav.org)
+ [![PHP Tests](https://github.com/getgrav/grav/workflows/PHP%20Tests/badge.svg?branch=develop)](https://github.com/getgrav/grav/actions?query=workflow%3A%22PHP+Tests%22) [![OpenCollective](https://opencollective.com/grav/tiers/backers/badge.svg?label=Backers&color=brightgreen)](#backers) [![OpenCollective](https://opencollective.com/grav/tiers/supporters/badge.svg?label=Supporters&color=brightgreen)](#supporters) [![OpenCollective](https://opencollective.com/grav/tiers/sponsors/badge.svg?label=Sponsors&color=brightgreen)](#sponsors)
 
-**Introducting** the next-generation website for the [MostlyWhat Systems](https://mostlywhat.systems) company.
+Grav is a **Fast**, **Simple**, and **Flexible**, file-based Web-platform.  There is **Zero** installation required.  Just extract the ZIP archive, and you are already up and running.  It follows similar principles to other flat-file CMS platforms, but has a different design philosophy than most. Grav comes with a powerful **Package Management System** to allow for simple installation and upgrading of plugins and themes, as well as simple updating of Grav itself.
 
-## Features
+The underlying architecture of Grav is designed to use well-established and _best-in-class_ technologies to ensure that Grav is simple to use and easy to extend. Some of these key technologies include:
 
-- ✅ Integration with **Tailwind CSS** ([@astrojs/tailwind](https://docs.astro.build/en/guides/integrations-guide/tailwind/)) supporting **Dark mode**.
-- ✅ **Production-ready** scores in [Lighthouse](https://web.dev/measure/) and [PageSpeed Insights](https://pagespeed.web.dev/) reports.
-- ✅ **Fast and SEO friendly blog** with automatic **RSS feed** ([@astrojs/rss](https://docs.astro.build/en/guides/rss/)), [**MDX** support](https://docs.astro.build/en/guides/integrations-guide/mdx/), **Categories & Tags**, **Social Share** buttons, ...
-- ✅ **Image optimization** ([@astrojs/images](https://docs.astro.build/en/guides/integrations-guide/image/)) and **Font optimization**.
-- ✅ Generation of **project sitemap** based on your routes ([@astrojs/sitemap](https://docs.astro.build/en/guides/integrations-guide/sitemap/)).
-- ✅ **Open Graph tags** for social media sharing.
-- ✅ **Analytics** built-in Google Analytics, and Splitbee integration.
+* [Twig Templating](https://twig.symfony.com/): for powerful control of the user interface
+* [Markdown](https://en.wikipedia.org/wiki/Markdown): for easy content creation
+* [YAML](https://yaml.org): for simple configuration
+* [Parsedown](https://parsedown.org/): for fast Markdown and Markdown Extra support
+* [Doctrine Cache](https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/caching.html): layer for performance
+* [Pimple Dependency Injection Container](https://github.com/silexphp/Pimple): for extensibility and maintainability
+* [Symfony Event Dispatcher](https://symfony.com/doc/current/components/event_dispatcher/introduction.html): for plugin event handling
+* [Symfony Console](https://symfony.com/doc/current/components/console/introduction.html): for CLI interface
+* [Gregwar Image Library](https://github.com/Gregwar/Image): for dynamic image manipulation
 
-<br>
+# Requirements
 
-[![License](https://img.shields.io/github/license/onwidget/astrowind?style=flat-square&color=eeeeee&labelColor=000000)](https://github.com/onwidget/astrowind/blob/main/LICENSE.md)
-[![Maintained](https://img.shields.io/badge/maintained%3F-yes-brightgreen.svg?style=flat-square)](https://github.com/onwidget)
-[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat-square)](https://github.com/onwidget/astrowind#contributing)
-[![Known Vulnerabilities](https://snyk.io/test/github/onwidget/astrowind/badge.svg?style=flat-square)](https://snyk.io/test/github/onwidget/astrowind)
-![Prettier](https://img.shields.io/badge/prettier-1A2C34?style=flat-square&logo=prettier&logoColor=F7BA3E)
-![Eslint](https://img.shields.io/badge/eslint-3A33D1?style=flat-square&logo=eslint&logoColor=white)
+- PHP 7.3.6 or higher. Check the [required modules list](https://learn.getgrav.org/basics/requirements#php-requirements)
+- Check the [Apache](https://learn.getgrav.org/basics/requirements#apache-requirements) or [IIS](https://learn.getgrav.org/basics/requirements#iis-requirements) requirements
 
-<br>
+# Documentation
 
-<details open>
-<summary>Table of Contents</summary>
+The full documentation can be found from [learn.getgrav.org](https://learn.getgrav.org).
 
-- [Demo](#demo)
-- [Getting started](#getting-started)
-  - [Project structure](#project-structure)
-  - [Commands](#commands)
-  - [Configuration](#configuration)
-  - [Deploy](#deploy)
-- [Roadmap](#roadmap)
-- [Frequently Asked Questions](#frequently-asked-questions)
-- [Contributing](#contributing)
-- [Acknowledgements](#acknowledgements)
-- [License](#license)
+# QuickStart
 
-</details>
+These are the options to get Grav:
 
-<br>
+### Downloading a Grav Package
 
-## Getting started
+You can download a **ready-built** package from the [Downloads page on https://getgrav.org](https://getgrav.org/downloads)
 
-### Project structure
+### With Composer
 
-Inside, you'll see the following folders and files:
+You can create a new project with the latest **stable** Grav release with the following command:
 
 ```
-/
-├── data/
-|   └── blog/
-|       ├── post-slug-1.md
-|       ├── post-slug-2.mdx
-|       └── ...
-├── public/
-│   ├── robots.txt
-│   └── favicon.ico
-├── src/
-│   ├── assets/
-│   │   ├── images/
-|   |   └── styles/
-|   |       └── base.css
-│   ├── components/
-│   │   ├── atoms/
-│   │   ├── blog/
-│   │   ├── core/
-|   |   └── widgets/
-|   |       ├── Header.astro
-|   |       ├── Footer.astro
-|   |       └── ...
-│   ├── layouts/
-│   |   |── BaseLayout.astro
-│   |   └── ...
-│   ├── pages/
-│   |   ├── [...blog]/
-|   |   |   ├── [...page].astro
-|   |   |   └── [slug].astro
-│   |   ├── [...categories]/
-|   |   |   └── [category]/
-|   |   |       └── [...page].astro
-│   |   ├── [...tags]/
-|   |   |   └── [tag]/
-|   |   |       └── [...page].astro
-│   |   ├── index.astro
-|   |   ├── 404.astro
-|   |   └-- rss.xml.js
-│   ├── utils/
-│   └── config.mjs
-├── package.json
-└── ...
+$ composer create-project getgrav/grav ~/webroot/grav
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+### From GitHub
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+1. Clone the Grav repository from [https://github.com/getgrav/grav]() to a folder in the webroot of your server, e.g. `~/webroot/grav`. Launch a **terminal** or **console** and navigate to the webroot folder:
+   ```
+   $ cd ~/webroot
+   $ git clone https://github.com/getgrav/grav.git
+   ```
 
-Any static assets, like images, can be placed in the `public/` directory if they do not require any transformation or in the `assets/` directory if they are imported directly.
+2. Install the **plugin** and **theme dependencies** by using the [Grav CLI application](https://learn.getgrav.org/advanced/grav-cli) `bin/grav`:
+   ```
+   $ cd ~/webroot/grav
+   $ bin/grav install
+   ```
 
-[![Edit on CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://githubbox.com/mostlywhat/website/tree/main)
+Check out the [install procedures](https://learn.getgrav.org/basics/installation) for more information.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Update `config.mjs` and contents. Have fun!
+# Adding Functionality
 
-<br>
+You can download [plugins](https://getgrav.org/downloads/plugins) or [themes](https://getgrav.org/downloads/themes) manually from the appropriate tab on the [Downloads page on https://getgrav.org](https://getgrav.org/downloads), but the preferred solution is to use the [Grav Package Manager](https://learn.getgrav.org/advanced/grav-gpm) or `GPM`:
 
-### Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command               | Action                                             |
-| :-------------------- | :------------------------------------------------- |
-| `npm install`         | Installs dependencies                              |
-| `npm run host`        | Starts the development server at current ip        |
-| `npm run dev`         | Starts local dev server at `localhost:3000`        |
-| `npm run build`       | Build your production site to `./dist/`            |
-| `npm run preview`     | Preview your build locally, before deploying       |
-| `npm run format`      | Format codes with Prettier                         |
-| `npm run lint:eslint` | Run Eslint                                         |
-| `npm run astro ...`   | Run CLI commands like `astro add`, `astro preview` |
-
-<br>
-
-### Configuration
-
-Basic configuration file: `./src/config.mjs`
-
-```javascript
-export const SITE = {
-  name: 'Example',
-
-  origin: 'https://example.com',
-  basePathname: '/', // Change this if you need to deploy to Github Pages, for example
-  trailingSlash: false, // Generate permalinks with or without "/" at the end
-
-  title: 'Example - This is the homepage title of Example',
-  description: 'This is the homepage description of Example',
-
-  googleAnalyticsId: false, // or "G-XXXXXXXXXX",
-  googleSiteVerificationId: false, // or some value,
-};
-
-export const BLOG = {
-  disabled: false,
-  postsPerPage: 4,
-
-  blog: {
-    disabled: false,
-    pathname: 'blog', // blog main path, you can change this to "articles" (/articles)
-  },
-
-  post: {
-    disabled: false,
-    pathname: '', // empty for /some-post, value for /pathname/some-post
-  },
-
-  category: {
-    disabled: false,
-    pathname: 'category', // set empty to change from /category/some-category to /some-category
-  },
-
-  tag: {
-    disabled: false,
-    pathname: 'tag', // set empty to change from /tag/some-tag to /some-tag
-  },
-};
+```
+$ bin/gpm index
 ```
 
-<br>
+This will display all the available plugins and then you can install one or more with:
 
-### Deploy
-
-#### Deploy to production (manual)
-
-You can create an optimized production build with:
-
-```shell
-npm run build
+```
+$ bin/gpm install <plugin/theme>
 ```
 
-Now, your website is ready to be deployed. All generated files are located at
-`dist` folder, which you can deploy the folder to any hosting service you
-prefer.
+# Updating
 
-#### Deploy to Netlify
+To update Grav you should use the [Grav Package Manager](https://learn.getgrav.org/advanced/grav-gpm) or `GPM`:
 
-Clone this repository on own GitHub account and deploy to Netlify:
+```
+$ bin/gpm selfupgrade
+```
 
-[![Netlify Deploy button](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/mostlywhat/website)
+To update plugins and themes:
 
-#### Deploy to Vercel
+```
+$ bin/gpm update
+```
 
-Clone this repository on own GitHub account and deploy to Vercel:
+## Upgrading from older version
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fmostlywhatt%2Fwebsite)
+* [Upgrading to Grav 1.7](https://learn.getgrav.org/16/advanced/grav-development/grav-17-upgrade-guide)
+* [Upgrading to Grav 1.6](https://learn.getgrav.org/16/advanced/grav-development/grav-16-upgrade-guide)
+* [Upgrading from Grav <1.6](https://learn.getgrav.org/16/advanced/grav-development/grav-15-upgrade-guide)
 
-<br>
+# Contributing
+We appreciate any contribution to Grav, whether it is related to bugs, grammar, or simply a suggestion or improvement! Please refer to the [Contributing guide](CONTRIBUTING.md) for more guidance on this topic.
 
-## Roadmap
+## Security issues
+If you discover a possible security issue related to Grav or one of its plugins, please email the core team at contact@getgrav.org and we'll address it as soon as possible.
 
-- _Project_:
-  - Create simple and clear strategy for updates
-- _Blog_:
-  - Improve blog design
-  - Create component or utilities for related posts
-  - Add more _shortcodes_ or _embed_ functions to posts in Markdown: (eg video, tweet...)
-- _More widgets_:
-  - Add more Tailwind components useful for most scenarios (Features, Contact, Call to Actions, Content, FAQs ...)
-  - Create external library or place with useful Tailwind components
-- _More Examples_: Add commonly used example pages (Ex: About, Terms, Services...)
-- _Documentation_: Create detailed documentation with best practices and redesign tips
+# Getting Started
 
-<br>
+* [What is Grav?](https://learn.getgrav.org/basics/what-is-grav)
+* [Install](https://learn.getgrav.org/basics/installation) Grav in few seconds
+* Understand the [Configuration](https://learn.getgrav.org/basics/grav-configuration)
+* Take a peek at our available free [Skeletons](https://getgrav.org/downloads/skeletons)
+* If you have questions, jump on our [Discord Chat Server](https://chat.getgrav.org)!
+* Have fun!
 
-## Frequently Asked Questions
+# Exploring More
 
-- None
+* Have a look at our [Basic Tutorial](https://learn.getgrav.org/basics/basic-tutorial)
+* Dive into more [advanced](https://learn.getgrav.org/advanced) functions
+* Learn about the [Grav CLI](https://learn.getgrav.org/cli-console/grav-cli)
+* Review examples in the [Grav Cookbook](https://learn.getgrav.org/cookbook)
+* More [Awesome Grav Stuff](https://github.com/getgrav/awesome-grav)
 
-<br>
+# Backers
+Support Grav with a monthly donation to help us continue development. [[Become a backer](https://opencollective.com/grav/contribute)]
 
-## Contributing
+<img src="https://opencollective.com/grav/tiers/backers.svg?avatarHeight=36&width=600" />
 
-If you have any idea, suggestions or find any bugs, feel free to open a discussion, an issue or create a pull request.
-That would be very useful for all of us and we would be happy to listen and take action.
 
-## Acknowledgements
+# Supporters
+Support Grav with a monthly donation to help us continue development. [[Become a supporter](https://opencollective.com/grav/contribute)]
 
-Initially created by [onWidget](https://onwidget.com) and maintained by a community of [contributors](https://github.com/onwidget/astrowind/graphs/contributors).
+<img src="https://opencollective.com/grav/tiers/supporters.svg?avatarHeight=36&width=600" />
 
-## License
 
-**This website** is licensed under the AGPL-3 license — see the [LICENSE](https://github.com/mostlywhat/website/blob/main/LICENSE.md) file for details.
+# Sponsors
+Support Grav with a yearly donation to help us continue development. [[Become a sponsor](https://opencollective.com/grav/contribute)]
+
+<img src="https://opencollective.com/grav/tiers/sponsors.svg?avatarHeight=36&width=600" />
+
+# License
+
+See [LICENSE](LICENSE.txt)
+
+
+[gitflow-model]: http://nvie.com/posts/a-successful-git-branching-model/
+[gitflow-extensions]: https://github.com/nvie/gitflow
+
+# Running Tests
+
+First install the dev dependencies by running `composer install` from the Grav root.
+
+Then `composer test` will run the Unit Tests, which should be always executed successfully on any site.
+Windows users should use the `composer test-windows` command.
+You can also run a single unit test file, e.g. `composer test tests/unit/Grav/Common/AssetsTest.php`
+
+To run phpstan tests, you should run:
+
+* `composer phpstan` for global tests
+* `composer phpstan-framework` for more strict tests
+* `composer phpstan-plugins` to test all installed plugins

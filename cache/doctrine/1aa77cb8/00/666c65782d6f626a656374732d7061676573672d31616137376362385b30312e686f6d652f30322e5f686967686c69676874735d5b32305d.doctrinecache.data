@@ -1,0 +1,29 @@
+1699000718
+O:39:"Grav\Common\Flex\Types\Pages\PageObject":4:{s:4:"type";s:5:"pages";s:3:"key";s:16:"home/_highlights";s:8:"elements";a:4:{s:4:"root";b:0;s:6:"header";a:4:{s:5:"title";s:19:"Homepage Highlights";s:4:"menu";s:10:"Highlights";s:5:"class";s:10:"offset-box";s:8:"features";a:6:{i:0;a:3:{s:6:"header";s:10:"Crazy Fast";s:4:"text";s:71:"Performance is not just an afterthought, we baked it in from the start!";s:4:"icon";s:17:"fa fa-fighter-jet";}i:1;a:3:{s:6:"header";s:13:"Easy to build";s:4:"text";s:72:"Simple text files means Grav is trivial to install, and easy to maintain";s:4:"icon";s:14:"fa fa-database";}i:2;a:3:{s:6:"header";s:18:"Awesome Technology";s:4:"text";s:73:"Grav employs best-in-class technologies such as Twig, Markdown &amp; Yaml";s:4:"icon";s:11:"fa fa-cubes";}i:3;a:3:{s:6:"header";s:14:"Super Flexible";s:4:"text";s:72:"From the ground up, with many plugin hooks, Grav is extremely extensible";s:4:"icon";s:20:"fa fa-object-ungroup";}i:4;a:3:{s:6:"header";s:16:"Abundant Plugins";s:4:"text";s:70:"A vibrant developer community means 200+ plugins available to download";s:4:"icon";s:18:"fa fa-puzzle-piece";}i:5;a:3:{s:6:"header";s:18:"Free / Open Source";s:4:"text";s:74:"Grav is an open source project, so you can spend your money on other stuff";s:4:"icon";s:11:"fa fa-money";}}}s:11:"frontmatter";s:958:"title: Homepage Highlights
+menu: Highlights
+class: offset-box
+features:
+    - header: Crazy Fast
+      text: "Performance is not just an afterthought, we baked it in from the start!"
+      icon: fa fa-fighter-jet
+    - header: Easy to build
+      text: "Simple text files means Grav is trivial to install, and easy to maintain"
+      icon: fa fa-database
+    - header: Awesome Technology
+      text: "Grav employs best-in-class technologies such as Twig, Markdown &amp; Yaml"
+      icon: fa fa-cubes
+    - header: Super Flexible
+      text: "From the ground up, with many plugin hooks, Grav is extremely extensible"
+      icon: fa fa-object-ungroup
+    - header: Abundant Plugins
+      text: "A vibrant developer community means 200+ plugins available to download"
+      icon: fa fa-puzzle-piece
+    - header: Free / Open Source
+      text: "Grav is an open source project, so you can spend your money on other stuff"
+      icon: fa fa-money
+           
+    ";s:8:"markdown";s:185:"# Why Grav?
+## **build sites better**
+
+We believe the best recipe to make something great, is to bake with [quality ingredients](#features) and add dollops of [cool stuff](#features). 
+";}s:7:"storage";a:6:{s:3:"key";s:16:"home/_highlights";s:11:"storage_key";s:22:"01.home/02._highlights";s:8:"template";s:8:"features";s:17:"storage_timestamp";i:1698999930;s:8:"markdown";a:1:{s:0:"";a:1:{s:8:"features";i:1614204100;}}s:8:"checksum";s:32:"af0a603b427ef7a582a7fbdb5c629f78";}}
