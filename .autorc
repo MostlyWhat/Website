@@ -1,11 +1,13 @@
 {
+  "plugins": [
+    "all-contributors",
+    "git-tag",
+    "first-time-contributor",
+    "conventional-commits",
+  ],
   "owner": "MostlyWhat",
-  "repo": "website",
+  "repo": "Website",
   "name": "MostlyWhat",
   "email": "mostlywhatstudios@gmail.com",
-  "prereleaseBranches": [
-    "alpha",
-    "beta",
-    "next"
-  ]
+  "prereleaseBranches": ["canary", "next", "alpha", "beta", "rc"]
 }
