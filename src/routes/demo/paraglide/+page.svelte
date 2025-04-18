@@ -1,18 +1,19 @@
 <script lang="ts">
-	import { setLocale } from '$lib/paraglide/runtime';
+	import type { AvailableLanguageTag } from '$lib/paraglide/runtime';
+	import { i18n } from '$lib/i18n';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
-	import { m } from '$lib/paraglide/messages.js';
+	import * as m from '$lib/paraglide/messages.js';
+
+	function switchToLanguage(newLanguage: AvailableLanguageTag) {
+		const canonicalPath = i18n.route(page.url.pathname);
+		const localisedPath = i18n.resolveRoute(canonicalPath, newLanguage);
+		goto(localisedPath);
+	}
 </script>
 
 <h1>{m.hello_world({ name: 'SvelteKit User' })}</h1>
 <div>
-	<button onclick={() => setLocale('en')}>en</button>
-	<button onclick={() => setLocale('th')}>th</button>
+	<button onclick={() => switchToLanguage('en')}>en</button>
+	<button onclick={() => switchToLanguage('th')}>th</button>
 </div>
-<p>
-	If you use VSCode, install the <a
-		href="https://marketplace.visualstudio.com/items?itemName=inlang.vs-code-extension"
-		target="_blank">Sherlock i18n extension</a
-	> for a better i18n experience.
-</p>
