@@ -43,7 +43,7 @@
 		<div class="col-span-1 min-h-80 border-b">
 			<div class="h-full bg-card rounded-md shadow-sm flex flex-col justify-between">
 				<div>
-					<img src="{item.image}" alt="{item.title}" class="mb-4 aspect-square object-cover rounded-md" />
+					<img src="{item.image}" alt="{item.title}" class="mb-4 aspect-square object-cover" />
 					<div class="p-4">
 						<p class="mb-2 font-mono text-xs uppercase">// {item.category}</p>
 						<h3 class="font-sans text-2xl font-black uppercase">{item.title}</h3>

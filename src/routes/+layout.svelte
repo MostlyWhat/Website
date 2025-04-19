@@ -6,6 +6,7 @@
 	// Plugins
 	import { i18n } from '$lib/i18n';
 	import { ParaglideJS } from '@inlang/paraglide-sveltekit';
+	import { onNavigate } from '$app/navigation';
 
 	// Fonts
 	import '@fontsource-variable/jetbrains-mono'; // Supports weights 100-800
@@ -13,6 +14,18 @@
 
 	// Styles
 	import '../app.css';
+
+	// View Transition
+	onNavigate((navigation) => {
+		if (!document.startViewTransition) return;
+
+		return new Promise((resolve) => {
+			document.startViewTransition(async () => {
+				resolve();
+				await navigation.complete;
+			});
+		});
+	});
 
 	// Imports
 	let { children } = $props();
