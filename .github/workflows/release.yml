@@ -1,6 +1,6 @@
 name: Publish Release
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 # Enabled permissions on GITHUB_TOKEN
 permissions:
