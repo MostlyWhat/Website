@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { NavigationMenuTriggerStyle } from "./index.js";
-	import { cn } from "$lib/utils";
-	import { NavigationMenu as NavigationMenuPrimitive } from "bits-ui";
-	import ChevronDown from "@lucide/svelte/icons/chevron-down";
+	import { NavigationMenuTriggerStyle } from './index.js';
+	import { cn } from '$lib/utils';
+	import { NavigationMenu as NavigationMenuPrimitive } from 'bits-ui';
+	import ChevronDown from '@lucide/svelte/icons/chevron-down';
 
 	let {
 		ref = $bindable(null),
@@ -12,7 +12,11 @@
 	}: NavigationMenuPrimitive.TriggerProps = $props();
 </script>
 
-<NavigationMenuPrimitive.Trigger {...restProps} bind:ref class={cn(NavigationMenuTriggerStyle, className)}>
+<NavigationMenuPrimitive.Trigger
+	{...restProps}
+	bind:ref
+	class={cn(NavigationMenuTriggerStyle, className)}
+>
 	{@render children?.()}
 
 	<ChevronDown
