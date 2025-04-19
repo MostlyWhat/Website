@@ -8,6 +8,12 @@ importers:
 
   .:
     dependencies:
+      '@fontsource-variable/jetbrains-mono':
+        specifier: ^5.2.5
+        version: 5.2.5
+      '@fontsource-variable/plus-jakarta-sans':
+        specifier: ^5.2.5
+        version: 5.2.5
       '@inlang/paraglide-sveltekit':
         specifier: ^0.15.5
         version: 0.15.5(@sveltejs/kit@2.20.7(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.28.1)(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(yaml@2.7.1)))(svelte@5.28.1)(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(yaml@2.7.1)))
@@ -660,6 +666,12 @@ packages:
 
   '@floating-ui/utils@0.2.9':
     resolution: {integrity: sha512-MDWhGtE+eHw5JW7lq4qhc5yRLS11ERl1c7Z6Xd0a58DozHES6EnNNwUWbMiG4J9Cgj053Bhk8zvlhFYKVhULwg==}
+
+  '@fontsource-variable/jetbrains-mono@5.2.5':
+    resolution: {integrity: sha512-G3sN1xq1moZd0JL+hFaA4MEdsiQS+JXC/z7m+EqA5/Fzn5CQlXGUaaNKFGQdDsFuLTnCfW0KOOSWHjygNfjEPw==}
+
+  '@fontsource-variable/plus-jakarta-sans@5.2.5':
+    resolution: {integrity: sha512-nkAWzq+QWBSK+52HIlNCyoh5YXrZ/AwV1OqzxZz6VnPmsIpU68B1bf1YT8heRAJKY1kXNtWIJ9jJMYVaStgf+w==}
 
   '@gcornut/valibot-json-schema@0.31.0':
     resolution: {integrity: sha512-3xGptCurm23e7nuPQkdrE5rEs1FeTPHhAUsBuwwqG4/YeZLwJOoYZv+fmsppUEfo5y9lzUwNQrNqLS/q7HMc7g==}
@@ -5130,6 +5142,10 @@ snapshots:
       '@floating-ui/utils': 0.2.9
 
   '@floating-ui/utils@0.2.9': {}
+
+  '@fontsource-variable/jetbrains-mono@5.2.5': {}
+
+  '@fontsource-variable/plus-jakarta-sans@5.2.5': {}
 
   '@gcornut/valibot-json-schema@0.31.0':
     dependencies:

@@ -5,7 +5,6 @@ import tailwindcssAnimate from "tailwindcss-animate";
 const config: Config = {
 	darkMode: ["class"],
 	content: ["./src/**/*.{html,js,svelte,ts}"],
-	safelist: ["dark"],
 	theme: {
 		container: {
 			center: true,
@@ -67,7 +66,10 @@ const config: Config = {
 				sm: "calc(var(--radius) - 4px)"
 			},
 			fontFamily: {
-				sans: [...fontFamily.sans]
+				heading: [...fontFamily.sans],
+				sans: ["'Plus Jakarta Sans Variable'", ...fontFamily.sans],
+				serif: [...fontFamily.serif],
+				mono: ["'JetBrains Mono Variable'", ...fontFamily.mono],
 			},
 			keyframes: {
 				"accordion-down": {

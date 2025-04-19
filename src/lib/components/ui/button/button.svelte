@@ -4,7 +4,7 @@
 	import { type VariantProps, tv } from "tailwind-variants";
 
 	export const buttonVariants = tv({
-		base: "ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+		base: "ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 font-mono uppercase",
 		variants: {
 			variant: {
 				default: "bg-primary text-primary-foreground hover:bg-primary/90",
@@ -40,6 +40,7 @@
 
 <script lang="ts">
 	import { cn } from "$lib/utils.js";
+	import { ArrowUpRight } from '@lucide/svelte';
 
 	let {
 		class: className,
@@ -60,7 +61,7 @@
 		{href}
 		{...restProps}
 	>
-		{@render children?.()}
+		<span class="flex flex-row gap-2 items-center">{@render children?.()}<ArrowUpRight class="h-4 w-4" /></span>
 	</a>
 {:else}
 	<button
@@ -69,6 +70,6 @@
 		{type}
 		{...restProps}
 	>
-		{@render children?.()}
+		<span class="flex flex-row gap-2 items-center">{@render children?.()}<ArrowUpRight class="h-4 w-4" /></span>
 	</button>
 {/if}
