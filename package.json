@@ -1,5 +1,5 @@
 {
-	"name": "website",
+	"name": "@mostlywhat/website",
 	"private": true,
 	"version": "0.0.1",
 	"type": "module",
@@ -15,6 +15,15 @@
 		"test:unit": "vitest",
 		"test": "npm run test:unit -- --run && npm run test:e2e",
 		"test:e2e": "playwright test"
+	},
+	"engines": {
+		"pnpm": ">=9",
+		"node": ">=18"
+	},
+	"packageManager": "pnpm@10.8.1",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/mostlywhat/horizon.git"
 	},
 	"devDependencies": {
 		"@auto-it/all-contributors": "^11.3.0",
