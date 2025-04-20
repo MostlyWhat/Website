@@ -58,6 +58,7 @@
 		"mdsvex": "^0.12.3",
 		"mode-watcher": "^1.0.2",
 		"paneforge": "1.0.0-next.5",
+		"phosphor-svelte": "^3.0.1",
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.3.3",
 		"prettier-plugin-tailwindcss": "^0.6.10",

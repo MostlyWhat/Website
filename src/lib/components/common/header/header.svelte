@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { ArrowUpRight, Menu, X } from '@lucide/svelte';
+	import { LanguageSelectorDesktop } from '$lib/components/ui/language-selector';
+	import { LanguageSelectorMobile } from '$lib/components/ui/language-selector';
 	import { onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
 
@@ -67,6 +69,7 @@
 					<span class="flex flex-row items-center">[<ArrowUpRight class="h-4 w-4" />]</span>
 				</a>
 			{/each}
+			<LanguageSelectorDesktop />
 		</nav>
 
 		<!-- Contact Button (visible on all devices) -->
@@ -109,6 +112,7 @@
 						<span class="flex flex-row items-center">[<ArrowUpRight class="h-4 w-4" />]</span>
 					</a>
 				{/each}
+				<LanguageSelectorMobile />
 			</nav>
 		</div>
 	{/if}
