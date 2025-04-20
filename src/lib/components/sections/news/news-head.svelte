@@ -55,16 +55,16 @@
 
 	<!-- Important Notice Card -->
 	<div class="col-span-1 min-h-80">
-		<div class="h-full flex flex-col rounded-md shadow-sm bg-destructive text-secondary-foreground">
+		<div class="h-full flex flex-col rounded-md shadow-sm bg-destructive text-secondary-foreground justify-between">
 			<div class="p-4 border-b border-secondary-foreground/20">
 				<p class="font-mono text-xs uppercase">&gt; Important Notice</p>
 			</div>
 			<div class="flex-1 flex flex-col">
 				<p class="text-sm p-4">Latest announcements and critical updates</p>
-				<Button class="mt-auto bg-secondary-foreground text-secondary" size="lg" variant="outline">
-					More Information
-				</Button>
 			</div>
+			<Button class="self-end mt-auto bg-secondary-foreground text-secondary" size="lg" variant="outline">
+				More Information
+			</Button>
 		</div>
 	</div>
 </div>

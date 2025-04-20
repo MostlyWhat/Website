@@ -11,6 +11,6 @@
 	<!-- Subtitle and Logo at bottom left -->
 	<div class="absolute bottom-4 left-4 flex flex-col items-start">
 		<p class="mb-2 font-mono text-xs sm:text-sm uppercase">// Design. Develop. Deploy.</p>
-		<p class="-m-1 font-sans text-4xl sm:text-6xl md:text-8xl font-black uppercase">MostlyWhat</p>
+		<p class="-m-1 font-sans text-5xl sm:text-6xl md:text-8xl font-black uppercase">MostlyWhat</p>
 	</div>
 </section>

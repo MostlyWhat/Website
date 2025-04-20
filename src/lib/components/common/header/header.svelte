@@ -32,6 +32,7 @@
 
 	const links = [
 		{ title: 'About', href: '/about' },
+		{ title: 'Products', href: '/products' },
 		{ title: 'Services', href: '/services' },
 		{ title: 'Projects', href: '/projects' },
 		{ title: 'News', href: '/news' },
@@ -73,14 +74,14 @@
 			class="inline-flex items-center h-full bg-secondary sm:w-auto w-full px-4 lg:px-12 py-2 text-secondary-foreground hover:bg-secondary/80"
 		>
 			<a class="flex flex-row gap-2 font-mono uppercase w-full justify-center sm:justify-start" href="/contact">
-				Contact Us<span class="flex flex-row items-center">[<ArrowUpRight class="h-4 w-4" />]</span>
+				Contact<span class="flex flex-row items-center">[<ArrowUpRight class="h-4 w-4" />]</span>
 			</a>
 		</div>
 
 		<!-- Mobile menu button -->
 		<button
 			aria-label="Toggle menu"
-			class="p-2 bg-background border border-border lg:hidden"
+			class="p-2 bg-background lg:hidden"
 			on:click={toggleMobileMenu}
 		>
 			{#if isMobileMenuOpen}
