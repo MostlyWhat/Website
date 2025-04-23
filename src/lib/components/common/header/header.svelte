@@ -76,8 +76,8 @@
 		<div
 			class="inline-flex items-center h-full bg-secondary sm:w-auto w-full px-4 lg:px-12 py-2 text-secondary-foreground hover:bg-secondary/80"
 		>
-			<a class="flex flex-row gap-2 font-mono uppercase w-full justify-center sm:justify-start" href="/contact">
-				Contact<span class="flex flex-row items-center">[<ArrowUpRight class="h-4 w-4" />]</span>
+			<a class="font-mono uppercase w-full justify-center sm:justify-start" href="/contact">
+				<span class="flex flex-row items-center">Contact [<ArrowUpRight class="h-4 w-4" />]</span>
 			</a>
 		</div>
 

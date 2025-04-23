@@ -41,7 +41,7 @@
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 min-h-full divide-x">
 	{#each newsItems as item}
 		<div class="col-span-1 min-h-80 border-b">
-			<div class="h-full bg-card rounded-md shadow-sm flex flex-col justify-between">
+			<div class="h-full flex flex-col justify-between">
 				<div>
 					<img src="{item.image}" alt="{item.title}" class="mb-4 aspect-square object-cover" />
 					<div class="p-4">
