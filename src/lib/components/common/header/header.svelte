@@ -8,6 +8,17 @@
 	let isScrolled = false;
 	let isMobileMenuOpen = false;
 	let isMobile = false;
+	let interval: ReturnType<typeof setInterval>;
+
+	const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	const links = [
+		{ title: 'About', href: '/about' },
+		{ title: 'Products', href: '/products' },
+		{ title: 'Services', href: '/services' },
+		{ title: 'Projects', href: '/projects' },
+		{ title: 'News', href: '/news' },
+		{ title: 'Careers', href: '/careers' }
+	];
 
 	const handleScroll = () => {
 		isScrolled = window.scrollY > 0;
@@ -32,18 +43,40 @@
 		};
 	});
 
-	const links = [
-		{ title: 'About', href: '/about' },
-		{ title: 'Products', href: '/products' },
-		{ title: 'Services', href: '/services' },
-		{ title: 'Projects', href: '/projects' },
-		{ title: 'News', href: '/news' },
-		{ title: 'Careers', href: '/careers' }
-	];
+	// Function to animate the text with complete animation
+	function animate_text(event: Event) {
+		let iteration = 0;
+		clearInterval(interval);
+
+		// Find the span with data-value within the parent anchor
+		const anchor = (event.currentTarget as HTMLElement);
+		if (!anchor) return;
+
+		const target = anchor.querySelector('[data-value]') as HTMLElement;
+		if (!target || !target.dataset.value) return;
+
+		interval = setInterval(() => {
+			target.innerText = target.innerText
+				.split('')
+				.map((letter: string, index: number) => {
+					if (index < iteration) {
+						return target.dataset.value?.[index] || '';
+					}
+					return letters[Math.floor(Math.random() * 26)];
+				})
+				.join('');
+
+			if (iteration >= (target.dataset.value?.length || 0)) {
+				clearInterval(interval);
+			}
+
+			iteration += 1 / 3;
+		}, 40);
+	}
 </script>
 
 <header
-	class="fixed z-40 w-full border-b transition-all duration-200 flex"
+	class="header fixed z-40 w-full border-b transition-all duration-200 flex"
 	class:bg-background={isScrolled || isMobileMenuOpen}
 >
 	<div
@@ -62,10 +95,12 @@
 		>
 			{#each links as link}
 				<a
-					class="flex flex-row gap-2 text-white hover:bg-primary hover:text-primary-foreground"
+					class="flex flex-row gap-2 text-white hover:bg-primary/80 hover:text-primary-foreground"
 					href={link.href}
+					onmouseover={animate_text}
+					onfocus={animate_text}
 				>
-					{link.title}
+					<span data-value={link.title}>{link.title}</span>
 					<span class="flex flex-row items-center">[<ArrowUpRight class="h-4 w-4" />]</span>
 				</a>
 			{/each}
@@ -74,7 +109,7 @@
 
 		<!-- Contact Button (visible on all devices) -->
 		<div
-			class="inline-flex items-center h-full bg-secondary sm:w-auto w-full px-4 lg:px-12 py-2 text-secondary-foreground hover:bg-secondary/80"
+			class="inline-flex items-center h-full bg-secondary sm:w-auto w-full px-4 lg:px-12 py-2 text-sm text-secondary-foreground hover:bg-secondary/80"
 		>
 			<a class="font-mono uppercase w-full justify-center sm:justify-start" href="/contact">
 				<span class="flex flex-row items-center">Contact [<ArrowUpRight class="h-4 w-4" />]</span>
@@ -85,7 +120,7 @@
 		<button
 			aria-label="Toggle menu"
 			class="p-2 bg-background lg:hidden"
-			on:click={toggleMobileMenu}
+			onclick={toggleMobileMenu}
 		>
 			{#if isMobileMenuOpen}
 				<X class="h-6 w-6 text-white" />
@@ -106,7 +141,7 @@
 					<a
 						class="flex flex-row justify-between p-4 border-b border-muted text-white hover:bg-primary hover:text-primary-foreground"
 						href={link.href}
-						on:click={() => isMobileMenuOpen = false}
+						onclick={() => isMobileMenuOpen = false}
 					>
 						{link.title}
 						<span class="flex flex-row items-center">[<ArrowUpRight class="h-4 w-4" />]</span>
@@ -117,3 +152,9 @@
 		</div>
 	{/if}
 </header>
+
+<style>
+    .header {
+        view-transition-name: header;
+    }
+</style>
