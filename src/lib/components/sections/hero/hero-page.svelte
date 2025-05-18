@@ -1,5 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { onMount } from 'svelte';
+
+	const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 	// Grab the current URL
 	const currentUrl = page.url;
@@ -15,6 +18,39 @@
 	if (isEmpty) {
 		currentUrl.pathname = '/ Home';
 	}
+
+	let page_name = $state(lastPart);
+
+	function animate() {
+		const target = page_name;
+
+		let iteration = 0;
+
+		const interval = setInterval(() => {
+			page_name = target
+				.split('')
+				.map((letter, index) => {
+					if (index < iteration) {
+						return target[index];
+					}
+					return letters[Math.floor(Math.random() * 26)];
+				})
+				.join('');
+
+			if (iteration >= target.length) {
+				clearInterval(interval);
+			}
+
+			iteration += 1 / 3;
+		}, 50);
+	}
+
+	onMount(() => {
+		setTimeout(() => {
+			animate();
+		}, 500);
+
+	});
 </script>
 
 <section class="relative min-h-screen w-full overflow-hidden">
@@ -30,7 +66,7 @@
 	<!-- Subtitle and Logo at bottom left -->
 	<div class="absolute bottom-4 left-4 flex flex-col items-start">
 		<p class="mb-2 font-mono text-xs sm:text-sm uppercase">Navigation {formattedPathname}</p>
-		<p class="-m-1 font-sans text-6xl md:text-8xl font-black uppercase">{lastPart}</p>
+		<p class="-m-1 font-sans text-6xl md:text-8xl font-black uppercase">{page_name}</p>
 	</div>
 </section>
 

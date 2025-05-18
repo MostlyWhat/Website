@@ -8,9 +8,7 @@
 	let isScrolled = false;
 	let isMobileMenuOpen = false;
 	let isMobile = false;
-	let interval: ReturnType<typeof setInterval>;
 
-	const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 	const links = [
 		{ title: 'About', href: '/about' },
 		{ title: 'Products', href: '/products' },
@@ -42,37 +40,6 @@
 			window.removeEventListener('resize', checkMobile);
 		};
 	});
-
-	// Function to animate the text with complete animation
-	function animate_text(event: Event) {
-		let iteration = 0;
-		clearInterval(interval);
-
-		// Find the span with data-value within the parent anchor
-		const anchor = (event.currentTarget as HTMLElement);
-		if (!anchor) return;
-
-		const target = anchor.querySelector('[data-value]') as HTMLElement;
-		if (!target || !target.dataset.value) return;
-
-		interval = setInterval(() => {
-			target.innerText = target.innerText
-				.split('')
-				.map((letter: string, index: number) => {
-					if (index < iteration) {
-						return target.dataset.value?.[index] || '';
-					}
-					return letters[Math.floor(Math.random() * 26)];
-				})
-				.join('');
-
-			if (iteration >= (target.dataset.value?.length || 0)) {
-				clearInterval(interval);
-			}
-
-			iteration += 1 / 3;
-		}, 40);
-	}
 </script>
 
 <header
@@ -97,10 +64,8 @@
 				<a
 					class="flex flex-row gap-2 text-white hover:bg-primary/80 hover:text-primary-foreground"
 					href={link.href}
-					onmouseover={animate_text}
-					onfocus={animate_text}
 				>
-					<span data-value={link.title}>{link.title}</span>
+					<span>{link.title}</span>
 					<span class="flex flex-row items-center">[<ArrowUpRight class="h-4 w-4" />]</span>
 				</a>
 			{/each}
