@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { cn } from '$lib/utils.js';
-	import type { WithElementRef } from 'bits-ui';
+	import type { WithElementRef } from '$lib/utils';
 	import type { HTMLAttributes } from 'svelte/elements';
 
 	let {
@@ -12,10 +12,10 @@
 </script>
 
 <ul
-	bind:this={ref}
-	data-sidebar="menu"
-	class={cn('flex w-full min-w-0 flex-col gap-1', className)}
 	{...restProps}
+	bind:this={ref}
+	class={cn('flex w-full min-w-0 flex-col gap-1', className)}
+	data-sidebar="menu"
 >
 	{@render children?.()}
 </ul>

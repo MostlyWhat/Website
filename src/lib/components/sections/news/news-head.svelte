@@ -12,7 +12,7 @@
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
 	<!-- Main News Header - spans 2 columns on tablet+ -->
 	<div class="col-span-1 md:col-span-2 min-h-80">
-		<div class="h-full bg-card rounded-md shadow-sm p-4 flex flex-col justify-between">
+		<div class="h-full bg-card rounded-md shadow-xs p-4 flex flex-col justify-between">
 			<div>
 				<p class="mb-2 font-chakra text-xs uppercase">// Communications</p>
 				<h3 class="font-heading text-3xl sm:text-4xl md:text-5xl font-black uppercase">Latest Updates</h3>
@@ -28,7 +28,7 @@
 
 	<!-- Social Links Card -->
 	<div class="col-span-1 min-h-80">
-		<div class="h-full flex flex-col rounded-md shadow-sm bg-primary text-primary-foreground">
+		<div class="h-full flex flex-col rounded-md shadow-xs bg-primary text-primary-foreground">
 			<div class="p-4 border-b border-primary-foreground/20">
 				<p class="font-chakra text-xs uppercase">&gt; Connect</p>
 			</div>
@@ -55,7 +55,7 @@
 
 	<!-- Important Notice Card -->
 	<div class="col-span-1 min-h-80">
-		<div class="h-full flex flex-col rounded-md shadow-sm bg-destructive text-secondary-foreground justify-between">
+		<div class="h-full flex flex-col rounded-md shadow-xs bg-destructive text-secondary-foreground justify-between">
 			<div class="p-4 border-b border-secondary-foreground/20">
 				<p class="font-chakra text-xs uppercase">&gt; Important Notice</p>
 			</div>

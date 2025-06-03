@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { cn } from '$lib/utils.js';
-	import type { WithElementRef } from 'bits-ui';
+	import type { WithElementRef } from '$lib/utils';
 	import type { HTMLAttributes } from 'svelte/elements';
 
 	let {
@@ -12,10 +12,10 @@
 </script>
 
 <li
-	bind:this={ref}
-	data-sidebar="menu-item"
-	class={cn('group/menu-item relative', className)}
 	{...restProps}
+	bind:this={ref}
+	class={cn('group/menu-item relative', className)}
+	data-sidebar="menu-item"
 >
 	{@render children?.()}
 </li>

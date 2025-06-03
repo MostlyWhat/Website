@@ -8,7 +8,7 @@
 	let {
 		ref = $bindable(null),
 		class: className,
-		variant = 'outline',
+		variant = 'outline-solid',
 		size = 'icon',
 		...restProps
 	}: WithoutChildren<Props> = $props();

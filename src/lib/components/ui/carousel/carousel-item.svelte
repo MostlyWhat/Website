@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { WithElementRef } from 'bits-ui';
+	import type { WithElementRef } from '$lib/utils';
 	import type { HTMLAttributes } from 'svelte/elements';
 	import { getEmblaContext } from './context.js';
 	import { cn } from '$lib/utils.js';
@@ -15,16 +15,16 @@
 </script>
 
 <div
-	bind:this={ref}
-	role="group"
+	{...restProps}
 	aria-roledescription="slide"
+	bind:this={ref}
 	class={cn(
 		'min-w-0 shrink-0 grow-0 basis-full',
 		emblaCtx.orientation === 'horizontal' ? 'pl-4' : 'pt-4',
 		className
 	)}
 	data-embla-slide=""
-	{...restProps}
+	role="group"
 >
 	{@render children?.()}
 </div>

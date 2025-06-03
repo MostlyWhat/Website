@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { WithElementRef } from 'bits-ui';
+	import type { WithElementRef } from '$lib/utils';
 	import type { HTMLAttributes } from 'svelte/elements';
 
 	let {
@@ -9,6 +9,6 @@
 	}: WithElementRef<HTMLAttributes<HTMLLIElement>> = $props();
 </script>
 
-<li bind:this={ref} data-sidebar="menu-sub-item" {...restProps}>
+<li {...restProps} bind:this={ref} data-sidebar="menu-sub-item">
 	{@render children?.()}
 </li>

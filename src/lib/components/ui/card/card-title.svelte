@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { WithElementRef } from 'bits-ui';
+	import type { WithElementRef } from '$lib/utils';
 	import type { HTMLAttributes } from 'svelte/elements';
 	import { cn } from '$lib/utils.js';
 
@@ -15,11 +15,11 @@
 </script>
 
 <div
-	role="heading"
+	{...restProps}
 	aria-level={level}
 	bind:this={ref}
 	class={cn('text-2xl font-semibold leading-none tracking-tight', className)}
-	{...restProps}
+	role="heading"
 >
 	{@render children?.()}
 </div>

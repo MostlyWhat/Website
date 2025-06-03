@@ -20,7 +20,7 @@
 
 <script lang="ts">
 	import type { HTMLAttributes } from 'svelte/elements';
-	import type { WithElementRef } from 'bits-ui';
+	import type { WithElementRef } from '$lib/utils';
 	import { cn } from '$lib/utils.js';
 
 	let {
@@ -34,6 +34,6 @@
 	} = $props();
 </script>
 
-<div bind:this={ref} class={cn(alertVariants({ variant }), className)} {...restProps} role="alert">
+<div {...restProps} bind:this={ref} class={cn(alertVariants({ variant }), className)} role="alert">
 	{@render children?.()}
 </div>

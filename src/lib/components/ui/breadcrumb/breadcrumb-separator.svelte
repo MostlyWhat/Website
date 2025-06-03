@@ -1,6 +1,6 @@
 <script lang="ts">
 	import ChevronRight from '@lucide/svelte/icons/chevron-right';
-	import type { WithElementRef } from 'bits-ui';
+	import type { WithElementRef } from '$lib/utils';
 	import type { HTMLLiAttributes } from 'svelte/elements';
 	import { cn } from '$lib/utils.js';
 
@@ -13,11 +13,11 @@
 </script>
 
 <li
-	role="presentation"
-	aria-hidden="true"
-	class={cn('[&>svg]:size-3.5', className)}
-	bind:this={ref}
 	{...restProps}
+	aria-hidden="true"
+	bind:this={ref}
+	class={cn('[&>svg]:size-3.5', className)}
+	role="presentation"
 >
 	{#if children}
 		{@render children?.()}

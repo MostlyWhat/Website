@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { HTMLAttributes } from 'svelte/elements';
-	import type { WithElementRef } from 'bits-ui';
+	import type { WithElementRef } from '$lib/utils';
 	import { cn } from '$lib/utils.js';
 
 	let {
@@ -12,13 +12,13 @@
 </script>
 
 <div
+	{...restProps}
 	bind:this={ref}
-	data-sidebar="content"
 	class={cn(
 		'flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden',
 		className
 	)}
-	{...restProps}
+	data-sidebar="content"
 >
 	{@render children?.()}
 </div>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { WithElementRef } from 'bits-ui';
+	import type { WithElementRef } from '$lib/utils';
 	import type { HTMLAttributes } from 'svelte/elements';
 	import { cn } from '$lib/utils.js';
 
@@ -12,9 +12,9 @@
 </script>
 
 <div
+	{...restProps}
 	bind:this={ref}
 	class={cn('flex flex-col space-y-2 text-center sm:text-left', className)}
-	{...restProps}
 >
 	{@render children?.()}
 </div>

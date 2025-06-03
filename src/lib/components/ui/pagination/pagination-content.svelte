@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { HTMLAttributes } from 'svelte/elements';
-	import type { WithElementRef } from 'bits-ui';
+	import type { WithElementRef } from '$lib/utils';
 	import { cn } from '$lib/utils.js';
 
 	let {
@@ -11,6 +11,6 @@
 	}: WithElementRef<HTMLAttributes<HTMLUListElement>> = $props();
 </script>
 
-<ul bind:this={ref} class={cn('flex flex-row items-center gap-1', className)} {...restProps}>
+<ul {...restProps} bind:this={ref} class={cn('flex flex-row items-center gap-1', className)}>
 	{@render children?.()}
 </ul>

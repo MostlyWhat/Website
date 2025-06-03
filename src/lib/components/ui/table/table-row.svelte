@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { HTMLAttributes } from 'svelte/elements';
-	import type { WithElementRef } from 'bits-ui';
+	import type { WithElementRef } from '$lib/utils';
 	import { cn } from '$lib/utils.js';
 
 	let {
@@ -12,12 +12,12 @@
 </script>
 
 <tr
+	{...restProps}
 	bind:this={ref}
 	class={cn(
 		'border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted',
 		className
 	)}
-	{...restProps}
 >
 	{@render children?.()}
 </tr>

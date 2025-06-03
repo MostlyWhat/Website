@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { HTMLLiAttributes } from 'svelte/elements';
-	import type { WithElementRef } from 'bits-ui';
+	import type { WithElementRef } from '$lib/utils';
 
 	let {
 		ref = $bindable(null),
@@ -9,6 +9,6 @@
 	}: WithElementRef<HTMLLiAttributes> = $props();
 </script>
 
-<li bind:this={ref} {...restProps}>
+<li {...restProps} bind:this={ref}>
 	{@render children?.()}
 </li>
