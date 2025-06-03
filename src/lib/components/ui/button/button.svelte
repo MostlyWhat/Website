@@ -4,7 +4,7 @@
 	import { type VariantProps, tv } from 'tailwind-variants';
 
 	export const buttonVariants = tv({
-		base: 'ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 font-mono uppercase',
+		base: 'ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 font-chakra uppercase',
 		variants: {
 			variant: {
 				default: 'bg-primary text-primary-foreground hover:bg-primary/90',
@@ -32,9 +32,9 @@
 
 	export type ButtonProps = WithElementRef<HTMLButtonAttributes> &
 		WithElementRef<HTMLAnchorAttributes> & {
-			variant?: ButtonVariant;
-			size?: ButtonSize;
-		};
+		variant?: ButtonVariant;
+		size?: ButtonSize;
+	};
 </script>
 
 <script lang="ts">
@@ -56,7 +56,8 @@
 {#if href}
 	<a bind:this={ref} class={cn(buttonVariants({ variant, size }), className)} {href} {...restProps}>
 		<span class="flex flex-row items-center gap-2"
-			>{@render children?.()}<ArrowUpRight class="h-4 w-4" /></span
+		>{@render children?.()}
+			<ArrowUpRight class="h-4 w-4" /></span
 		>
 	</a>
 {:else}
@@ -67,7 +68,8 @@
 		{...restProps}
 	>
 		<span class="flex flex-row items-center gap-2"
-			>{@render children?.()}<ArrowUpRight class="h-4 w-4" /></span
+		>{@render children?.()}
+			<ArrowUpRight class="h-4 w-4" /></span
 		>
 	</button>
 {/if}

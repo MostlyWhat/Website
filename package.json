@@ -78,8 +78,10 @@
 		"zod": "^3.24.3"
 	},
 	"dependencies": {
+		"@fontsource-variable/hubot-sans": "^5.2.5",
 		"@fontsource-variable/jetbrains-mono": "^5.2.5",
-		"@fontsource-variable/plus-jakarta-sans": "^5.2.5",
+		"@fontsource/chakra-petch": "^5.2.6",
+		"@fontsource/tourney": "^5.2.5",
 		"@inlang/paraglide-sveltekit": "^0.15.5"
 	},
 	"husky": {

@@ -25,7 +25,7 @@
 					class=""
 				>
 					<a
-						class="flex flex-row justify-between p-4 border-b border-muted text-white hover:bg-primary hover:text-primary-foreground items-center font-mono uppercase text-sm"
+						class="flex flex-row justify-between p-4 border-b border-muted text-white hover:bg-primary hover:text-primary-foreground font-chakra items-center uppercase text-sm"
 						href="/{language.value}">
 						{language.label}
 					</a>

@@ -14,8 +14,8 @@
 	<div class="col-span-1 md:col-span-2 min-h-80">
 		<div class="h-full bg-card rounded-md shadow-sm p-4 flex flex-col justify-between">
 			<div>
-				<p class="mb-2 font-mono text-xs uppercase">// Communications</p>
-				<h3 class="font-sans text-3xl sm:text-4xl md:text-5xl font-black uppercase">Latest Updates</h3>
+				<p class="mb-2 font-chakra text-xs uppercase">// Communications</p>
+				<h3 class="font-heading text-3xl sm:text-4xl md:text-5xl font-black uppercase">Latest Updates</h3>
 				<p class="mt-3 text-sm text-muted-foreground max-w-md">
 					Stay connected with the latest news, including upcoming releases, updates, and communications from the team.
 				</p>
@@ -30,12 +30,12 @@
 	<div class="col-span-1 min-h-80">
 		<div class="h-full flex flex-col rounded-md shadow-sm bg-primary text-primary-foreground">
 			<div class="p-4 border-b border-primary-foreground/20">
-				<p class="font-mono text-xs uppercase">&gt; Connect</p>
+				<p class="font-chakra text-xs uppercase">&gt; Connect</p>
 			</div>
 			<div class="flex-1 p-4 flex flex-col justify-between">
 				<p class="text-sm">Connect with us on social media</p>
 				<div class="mt-auto pt-4">
-					<ul class="font-mono uppercase text-sm">
+					<ul class="font-chakra uppercase text-sm">
 						<li>[] Discord</li>
 						<li>Twitter</li>
 						<li>LinkedIn</li>
@@ -57,7 +57,7 @@
 	<div class="col-span-1 min-h-80">
 		<div class="h-full flex flex-col rounded-md shadow-sm bg-destructive text-secondary-foreground justify-between">
 			<div class="p-4 border-b border-secondary-foreground/20">
-				<p class="font-mono text-xs uppercase">&gt; Important Notice</p>
+				<p class="font-chakra text-xs uppercase">&gt; Important Notice</p>
 			</div>
 			<div class="flex-1 flex flex-col">
 				<p class="text-sm p-4">Latest announcements and critical updates</p>

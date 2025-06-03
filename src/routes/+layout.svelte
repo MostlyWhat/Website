@@ -10,7 +10,9 @@
 
 	// Fonts
 	import '@fontsource-variable/jetbrains-mono'; // Supports weights 100-800
-	import '@fontsource-variable/plus-jakarta-sans'; // Supports weights 200-800
+	import '@fontsource-variable/hubot-sans'; // Supports weights 200-900
+	import '@fontsource/chakra-petch';
+	import '@fontsource/tourney/900.css';
 
 	// Styles
 	import '../app.css';

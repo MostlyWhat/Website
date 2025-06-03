@@ -7,8 +7,8 @@
 		<div class="col-span-1 sm:col-span-2">
 			<div class="h-full bg-card rounded-md shadow-sm p-4 flex flex-col justify-between">
 				<div>
-					<p class="mb-2 font-mono text-xs uppercase">// Invitation</p>
-					<h3 class="font-sans text-3xl sm:text-4xl md:text-5xl font-black uppercase">Let's Work Together</h3>
+					<p class="mb-2 font-chakra text-xs uppercase">// Invitation</p>
+					<h3 class="font-heading text-3xl sm:text-4xl md:text-5xl font-black uppercase">Let's Work Together</h3>
 					<p class="mt-3 text-sm text-muted-foreground max-w-md">
 						Discuss your project with us and see how we can help you achieve your goals.
 						We are here to assist you in every step of the way.

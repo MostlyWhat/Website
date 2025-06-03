@@ -45,8 +45,8 @@
 				<div>
 					<img src="{item.image}" alt="{item.title}" class="mb-4 aspect-square object-cover" />
 					<div class="p-4">
-						<p class="mb-2 font-mono text-xs uppercase">// {item.category}</p>
-						<h3 class="font-sans text-2xl font-black uppercase">{item.title}</h3>
+						<p class="mb-2 font-chakra text-xs uppercase">// {item.category}</p>
+						<h3 class="font-heading text-2xl font-black uppercase">{item.title}</h3>
 						<p class="mt-4 text-sm text-muted-foreground max-w-md">{item.excerpt}</p>
 					</div>
 				</div>

@@ -32,18 +32,18 @@
 </script>
 
 <footer
-	class="z-30 relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0 bg-background font-mono border divide-x divide-y">
+	class="z-30 relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0 bg-background font-chakra border divide-x divide-y">
 	<div class="lg:col-start-1 row-span-1 lg:row-span-2 lg:row-start-1 bg-primary text-primary-foreground">
 		<div class="p-4">
-			<p class="font-sans font-bold uppercase">MostlyWhat Systems</p>
+			<p class="font-heading font-bold uppercase">MostlyWhat Systems</p>
 			<p class="text-sm mt-2">MostlyWhat Systems is a creative studio producing performant, minimalist, secure
 				solutions.</p>
 		</div>
 	</div>
 	<div class="lg:col-start-2 row-span-1 lg:row-span-2 lg:row-start-1">
 		<div class="p-4">
-			<p class="font-sans font-bold uppercase mb-2">Navigation</p>
-			<div class="flex flex-col space-y-1">
+			<p class="font-heading font-bold uppercase mb-2">Navigation</p>
+			<div class="flex flex-col space-y-1 font-chakra">
 				{#each links as link}
 					<a
 						class="text-white hover:bg-primary hover:text-primary-foreground uppercase tracking-wide"
@@ -58,8 +58,8 @@
 	</div>
 	<div class="lg:col-start-3 row-span-1 lg:row-span-2 lg:row-start-1">
 		<div class="p-4">
-			<p class="font-sans font-bold uppercase mb-2">Connect</p>
-			<div class="flex flex-col space-y-1">
+			<p class="font-heading font-bold uppercase mb-2">Connect</p>
+			<div class="flex flex-col space-y-1 font-chakra">
 				{#each links as link}
 					<a
 						class="text-white hover:bg-primary hover:text-primary-foreground uppercase tracking-wide"
@@ -74,8 +74,8 @@
 	</div>
 	<div class="lg:col-start-4 row-span-1 lg:row-span-2 lg:row-start-1">
 		<div class="p-4">
-			<p class="font-sans font-bold uppercase mb-2">Legal</p>
-			<div class="flex flex-col space-y-1">
+			<p class="font-heading font-bold uppercase mb-2">Legal</p>
+			<div class="flex flex-col space-y-1 font-chakra">
 				{#each links as link}
 					<a
 						class="text-white hover:bg-primary hover:text-primary-foreground uppercase tracking-wide"

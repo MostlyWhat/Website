@@ -8,10 +8,16 @@ importers:
 
   .:
     dependencies:
+      '@fontsource-variable/hubot-sans':
+        specifier: ^5.2.5
+        version: 5.2.5
       '@fontsource-variable/jetbrains-mono':
         specifier: ^5.2.5
         version: 5.2.5
-      '@fontsource-variable/plus-jakarta-sans':
+      '@fontsource/chakra-petch':
+        specifier: ^5.2.6
+        version: 5.2.6
+      '@fontsource/tourney':
         specifier: ^5.2.5
         version: 5.2.5
       '@inlang/paraglide-sveltekit':
@@ -670,11 +676,17 @@ packages:
   '@floating-ui/utils@0.2.9':
     resolution: {integrity: sha512-MDWhGtE+eHw5JW7lq4qhc5yRLS11ERl1c7Z6Xd0a58DozHES6EnNNwUWbMiG4J9Cgj053Bhk8zvlhFYKVhULwg==}
 
+  '@fontsource-variable/hubot-sans@5.2.5':
+    resolution: {integrity: sha512-k8N+lm3e5QPFaxsz1YNoZSpwjuq/93/KD9OLmVfXAM+XBETtjIWhsa9RLOuqGC+6e3EAuZGdAcBiBUcwPAaRog==}
+
   '@fontsource-variable/jetbrains-mono@5.2.5':
     resolution: {integrity: sha512-G3sN1xq1moZd0JL+hFaA4MEdsiQS+JXC/z7m+EqA5/Fzn5CQlXGUaaNKFGQdDsFuLTnCfW0KOOSWHjygNfjEPw==}
 
-  '@fontsource-variable/plus-jakarta-sans@5.2.5':
-    resolution: {integrity: sha512-nkAWzq+QWBSK+52HIlNCyoh5YXrZ/AwV1OqzxZz6VnPmsIpU68B1bf1YT8heRAJKY1kXNtWIJ9jJMYVaStgf+w==}
+  '@fontsource/chakra-petch@5.2.6':
+    resolution: {integrity: sha512-vtVU+kNam7bvrzxQ6CY4vGWUkJTtacMSuU52mw8JXok3BKGWQWNjVzdADh2tM4O7cYruQZ/205N/74j/XVodXg==}
+
+  '@fontsource/tourney@5.2.5':
+    resolution: {integrity: sha512-wuO2HC0XTqfFPjTEx7mkYyW9StS5AHWX5gHSr2dhxKaEE/svrYKRSk6f1qEC9XQ3zn41haln877YLplNn5grJQ==}
 
   '@gcornut/valibot-json-schema@0.31.0':
     resolution: {integrity: sha512-3xGptCurm23e7nuPQkdrE5rEs1FeTPHhAUsBuwwqG4/YeZLwJOoYZv+fmsppUEfo5y9lzUwNQrNqLS/q7HMc7g==}
@@ -5155,9 +5167,13 @@ snapshots:
 
   '@floating-ui/utils@0.2.9': {}
 
+  '@fontsource-variable/hubot-sans@5.2.5': {}
+
   '@fontsource-variable/jetbrains-mono@5.2.5': {}
 
-  '@fontsource-variable/plus-jakarta-sans@5.2.5': {}
+  '@fontsource/chakra-petch@5.2.6': {}
+
+  '@fontsource/tourney@5.2.5': {}
 
   '@gcornut/valibot-json-schema@0.31.0':
     dependencies:

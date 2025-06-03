@@ -49,7 +49,7 @@
 	<div
 		class="bg-primary h-full py-2 px-4 text-primary-foreground hover:bg-primary/90"
 	>
-		<a class="font-bold uppercase" href="/">
+		<a class="font-bold uppercase font-heading" href="/">
 			<span class="block sm:hidden">MostlyWhat</span>
 			<span class="hidden sm:block">MostlyWhat Systems</span>
 		</a>
@@ -58,7 +58,7 @@
 	<div class="flex flex-1 items-center justify-end">
 		<!-- Desktop Navigation -->
 		<nav
-			class="hidden mx-4 mr-auto flex-wrap items-center justify-center gap-8 p-2 font-mono text-sm uppercase tracking-wide lg:flex"
+			class="hidden mx-4 mr-auto flex-wrap items-center justify-center gap-8 p-2 font-chakra text-sm uppercase tracking-wide lg:flex"
 		>
 			{#each links as link}
 				<a
@@ -76,7 +76,7 @@
 		<div
 			class="inline-flex items-center h-full bg-secondary sm:w-auto w-full px-4 lg:px-12 py-2 text-sm text-secondary-foreground hover:bg-secondary/80"
 		>
-			<a class="font-mono uppercase w-full justify-center sm:justify-start" href="/contact">
+			<a class="font-chakra uppercase w-full justify-center sm:justify-start" href="/contact">
 				<span class="flex flex-row items-center">Contact [<ArrowUpRight class="h-4 w-4" />]</span>
 			</a>
 		</div>
@@ -101,7 +101,7 @@
 			class="fixed inset-0 top-[40px] z-50 w-full h-screen border-t bg-background/95"
 			transition:fly={{ y: -10, duration: 200 }}
 		>
-			<nav class="flex flex-col font-mono text-sm uppercase tracking-wide h-full overflow-y-auto">
+			<nav class="flex flex-col font-chakra text-sm uppercase tracking-wide h-full overflow-y-auto">
 				{#each links as link}
 					<a
 						class="flex flex-row justify-between p-4 border-b border-muted text-white hover:bg-primary hover:text-primary-foreground"

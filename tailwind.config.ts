@@ -66,9 +66,10 @@ const config: Config = {
 				sm: 'calc(var(--radius) - 4px)'
 			},
 			fontFamily: {
-				heading: [...fontFamily.sans],
-				sans: ["'Plus Jakarta Sans Variable'", ...fontFamily.sans],
+				heading: ['Tourney', ...fontFamily.sans],
+				sans: ["'Hubot Sans Variable'", ...fontFamily.sans],
 				serif: [...fontFamily.serif],
+				chakra: ["'Chakra Petch'", ...fontFamily.sans],
 				mono: ["'JetBrains Mono Variable'", ...fontFamily.mono]
 			},
 			keyframes: {

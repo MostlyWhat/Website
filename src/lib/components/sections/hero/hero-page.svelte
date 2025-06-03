@@ -65,8 +65,8 @@
 
 	<!-- Subtitle and Logo at bottom left -->
 	<div class="absolute bottom-4 left-4 flex flex-col items-start">
-		<p class="mb-2 font-mono text-xs sm:text-sm uppercase">Navigation {formattedPathname}</p>
-		<p class="-m-1 font-sans text-6xl md:text-8xl font-black uppercase">{page_name}</p>
+		<p class="mb-2 font-chakra text-xs sm:text-sm uppercase">Navigation {formattedPathname}</p>
+		<p class="-m-1 font-heading text-6xl md:text-8xl font-black uppercase">{page_name}</p>
 	</div>
 </section>
 
