@@ -4,10 +4,25 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="77d12f36-d6e8-47cc-aa3d-dc51b0860806" name="Changes" comment="feat: styles and fonts update">
+    <list default="true" id="77d12f36-d6e8-47cc-aa3d-dc51b0860806" name="Changes" comment="temp: check nav menu issue">
+      <change afterPath="$PROJECT_DIR$/src/lib/components/common/footer/footer.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/lib/components/common/header/contact-button.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/lib/components/common/header/desktop-nav.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/lib/components/common/header/header-old.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/lib/components/common/header/header.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/lib/components/common/header/home-button.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/lib/components/common/header/mobile-nav.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/lib/components/common/utilities/metadata.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/lib/config/site.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/routes/(app)/+layout.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bun.lock" beforeDir="false" afterPath="$PROJECT_DIR$/bun.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/components/ui/navigation-menu/navigation-menu-trigger.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/components/ui/navigation-menu/navigation-menu-trigger.svelte" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/routes/+layout.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/+layout.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/+page.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/(app)/+page.svelte" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,10 +42,19 @@
         <option value="cta" />
         <option value="+page" />
         <option value="language-selector" />
-        <option value="TypeScript File" />
         <option value="cta-small" />
         <option value="CSS File" />
         <option value="glitch_text" />
+        <option value="header" />
+        <option value="footer" />
+        <option value="metadata" />
+        <option value="+layout" />
+        <option value="mode-switcher" />
+        <option value="TypeScript File" />
+        <option value="mobile-link" />
+        <option value="desktop-nav" />
+        <option value="mobile-nav" />
+        <option value="home-button" />
       </list>
     </option>
   </component>
@@ -76,7 +100,7 @@
     "code.cleanup.on.save": "true",
     "git-widget-placeholder": "bun",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/venot/Projects/GitHub/Website",
+    "last_opened_file_path": "C:/Users/venot/Projects/GitHub/Website/src/lib/components/common/header",
     "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.standard": "true",
@@ -95,13 +119,14 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\venot\Projects\GitHub\Website\src\lib\components\common\header" />
       <recent name="C:\Users\venot\Projects\GitHub\Website\src\lib\components\ui\language-selector" />
       <recent name="C:\Users\venot\Projects\GitHub\Website\src\lib\components\ui" />
       <recent name="C:\Users\venot\Projects\GitHub\Website\src\routes" />
       <recent name="C:\Users\venot\Projects\GitHub\Website\src\lib\components\sections\hero" />
-      <recent name="C:\Users\venot\Projects\GitHub\Website\src\lib\components\sections" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\venot\Projects\GitHub\Website\src\routes\(app)" />
       <recent name="C:\Users\venot\Projects\GitHub\Website" />
       <recent name="C:\Users\venot\Projects\GitHub\Website\src\lib\components\sections\feature" />
       <recent name="C:\Users\venot\Projects\GitHub\Website\src\lib\components\sections\news" />
@@ -131,7 +156,7 @@
       <workItem from="1747597348903" duration="8568000" />
       <workItem from="1748050649802" duration="75000" />
       <workItem from="1748983152240" duration="7949000" />
-      <workItem from="1748996295495" duration="1409000" />
+      <workItem from="1748996295495" duration="8159000" />
     </task>
     <task id="LOCAL-00001" summary="feat: initial release">
       <option name="closed" value="true" />
@@ -317,7 +342,23 @@
       <option name="project" value="LOCAL" />
       <updated>1748997456502</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="feat: styles and fonts update">
+      <option name="closed" value="true" />
+      <created>1748997825326</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1748997825326</updated>
+    </task>
+    <task id="LOCAL-00025" summary="temp: check nav menu issue">
+      <option name="closed" value="true" />
+      <created>1749002350647</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1749002350647</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -347,6 +388,7 @@
     <MESSAGE value="feat: initial release" />
     <MESSAGE value="feat: ci and dependencies update" />
     <MESSAGE value="feat: styles and fonts update" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: styles and fonts update" />
+    <MESSAGE value="temp: check nav menu issue" />
+    <option name="LAST_COMMIT_MESSAGE" value="temp: check nav menu issue" />
   </component>
 </project>
