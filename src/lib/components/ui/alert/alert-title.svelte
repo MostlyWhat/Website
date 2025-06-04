@@ -1,25 +1,20 @@
 <script lang="ts">
-	import type { HTMLAttributes } from 'svelte/elements';
-	import type { WithElementRef } from '$lib/utils';
-	import { cn } from '$lib/utils.js';
+	import type { HTMLAttributes } from "svelte/elements";
+	import { cn, type WithElementRef } from "$lib/utils.js";
 
 	let {
 		ref = $bindable(null),
 		class: className,
-		level = 5,
 		children,
 		...restProps
-	}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {
-		level?: 1 | 2 | 3 | 4 | 5 | 6;
-	} = $props();
+	}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();
 </script>
 
 <div
-	{...restProps}
-	aria-level={level}
 	bind:this={ref}
-	class={cn('mb-1 font-medium leading-none tracking-tight', className)}
-	role="heading"
+	data-slot="alert-title"
+	class={cn("col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight", className)}
+	{...restProps}
 >
 	{@render children?.()}
 </div>

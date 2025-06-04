@@ -1,7 +1,6 @@
 <script lang="ts">
-	import type { HTMLThAttributes } from 'svelte/elements';
-	import type { WithElementRef } from '$lib/utils';
-	import { cn } from '$lib/utils.js';
+	import { cn, type WithElementRef } from "$lib/utils.js";
+	import type { HTMLThAttributes } from "svelte/elements";
 
 	let {
 		ref = $bindable(null),
@@ -12,12 +11,13 @@
 </script>
 
 <th
-	{...restProps}
 	bind:this={ref}
+	data-slot="table-head"
 	class={cn(
-		'h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0',
+		"text-foreground h-10 whitespace-nowrap px-2 text-left align-middle font-medium [&:has([role=checkbox])]:pr-0",
 		className
 	)}
+	{...restProps}
 >
 	{@render children?.()}
 </th>
