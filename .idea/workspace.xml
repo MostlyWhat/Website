@@ -4,25 +4,26 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="77d12f36-d6e8-47cc-aa3d-dc51b0860806" name="Changes" comment="temp: check nav menu issue">
-      <change afterPath="$PROJECT_DIR$/src/lib/components/common/footer/footer.svelte" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/components/common/header/contact-button.svelte" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/components/common/header/desktop-nav.svelte" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/components/common/header/header-old.svelte" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/components/common/header/header.svelte" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/components/common/header/home-button.svelte" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/components/common/header/mobile-nav.svelte" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/components/common/utilities/metadata.svelte" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/config/site.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/routes/(app)/+layout.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+    <list default="true" id="77d12f36-d6e8-47cc-aa3d-dc51b0860806" name="Changes" comment="feat: updated hero">
+      <change afterPath="$PROJECT_DIR$/src/lib/components/sections/hero/hero-page.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/lib/components/sections/hero/hero-video.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/lib/components/sections/hero/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/lib/sources.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/routes/(app)/+error.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/routes/(app)/about/+page.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/routes/(app)/contact/+page.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bun.lock" beforeDir="false" afterPath="$PROJECT_DIR$/bun.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/components/ui/navigation-menu/navigation-menu-trigger.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/components/ui/navigation-menu/navigation-menu-trigger.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/components/common/footer/footer.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/components/common/footer/footer.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/components/common/header/desktop-nav.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/components/common/header/desktop-nav.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/components/common/header/header.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/components/common/header/header.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/components/ui/navigation-menu/navigation-menu-viewport.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/components/ui/navigation-menu/navigation-menu-viewport.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/(app)/+layout.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/(app)/+layout.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/(app)/+page.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/(app)/+page.svelte" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/routes/+layout.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/+layout.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/+page.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/(app)/+page.svelte" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,11 +51,12 @@
         <option value="metadata" />
         <option value="+layout" />
         <option value="mode-switcher" />
-        <option value="TypeScript File" />
         <option value="mobile-link" />
         <option value="desktop-nav" />
         <option value="mobile-nav" />
         <option value="home-button" />
+        <option value="hero-video.svelte" />
+        <option value="TypeScript File" />
       </list>
     </option>
   </component>
@@ -100,7 +102,7 @@
     "code.cleanup.on.save": "true",
     "git-widget-placeholder": "bun",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/venot/Projects/GitHub/Website/src/lib/components/common/header",
+    "last_opened_file_path": "C:/Users/venot/Projects/GitHub/Website/src/lib/components/sections/hero",
     "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.standard": "true",
@@ -119,11 +121,11 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\venot\Projects\GitHub\Website\src\lib\components\sections\hero" />
       <recent name="C:\Users\venot\Projects\GitHub\Website\src\lib\components\common\header" />
       <recent name="C:\Users\venot\Projects\GitHub\Website\src\lib\components\ui\language-selector" />
       <recent name="C:\Users\venot\Projects\GitHub\Website\src\lib\components\ui" />
       <recent name="C:\Users\venot\Projects\GitHub\Website\src\routes" />
-      <recent name="C:\Users\venot\Projects\GitHub\Website\src\lib\components\sections\hero" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\venot\Projects\GitHub\Website\src\routes\(app)" />
@@ -156,7 +158,8 @@
       <workItem from="1747597348903" duration="8568000" />
       <workItem from="1748050649802" duration="75000" />
       <workItem from="1748983152240" duration="7949000" />
-      <workItem from="1748996295495" duration="8159000" />
+      <workItem from="1748996295495" duration="8354000" />
+      <workItem from="1749135410023" duration="6502000" />
     </task>
     <task id="LOCAL-00001" summary="feat: initial release">
       <option name="closed" value="true" />
@@ -358,14 +361,21 @@
       <option name="project" value="LOCAL" />
       <updated>1749002350647</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="feat: updated header">
+      <option name="closed" value="true" />
+      <created>1749004834774</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1749004834774</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="feat: initial release 2 with the right version of svelte" />
     <MESSAGE value="feat: added shadcn-svelte and components" />
     <MESSAGE value="feat: updated packages" />
     <MESSAGE value="feat: initial layout and design" />
@@ -389,6 +399,8 @@
     <MESSAGE value="feat: ci and dependencies update" />
     <MESSAGE value="feat: styles and fonts update" />
     <MESSAGE value="temp: check nav menu issue" />
-    <option name="LAST_COMMIT_MESSAGE" value="temp: check nav menu issue" />
+    <MESSAGE value="feat: updated header" />
+    <MESSAGE value="feat: updated hero" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: updated hero" />
   </component>
 </project>

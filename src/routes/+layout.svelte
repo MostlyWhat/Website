@@ -1,7 +1,10 @@
 <script lang="ts">
+	// Styles
+	import '../app.css';
+
 	// Modules
+	import { onNavigate } from '$app/navigation';
 	import { Toaster } from '$lib/components/ui/sonner';
-	import * as Tooltip from '$lib/components/ui/tooltip';
 	import Metadata from '$lib/components/common/utilities/metadata.svelte';
 
 	// Fonts
@@ -10,16 +13,22 @@
 	import '@fontsource/chakra-petch';
 	import '@fontsource/tourney/900.css';
 
-	// Styles
-	import '../app.css';
+	onNavigate((navigation) => {
+		if (!document.startViewTransition) return;
+
+		return new Promise((resolve) => {
+			document.startViewTransition(async () => {
+				resolve();
+				await navigation.complete;
+			});
+		});
+	});
 
 	let { children } = $props();
 </script>
 
 <Metadata />
 <Toaster />
-<Tooltip.Provider>
-	<div class="bg-background relative flex min-h-dvh flex-col">
-		{@render children?.()}
-	</div>
-</Tooltip.Provider>
+<div class="min-h-dvh">
+    {@render children?.()}
+</div>

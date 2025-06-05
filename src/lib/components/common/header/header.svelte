@@ -19,7 +19,7 @@
 		{ title: 'Services', href: '/services' },
 		{ title: 'Projects', href: '/projects' },
 		{ title: 'News', href: '/news' },
-		{ title: 'Careers', href: '/careers' },
+		{ title: 'Careers', href: '/careers' }
 	];
 
 	const handleScroll = () => {
@@ -47,28 +47,49 @@
 </script>
 
 <header
-	class="header fixed z-40 w-full border-b transition-all duration-200 flex"
-	class:bg-background={isScrolled || isMobileMenuOpen}
+    class="header fixed z-40 w-full border-b transition-all duration-200 flex"
+    class:bg-background={isScrolled || isMobileMenuOpen}
 >
-	<HomeButton />
-	<div class="flex flex-1 items-center justify-end">
-		<DesktopNav {links} />
-		<ContactButton />
+    <HomeButton />
+    <div class="flex flex-1 items-center justify-end">
+        <DesktopNav {links} />
+        <ContactButton />
 
-		<!-- Mobile menu button -->
-		<button
-			aria-label="Toggle menu"
-			class={cn("lg:hidden",navigationMenuTriggerStyle())}
-			onclick={toggleMobileMenu}
-		>
-			{#if isMobileMenuOpen}
-				<X class="h-6 w-6 text-white" />
-			{:else}
-				<Menu class="h-6 w-6 text-white" />
-			{/if}
-		</button>
-	</div>
+        <!-- Mobile menu button -->
+        <button
+            aria-label="Toggle menu"
+            class={cn("lg:hidden",navigationMenuTriggerStyle())}
+            onclick={toggleMobileMenu}
+        >
+            {#if isMobileMenuOpen}
+                <X class="h-6 w-6 text-white" />
+            {:else}
+                <Menu class="h-6 w-6 text-white" />
+            {/if}
+        </button>
+    </div>
 
+    <!-- Mobile Menu (fullscreen) -->
+    {#if isMobileMenuOpen && isMobile}
+        <div
+            class="fixed inset-0 top-[36px] z-50 w-full h-screen border-t bg-background/95"
+            transition:fly={{ y: -10, duration: 200 }}
+        >
+            <nav class="flex flex-col font-chakra text-sm uppercase tracking-wide h-full overflow-y-auto">
+                {#each links as link (link.href)}
+                    <a
+                        class="flex flex-row justify-between p-4 border-b border-muted text-white hover:bg-primary hover:text-primary-foreground"
+                        href={link.href}
+                        onclick={() => isMobileMenuOpen = false}
+                    >
+                        {link.title}
+                        <span class="flex flex-row items-center">[<ArrowUpRight class="h-4 w-4" />]</span>
+                    </a>
+                {/each}
+                <!--				<LanguageSelectorMobile />-->
+            </nav>
+        </div>
+    {/if}
 </header>
 
 <style>
