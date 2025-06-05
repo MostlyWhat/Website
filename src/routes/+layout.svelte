@@ -9,6 +9,7 @@
 	import Header from '$lib/components/common/header/header.svelte';
 	import Footer from '$lib/components/common/footer/footer.svelte';
 	import Announcement from '$lib/components/common/utilities/announcement.svelte';
+	import Cursor from '$lib/components/common/utilities/cursor.svelte';
 
 	// Fonts
 	import '@fontsource-variable/jetbrains-mono'; // Supports weights 100-800
@@ -32,6 +33,7 @@
 
 <Metadata />
 <Toaster />
+<Cursor />
 <Announcement />
 <Header />
 <main class="min-h-dvh">

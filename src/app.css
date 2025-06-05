@@ -129,6 +129,16 @@
     }
 }
 
+/* Make sure cursor is hidden everywhere */
+*, *::before, *::after {
+    cursor: none !important;
+}
+
+/* Specifically target interactive elements that often have their own cursor styles */
+a, button, input, select, textarea, [role="button"], label {
+    cursor: none !important;
+}
+
 @keyframes fade-in {
     from {
         opacity: 0;

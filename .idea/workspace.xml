@@ -5,12 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="77d12f36-d6e8-47cc-aa3d-dc51b0860806" name="Changes" comment="feat: updated config and temp design for header">
+      <change afterPath="$PROJECT_DIR$/src/lib/components/common/utilities/cursor.svelte" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/components/common/footer/footer.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/components/common/footer/footer.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/components/common/header/desktop-nav.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/components/common/header/desktop-nav.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/components/common/header/header.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/components/common/header/header.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/components/common/header/home-button.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/components/common/header/home-button.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/config/nav.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/config/nav.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/+layout.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/+layout.svelte" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,6 +45,7 @@
         <option value="HTML File" />
         <option value="TypeScript File" />
         <option value="announcement" />
+        <option value="cursor" />
       </list>
     </option>
   </component>
@@ -150,7 +150,7 @@
       <workItem from="1748983152240" duration="7949000" />
       <workItem from="1748996295495" duration="8354000" />
       <workItem from="1749135410023" duration="6502000" />
-      <workItem from="1749148026681" duration="9593000" />
+      <workItem from="1749148026681" duration="12039000" />
     </task>
     <task id="LOCAL-00001" summary="feat: initial release">
       <option name="closed" value="true" />
@@ -376,7 +376,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749158972633</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="feat: updated config and temp design for header">
+      <option name="closed" value="true" />
+      <created>1749160807225</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1749160807225</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
