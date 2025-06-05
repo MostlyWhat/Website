@@ -1,19 +1,16 @@
 <script lang="ts">
 	import * as NavigationMenu from '$lib/components/ui/navigation-menu';
-	import { ArrowUpRight } from '@lucide/svelte';
 	import {
 		navigationMenuHomeStyle,
 		navigationMenuTriggerStyle
 	} from '$lib/components/ui/navigation-menu/navigation-menu-trigger.svelte';
 	import { cn } from '$lib/utils';
 	import { navigationConfig } from '$lib/config/nav';
-
-	// We can still accept links prop, but we'll primarily use navigationConfig
-	let { links = [] } = $props();
 </script>
 
 <NavigationMenu.Root class="mr-auto hidden lg:block" viewport>
 	<NavigationMenu.List>
+		<!-- Home link unchanged -->
 		<NavigationMenu.Item>
 			<NavigationMenu.Link
 				class={cn(navigationMenuHomeStyle())}
@@ -31,36 +28,24 @@
        <span>{item.title}</span>
       </span>
 					</NavigationMenu.Trigger>
-					<NavigationMenu.Content>
-						<ul class="grid w-[400px] md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+					<NavigationMenu.Content class="min-w-full">
+						<div class="flex justify-between w-full">
 							{#each item.items as subItem (subItem.title)}
-								<li>
-									<NavigationMenu.Link
-										href={subItem.href}
-										class="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-										external={subItem.external}
-									>
-										<div class="text-sm font-medium leading-none">{subItem.title}</div>
-										{#if subItem.label}
-											<p class="line-clamp-2 text-sm leading-snug text-muted-foreground">{subItem.label}</p>
-										{/if}
-									</NavigationMenu.Link>
-								</li>
+								<a
+									href={subItem.href}
+									class="h-64 w-full relative bg-primary/50 hover:bg-primary/80 transition-colors duration-200 flex items-end"
+								>
+									<span class="p-4 text-primary-foreground font-medium">{subItem.title}</span>
+								</a>
 							{/each}
-						</ul>
+						</div>
 					</NavigationMenu.Content>
 				{:else}
 					<NavigationMenu.Link
 						class={cn(navigationMenuTriggerStyle())}
 						href={item.href}
-						external={item.external}
 					>
-      <span class="flex flex-row items-center uppercase gap-2">
-       <span>{item.title}</span>
-				{#if item.external}
-        <ArrowUpRight class="h-4 w-4" />
-       {/if}
-      </span>
+						<span class="flex flex-row items-center uppercase gap-2">{item.title}</span>
 					</NavigationMenu.Link>
 				{/if}
 			</NavigationMenu.Item>

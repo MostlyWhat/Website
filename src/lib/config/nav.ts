@@ -65,68 +65,49 @@ export const navigationConfig: NavigationConfig = {
 			]
 		},
 		{
-			title: 'Design',
+			title: 'Products',
 			items: [
 				{
-					title: 'Trajectory',
-					href: '/docs'
+					title: 'Horizon',
+					href: '/products/horizon'
 				},
 				{
-					title: 'ETA',
-					href: '/docs/eta'
+					title: 'Horizon CLI',
+					href: '/products/horizon-cli'
 				},
 				{
-					title: 'Elevation',
-					href: '/docs/elevation'
-				},
-				{
-					title: 'Typography',
-					href: '/docs/typography'
-				},
-				{
-					title: 'Color',
-					href: '/docs/color'
-				},
-				{
-					title: 'Iconography',
-					href: '/docs/iconography'
-				},
-				{
-					title: 'Illustrations',
-					href: '/docs/illustrations'
+					title: 'Horizon SDK',
+					href: '/products/horizon-sdk'
 				}
 			]
 		},
 		{
-			title: 'Develop',
+			title: 'Services',
 			items: [
 				{
-					title: 'Introduction',
-					href: '/docs'
+					title: 'Consulting',
+					href: '/services/consulting'
 				},
 				{
-					title: 'Installation',
-					href: '/docs/installation'
+					title: 'Support',
+					href: '/services/support'
 				},
 				{
-					title: 'components.json',
-					href: '/docs/components-json'
+					title: 'Training',
+					href: '/services/training'
+				}
+			]
+		},
+		{
+			title: 'Projects',
+			items: [
+				{
+					title: 'Open Source',
+					href: '/projects/open-source'
 				},
 				{
-					title: 'Theming',
-					href: '/docs/theming'
-				},
-				{
-					title: 'Dark mode',
-					href: '/docs/dark-mode'
-				},
-				{
-					title: 'CLI',
-					href: '/docs/cli'
-				},
-				{
-					title: 'Typography',
-					href: '/docs/typography'
+					title: 'Community',
+					href: '/projects/community'
 				}
 			]
 		}
