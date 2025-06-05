@@ -1,34 +1,9 @@
 <script lang="ts">
 	import ArrowUpRight from '@lucide/svelte/icons/arrow-up-right';
+	import { navigationConfig } from '$lib/config/nav';
+	import type { NavItem } from '$lib/config/nav';
 
 	let current_year = new Date().getFullYear();
-
-	const links: { title: string; href: string }[] = [
-		{
-			title: 'About',
-			href: '/about'
-		},
-		{
-			title: 'Services',
-			href: '/services'
-		},
-		{
-			title: 'Projects',
-			href: '/projects'
-		},
-		{
-			title: 'News',
-			href: '/news'
-		},
-		{
-			title: 'Careers',
-			href: '/careers'
-		},
-		{
-			title: 'Contact',
-			href: '/contact'
-		}
-	];
 </script>
 
 <footer
@@ -44,57 +19,36 @@
 			</p>
 		</div>
 	</div>
-	<div class="row-span-1 lg:col-start-2 lg:row-span-2 lg:row-start-1">
-		<div class="p-4">
-			<p class="font-heading mb-2 font-bold uppercase">Navigation</p>
-			<div class="font-chakra flex flex-col space-y-1">
-				{#each links as link}
-					<a
-						class="hover:bg-primary hover:text-primary-foreground tracking-wide text-white uppercase"
-						href={link.href}
-					>
-						<span class="flex flex-row items-center text-sm"
-							>[<ArrowUpRight class="h-4 w-4" />] {link.title}</span
-						>
-					</a>
-				{/each}
+
+	{#each navigationConfig.footerNav as section, i (section.title)}
+		<div class="row-span-1 lg:col-start-{i + 2} lg:row-span-2 lg:row-start-1">
+			<div class="p-4">
+				<p class="font-heading mb-2 font-bold uppercase">{section.title}</p>
+				<div class="font-chakra flex flex-col space-y-1">
+					{#if section.items && section.items.length > 0}
+						{#each section.items as link (link.title)}
+							<a
+								class="hover:bg-primary hover:text-primary-foreground tracking-wide text-white uppercase"
+								href={link.href}
+								target={link.href?.startsWith('http') ? '_blank' : undefined}
+								rel={link.href?.startsWith('http') ? 'noopener noreferrer' : undefined}
+							>
+         <span class="flex flex-row items-center text-sm">
+          {#if link.href?.startsWith('http')}
+            [<ArrowUpRight class="h-4 w-4" />]
+          {:else}
+            [ ]
+          {/if}
+					 {link.title}
+         </span>
+							</a>
+						{/each}
+					{/if}
+				</div>
 			</div>
 		</div>
-	</div>
-	<div class="row-span-1 lg:col-start-3 lg:row-span-2 lg:row-start-1">
-		<div class="p-4">
-			<p class="font-heading mb-2 font-bold uppercase">Connect</p>
-			<div class="font-chakra flex flex-col space-y-1">
-				{#each links as link}
-					<a
-						class="hover:bg-primary hover:text-primary-foreground tracking-wide text-white uppercase"
-						href={link.href}
-					>
-						<span class="flex flex-row items-center text-sm"
-							>[<ArrowUpRight class="h-4 w-4" />] {link.title}</span
-						>
-					</a>
-				{/each}
-			</div>
-		</div>
-	</div>
-	<div class="row-span-1 lg:col-start-4 lg:row-span-2 lg:row-start-1">
-		<div class="p-4">
-			<p class="font-heading mb-2 font-bold uppercase">Legal</p>
-			<div class="font-chakra flex flex-col space-y-1">
-				{#each links as link}
-					<a
-						class="hover:bg-primary hover:text-primary-foreground tracking-wide text-white uppercase"
-						href={link.href}
-					>
-						<span class="flex flex-row items-center text-sm"
-							>[<ArrowUpRight class="h-4 w-4" />] {link.title}</span
-						>
-					</a>
-				{/each}
-			</div>
-		</div>
-	</div>
+	{/each}
+
 	<div class="col-span-1 sm:col-span-2 lg:col-start-1">
 		<div class="p-4">
 			<p>Copyright 2018-{current_year} MostlyWhat Systems, LLC. All rights reserved.</p>

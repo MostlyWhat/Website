@@ -3,7 +3,17 @@
 	import { siteConfig } from '$lib/config/site';
 
 	const title = $derived(
-		page.data?.title ? `${page.data.title} - ${siteConfig.name}` : siteConfig.name,
+		(() => {
+			const lastSegment = page.url.pathname.split('/').filter(Boolean).pop() || '';
+			if (!lastSegment) return siteConfig.name;
+
+			const formattedSegment = lastSegment
+				.split('-')
+				.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+				.join(' ');
+
+			return `${formattedSegment} - ${siteConfig.name}`;
+		})()
 	);
 </script>
 

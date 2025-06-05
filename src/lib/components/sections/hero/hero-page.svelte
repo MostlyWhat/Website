@@ -3,58 +3,58 @@
 	import { MARATHON_VIDEO } from '$lib/sources';
 	import HeroVideo from './hero-video.svelte';
 
+	// Constants
 	const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
+	// State variables
 	let page_name = $state('');
 	let page_subtitle = $state('');
+	let targetName = '';
 
-	// Grab the current URL
-	const currentUrl = page.url;
-	// Get the pathname
-	const pathname = currentUrl.pathname;
-	// Add a space between the slashes
-	const formattedPathname = pathname.replace(/\//g, ' / ');
-	// Get the last part of the pathname
-	const lastPart = pathname.substring(pathname.lastIndexOf('/') + 1);
-	// Check if the last part is empty
-	const isEmpty = lastPart === '';
-	// If it is empty, set the pathname to 'home'
-	if (isEmpty) {
-		currentUrl.pathname = '/ Home';
+	// Process URL and set page information
+	function setupPageContent() {
+		const currentUrl = page.url;
+		const pathname = currentUrl.pathname;
+		const formattedPathname = pathname.replace(/\//g, ' / ');
+		const lastPart = pathname.substring(pathname.lastIndexOf('/') + 1);
+		const isEmpty = lastPart === '';
+
+		// Handle empty path
+		if (isEmpty) {
+			currentUrl.pathname = '/ Home';
+		}
+
+		// Determine target name and subtitle based on path
+		if (lastPart === 'index' || lastPart === '') {
+			targetName = 'MostlyWhat';
+			page_subtitle = '// Design. Develop. Deploy.';
+		} else {
+			targetName = lastPart;
+			page_subtitle = `Navigation ${formattedPathname}`;
+		}
+
+		// Initialize with random text
+		page_name = Array(targetName.length)
+			.fill(0)
+			.map(() => letters[Math.floor(Math.random() * 26)])
+			.join('');
 	}
 
-	// Set Page Name
-	if (lastPart === 'index' || lastPart === '') {
-		page_name = 'MostlyWhat';
-	} else {
-		page_name = lastPart;
-	}
-
-	// Set Subtitle
-	if (lastPart === 'index' || lastPart === '') {
-		page_subtitle = '// Design. Develop. Deploy.';
-	} else {
-		page_subtitle = `Navigation ${formattedPathname}`;
-	}
-
-
+	// Text scramble animation
 	function animate() {
-		const target = page_name;
-
 		let iteration = 0;
 
 		const interval = setInterval(() => {
-			page_name = target
+			page_name = targetName
 				.split('')
-				.map((letter, index) => {
-					if (index < iteration) {
-						return target[index];
-					}
-					return letters[Math.floor(Math.random() * 26)];
-				})
+				.map((letter, index) =>
+					index < iteration
+						? targetName[index]
+						: letters[Math.floor(Math.random() * 26)]
+				)
 				.join('');
 
-			if (iteration >= target.length) {
+			if (iteration >= targetName.length) {
 				clearInterval(interval);
 			}
 
@@ -62,24 +62,26 @@
 		}, 50);
 	}
 
+	// Initialize page content
+	setupPageContent();
+
+	// Start animation with delay
 	$effect(() => {
-		setTimeout(() => {
-			animate();
-		}, 500);
+		setTimeout(animate, 500);
 	});
 </script>
 
 <section class="hero relative min-h-screen w-full overflow-hidden">
-    <!-- Video background -->
-    <div class="video-container absolute inset-0 z-[-1]">
-        <HeroVideo videoSrc={MARATHON_VIDEO} />
-    </div>
+	<!-- Video background -->
+	<div class="video-container absolute inset-0 z-[-1]">
+		<HeroVideo videoSrc={MARATHON_VIDEO} />
+	</div>
 
-    <!-- Subtitle and Logo at bottom left -->
-    <div class="absolute bottom-4 left-4 flex flex-col items-start">
-        <p class="font-chakra mb-2 text-xs uppercase sm:text-sm">{page_subtitle}</p>
-        <p class="font-heading -m-1 text-6xl font-black uppercase md:text-8xl">{page_name}</p>
-    </div>
+	<!-- Subtitle and Logo at bottom left -->
+	<div class="absolute bottom-4 left-4 flex flex-col items-start">
+		<p class="font-chakra mb-2 text-xs uppercase sm:text-sm">{page_subtitle}</p>
+		<p class="font-heading -m-1 text-6xl font-black uppercase md:text-8xl">{page_name}</p>
+	</div>
 </section>
 
 <style>
