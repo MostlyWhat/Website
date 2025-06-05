@@ -1,7 +1,6 @@
 <script lang="ts">
 	import ArrowUpRight from '@lucide/svelte/icons/arrow-up-right';
-	import { navigationConfig } from '$lib/config/nav';
-	import type { NavItem } from '$lib/config/nav';
+	import { footerNavConfig } from '$lib/config/nav';
 
 	let current_year = new Date().getFullYear();
 </script>
@@ -20,7 +19,7 @@
 		</div>
 	</div>
 
-	{#each navigationConfig.footerNav as section, i (section.title)}
+	{#each footerNavConfig as section, i (section.title)}
 		<div class="row-span-1 lg:col-start-{i + 2} lg:row-span-2 lg:row-start-1">
 			<div class="p-4">
 				<p class="font-heading mb-2 font-bold uppercase">{section.title}</p>
@@ -33,14 +32,9 @@
 								target={link.href?.startsWith('http') ? '_blank' : undefined}
 								rel={link.href?.startsWith('http') ? 'noopener noreferrer' : undefined}
 							>
-         <span class="flex flex-row items-center text-sm">
-          {#if link.href?.startsWith('http')}
-            [<ArrowUpRight class="h-4 w-4" />]
-          {:else}
-            [ ]
-          {/if}
-					 {link.title}
-         </span>
+								<span class="flex flex-row items-center text-sm">
+									[<ArrowUpRight class="h-4 w-4" />] {link.title}
+								</span>
 							</a>
 						{/each}
 					{/if}

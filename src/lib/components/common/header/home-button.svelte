@@ -4,7 +4,7 @@
 </script>
 
 <a
-	class={cn("lg:hidden", navigationMenuHomeStyle())}
+	class={cn("w-full text-left pl-0 lg:hidden", navigationMenuHomeStyle())}
 	href="/"
 >
 	<span class="block sm:hidden">MostlyWhat</span>
