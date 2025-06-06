@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="77d12f36-d6e8-47cc-aa3d-dc51b0860806" name="Changes" comment="feat: updated cursor">
+    <list default="true" id="77d12f36-d6e8-47cc-aa3d-dc51b0860806" name="Changes" comment="feat: fix cursor and header">
+      <change beforePath="$PROJECT_DIR$/.idea/prettier.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/prettier.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/components/common/header/contact-button.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/components/common/header/contact-button.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/components/common/header/header.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/components/common/header/header.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/components/common/utilities/cursor.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/components/common/utilities/cursor.svelte" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -103,7 +101,7 @@
     "prettierjs.PrettierConfiguration.Package": "C:\\Users\\venot\\Projects\\GitHub\\Website\\node_modules\\prettier",
     "rearrange.code.on.save": "true",
     "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "settings.editor.selected.configurable": "actions.on.save",
     "ts.external.directory.path": "C:\\Users\\venot\\Projects\\GitHub\\Website\\node_modules\\typescript\\lib",
     "vue.rearranger.settings.migration": "true"
   }
@@ -149,7 +147,7 @@
       <workItem from="1748983152240" duration="7949000" />
       <workItem from="1748996295495" duration="8354000" />
       <workItem from="1749135410023" duration="6502000" />
-      <workItem from="1749148026681" duration="13334000" />
+      <workItem from="1749148026681" duration="13497000" />
     </task>
     <task id="LOCAL-00001" summary="feat: initial release">
       <option name="closed" value="true" />
@@ -399,14 +397,21 @@
       <option name="project" value="LOCAL" />
       <updated>1749168514016</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="feat: fix cursor and header">
+      <option name="closed" value="true" />
+      <created>1749169236949</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1749169236949</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="ci: updated actions for github" />
     <MESSAGE value="fix: missing config for pnpm and node in package.json" />
     <MESSAGE value="fix: added release and husky to prepare script" />
     <MESSAGE value="fix: updated homepage layout, added footer and header" />
@@ -431,6 +436,7 @@
     <MESSAGE value="feat: updated config and temp design for header" />
     <MESSAGE value="feat: new cursor" />
     <MESSAGE value="feat: updated cursor" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: updated cursor" />
+    <MESSAGE value="feat: fix cursor and header" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: fix cursor and header" />
   </component>
 </project>
