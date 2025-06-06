@@ -79,6 +79,27 @@ export const mainNavConfig: MainNavItem[] = [
 		]
 	},
 	{
+		title: 'Works',
+		layout: 'list',
+		items: [
+			{
+				title: 'Clients',
+				href: '/projects/clients',
+				description: 'Our work with clients'
+			},
+			{
+				title: 'Open Source',
+				href: '/projects/open-source',
+				description: 'Our contributions to the community'
+			},
+			{
+				title: 'Community',
+				href: '/projects/community',
+				description: 'Join our developer network'
+			}
+		]
+	},
+	{
 		title: 'Products',
 		layout: 'featured',
 		items: [
@@ -122,25 +143,8 @@ export const mainNavConfig: MainNavItem[] = [
 		]
 	},
 	{
-		title: 'Projects',
-		layout: 'list',
-		items: [
-			{
-				title: 'Clients',
-				href: '/projects/clients',
-				description: 'Our work with clients'
-			},
-			{
-				title: 'Open Source',
-				href: '/projects/open-source',
-				description: 'Our contributions to the community'
-			},
-			{
-				title: 'Community',
-				href: '/projects/community',
-				description: 'Join our developer network'
-			}
-		]
+		title: 'News',
+		href: '/news'
 	}
 ];
 
