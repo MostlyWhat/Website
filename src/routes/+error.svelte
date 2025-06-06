@@ -17,15 +17,19 @@
 	<div class="absolute inset-0 flex items-center justify-center px-4 md:justify-start md:px-8">
 		<div class="max-w-3xl">
 			<p class="mb-8 font-mono text-xs uppercase sm:text-sm">
-				<span class="bg-destructive p-4 font-chakra"> // An Error has Occurred </span>
+				<span class="bg-destructive font-chakra p-4"> // An Error has Occurred </span>
 			</p>
-			<p class="-m-1 font-heading text-4xl font-black uppercase sm:text-5xl md:text-7xl lg:text-8xl">
+			<p
+				class="font-heading -m-1 text-4xl font-black uppercase sm:text-5xl md:text-7xl lg:text-8xl"
+			>
 				{page.status}
 				{page.error?.message || 'SYSTEM FAILURE'}
 			</p>
 			<div class="mt-12 flex flex-col gap-4 sm:flex-row">
-				<Button class="uppercase font-chakra" href="/" size="lg">Go to Home</Button>
-				<Button class="uppercase font-chakra" href="/contact" size="lg" variant="secondary">Contact Us</Button>
+				<Button class="font-chakra uppercase" href="/" size="lg">Go to Home</Button>
+				<Button class="font-chakra uppercase" href="/contact" size="lg" variant="secondary"
+					>Contact Us</Button
+				>
 			</div>
 		</div>
 	</div>

@@ -12,10 +12,7 @@
 	<NavigationMenu.List>
 		<!-- Home link unchanged -->
 		<NavigationMenu.Item>
-			<NavigationMenu.Link
-				class={cn(navigationMenuHomeStyle())}
-				href="/"
-			>
+			<NavigationMenu.Link class={cn(navigationMenuHomeStyle())} href="/">
 				MostlyWhat Systems
 			</NavigationMenu.Link>
 		</NavigationMenu.Item>
@@ -24,77 +21,68 @@
 			<NavigationMenu.Item>
 				{#if item.items && item.items.length > 0}
 					<NavigationMenu.Trigger class={cn(navigationMenuTriggerStyle())}>
-						<span class="flex flex-row items-center uppercase gap-2">
+						<span class="flex flex-row items-center gap-2 uppercase">
 							<span>{item.title}</span>
 						</span>
 					</NavigationMenu.Trigger>
 					<NavigationMenu.Content class="min-w-full">
 						{#if item.layout === 'grid'}
-							<div class="grid grid-cols-3 gap-3 p-4 w-[500px]">
+							<div class="grid w-[500px] grid-cols-3 gap-3 p-4">
 								{#each item.items as subItem (subItem.title)}
-									<a
-										href={subItem.href}
-										class="block rounded-md p-3 hover:bg-muted"
-									>
-										<div class="font-medium">{subItem.title}</div>
+									<a href={subItem.href} class="hover:bg-muted block rounded-md p-3">
+										<div class="font-medium uppercase">{subItem.title}</div>
 										{#if subItem.description}
-											<p class="text-sm text-muted-foreground">{subItem.description}</p>
+											<p class="text-muted-foreground text-sm font-sans">{subItem.description}</p>
 										{/if}
 									</a>
 								{/each}
 							</div>
 						{:else if item.layout === 'featured'}
-							<div class="flex flex-col p-4 w-[500px]">
-								{#each item.items.filter(i => i.featured) as featuredItem (featuredItem.title)}
+							<div class="flex w-[500px] flex-col p-4">
+								{#each item.items.filter((i) => i.featured) as featuredItem (featuredItem.title)}
 									<a
 										href={featuredItem.href}
-										class="mb-3 bg-primary/10 rounded-md p-4 hover:bg-primary/20"
+										class="bg-primary/10 hover:bg-primary/20 mb-3 rounded-md p-4"
 									>
-										<div class="font-bold text-lg">{featuredItem.title}</div>
+										<div class="text-lg font-bold uppercase">{featuredItem.title}</div>
 										{#if featuredItem.description}
-											<p>{featuredItem.description}</p>
+											<p class="font-sans">{featuredItem.description}</p>
 										{/if}
 									</a>
 								{/each}
 								<div class="grid grid-cols-2 gap-3">
-									{#each item.items.filter(i => !i.featured) as subItem (subItem.title)}
-										<a
-											href={subItem.href}
-											class="block rounded-md p-3 hover:bg-muted"
-										>
-											<div class="font-medium">{subItem.title}</div>
+									{#each item.items.filter((i) => !i.featured) as subItem (subItem.title)}
+										<a href={subItem.href} class="hover:bg-muted block rounded-md p-3">
+											<div class="font-medium uppercase">{subItem.title}</div>
 											{#if subItem.description}
-												<p class="text-sm text-muted-foreground">{subItem.description}</p>
+												<p class="text-muted-foreground text-sm font-sans">{subItem.description}</p>
 											{/if}
 										</a>
 									{/each}
 								</div>
 							</div>
 						{:else if item.layout === 'cards'}
-							<div class="grid grid-cols-3 gap-4 p-4 w-[600px]">
+							<div class="grid w-[600px] grid-cols-3 gap-4 p-4">
 								{#each item.items as subItem (subItem.title)}
 									<a
 										href={subItem.href}
-										class="h-36 flex flex-col rounded-md border p-4 hover:bg-muted"
+										class="hover:bg-muted flex h-36 flex-col rounded-md border p-4"
 									>
-										<div class="font-medium">{subItem.title}</div>
+										<div class="font-medium uppercase">{subItem.title}</div>
 										{#if subItem.description}
-											<p class="mt-2 text-sm text-muted-foreground">{subItem.description}</p>
+											<p class="text-muted-foreground mt-2 text-sm font-sans">{subItem.description}</p>
 										{/if}
 									</a>
 								{/each}
 							</div>
 						{:else if item.layout === 'list'}
-							<div class="flex flex-col p-4 w-[400px]">
+							<div class="flex w-[400px] flex-col p-4">
 								{#each item.items as subItem (subItem.title)}
-									<a
-										href={subItem.href}
-										class="block p-3 hover:bg-muted"
-									>
+									<a href={subItem.href} class="hover:bg-muted block p-3">
 										<div class="flex items-center justify-between">
-											<div class="font-medium">{subItem.title}</div>
+											<div class="font-medium uppercase">{subItem.title}</div>
 											{#if subItem.description}
-												<p class="text-sm text-muted-foreground">{subItem.description}</p>
+												<p class="text-muted-foreground text-sm font-sans">{subItem.description}</p>
 											{/if}
 										</div>
 									</a>
@@ -102,24 +90,21 @@
 							</div>
 						{:else}
 							<!-- Default layout -->
-							<div class="flex justify-between w-full">
+							<div class="flex w-full justify-between">
 								{#each item.items as subItem (subItem.title)}
 									<a
 										href={subItem.href}
-										class="h-64 w-full relative bg-primary/50 hover:bg-primary/80 transition-colors duration-200 flex items-end"
+										class="bg-primary/50 hover:bg-primary/80 relative flex h-64 w-full items-end transition-colors duration-200"
 									>
-										<span class="p-4 text-primary-foreground font-medium">{subItem.title}</span>
+										<span class="text-primary-foreground p-4 font-medium">{subItem.title}</span>
 									</a>
 								{/each}
 							</div>
 						{/if}
 					</NavigationMenu.Content>
 				{:else}
-					<NavigationMenu.Link
-						class={cn(navigationMenuTriggerStyle())}
-						href={item.href}
-					>
-						<span class="flex flex-row items-center uppercase gap-2">{item.title}</span>
+					<NavigationMenu.Link class={cn(navigationMenuTriggerStyle())} href={item.href}>
+						<span class="flex flex-row items-center gap-2 uppercase">{item.title}</span>
 					</NavigationMenu.Link>
 				{/if}
 			</NavigationMenu.Item>

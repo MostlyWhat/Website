@@ -4,12 +4,9 @@
 	import { ArrowUpRight } from '@lucide/svelte';
 </script>
 
-<a
-	class={cn(navigationMenuHomeStyle())}
-	href="/contact"
->
-	<span class="flex flex-row items-center uppercase gap-2">
-					<span>Contact</span>
-					<ArrowUpRight class="h-4 w-4" />
+<a class={cn(navigationMenuHomeStyle())} href="/contact">
+	<span class="flex flex-row items-center gap-2 uppercase">
+		<span>Contact</span>
+		<ArrowUpRight class="h-4 w-4" />
 	</span>
 </a>

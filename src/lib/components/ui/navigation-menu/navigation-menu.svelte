@@ -18,7 +18,7 @@
 	{...restProps}
 	bind:ref
 	class={cn(
-		"group/navigation-menu relative flex max-w-max flex-1 items-center justify-center font-chakra",
+		'group/navigation-menu font-chakra relative flex max-w-max flex-1 items-center justify-center',
 		className
 	)}
 	data-slot="navigation-menu"

@@ -36,21 +36,24 @@
 
 	onMount(() => {
 		// Subscribe to changes in Spring.current values
-		intervalIds.push(setInterval(() => {
-			innerCursorPos.set(innerPos.current);
-			outerCursorPos.set(outerPos.current);
-			cursorSize.set(size.current);
-		}, 16));
+		intervalIds.push(
+			setInterval(() => {
+				innerCursorPos.set(innerPos.current);
+				outerCursorPos.set(outerPos.current);
+				cursorSize.set(size.current);
+			}, 16)
+		);
 	});
 
 	onDestroy(() => {
-		intervalIds.forEach(id => clearInterval(id));
+		intervalIds.forEach((id) => clearInterval(id));
 	});
 
 	// Throttled mousemove handler
 	function handleMouseMove(e: MouseEvent) {
 		const now = performance.now();
-		if (now - lastMove > 10) { // ~60fps
+		if (now - lastMove > 10) {
+			// ~60fps
 			// Update both positions with the same target, but they'll move at different speeds
 			innerPos.set({ x: e.clientX, y: e.clientY });
 			outerPos.set({ x: e.clientX, y: e.clientY });
@@ -86,18 +89,18 @@
 		cx={$innerCursorPos.x}
 		cy={$innerCursorPos.y}
 		fill="var(--color-primary-foreground)"
-		r={$cursorSize/4}
+		r={$cursorSize / 4}
 	/>
 </svg>
 
 <style>
-    .cursor-container {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        pointer-events: none;
-        z-index: 9999;
-    }
+	.cursor-container {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 100vh;
+		pointer-events: none;
+		z-index: 9999;
+	}
 </style>

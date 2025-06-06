@@ -10,7 +10,7 @@
 		const savedTime = sessionStorage.getItem('videoTime');
 		if (savedTime && video) {
 			video.currentTime = parseFloat(savedTime);
-			video.play().catch(e => console.error('Video autoplay failed:', e));
+			video.play().catch((e) => console.error('Video autoplay failed:', e));
 		}
 
 		// Save video position before navigation
@@ -23,14 +23,14 @@
 </script>
 
 <video
-    autoplay
-    bind:this={video}
-    class="h-full w-full object-cover"
-    loop
-    muted
-    playsinline
-    src={videoSrc}
-    style="view-transition-name: hero-video;"
+	autoplay
+	bind:this={video}
+	class="h-full w-full object-cover"
+	loop
+	muted
+	playsinline
+	src={videoSrc}
+	style="view-transition-name: hero-video;"
 >
-    Your browser does not support the video tag.
+	Your browser does not support the video tag.
 </video>

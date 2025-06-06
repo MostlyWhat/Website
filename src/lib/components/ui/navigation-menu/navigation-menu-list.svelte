@@ -12,6 +12,6 @@
 <NavigationMenuPrimitive.List
 	{...restProps}
 	bind:ref
-	class={cn("group flex flex-1 list-none items-center justify-center", className)}
+	class={cn('group flex flex-1 list-none items-center justify-center', className)}
 	data-slot="navigation-menu-list"
 />

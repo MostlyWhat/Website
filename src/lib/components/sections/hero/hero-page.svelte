@@ -48,9 +48,7 @@
 			page_name = targetName
 				.split('')
 				.map((letter, index) =>
-					index < iteration
-						? targetName[index]
-						: letters[Math.floor(Math.random() * 26)]
+					index < iteration ? targetName[index] : letters[Math.floor(Math.random() * 26)]
 				)
 				.join('');
 
@@ -85,7 +83,7 @@
 </section>
 
 <style>
-    .hero .video-container {
-        view-transition-name: hero-video;
-    }
+	.hero .video-container {
+		view-transition-name: hero-video;
+	}
 </style>
