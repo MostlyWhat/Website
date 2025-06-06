@@ -10,8 +10,8 @@
 </script>
 
 <AlertDialogPrimitive.Title
-	bind:ref
-	data-slot="alert-dialog-title"
-	class={cn('text-lg font-semibold', className)}
 	{...restProps}
+	bind:ref
+	class={cn('text-lg font-semibold font-heading uppercase px-4 pt-4', className)}
+	data-slot="alert-dialog-title"
 />

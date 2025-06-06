@@ -11,10 +11,10 @@
 </script>
 
 <div
-	bind:this={ref}
-	data-slot="alert-dialog-footer"
-	class={cn('flex flex-col-reverse gap-2 sm:flex-row sm:justify-end', className)}
 	{...restProps}
+	bind:this={ref}
+	class={cn('flex flex-col-reverse sm:flex-row sm:justify-end', className)}
+	data-slot="alert-dialog-footer"
 >
 	{@render children?.()}
 </div>

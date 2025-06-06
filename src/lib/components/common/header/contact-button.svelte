@@ -5,7 +5,7 @@
 </script>
 
 <a class={cn(navigationMenuHomeStyle())} href="/contact">
-	<span class="flex flex-row items-center gap-2 uppercase">
+	<span class="flex flex-row items-center gap-2 uppercase font-chakra">
 		<span>Contact</span>
 		<ArrowUpRight class="h-4 w-4" />
 	</span>

@@ -49,7 +49,7 @@ export const announcementConfig: AnnouncementConfig = {
 export const mainNavConfig: MainNavItem[] = [
 	{
 		title: 'About',
-		layout: 'grid',
+		layout: 'cards',
 		items: [
 			{
 				title: 'Company',
@@ -80,7 +80,7 @@ export const mainNavConfig: MainNavItem[] = [
 	},
 	{
 		title: 'Works',
-		layout: 'list',
+		layout: 'cards',
 		items: [
 			{
 				title: 'Clients',
@@ -101,7 +101,7 @@ export const mainNavConfig: MainNavItem[] = [
 	},
 	{
 		title: 'Products',
-		layout: 'featured',
+		layout: 'cards',
 		items: [
 			{
 				title: 'Horizon',
@@ -180,10 +180,3 @@ export const footerNavConfig: FooterNavSection[] = [
 		]
 	}
 ];
-
-// For backward compatibility
-export const navigationConfig = {
-	announcement: announcementConfig,
-	mainNav: mainNavConfig,
-	footerNav: footerNavConfig
-};

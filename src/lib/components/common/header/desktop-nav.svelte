@@ -62,11 +62,11 @@
 								</div>
 							</div>
 						{:else if item.layout === 'cards'}
-							<div class="grid w-[600px] grid-cols-3 gap-4 p-4">
+							<div class="flex justify-between w-full">
 								{#each item.items as subItem (subItem.title)}
 									<a
 										href={subItem.href}
-										class="hover:bg-muted flex h-36 flex-col rounded-md border p-4"
+										class="p-4 h-64 w-full relative hover:bg-primary/50 transition-colors duration-200 flex flex-col justify-end"
 									>
 										<div class="font-medium uppercase">{subItem.title}</div>
 										{#if subItem.description}
