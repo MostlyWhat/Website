@@ -48,14 +48,11 @@
 </script>
 
 <header
-	class="header fixed z-40 w-full border-b transition-all duration-200 flex"
+	class="header fixed z-40 w-full border-b transition-all duration-200"
 	class:bg-background={isScrolled || isMobileMenuOpen}
 >
-	<div class="flex flex-1 items-center justify-between">
-		<HomeButton />
+	<div class="flex items-center justify-between w-full">
 		<div class="flex items-center">
-			<DesktopNav />
-			<ContactButton />
 			<!-- Mobile menu button -->
 			<button
 				aria-label="Toggle menu"
@@ -63,12 +60,16 @@
 				on:click={toggleMobileMenu}
 			>
 				{#if isMobileMenuOpen}
-					<X class="h-6 w-6 text-white" />
+					<X class="size-4 text-white" />
 				{:else}
-					<Menu class="h-6 w-6 text-white" />
+					<Menu class="size-4 text-white" />
 				{/if}
 			</button>
+			<HomeButton />
+			<DesktopNav />
 		</div>
+
+		<ContactButton />
 	</div>
 
 	<!-- Mobile Menu (fullscreen) -->
@@ -82,7 +83,7 @@
 					{#if navItem.items && navItem.items.length > 0}
 						<!-- Nav item with dropdown -->
 						<button
-							class="flex flex-row justify-between p-4 border-b border-muted text-white hover:bg-primary/20 w-full text-left"
+							class="flex flex-row justify-between p-4 border-b border-muted text-white hover:bg-primary/20 w-full text-left uppercase"
 							on:click={() => toggleSubMenu(navItem.title)}
 						>
 							{navItem.title}
@@ -104,7 +105,7 @@
 										on:click={() => isMobileMenuOpen = false}
 									>
 										<div>
-											<div>{subItem.title}</div>
+											<div class="uppercase">{subItem.title}</div>
 											{#if subItem.description}
 												<div class="text-xs font-normal text-muted-foreground">{subItem.description}</div>
 											{/if}
@@ -117,7 +118,7 @@
 					{:else}
 						<!-- Direct link -->
 						<a
-							class="flex flex-row justify-between p-4 border-b border-muted text-white hover:bg-primary hover:text-primary-foreground"
+							class="flex flex-row justify-between p-4 border-b border-muted text-white hover:bg-primary hover:text-primary-foreground uppercase"
 							href={navItem.href}
 							on:click={() => isMobileMenuOpen = false}
 						>

@@ -50,9 +50,9 @@
 	// Throttled mousemove handler
 	function handleMouseMove(e: MouseEvent) {
 		const now = performance.now();
-		if (now - lastMove > 16) { // ~60fps
+		if (now - lastMove > 10) { // ~60fps
 			// Update both positions with the same target, but they'll move at different speeds
-			innerPos.set({ x: e.clientX, y: e.clientY }); // Using pageX/Y for scroll support
+			innerPos.set({ x: e.clientX, y: e.clientY });
 			outerPos.set({ x: e.clientX, y: e.clientY });
 			lastMove = now;
 		}
@@ -73,7 +73,7 @@
 	on:mouseup={handleMouseUp}
 />
 
-<svg class="cursor-container">
+<svg class="cursor-container hidden lg:block">
 	<circle
 		cx={$outerCursorPos.x}
 		cy={$outerCursorPos.y}

@@ -9,7 +9,7 @@
 	href="/contact"
 >
 	<span class="flex flex-row items-center uppercase gap-2">
-					<span>Contact Us</span>
+					<span>Contact</span>
 					<ArrowUpRight class="h-4 w-4" />
 	</span>
 </a>
