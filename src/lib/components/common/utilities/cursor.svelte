@@ -1,17 +1,7 @@
 <script lang="ts">
 	import { Spring } from 'svelte/motion';
-	import { onMount, onDestroy } from 'svelte';
-	import { writable } from 'svelte/store';
 
-	// Create Springs for cursor positions - slower for outer circle
-	const innerPos = new Spring(
-		{ x: 0, y: 0 },
-		{
-			stiffness: 0.2,
-			damping: 0.3
-		}
-	);
-
+	// Only outer circle uses spring for lag effect
 	const outerPos = new Spring(
 		{ x: 0, y: 0 },
 		{
@@ -25,28 +15,26 @@
 		damping: 0.4
 	});
 
-	// Create stores to track the current values
-	const innerCursorPos = writable({ x: 0, y: 0 });
-	const outerCursorPos = writable({ x: 0, y: 0 });
-	const cursorSize = writable(10);
+	// Svelte 5 reactive state for inner cursor position (follows directly)
+	let innerCursorPos = $state({ x: 0, y: 0 });
+
+	// Reactive state for spring values
+	let outerCursorPos = $state({ x: 0, y: 0 });
+	let cursorSize = $state(10);
 
 	let lastMove = 0;
-	// Fix: Change the type to accommodate Timeout objects
-	let intervalIds: ReturnType<typeof setInterval>[] = [];
+	let intervalId: ReturnType<typeof setInterval> | null = null;
 
-	onMount(() => {
+	$effect(() => {
 		// Subscribe to changes in Spring.current values
-		intervalIds.push(
-			setInterval(() => {
-				innerCursorPos.set(innerPos.current);
-				outerCursorPos.set(outerPos.current);
-				cursorSize.set(size.current);
-			}, 16)
-		);
-	});
+		intervalId = setInterval(() => {
+			outerCursorPos = { ...outerPos.current };
+			cursorSize = size.current;
+		}, 16);
 
-	onDestroy(() => {
-		intervalIds.forEach((id) => clearInterval(id));
+		return () => {
+			if (intervalId) clearInterval(intervalId);
+		};
 	});
 
 	// Throttled mousemove handler
@@ -54,8 +42,9 @@
 		const now = performance.now();
 		if (now - lastMove > 10) {
 			// ~60fps
-			// Update both positions with the same target, but they'll move at different speeds
-			innerPos.set({ x: e.clientX, y: e.clientY });
+			// Inner cursor follows directly
+			innerCursorPos = { x: e.clientX, y: e.clientY };
+			// Outer cursor uses spring animation
 			outerPos.set({ x: e.clientX, y: e.clientY });
 			lastMove = now;
 		}
@@ -71,36 +60,36 @@
 </script>
 
 <svelte:window
-	on:mousedown={handleMouseDown}
-	on:mousemove={handleMouseMove}
-	on:mouseup={handleMouseUp}
+	onmousedown={handleMouseDown}
+	onmousemove={handleMouseMove}
+	onmouseup={handleMouseUp}
 />
 
 <svg class="cursor-container hidden lg:block">
 	<circle
-		cx={$outerCursorPos.x}
-		cy={$outerCursorPos.y}
+		cx={outerCursorPos.x}
+		cy={outerCursorPos.y}
 		fill-opacity="0"
-		r={$cursorSize}
+		r={cursorSize}
 		stroke="var(--color-secondary-foreground)"
 		stroke-width="1"
 	/>
 	<circle
-		cx={$innerCursorPos.x}
-		cy={$innerCursorPos.y}
+		cx={innerCursorPos.x}
+		cy={innerCursorPos.y}
 		fill="var(--color-primary-foreground)"
-		r={$cursorSize / 4}
+		r={cursorSize / 4}
 	/>
 </svg>
 
 <style>
-	.cursor-container {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100vw;
-		height: 100vh;
-		pointer-events: none;
-		z-index: 9999;
-	}
+    .cursor-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        pointer-events: none;
+        z-index: 9999;
+    }
 </style>
