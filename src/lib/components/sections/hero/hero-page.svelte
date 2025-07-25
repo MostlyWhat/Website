@@ -78,12 +78,12 @@
 	<!-- Subtitle and Logo at bottom left -->
 	<div class="absolute bottom-4 left-4 flex flex-col items-start">
 		<p class="font-chakra mb-2 text-xs uppercase sm:text-sm">{page_subtitle}</p>
-		<p class="font-heading -m-1 text-6xl font-black uppercase md:text-8xl">{page_name}</p>
+		<p class="font-heading -m-1 text-6xl font-black uppercase md:text-8xl tracking-wide">{page_name}</p>
 	</div>
 </section>
 
 <style>
-	.hero .video-container {
-		view-transition-name: hero-video;
-	}
+    .hero .video-container {
+        view-transition-name: hero-video;
+    }
 </style>

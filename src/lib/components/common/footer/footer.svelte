@@ -45,7 +45,7 @@
 
 	<div class="col-span-1 sm:col-span-2 lg:col-start-1">
 		<div class="p-4">
-			<p>Copyright 2018-{current_year} MostlyWhat Systems, LLC. All rights reserved.</p>
+			<p>&copy; 2018-{current_year} MostlyWhat Systems, LLC. All rights reserved.</p>
 		</div>
 	</div>
 	<div class="col-span-1 sm:col-span-2 lg:col-start-3">

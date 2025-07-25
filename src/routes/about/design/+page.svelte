@@ -60,7 +60,7 @@
 		{ label: 'Design System' }
 	]}
 	description="A comprehensive design system built with Svelte, Tailwind CSS, and modern web standards. Explore our foundations, components, and patterns."
-	size="half"
+	size="full"
 	subtitle="Documentation"
 	title="Design System"
 >
@@ -76,11 +76,11 @@
 </DesignHero>
 
 <!-- Main Content -->
-<div class="container mx-auto px-4 py-16 space-y-24">
+<div class="py-16 space-y-24">
 
 	<!-- Design Principles Section -->
 	<section class="space-y-8" id="principles">
-		<div class="text-center space-y-4">
+		<div class="px-4 space-y-4 text-start">
 			<Badge class="font-chakra text-xs uppercase tracking-wider" variant="outline">
 				Core Principles
 			</Badge>
@@ -93,7 +93,7 @@
 			</p>
 		</div>
 
-		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 min-h-20">
 			{#each principles as principle (principle.title)}
 				<div class="group relative">
 					<!-- Card Background -->
@@ -128,7 +128,7 @@
 
 	<!-- Navigation Sections -->
 	<section class="space-y-8" id="sections">
-		<div class="text-center space-y-4">
+		<div class="space-y-4">
 			<Badge class="font-chakra text-xs uppercase tracking-wider" variant="outline">
 				Explore Documentation
 			</Badge>
@@ -139,7 +139,8 @@
 
 		<div class="space-y-8">
 			{#each designSections as section, index (section.title)}
-				<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center {index % 2 === 1 ? 'lg:flex-row-reverse' : ''}">
+				<div
+					class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 items-center {index % 2 === 1 ? 'lg:flex-row-reverse' : ''}">
 					<!-- Content -->
 					<div class="space-y-6 {index % 2 === 1 ? 'lg:order-2' : ''}">
 						<div class="space-y-4">

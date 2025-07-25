@@ -23,6 +23,9 @@ importers:
       '@inlang/paraglide-js':
         specifier: ^2.0.0
         version: 2.0.13
+      '@tabler/icons-svelte':
+        specifier: ^3.34.1
+        version: 3.34.1(svelte@5.33.14)
       mode-watcher:
         specifier: 0.5.1
         version: 0.5.1(svelte@5.33.14)
@@ -938,6 +941,14 @@ packages:
 
   '@swc/helpers@0.5.17':
     resolution: {integrity: sha512-5IKx/Y13RsYd+sauPb2x+U/xZikHjolzfuDgTAl/Tdf3Q8rslRvC19NKDLgAJQ6wsqADk10ntlv08nPFw/gO/A==}
+
+  '@tabler/icons-svelte@3.34.1':
+    resolution: {integrity: sha512-HqPpWgAvCuR5Q5s7kBHfN0P7ULXCf+mwkcsmWhu8GuThQyfl8wR3l3zklS8IOCPwwpF9+Oox7fZhzRM+Af5Haw==}
+    peerDependencies:
+      svelte: '>=3 <6 || >=5.0.0-next.0'
+
+  '@tabler/icons@3.34.1':
+    resolution: {integrity: sha512-9gTnUvd7Fd/DmQgr3MKY+oJLa1RfNsQo8c/ir3TJAWghOuZXodbtbVp0QBY2DxWuuvrSZFys0HEbv1CoiI5y6A==}
 
   '@tailwindcss/forms@0.5.10':
     resolution: {integrity: sha512-utI1ONF6uf/pPNO68kmN1b8rEwNXv3czukalo8VtJH8ksIkZXr3Q3VYudZLkCsDd4Wku120uF02hYK25XGPorw==}
@@ -5364,6 +5375,13 @@ snapshots:
   '@swc/helpers@0.5.17':
     dependencies:
       tslib: 2.8.1
+
+  '@tabler/icons-svelte@3.34.1(svelte@5.33.14)':
+    dependencies:
+      '@tabler/icons': 3.34.1
+      svelte: 5.33.14
+
+  '@tabler/icons@3.34.1': {}
 
   '@tailwindcss/forms@0.5.10(tailwindcss@4.1.8)':
     dependencies:

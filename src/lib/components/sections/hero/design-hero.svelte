@@ -37,28 +37,6 @@
 		: 'bg-background';
 </script>
 
-<!-- Full Width Header -->
-<div class="w-full border-b border-border/20 bg-card/50 backdrop-blur-sm">
-	<div class="container mx-auto px-4 py-2">
-		{#if breadcrumbs.length > 0}
-			<nav class="flex items-center space-x-1 text-xs font-chakra uppercase tracking-wider">
-				{#each breadcrumbs as crumb, index (crumb.label)}
-					{#if index > 0}
-						<span class="text-muted-foreground">/</span>
-					{/if}
-					{#if crumb.href}
-						<a href={crumb.href} class="text-{accent} hover:text-{accent}/80 transition-colors">
-							{crumb.label}
-						</a>
-					{:else}
-						<span class="text-muted-foreground">{crumb.label}</span>
-					{/if}
-				{/each}
-			</nav>
-		{/if}
-	</div>
-</div>
-
 <!-- Hero Section -->
 <section class="relative {sizeClasses[size]} flex items-center justify-center overflow-hidden">
 	<!-- Sci-fi Background Pattern -->
@@ -79,8 +57,8 @@
 
 	<!-- Content Overlay -->
 	<div class="relative z-10 {overlayClasses} w-full">
-		<div class="container mx-auto px-4 py-16">
-			<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+		<div class="px-4 py-16">
+			<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 items-center">
 				<!-- Text Content -->
 				<div class="space-y-6">
 					{#if subtitle}

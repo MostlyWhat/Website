@@ -84,6 +84,7 @@
 		"@fontsource/chakra-petch": "^5.2.6",
 		"@fontsource/tourney": "^5.2.5",
 		"@inlang/paraglide-js": "^2.0.0",
+		"@tabler/icons-svelte": "^3.34.1",
 		"mode-watcher": "0.5.1"
 	},
 	"husky": {

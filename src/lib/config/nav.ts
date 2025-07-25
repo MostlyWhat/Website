@@ -57,6 +57,11 @@ export const mainNavConfig: MainNavItem[] = [
 				description: 'Learn about our mission and values'
 			},
 			{
+				title: 'Design',
+				href: '/about/design',
+				description: 'Explore our design philosophy'
+			},
+			{
 				title: 'Status',
 				href: 'https://status.mostlywhat.com',
 				description: 'Check our system status'
