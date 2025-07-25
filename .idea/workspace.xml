@@ -4,21 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="77d12f36-d6e8-47cc-aa3d-dc51b0860806" name="Changes" comment="feat: design system temp">
-      <change afterPath="$PROJECT_DIR$/src/lib/components/sections/content/content-left.svelte" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/components/sections/content/content-right.svelte" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/components/sections/cta/cta-main.svelte" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/components/sections/steps/steps-main.svelte" afterDir="false" />
+    <list default="true" id="77d12f36-d6e8-47cc-aa3d-dc51b0860806" name="Changes" comment="feat: new pages temp">
+      <change afterPath="$PROJECT_DIR$/src/lib/components/sections/cta/cta-final.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/lib/components/sections/features/features-grid.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/lib/components/sections/hero/hero-modern.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/lib/components/sections/pricing/pricing-cards.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/lib/components/sections/social-proof/social-proof.svelte" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/components/common/footer/footer.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/components/common/footer/footer.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/components/sections/hero/design-hero.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/components/sections/hero/design-hero.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/components/sections/hero/hero-page.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/components/sections/hero/hero-page.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/config/nav.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/config/nav.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/components/sections/steps/steps-main.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/components/sections/steps/steps-main.svelte" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/routes/+page.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/+page.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/about/design/+page.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/about/design/+page.svelte" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -175,7 +169,7 @@
       <workItem from="1749240737500" duration="51000" />
       <workItem from="1749240814616" duration="6872000" />
       <workItem from="1749838803155" duration="21000" />
-      <workItem from="1753388882566" duration="11127000" />
+      <workItem from="1753388882566" duration="12559000" />
     </task>
     <task id="LOCAL-00001" summary="feat: initial release">
       <option name="closed" value="true" />
@@ -473,14 +467,21 @@
       <option name="project" value="LOCAL" />
       <updated>1753390569952</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="feat: new pages temp">
+      <option name="closed" value="true" />
+      <created>1753462778500</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1753462778500</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="feat: scaffolded pages and added cta, info, and hero" />
     <MESSAGE value="fix: fixed layout and size issue with hero" />
     <MESSAGE value="feat: proof of concept language selector" />
     <MESSAGE value="feat: added a contact page design" />
@@ -505,6 +506,7 @@
     <MESSAGE value="feat: new favicon and updated nav" />
     <MESSAGE value="feat: updated header and footer" />
     <MESSAGE value="feat: design system temp" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: design system temp" />
+    <MESSAGE value="feat: new pages temp" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: new pages temp" />
   </component>
 </project>

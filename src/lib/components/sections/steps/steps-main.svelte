@@ -26,7 +26,7 @@
 </script>
 
 <section class="">
-	<div class="border px-4 py-16">
+	<div class="border px-4 py-16 text-center">
 		<h2 class="text-2xl font-bold text-foreground sm:text-4xl">
 			From Idea to Reality
 		</h2>
