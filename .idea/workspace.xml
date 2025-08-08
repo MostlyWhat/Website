@@ -4,15 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="77d12f36-d6e8-47cc-aa3d-dc51b0860806" name="Changes" comment="feat: new pages temp">
-      <change afterPath="$PROJECT_DIR$/src/lib/components/sections/cta/cta-final.svelte" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/components/sections/features/features-grid.svelte" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/components/sections/hero/hero-modern.svelte" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/components/sections/pricing/pricing-cards.svelte" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/components/sections/social-proof/social-proof.svelte" afterDir="false" />
+    <list default="true" id="77d12f36-d6e8-47cc-aa3d-dc51b0860806" name="Changes" comment="feat: new pages temp 2">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/components/sections/steps/steps-main.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/components/sections/steps/steps-main.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/+page.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/+page.svelte" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -107,7 +100,7 @@
     "code.cleanup.on.save": "true",
     "git-widget-placeholder": "v2",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/venot/Projects/GitHub/Website/src/lib/components/sections/hero",
+    "last_opened_file_path": "C:/Users/venot/Projects/GitHub/sysdyne",
     "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.standard": "true",
@@ -170,6 +163,7 @@
       <workItem from="1749240814616" duration="6872000" />
       <workItem from="1749838803155" duration="21000" />
       <workItem from="1753388882566" duration="12559000" />
+      <workItem from="1754251080956" duration="263000" />
     </task>
     <task id="LOCAL-00001" summary="feat: initial release">
       <option name="closed" value="true" />

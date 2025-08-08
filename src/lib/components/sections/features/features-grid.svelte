@@ -22,7 +22,7 @@
 				<div class="flex flex-col">
 					<dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-foreground">
 						<div class="h-5 w-5 flex-none rounded bg-primary/10 p-1">
-							<div class="h-full w-full rounded bg-primary" />
+							<div class="h-full w-full rounded bg-primary"></div>
 						</div>
 						Instant Deployments
 					</dt>
@@ -36,7 +36,7 @@
 				<div class="flex flex-col">
 					<dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-foreground">
 						<div class="h-5 w-5 flex-none rounded bg-green-500/10 p-1">
-							<div class="h-full w-full rounded bg-green-500" />
+							<div class="h-full w-full rounded bg-green-500"></div>
 						</div>
 						Auto-Scaling
 					</dt>
@@ -50,7 +50,7 @@
 				<div class="flex flex-col">
 					<dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-foreground">
 						<div class="h-5 w-5 flex-none rounded bg-blue-500/10 p-1">
-							<div class="h-full w-full rounded bg-blue-500" />
+							<div class="h-full w-full rounded bg-blue-500"></div>
 						</div>
 						Global CDN
 					</dt>
@@ -64,7 +64,7 @@
 				<div class="flex flex-col">
 					<dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-foreground">
 						<div class="h-5 w-5 flex-none rounded bg-purple-500/10 p-1">
-							<div class="h-full w-full rounded bg-purple-500" />
+							<div class="h-full w-full rounded bg-purple-500"></div>
 						</div>
 						Database Integration
 					</dt>
@@ -78,7 +78,7 @@
 				<div class="flex flex-col">
 					<dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-foreground">
 						<div class="h-5 w-5 flex-none rounded bg-orange-500/10 p-1">
-							<div class="h-full w-full rounded bg-orange-500" />
+							<div class="h-full w-full rounded bg-orange-500"></div>
 						</div>
 						Team Collaboration
 					</dt>
@@ -92,7 +92,7 @@
 				<div class="flex flex-col">
 					<dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-foreground">
 						<div class="h-5 w-5 flex-none rounded bg-red-500/10 p-1">
-							<div class="h-full w-full rounded bg-red-500" />
+							<div class="h-full w-full rounded bg-red-500"></div>
 						</div>
 						24/7 Monitoring
 					</dt>

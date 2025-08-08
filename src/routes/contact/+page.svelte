@@ -1,121 +1,102 @@
 <script lang="ts">
 	import HeroPage from '$lib/components/sections/hero/hero-page.svelte';
-	import Button from '$lib/components/ui/button/button.svelte';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { Input } from '$lib/components/ui/input/index.js';
+	import { Textarea } from '$lib/components/ui/textarea/index.js';
+	import { Label } from '$lib/components/ui/label/index.js';
 </script>
 
 <HeroPage />
-<section class="">
-	<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-		<div class="col-span-1 min-h-80 md:col-span-2">
-			<div class="bg-card flex h-full flex-col justify-between rounded-md p-4 shadow-xs">
-				<div>
-					<p class="font-chakra mb-2 text-xs uppercase">// Communicate</p>
-					<h3 class="font-heading text-3xl font-black uppercase sm:text-4xl md:text-5xl">
-						Reach Out
-					</h3>
-					<p class="text-muted-foreground mt-3 max-w-md text-sm">
-						There are many ways you can connect with us. We are here to assist you in every step of
-						the way.
-					</p>
+
+<!-- Contact grid aligned to the new visual language -->
+<section class="relative overflow-hidden py-16 sm:py-24">
+	<div class="absolute inset-0 bg-grid-white/[0.02] bg-[size:60px_60px]"></div>
+	<div class="relative mx-auto max-w-7xl px-6 lg:px-8">
+		<div class="grid grid-cols-1 gap-8 lg:grid-cols-12">
+			<!-- Form -->
+			<div class="lg:col-span-7">
+				<div class="rounded-md border bg-card/80 p-6 sm:p-8">
+					<p class="font-chakra text-xs uppercase text-muted-foreground">// Start a project</p>
+					<h2 class="mt-2 text-2xl font-bold sm:text-3xl">Tell us about your idea</h2>
+					<form class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
+						<div class="sm:col-span-1">
+							<Label for="name">Name</Label>
+							<Input id="name" name="name" placeholder="Ada Lovelace" class="mt-2" />
+						</div>
+						<div class="sm:col-span-1">
+							<Label for="email">Email</Label>
+							<Input id="email" name="email" type="email" placeholder="you@company.com" class="mt-2" />
+						</div>
+						<div class="sm:col-span-1">
+							<Label for="company">Company</Label>
+							<Input id="company" name="company" placeholder="Acme Inc." class="mt-2" />
+						</div>
+						<div class="sm:col-span-1">
+							<Label for="budget">Budget (optional)</Label>
+							<Input id="budget" name="budget" placeholder="$10k–$50k" class="mt-2" />
+						</div>
+						<div class="sm:col-span-2">
+							<Label for="message">Project details</Label>
+							<Textarea id="message" name="message" rows="6" placeholder="Scope, timeline, goals…" class="mt-2" />
+						</div>
+						<div class="sm:col-span-2 flex items-center justify-between gap-4">
+							<div class="text-xs text-muted-foreground">We reply within 24 hours on weekdays.</div>
+							<Button size="lg" class="px-8">Send message</Button>
+						</div>
+					</form>
 				</div>
 			</div>
-		</div>
 
-		<!-- Social Links Card -->
-		<div class="col-span-1 min-h-80">
-			<div class="bg-primary text-primary-foreground flex h-full flex-col rounded-md shadow-xs">
-				<div class="border-primary-foreground/20 border-b p-4">
-					<p class="font-chakra text-xs uppercase">&gt; Connect</p>
-				</div>
-				<div class="flex flex-1 flex-col justify-between p-4">
-					<p class="text-sm">Connect with us on social media</p>
-					<div class="mt-auto pt-4">
-						<ul class="font-chakra text-sm uppercase">
-							<li>Discord</li>
+			<!-- Details -->
+			<div class="lg:col-span-5">
+				<div class="grid gap-6">
+					<div class="rounded-md border p-6">
+						<p class="font-chakra text-xs uppercase text-muted-foreground">// Contact</p>
+						<div class="mt-3 grid grid-cols-1 gap-4">
+							<div>
+								<p class="text-xs text-muted-foreground">Email</p>
+								<p class="mt-1 font-medium">hello@mostlywhat.com</p>
+							</div>
+							<div>
+								<p class="text-xs text-muted-foreground">Hours</p>
+								<p class="mt-1 font-medium">Mon–Fri, 9am–5pm UTC</p>
+							</div>
+							<div>
+								<p class="text-xs text-muted-foreground">Response time</p>
+								<p class="mt-1 font-medium"><span class="text-primary">~</span> 24 hours</p>
+							</div>
+						</div>
+					</div>
+					<div class="rounded-md border p-6">
+						<p class="font-chakra text-xs uppercase text-muted-foreground">// Social</p>
+						<ul class="mt-3 grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
 							<li>Twitter</li>
 							<li>LinkedIn</li>
 							<li>GitHub</li>
-							<li>Reddit</li>
-							<li>Facebook</li>
+							<li>Discord</li>
 							<li>Instagram</li>
-							<li>Telegram</li>
+							<li>Dribbble</li>
 						</ul>
+					</div>
+					<div class="rounded-md border p-6">
+						<p class="font-chakra text-xs uppercase text-muted-foreground">// Status</p>
+						<div class="mt-3 grid grid-cols-3 gap-3 text-xs">
+							<div class="border p-3">
+								<p>New slots</p>
+								<p class="mt-1 font-medium text-foreground">2 openings</p>
+							</div>
+							<div class="border p-3">
+								<p>Lead time</p>
+								<p class="mt-1 font-medium text-foreground">1–2 weeks</p>
+							</div>
+							<div class="border p-3">
+								<p>Timezone</p>
+								<p class="mt-1 font-medium text-foreground">UTC±0</p>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-
-		<!-- Important Notice Card -->
-		<div class="col-span-1 min-h-80">
-			<div
-				class="bg-destructive text-secondary-foreground flex h-full flex-col justify-between rounded-md shadow-xs"
-			>
-				<div class="border-secondary-foreground/20 border-b p-4">
-					<p class="font-chakra text-xs uppercase">&gt; Important Notice</p>
-				</div>
-				<div class="flex flex-1 flex-col">
-					<p class="p-4 text-sm">Latest announcements and critical updates</p>
-				</div>
-				<Button
-					class="bg-secondary-foreground text-secondary mt-auto self-end"
-					size="lg"
-					variant="outline"
-				>
-					More Information
-				</Button>
-			</div>
-		</div>
-	</div>
-	<div class="bg-card flex h-full flex-col justify-between rounded-md border-t p-4 shadow-xs">
-		<div>
-			<p class="font-chakra mb-2 text-xs uppercase">// Select a channel</p>
-			<h3 class="font-heading text-3xl font-black uppercase sm:text-4xl md:text-5xl">
-				Communication Channels
-			</h3>
-		</div>
-	</div>
-	<div
-		class="bg-background relative grid h-full grid-cols-1 gap-0 divide-x border sm:grid-cols-2 lg:grid-cols-4"
-	>
-		<div class="flex h-full flex-col justify-between">
-			<div class="p-4">
-				<p class="font-chakra mb-2 text-xs uppercase">// Option 1</p>
-				<h3 class="font-heading text-2xl font-black uppercase">Product Support</h3>
-				<p class="text-muted-foreground mt-4 max-w-md text-sm">
-					Find information and resources to help you get started.
-				</p>
-			</div>
-			<Button class="mt-8 self-end" size="lg" variant="secondary">Read more</Button>
-		</div>
-		<div class="flex h-full flex-col justify-between">
-			<div class="p-4">
-				<p class="font-chakra mb-2 text-xs uppercase">// Option 2</p>
-				<h3 class="font-heading text-2xl font-black uppercase">Technical Support</h3>
-				<p class="text-muted-foreground mt-4 max-w-md text-sm">
-					Can't find what you're looking for? Get in touch with our support team.
-				</p>
-			</div>
-			<Button class="mt-8 self-end" size="lg" variant="secondary">Read more</Button>
-		</div>
-		<div class="flex h-full flex-col justify-between">
-			<div class="p-4">
-				<p class="font-chakra mb-2 text-xs uppercase">// Option 3</p>
-				<h3 class="font-heading text-2xl font-black uppercase">Feedback Form</h3>
-				<p class="text-muted-foreground mt-4 max-w-md text-sm">
-					Let us know how we can improve our services and products.
-				</p>
-			</div>
-			<Button class="mt-8 self-end" size="lg" variant="secondary">Read more</Button>
-		</div>
-		<div class="flex h-full flex-col justify-between">
-			<div class="p-4">
-				<p class="font-chakra mb-2 text-xs uppercase">// Option 4</p>
-				<h3 class="font-heading text-2xl font-black uppercase">Emergency Contact</h3>
-				<p class="text-muted-foreground mt-4 max-w-md text-sm">
-					Report critical issues or vulnerability that needs immediate attention.
-				</p>
-			</div>
-			<Button class="mt-8 self-end" size="lg" variant="secondary">Read more</Button>
 		</div>
 	</div>
 </section>
