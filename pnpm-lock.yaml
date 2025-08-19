@@ -8,6 +8,15 @@ importers:
 
   .:
     dependencies:
+      '@fontsource-variable/hubot-sans':
+        specifier: ^5.2.6
+        version: 5.2.6
+      '@fontsource-variable/tourney':
+        specifier: ^5.2.6
+        version: 5.2.6
+      '@fontsource/chakra-petch':
+        specifier: ^5.2.6
+        version: 5.2.6
       '@inlang/paraglide-js':
         specifier: ^2.0.0
         version: 2.2.0
@@ -862,6 +871,15 @@ packages:
 
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
+
+  '@fontsource-variable/hubot-sans@5.2.6':
+    resolution: {integrity: sha512-FBH1YGFc3BhmtbxTIOBj+14mkQKLgDIWVSoPUVAgQlDL8LWBcls+drfJmFeReXA6ewLFvI7//FR+NzrgvkGpVQ==}
+
+  '@fontsource-variable/tourney@5.2.6':
+    resolution: {integrity: sha512-NKtkp+4p+p88JBpJNqQRuoPhsEdVvyv2Ea8HPvHW2mF/treyUNGi1xwFHxF+0khcLra92v6KbOfkqdnO8mlzQA==}
+
+  '@fontsource/chakra-petch@5.2.6':
+    resolution: {integrity: sha512-vtVU+kNam7bvrzxQ6CY4vGWUkJTtacMSuU52mw8JXok3BKGWQWNjVzdADh2tM4O7cYruQZ/205N/74j/XVodXg==}
 
   '@gcornut/valibot-json-schema@0.42.0':
     resolution: {integrity: sha512-4Et4AN6wmqeA0PfU5Clkv/IS27wiefsWf6TemAZrb75uzkClYEFavim7SboeKwbll9Nbsn2Iv0LT/HS5H7orZg==}
@@ -3470,6 +3488,12 @@ snapshots:
       '@floating-ui/utils': 0.2.10
 
   '@floating-ui/utils@0.2.10': {}
+
+  '@fontsource-variable/hubot-sans@5.2.6': {}
+
+  '@fontsource-variable/tourney@5.2.6': {}
+
+  '@fontsource/chakra-petch@5.2.6': {}
 
   '@gcornut/valibot-json-schema@0.42.0(esbuild@0.19.12)(typescript@5.9.2)':
     dependencies:

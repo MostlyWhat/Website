@@ -64,6 +64,9 @@
 		"wrangler": "^4.31.0"
 	},
 	"dependencies": {
+		"@fontsource-variable/hubot-sans": "^5.2.6",
+		"@fontsource-variable/tourney": "^5.2.6",
+		"@fontsource/chakra-petch": "^5.2.6",
 		"@inlang/paraglide-js": "^2.0.0",
 		"drizzle-orm": "^0.40.0",
 		"postgres": "^3.4.5"
