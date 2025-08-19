@@ -11,6 +11,9 @@ importers:
       '@fontsource-variable/hubot-sans':
         specifier: ^5.2.6
         version: 5.2.6
+      '@fontsource-variable/jetbrains-mono':
+        specifier: ^5.2.6
+        version: 5.2.6
       '@fontsource-variable/tourney':
         specifier: ^5.2.6
         version: 5.2.6
@@ -874,6 +877,9 @@ packages:
 
   '@fontsource-variable/hubot-sans@5.2.6':
     resolution: {integrity: sha512-FBH1YGFc3BhmtbxTIOBj+14mkQKLgDIWVSoPUVAgQlDL8LWBcls+drfJmFeReXA6ewLFvI7//FR+NzrgvkGpVQ==}
+
+  '@fontsource-variable/jetbrains-mono@5.2.6':
+    resolution: {integrity: sha512-1pvtyK6H1paBOixbtZ9xfQgArVQ4SJMW3WSGZPOd5PiW3yg0t8umwKnjDMzW2ofb7qSdiXnsnIaHPT36vEOdlg==}
 
   '@fontsource-variable/tourney@5.2.6':
     resolution: {integrity: sha512-NKtkp+4p+p88JBpJNqQRuoPhsEdVvyv2Ea8HPvHW2mF/treyUNGi1xwFHxF+0khcLra92v6KbOfkqdnO8mlzQA==}
@@ -3490,6 +3496,8 @@ snapshots:
   '@floating-ui/utils@0.2.10': {}
 
   '@fontsource-variable/hubot-sans@5.2.6': {}
+
+  '@fontsource-variable/jetbrains-mono@5.2.6': {}
 
   '@fontsource-variable/tourney@5.2.6': {}
 

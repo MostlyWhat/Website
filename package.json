@@ -65,6 +65,7 @@
 	},
 	"dependencies": {
 		"@fontsource-variable/hubot-sans": "^5.2.6",
+		"@fontsource-variable/jetbrains-mono": "^5.2.6",
 		"@fontsource-variable/tourney": "^5.2.6",
 		"@fontsource/chakra-petch": "^5.2.6",
 		"@inlang/paraglide-js": "^2.0.0",
