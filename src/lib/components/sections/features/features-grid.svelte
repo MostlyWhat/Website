@@ -3,10 +3,10 @@
 	import { Card, CardContent } from '$lib/components/ui/card/index.js';
 </script>
 
-<section class="py-24 sm:py-32">
+<section class="py-16 sm:py-20">
 	<div class="mx-auto max-w-7xl px-6 lg:px-8">
 		<div class="mx-auto max-w-2xl text-center">
-			<Badge class="mb-6" variant="outline">
+			<Badge class="mb-6 rounded-none" variant="outline">
 				Platform Features
 			</Badge>
 			<h2 class="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
@@ -17,12 +17,12 @@
 			</p>
 		</div>
 
-		<div class="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
-			<dl class="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3">
+		<div class="mx-auto mt-12 max-w-2xl lg:max-w-none">
+			<dl class="grid max-w-xl grid-cols-1 gap-x-8 gap-y-12 lg:max-w-none lg:grid-cols-3">
 				<div class="flex flex-col">
 					<dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-foreground">
-						<div class="h-5 w-5 flex-none rounded bg-primary/10 p-1">
-							<div class="h-full w-full rounded bg-primary"></div>
+						<div class="h-5 w-5 flex-none bg-primary/10 p-1">
+							<div class="h-full w-full bg-primary"></div>
 						</div>
 						Instant Deployments
 					</dt>
@@ -35,8 +35,8 @@
 
 				<div class="flex flex-col">
 					<dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-foreground">
-						<div class="h-5 w-5 flex-none rounded bg-green-500/10 p-1">
-							<div class="h-full w-full rounded bg-green-500"></div>
+						<div class="h-5 w-5 flex-none bg-green-500/10 p-1">
+							<div class="h-full w-full bg-green-500"></div>
 						</div>
 						Auto-Scaling
 					</dt>
@@ -49,8 +49,8 @@
 
 				<div class="flex flex-col">
 					<dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-foreground">
-						<div class="h-5 w-5 flex-none rounded bg-blue-500/10 p-1">
-							<div class="h-full w-full rounded bg-blue-500"></div>
+						<div class="h-5 w-5 flex-none bg-blue-500/10 p-1">
+							<div class="h-full w-full bg-blue-500"></div>
 						</div>
 						Global CDN
 					</dt>
@@ -63,8 +63,8 @@
 
 				<div class="flex flex-col">
 					<dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-foreground">
-						<div class="h-5 w-5 flex-none rounded bg-purple-500/10 p-1">
-							<div class="h-full w-full rounded bg-purple-500"></div>
+						<div class="h-5 w-5 flex-none bg-purple-500/10 p-1">
+							<div class="h-full w-full bg-purple-500"></div>
 						</div>
 						Database Integration
 					</dt>
@@ -77,8 +77,8 @@
 
 				<div class="flex flex-col">
 					<dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-foreground">
-						<div class="h-5 w-5 flex-none rounded bg-orange-500/10 p-1">
-							<div class="h-full w-full rounded bg-orange-500"></div>
+						<div class="h-5 w-5 flex-none bg-orange-500/10 p-1">
+							<div class="h-full w-full bg-orange-500"></div>
 						</div>
 						Team Collaboration
 					</dt>
@@ -91,8 +91,8 @@
 
 				<div class="flex flex-col">
 					<dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-foreground">
-						<div class="h-5 w-5 flex-none rounded bg-red-500/10 p-1">
-							<div class="h-full w-full rounded bg-red-500"></div>
+						<div class="h-5 w-5 flex-none bg-red-500/10 p-1">
+							<div class="h-full w-full bg-red-500"></div>
 						</div>
 						24/7 Monitoring
 					</dt>

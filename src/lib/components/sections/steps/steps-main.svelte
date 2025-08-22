@@ -25,7 +25,7 @@
 	];
 </script>
 
-<section class="">
+<section class="py-16 sm:py-20">
 	<div class="border px-4 py-16 text-center">
 		<h2 class="text-2xl font-bold text-foreground sm:text-4xl">
 			From Idea to Reality
@@ -43,7 +43,7 @@
 				<p class="mt-2 text-muted-foreground">
 					{step.description}
 				</p>
-				<Skeleton class="mt-8 w-full h-64 rounded-lg" />
+				<Skeleton class="mt-8 w-full h-64" />
 			</div>
 		{/each}
 	</div>
