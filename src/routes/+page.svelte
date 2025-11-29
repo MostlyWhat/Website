@@ -1,19 +1,16 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages';
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
-	import Section from '$lib/components/layout/Section.svelte';
-	import Grid from '$lib/components/layout/Grid.svelte';
-	import Tile from '$lib/components/layout/Tile.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import { ArrowRight, Zap, Shield, Users, Headphones, Clock, MapPin, Code } from '@lucide/svelte';
+	import { ArrowRight, ArrowDown, Zap, Shield, Users, Headphones } from '@lucide/svelte';
 
 	const services = [
-		{ number: m.service_strategy_number(), title: m.service_strategy_title(), desc: m.service_strategy_desc() },
-		{ number: m.service_brand_number(), title: m.service_brand_title(), desc: m.service_brand_desc() },
-		{ number: m.service_ux_number(), title: m.service_ux_title(), desc: m.service_ux_desc() },
-		{ number: m.service_engineering_number(), title: m.service_engineering_title(), desc: m.service_engineering_desc() },
-		{ number: m.service_platforms_number(), title: m.service_platforms_title(), desc: m.service_platforms_desc() },
-		{ number: m.service_growth_number(), title: m.service_growth_title(), desc: m.service_growth_desc() }
+		{ number: '01', title: m.service_strategy_title(), desc: m.service_strategy_desc() },
+		{ number: '02', title: m.service_brand_title(), desc: m.service_brand_desc() },
+		{ number: '03', title: m.service_ux_title(), desc: m.service_ux_desc() },
+		{ number: '04', title: m.service_engineering_title(), desc: m.service_engineering_desc() },
+		{ number: '05', title: m.service_platforms_title(), desc: m.service_platforms_desc() },
+		{ number: '06', title: m.service_growth_title(), desc: m.service_growth_desc() }
 	];
 
 	const capabilities = [
@@ -24,16 +21,16 @@
 	];
 
 	const stats = [
-		{ label: m.stats_response_time(), value: m.stats_response_value(), icon: Clock },
-		{ label: m.stats_locations(), value: m.stats_locations_value(), icon: MapPin },
-		{ label: m.stats_stack(), value: m.stats_stack_value(), icon: Code }
+		{ label: m.stats_response_time(), value: m.stats_response_value() },
+		{ label: m.stats_locations(), value: m.stats_locations_value() },
+		{ label: m.stats_stack(), value: m.stats_stack_value() }
 	];
 
 	const process = [
-		{ step: '1', title: m.process_step1_title(), desc: m.process_step1_desc() },
-		{ step: '2', title: m.process_step2_title(), desc: m.process_step2_desc() },
-		{ step: '3', title: m.process_step3_title(), desc: m.process_step3_desc() },
-		{ step: '4', title: m.process_step4_title(), desc: m.process_step4_desc() }
+		{ step: '01', title: m.process_step1_title(), desc: m.process_step1_desc() },
+		{ step: '02', title: m.process_step2_title(), desc: m.process_step2_desc() },
+		{ step: '03', title: m.process_step3_title(), desc: m.process_step3_desc() },
+		{ step: '04', title: m.process_step4_title(), desc: m.process_step4_desc() }
 	];
 </script>
 
@@ -42,138 +39,128 @@
 	<meta name="description" content={m.site_description()} />
 </svelte:head>
 
-<!-- Hero Section -->
-<section class="relative overflow-hidden border-b border-border">
-	<div class="mx-auto max-w-7xl px-4 py-24 md:py-32 lg:py-40">
-		<div class="grid gap-12 lg:grid-cols-2 lg:items-center">
-			<!-- Hero Content -->
-			<div use:scrollAnimate={{ animation: 'slide-left', startVisible: true }}>
-				<h1 class="vt-title mb-6 text-4xl leading-tight md:text-5xl lg:text-6xl xl:text-7xl">
+<!-- Hero Section - Full Screen -->
+<section class="relative flex min-h-screen flex-col">
+	<!-- Background -->
+	<div class="absolute inset-0 -z-10 bg-gradient-to-br from-background via-background to-primary/5">
+		<div class="absolute inset-0 opacity-10" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
+	</div>
+
+	<!-- Hero Content -->
+	<div class="flex flex-1 items-end p-4 pb-24 md:p-6 lg:p-8" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
+		<div class="grid w-full gap-4 lg:grid-cols-12">
+			<div class="lg:col-span-8">
+				<h1 class="font-display text-5xl font-black uppercase leading-[0.9] tracking-tight md:text-7xl lg:text-8xl xl:text-9xl">
 					{m.hero_title()}
 				</h1>
-				<p class="font-body mb-8 max-w-xl text-lg text-muted-foreground md:text-xl">
-					{m.hero_subtitle()}
-				</p>
-				<div class="flex flex-wrap gap-4">
-					<Button href="/contact" size="lg" class="font-ui">
-						{m.hero_cta_primary()}
-						<ArrowRight class="ml-2 h-5 w-5" />
-					</Button>
-					<Button href="/projects" variant="outline" size="lg" class="font-ui">
-						{m.hero_cta_secondary()}
-					</Button>
+			</div>
+			<div class="lg:col-span-4 lg:flex lg:flex-col lg:justify-end">
+				<p class="font-body text-base text-muted-foreground md:text-lg">{m.hero_subtitle()}</p>
+				<div class="mt-4 flex gap-2">
+					<Button href="/contact" class="font-ui">{m.hero_cta_primary()}<ArrowRight class="ml-2 h-4 w-4" /></Button>
+					<Button href="/projects" variant="outline" class="font-ui">{m.hero_cta_secondary()}</Button>
 				</div>
 			</div>
-
-			<!-- Stats Grid -->
-			<div class="grid gap-4" use:scrollAnimate={{ animation: 'slide-right', delay: 200 }}>
-				{#each stats as { label, value, icon: Icon }}
-					<Tile variant="outline" class="flex items-center gap-4">
-						<div class="flex h-12 w-12 shrink-0 items-center justify-center border border-primary bg-primary/10">
-							<Icon class="h-6 w-6 text-primary" />
-						</div>
-						<div>
-							<p class="font-ui text-sm text-muted-foreground">{label}</p>
-							<p class="font-body text-lg font-semibold">{value}</p>
-						</div>
-					</Tile>
-				{/each}
-			</div>
 		</div>
 	</div>
 
-	<!-- Grid background decoration -->
-	<div class="pointer-events-none absolute inset-0 -z-10 opacity-5">
-		<div class="h-full w-full" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 48px 48px;"></div>
-	</div>
-</section>
-
-<!-- Services Section -->
-<Section id="services" background="card">
-	<div use:scrollAnimate={{ animation: 'fade' }}>
-		<div class="mb-12 max-w-2xl">
-			<p class="font-ui mb-2 text-sm uppercase tracking-wider text-primary">Services</p>
-			<h2 class="h2 mb-4 text-3xl md:text-4xl">{m.services_title()}</h2>
-			<p class="font-body text-lg text-muted-foreground">{m.services_subtitle()}</p>
-		</div>
+	<!-- Scroll indicator -->
+	<div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+		<ArrowDown class="h-6 w-6 text-muted-foreground" />
 	</div>
 
-	<div class="stagger-children grid gap-4 md:grid-cols-2 lg:grid-cols-3" use:scrollAnimate={{ animation: 'stagger' }}>
-		{#each services as { number, title, desc }}
-			<Tile interactive padding="lg">
-				<div class="mb-4 flex items-center gap-3">
-					<span class="font-display text-2xl text-primary">{number}</span>
-					<h3 class="font-ui text-lg font-semibold uppercase tracking-wide">{title}</h3>
+	<!-- Stats bar -->
+	<div class="border-t border-border bg-card/50 backdrop-blur-sm">
+		<div class="grid grid-cols-3 divide-x divide-border">
+			{#each stats as { label, value }}
+				<div class="p-4 md:p-6">
+					<p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">{label}</p>
+					<p class="font-display mt-1 text-lg font-bold md:text-xl">{value}</p>
 				</div>
-				<p class="font-body text-muted-foreground">{desc}</p>
-			</Tile>
-		{/each}
-	</div>
-</Section>
-
-<!-- Capabilities Section -->
-<Section id="capabilities">
-	<div class="grid gap-12 lg:grid-cols-2 lg:items-center">
-		<div use:scrollAnimate={{ animation: 'slide-left' }}>
-			<p class="font-ui mb-2 text-sm uppercase tracking-wider text-primary">Capabilities</p>
-			<h2 class="h2 mb-4 text-3xl md:text-4xl">{m.capabilities_title()}</h2>
-			<p class="font-body text-lg text-muted-foreground">{m.capabilities_subtitle()}</p>
-		</div>
-
-		<div class="stagger-children grid gap-4 sm:grid-cols-2" use:scrollAnimate={{ animation: 'stagger' }}>
-			{#each capabilities as { icon: Icon, title, desc }}
-				<Tile padding="lg">
-					<div class="mb-3 flex h-10 w-10 items-center justify-center border border-border">
-						<Icon class="h-5 w-5 text-primary" />
-					</div>
-					<h3 class="font-ui mb-1 font-semibold">{title}</h3>
-					<p class="font-body text-sm text-muted-foreground">{desc}</p>
-				</Tile>
 			{/each}
 		</div>
 	</div>
-</Section>
+</section>
 
-<!-- Process Section -->
-<Section id="process" background="card">
-	<div class="mb-12" use:scrollAnimate={{ animation: 'fade' }}>
-		<p class="font-ui mb-2 text-sm uppercase tracking-wider text-primary">Process</p>
-		<h2 class="h2 text-3xl md:text-4xl">{m.process_title()}</h2>
+<!-- Services Grid -->
+<section class="border-b border-border">
+	<div class="grid lg:grid-cols-12">
+		<div class="border-b border-border p-4 md:p-6 lg:col-span-4 lg:border-b-0 lg:border-r" use:scrollAnimate={{ animation: 'fade' }}>
+			<p class="font-mono text-xs uppercase tracking-wider text-primary">Services</p>
+			<h2 class="font-display mt-2 text-2xl font-bold uppercase md:text-3xl">{m.services_title()}</h2>
+			<p class="font-body mt-2 text-sm text-muted-foreground">{m.services_subtitle()}</p>
+		</div>
+		<div class="grid gap-px bg-border sm:grid-cols-2 lg:col-span-8 lg:grid-cols-3" use:scrollAnimate={{ animation: 'stagger' }}>
+			{#each services as { number, title, desc }}
+				<div class="stagger-children bg-background p-4 transition-colors hover:bg-card md:p-6">
+					<span class="font-mono text-xs text-primary">{number}</span>
+					<h3 class="font-ui mt-2 text-sm font-semibold uppercase tracking-wide">{title}</h3>
+					<p class="font-body mt-1 text-xs text-muted-foreground">{desc}</p>
+				</div>
+			{/each}
+		</div>
 	</div>
+</section>
 
-	<div class="stagger-children grid gap-4 md:grid-cols-2 lg:grid-cols-4" use:scrollAnimate={{ animation: 'stagger' }}>
-		{#each process as { step, title, desc }}
-			<Tile padding="lg" class="relative">
-				<div class="font-display mb-4 text-6xl text-primary/20">{step}</div>
-				<h3 class="font-ui mb-2 text-lg font-semibold">{title}</h3>
-				<p class="font-body text-sm text-muted-foreground">{desc}</p>
-			</Tile>
+<!-- Capabilities Grid -->
+<section class="border-b border-border">
+	<div class="grid gap-px bg-border md:grid-cols-2 lg:grid-cols-4" use:scrollAnimate={{ animation: 'stagger' }}>
+		{#each capabilities as { icon: Icon, title, desc }}
+			<div class="stagger-children flex flex-col bg-card p-4 md:p-6">
+				<div class="mb-3 flex h-10 w-10 items-center justify-center border border-border bg-background">
+					<Icon class="h-5 w-5 text-primary" />
+				</div>
+				<h3 class="font-ui text-sm font-semibold uppercase">{title}</h3>
+				<p class="font-body mt-1 flex-1 text-xs text-muted-foreground">{desc}</p>
+			</div>
 		{/each}
 	</div>
-</Section>
+</section>
 
-<!-- CTA Section -->
-<Section padding="xl">
-	<div class="grid gap-8 lg:grid-cols-2 lg:items-center" use:scrollAnimate={{ animation: 'scale' }}>
-		<div>
-			<h2 class="font-display mb-4 text-3xl md:text-4xl lg:text-5xl">{m.cta_title()}</h2>
-			<p class="font-body mb-8 max-w-xl text-lg text-muted-foreground">{m.cta_subtitle()}</p>
-			<div class="flex flex-wrap gap-4">
-				<Button href="/contact" size="lg" class="font-ui">
-					{m.cta_button_primary()}
-					<ArrowRight class="ml-2 h-5 w-5" />
-				</Button>
-				<Button href="/contact" variant="outline" size="lg" class="font-ui">
-					{m.cta_button_secondary()}
-				</Button>
-			</div>
-			<p class="font-body mt-6 text-sm text-muted-foreground">{m.cta_disclaimer()}</p>
+<!-- Process Section -->
+<section class="border-b border-border">
+	<div class="grid lg:grid-cols-12">
+		<div class="border-b border-border p-4 md:p-6 lg:col-span-3 lg:border-b-0 lg:border-r" use:scrollAnimate={{ animation: 'fade' }}>
+			<p class="font-mono text-xs uppercase tracking-wider text-primary">Process</p>
+			<h2 class="font-display mt-2 text-2xl font-bold uppercase md:text-3xl">{m.process_title()}</h2>
 		</div>
-		<div class="border border-border bg-card p-8">
-			<p class="font-ui mb-2 text-sm uppercase tracking-wider text-muted-foreground">Quick contact</p>
-			<a href="mailto:hello@mostlywhat.systems" class="font-display block text-2xl text-primary hover:underline">
-				hello@mostlywhat.systems
-			</a>
+		<div class="grid gap-px bg-border sm:grid-cols-2 lg:col-span-9 lg:grid-cols-4" use:scrollAnimate={{ animation: 'stagger' }}>
+			{#each process as { step, title, desc }}
+				<div class="stagger-children bg-background p-4 md:p-6">
+					<span class="font-display text-4xl font-black text-primary/20">{step}</span>
+					<h3 class="font-ui mt-2 text-sm font-semibold">{title}</h3>
+					<p class="font-body mt-1 text-xs text-muted-foreground">{desc}</p>
+				</div>
+			{/each}
 		</div>
 	</div>
-</Section>
+</section>
+
+<!-- CTA Section -->
+<section class="border-b border-border">
+	<div class="grid lg:grid-cols-2" use:scrollAnimate={{ animation: 'scale' }}>
+		<div class="p-4 md:p-8 lg:p-12">
+			<h2 class="font-display text-3xl font-bold uppercase md:text-4xl lg:text-5xl">{m.cta_title()}</h2>
+			<p class="font-body mt-4 max-w-lg text-muted-foreground">{m.cta_subtitle()}</p>
+			<div class="mt-6 flex flex-wrap gap-2">
+				<Button href="/contact" class="font-ui">{m.cta_button_primary()}<ArrowRight class="ml-2 h-4 w-4" /></Button>
+				<Button href="/contact" variant="outline" class="font-ui">{m.cta_button_secondary()}</Button>
+			</div>
+			<p class="font-body mt-4 text-xs text-muted-foreground">{m.cta_disclaimer()}</p>
+		</div>
+		<div class="border-t border-border bg-card p-4 md:p-8 lg:border-l lg:border-t-0 lg:p-12">
+			<p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Quick contact</p>
+			<a href="mailto:hello@mostlywhat.systems" class="font-display mt-2 block text-xl text-primary hover:underline md:text-2xl">hello@mostlywhat.systems</a>
+			<div class="mt-6 grid grid-cols-2 gap-4">
+				<div>
+					<p class="font-mono text-xs uppercase text-muted-foreground">Response</p>
+					<p class="font-ui mt-1 text-sm font-semibold">~24 hours</p>
+				</div>
+				<div>
+					<p class="font-mono text-xs uppercase text-muted-foreground">Based in</p>
+					<p class="font-ui mt-1 text-sm font-semibold">Remote • Global</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
