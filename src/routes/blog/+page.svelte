@@ -31,7 +31,7 @@
 </svelte:head>
 
 <!-- Hero Section - Full Viewport -->
-<section class="relative flex h-[calc(100dvh-6rem)] flex-col border-b border-border">
+<section class="relative flex h-dvh flex-col border-b border-border">
 	<!-- Image Background -->
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<img 
@@ -43,7 +43,7 @@
 	</div>
 
 	<!-- Hero Content - Positioned at Bottom -->
-	<div class="flex flex-1 flex-col justify-end px-6 pb-8 md:px-8 lg:px-12" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
+	<div class="flex flex-1 flex-col justify-end px-6 pb-8 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
 		<div class="grid grid-cols-12 gap-4 lg:gap-8">
 			<div class="col-span-12 lg:col-span-8">
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">INSIGHTS & UPDATES</span>
@@ -59,15 +59,15 @@
 
 	<!-- Stats Bar -->
 	<div class="grid grid-cols-12 gap-px border-t border-border bg-border">
-		<div class="col-span-4 bg-card/80 p-4 backdrop-blur-sm">
+		<div class="col-span-4 bg-card/80 px-6 py-4 backdrop-blur-sm md:px-12 lg:px-16">
 			<span class="font-display text-lg font-bold text-primary md:text-2xl">{data.posts.length}</span>
 			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">ARTICLES</p>
 		</div>
-		<div class="col-span-4 bg-card/80 p-4 backdrop-blur-sm">
+		<div class="col-span-4 bg-card/80 px-6 py-4 backdrop-blur-sm md:px-12 lg:px-16">
 			<span class="font-display text-lg font-bold text-primary md:text-2xl">{data.categories.length - 1}</span>
 			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">CATEGORIES</p>
 		</div>
-		<div class="col-span-4 bg-card/80 p-4 backdrop-blur-sm">
+		<div class="col-span-4 bg-card/80 px-6 py-4 backdrop-blur-sm md:px-12 lg:px-16">
 			<span class="font-display text-lg font-bold text-primary md:text-2xl">WEEKLY</span>
 			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">UPDATES</p>
 		</div>
@@ -97,7 +97,7 @@
 </section>
 
 <!-- Posts Grid -->
-<section class="min-h-[80vh] border-b border-border">
+<section class="min-h-dvh border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
 		{#each filteredPosts as post (post.slug)}
 			<a 
@@ -111,7 +111,7 @@
 					</div>
 				</div>
 				
-				<div class="flex flex-1 flex-col p-6 lg:p-8">
+				<div class="flex flex-1 flex-col px-6 py-6 md:px-12 lg:px-16">
 					<div class="flex items-center gap-3 text-xs">
 						<span class="font-mono uppercase text-primary">{post.category}</span>
 						<span class="font-mono text-muted-foreground">{formatDate(post.date)}</span>
@@ -130,7 +130,7 @@
 				</div>
 			</a>
 		{:else}
-			<div class="col-span-12 flex min-h-[40vh] items-center justify-center bg-background p-8">
+			<div class="col-span-12 flex min-h-[40vh] items-center justify-center bg-background px-6 py-12 md:px-12 lg:px-16">
 				<p class="font-body text-center text-muted-foreground">No posts found in this category.</p>
 			</div>
 		{/each}
@@ -138,14 +138,14 @@
 </section>
 
 <!-- Newsletter CTA -->
-<section class="border-b border-border">
-	<div class="grid grid-cols-12 gap-px bg-border">
-		<div class="col-span-12 flex flex-col justify-center bg-background p-6 md:p-8 lg:col-span-6 lg:p-12">
+<section class="min-h-dvh border-b border-border">
+	<div class="grid h-full min-h-dvh grid-cols-12 gap-px bg-border">
+		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-16 md:px-12 lg:col-span-6 lg:px-16">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">STAY INFORMED</span>
 			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl lg:text-5xl">NEWSLETTER</h2>
 			<p class="font-body mt-4 max-w-md text-muted-foreground">Get notified when we publish new articles and insights.</p>
 		</div>
-		<div class="col-span-12 flex flex-col justify-center bg-card p-6 md:p-8 lg:col-span-6 lg:p-12">
+		<div class="col-span-12 flex flex-col justify-center bg-card px-6 py-16 md:px-12 lg:col-span-6 lg:px-16">
 			<div class="flex flex-col gap-4 sm:flex-row">
 				<input 
 					type="email" 

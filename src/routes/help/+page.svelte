@@ -145,7 +145,7 @@
 </svelte:head>
 
 <!-- Hero Section - Full Viewport -->
-<section class="relative flex h-[calc(100dvh-6rem)] flex-col border-b border-border">
+<section class="relative flex h-dvh flex-col border-b border-border">
 	<!-- Image Background -->
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<img 
@@ -157,7 +157,7 @@
 	</div>
 
 	<!-- Hero Content - Positioned at Bottom -->
-	<div class="flex flex-1 flex-col justify-end px-6 pb-8 md:px-8 lg:px-12" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
+	<div class="flex flex-1 flex-col justify-end px-6 pb-8 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
 		<div class="grid grid-cols-12 gap-4">
 			<div class="col-span-12 lg:col-span-8">
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">KNOWLEDGE BASE</span>
@@ -174,7 +174,7 @@
 	</div>
 
 	<!-- Search Bar -->
-	<div class="border-t border-border bg-card/80 p-4 backdrop-blur-sm md:p-6">
+	<div class="border-t border-border bg-card/80 px-6 py-4 backdrop-blur-sm md:px-12 md:py-6 lg:px-16">
 		<div class="relative">
 			<Search class="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
 			<Input 
@@ -189,7 +189,7 @@
 	<!-- Stats Bar -->
 	<div class="grid grid-cols-12 gap-px border-t border-border bg-border">
 		{#each stats as { value, label } (label)}
-			<div class="col-span-4 bg-card/80 p-4 backdrop-blur-sm">
+			<div class="col-span-4 bg-card/80 px-6 py-4 backdrop-blur-sm md:px-12 lg:px-16">
 				<span class="font-display text-lg font-bold text-primary md:text-2xl">{value}</span>
 				<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
 			</div>
@@ -199,15 +199,17 @@
 
 <!-- Categories Grid -->
 <section class="border-b border-border">
-	<div class="grid grid-cols-2 gap-px bg-border md:grid-cols-3 lg:grid-cols-6" use:scrollAnimate={{ animation: 'stagger' }}>
+	<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
 		{#each categories as { id, icon: Icon, title, desc, count } (id)}
 			<button
 				type="button"
 				onclick={() => selectedCategory = selectedCategory === id ? null : id}
-				class="group flex flex-col bg-background p-4 text-left transition-colors hover:bg-card md:p-6 {selectedCategory === id ? 'bg-primary/10 ring-1 ring-primary' : ''}"
+				class="group col-span-6 flex flex-col bg-background px-6 py-5 text-left transition-colors hover:bg-card md:col-span-4 md:px-12 lg:col-span-2 lg:px-16 {selectedCategory === id ? 'bg-primary/10 ring-1 ring-primary' : ''}"
 			>
-				<Icon class="mb-3 h-5 w-5 text-primary" />
-				<h3 class="font-ui text-[11px] font-semibold tracking-wider">{title}</h3>
+				<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">
+					<Icon class="h-5 w-5 text-primary" />
+				</div>
+				<h3 class="font-ui mt-4 text-[11px] font-semibold tracking-wider">{title}</h3>
 				<p class="font-body mt-1 text-[10px] text-muted-foreground">{desc}</p>
 				<span class="font-mono mt-2 text-[10px] tracking-wider text-muted-foreground">{count} ARTICLES</span>
 			</button>
@@ -216,10 +218,10 @@
 </section>
 
 <!-- Articles Section -->
-<section class="border-b border-border">
+<section class="min-h-[80vh] border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
 		<!-- Sidebar -->
-		<div class="col-span-12 bg-background p-4 md:p-6 lg:col-span-3 lg:p-8" use:scrollAnimate={{ animation: 'fade' }}>
+		<div class="col-span-12 bg-background px-6 py-10 md:px-12 lg:col-span-3 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">
 				{selectedCategory ? 'FILTERED BY' : 'SHOWING'}
 			</span>
@@ -228,7 +230,7 @@
 			</h2>
 			
 			{#if selectedCategory}
-				<Button variant="outline" class="font-ui mt-4 tracking-wider" onclick={() => selectedCategory = null}>
+				<Button variant="outline" size="lg" class="font-ui mt-4 tracking-wider" onclick={() => selectedCategory = null}>
 					CLEAR FILTER
 				</Button>
 			{/if}
@@ -256,7 +258,7 @@
 					{#each filteredArticles() as { id, category, title, excerpt, readTime } (id)}
 						<a
 							href={localizeHref(`/help/${id}`)}
-							class="group flex flex-col bg-background p-4 transition-colors hover:bg-card md:p-6"
+							class="group flex flex-col bg-background px-6 py-6 transition-colors hover:bg-card md:px-12 lg:px-16"
 						>
 							<span class="font-mono text-[10px] tracking-widest text-primary">
 								{categories.find(c => c.id === category)?.title}
@@ -271,10 +273,10 @@
 					{/each}
 				</div>
 			{:else}
-				<div class="flex min-h-[300px] flex-col items-center justify-center bg-background p-8 text-center">
+				<div class="flex min-h-[300px] flex-col items-center justify-center bg-background px-6 py-12 text-center md:px-12 lg:px-16">
 					<HelpCircle class="mb-4 h-8 w-8 text-muted-foreground" />
 					<p class="font-ui text-sm text-muted-foreground">No articles found</p>
-					<Button variant="outline" class="font-ui mt-4 tracking-wider" onclick={() => { searchQuery = ''; selectedCategory = null; }}>
+					<Button variant="outline" size="lg" class="font-ui mt-4 tracking-wider" onclick={() => { searchQuery = ''; selectedCategory = null; }}>
 						CLEAR FILTERS
 					</Button>
 				</div>
@@ -284,38 +286,38 @@
 </section>
 
 <!-- CTA Section -->
-<section class="border-b border-border">
-	<div class="grid grid-cols-1 gap-px bg-border lg:grid-cols-2" use:scrollAnimate={{ animation: 'scale' }}>
-		<div class="bg-background p-6 md:p-8 lg:p-12">
+<section class="min-h-[60vh] border-b border-border">
+	<div class="grid h-full min-h-[60vh] grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'scale' }}>
+		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:px-12 lg:col-span-6 lg:px-16">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">STILL NEED HELP?</span>
-			<h2 class="font-display mt-4 text-3xl font-bold uppercase">CONTACT OUR TEAM</h2>
+			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl lg:text-5xl">CONTACT OUR TEAM</h2>
 			<p class="font-body mt-4 text-muted-foreground">
 				Can't find what you're looking for? Our team is here to help.
 			</p>
-			<div class="mt-6 flex gap-2">
-				<Button href={localizeHref('/contact')} class="font-ui tracking-wider">
+			<div class="mt-6 flex gap-4">
+				<Button href={localizeHref('/contact')} size="xl" class="font-ui tracking-wider">
 					GET IN TOUCH
-					<ArrowRight class="ml-2 h-4 w-4" />
+					<ArrowRight class="ml-2 h-5 w-5" />
 				</Button>
-				<Button href={localizeHref('/support')} variant="outline" class="font-ui tracking-wider">
+				<Button href={localizeHref('/support')} variant="outline" size="xl" class="font-ui tracking-wider">
 					SUPPORT
 				</Button>
 			</div>
 		</div>
-		<div class="grid grid-cols-2 gap-px bg-border">
-			<div class="bg-card p-4 md:p-6">
+		<div class="col-span-12 grid grid-cols-2 gap-px bg-border lg:col-span-6">
+			<div class="flex flex-col justify-center bg-card px-6 py-10 md:px-12 lg:px-16">
 				<span class="font-display text-2xl font-bold text-primary">24H</span>
 				<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">AVG. RESPONSE</p>
 			</div>
-			<div class="bg-card p-4 md:p-6">
+			<div class="flex flex-col justify-center bg-card px-6 py-10 md:px-12 lg:px-16">
 				<span class="font-display text-2xl font-bold text-primary">100%</span>
 				<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">SATISFACTION</p>
 			</div>
-			<div class="bg-card p-4 md:p-6">
+			<div class="flex flex-col justify-center bg-card px-6 py-10 md:px-12 lg:px-16">
 				<span class="font-display text-2xl font-bold text-primary">50+</span>
 				<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">HELP ARTICLES</p>
 			</div>
-			<div class="bg-card p-4 md:p-6">
+			<div class="flex flex-col justify-center bg-card px-6 py-10 md:px-12 lg:px-16">
 				<span class="font-display text-2xl font-bold text-primary">6</span>
 				<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">CATEGORIES</p>
 			</div>

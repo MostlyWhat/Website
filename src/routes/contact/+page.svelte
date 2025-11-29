@@ -140,7 +140,7 @@
 </svelte:head>
 
 <!-- Hero Section -->
-<section class="relative flex h-[calc(100dvh-6rem)] flex-col border-b border-border">
+<section class="relative flex h-dvh flex-col border-b border-border">
 	<!-- Image Background -->
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<img 
@@ -151,11 +151,11 @@
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
 	</div>
 
-	<!-- Hero Content - Positioned at Bottom -->
-	<div class="flex flex-1 flex-col justify-end px-6 pb-8 md:px-8 lg:px-12" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
+	<!-- Hero Content -->
+	<div class="flex flex-1 flex-col justify-end px-6 pb-8 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
 		<div class="grid grid-cols-12 gap-4">
 			<div class="col-span-12 lg:col-span-8">
-				<span class="font-mono text-xs tracking-widest text-muted-foreground">CONTACT</span>
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTACT</span>
 				<h1 class="font-display mt-4 text-5xl font-black uppercase leading-[0.9] tracking-tight md:text-7xl lg:text-8xl">
 					{m.contact_title()}
 				</h1>
@@ -167,15 +167,17 @@
 	</div>
 
 	<!-- Contact Options Grid -->
-	<div class="grid grid-cols-2 gap-px border-t border-border bg-border lg:grid-cols-4" use:scrollAnimate={{ animation: 'stagger' }}>
+	<div class="grid grid-cols-12 gap-px border-t border-border bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
 		{#each contactOptions as { id, icon: Icon, title, desc, action, href } (id)}
 			{#if href}
 				<a
-					{href}
-					class="group flex flex-col bg-background p-4 transition-colors hover:bg-card md:p-6"
+					href={localizeHref(href)}
+					class="group col-span-6 flex flex-col bg-background px-6 py-5 transition-colors hover:bg-card md:px-12 lg:col-span-3 lg:px-16"
 				>
-					<Icon class="mb-3 h-5 w-5 text-primary" />
-					<h3 class="font-ui text-xs font-semibold tracking-wider">{title}</h3>
+					<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">
+						<Icon class="h-5 w-5 text-primary" />
+					</div>
+					<h3 class="font-ui mt-4 text-xs font-semibold tracking-wider">{title}</h3>
 					<p class="font-body mt-1 flex-1 text-[11px] text-muted-foreground">{desc}</p>
 					<span class="font-mono mt-3 flex items-center gap-1 text-[10px] tracking-wider text-primary">
 						{action}
@@ -186,10 +188,12 @@
 				<button
 					type="button"
 					onclick={() => selectTopic(id)}
-					class="group flex flex-col bg-background p-4 text-left transition-colors hover:bg-card md:p-6 {selectedTopic === id ? 'bg-primary/10 ring-1 ring-primary' : ''}"
+					class="group col-span-6 flex flex-col bg-background px-6 py-5 text-left transition-colors hover:bg-card md:px-12 lg:col-span-3 lg:px-16 {selectedTopic === id ? 'bg-primary/10 ring-1 ring-primary' : ''}"
 				>
-					<Icon class="mb-3 h-5 w-5 text-primary" />
-					<h3 class="font-ui text-xs font-semibold tracking-wider">{title}</h3>
+					<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">
+						<Icon class="h-5 w-5 text-primary" />
+					</div>
+					<h3 class="font-ui mt-4 text-xs font-semibold tracking-wider">{title}</h3>
 					<p class="font-body mt-1 flex-1 text-[11px] text-muted-foreground">{desc}</p>
 					<span class="font-mono mt-3 flex items-center gap-1 text-[10px] tracking-wider text-primary">
 						{action}
@@ -203,43 +207,43 @@
 
 <!-- Contact Form Section -->
 {#if selectedTopic}
-	<section class="border-b border-border" use:scrollAnimate={{ animation: 'fade' }}>
+	<section class="min-h-[80vh] border-b border-border" use:scrollAnimate={{ animation: 'fade' }}>
 		<div class="grid grid-cols-12 gap-px bg-border">
 			<!-- Form -->
-			<div class="col-span-12 bg-background p-4 md:p-6 lg:col-span-7 lg:p-8">
+			<div class="col-span-12 bg-background px-6 py-12 md:px-12 lg:col-span-7 lg:px-16">
 				{#if isSubmitted}
 					<div class="flex min-h-[400px] flex-col items-center justify-center text-center">
 						<div class="mb-4 flex h-12 w-12 items-center justify-center border border-primary bg-primary/10">
-							<CheckCircle class="h-6 w-6 text-primary" />
+							<CheckCircle class="h-5 w-5 text-primary" />
 						</div>
 						<h3 class="font-display text-xl uppercase">MESSAGE SENT</h3>
 						<p class="font-body mt-2 text-sm text-muted-foreground">{m.contact_form_success()}</p>
-						<Button variant="outline" class="font-ui mt-6 tracking-wider" onclick={() => { isSubmitted = false; selectedTopic = null; }}>
+						<Button variant="outline" size="lg" class="font-ui mt-6 tracking-wider" onclick={() => { isSubmitted = false; selectedTopic = null; }}>
 							SEND ANOTHER
 						</Button>
 					</div>
 				{:else}
 					<div class="mb-6">
-						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">{selectedTopic?.toUpperCase()} FORM</span>
+						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">01 — {selectedTopic?.toUpperCase()} FORM</span>
 						<h2 class="font-display mt-2 text-2xl font-bold uppercase">TELL US ABOUT YOUR PROJECT</h2>
 					</div>
 					
 					<form onsubmit={handleSubmit} class="space-y-4">
 						<div class="grid grid-cols-2 gap-px border border-border bg-border">
-							<div class="bg-background p-3">
+							<div class="bg-background p-4">
 								<Label for="name" class="font-mono text-[10px] tracking-widest text-muted-foreground">NAME *</Label>
 								<Input id="name" bind:value={name} required placeholder="John Doe" class="font-body mt-1 border-0 bg-transparent p-0 text-sm focus-visible:ring-0" />
 							</div>
-							<div class="bg-background p-3">
+							<div class="bg-background p-4">
 								<Label for="email" class="font-mono text-[10px] tracking-widest text-muted-foreground">EMAIL *</Label>
 								<Input id="email" type="email" bind:value={email} required placeholder="john@company.com" class="font-body mt-1 border-0 bg-transparent p-0 text-sm focus-visible:ring-0" />
 							</div>
 						</div>
-						<div class="border border-border bg-background p-3">
+						<div class="border border-border bg-background p-4">
 							<Label for="company" class="font-mono text-[10px] tracking-widest text-muted-foreground">COMPANY</Label>
 							<Input id="company" bind:value={company} placeholder="Company Inc. (optional)" class="font-body mt-1 border-0 bg-transparent p-0 text-sm focus-visible:ring-0" />
 						</div>
-						<div class="border border-border bg-background p-3">
+						<div class="border border-border bg-background p-4">
 							<Label for="message" class="font-mono text-[10px] tracking-widest text-muted-foreground">MESSAGE *</Label>
 							<Textarea id="message" bind:value={message} required rows={6} placeholder="Tell us about your project, timeline, and budget..." class="font-body mt-1 resize-none border-0 bg-transparent p-0 text-sm focus-visible:ring-0" />
 						</div>
@@ -247,11 +251,11 @@
 							<div class="font-mono border border-red-500 bg-red-500/10 p-3 text-xs text-red-400">{error}</div>
 						{/if}
 						<div class="flex gap-2">
-							<Button type="submit" class="font-ui flex-1 tracking-wider" disabled={isSubmitting}>
+							<Button type="submit" size="lg" class="font-ui flex-1 tracking-wider" disabled={isSubmitting}>
 								{isSubmitting ? 'SENDING...' : 'SEND MESSAGE'}
 								<Send class="ml-2 h-4 w-4" />
 							</Button>
-							<Button type="button" variant="outline" class="font-ui tracking-wider" onclick={() => selectedTopic = null}>
+							<Button type="button" variant="outline" size="lg" class="font-ui tracking-wider" onclick={() => selectedTopic = null}>
 								CANCEL
 							</Button>
 						</div>
@@ -260,14 +264,16 @@
 			</div>
 
 			<!-- Contact Info Sidebar -->
-			<div class="col-span-12 bg-card p-4 md:p-6 lg:col-span-5 lg:p-8">
+			<div class="col-span-12 bg-card px-6 py-12 md:px-12 lg:col-span-5 lg:px-16">
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTACT INFO</span>
 				
 				<div class="mt-6 space-y-4">
 					{#each contactInfo as { icon: Icon, label, value, href } (label)}
 						<div class="border border-border bg-background p-4">
 							<div class="flex items-start gap-3">
-								<Icon class="h-4 w-4 text-muted-foreground" />
+								<div class="flex h-8 w-8 items-center justify-center border border-border">
+									<Icon class="h-4 w-4 text-muted-foreground" />
+								</div>
 								<div>
 									<p class="font-mono text-[10px] tracking-widest text-muted-foreground">{label}</p>
 									{#if href}
@@ -302,17 +308,17 @@
 {/if}
 
 <!-- FAQ Section with Accordion -->
-<section class="border-b border-border">
-	<div class="grid grid-cols-1 gap-px bg-border lg:grid-cols-2">
+<section class="min-h-[80vh] border-b border-border">
+	<div class="grid h-full grid-cols-12 gap-px bg-border">
 		<!-- FAQ Info (Left) -->
-		<div class="bg-background p-4 md:p-6 lg:p-8" use:scrollAnimate={{ animation: 'fade' }}>
-			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">FAQ</span>
+		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:px-12 lg:col-span-6 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">02 — FAQ</span>
 			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">COMMON QUESTIONS</h2>
 			<p class="font-body mt-4 text-muted-foreground">
 				Find answers to frequently asked questions about our process, pricing, and services. 
 				Can't find what you're looking for?
 			</p>
-			<Button href={localizeHref('/help')} variant="outline" class="font-ui mt-6 tracking-wider">
+			<Button href={localizeHref('/help')} variant="outline" size="lg" class="font-ui mt-6 w-fit tracking-wider">
 				VISIT HELP CENTER
 				<ExternalLink class="ml-2 h-4 w-4" />
 			</Button>
@@ -331,14 +337,14 @@
 		</div>
 
 		<!-- FAQ Accordion (Right) -->
-		<div class="bg-card" use:scrollAnimate={{ animation: 'fade' }}>
+		<div class="col-span-12 flex flex-col justify-center bg-card lg:col-span-6" use:scrollAnimate={{ animation: 'fade' }}>
 			<Accordion.Root class="divide-y divide-border">
 				{#each faqs as { id, q, a } (id)}
 					<Accordion.Item value={id} class="border-0">
-						<Accordion.Trigger class="font-ui w-full bg-background px-6 py-5 text-left text-sm font-medium tracking-wide hover:bg-muted/50 [&[data-state=open]]:bg-primary/5 [&[data-state=open]]:text-primary">
+						<Accordion.Trigger class="font-ui w-full bg-background px-6 py-4 text-left text-sm font-medium tracking-wide hover:bg-muted/50 md:px-12 lg:px-16 [&[data-state=open]]:bg-primary/5 [&[data-state=open]]:text-primary">
 							{q}
 						</Accordion.Trigger>
-						<Accordion.Content class="font-body bg-background px-6 pb-5 pt-0 text-sm leading-relaxed text-muted-foreground">
+						<Accordion.Content class="font-body bg-background px-6 pb-4 pt-0 text-sm leading-relaxed text-muted-foreground md:px-12 lg:px-16">
 							{a}
 						</Accordion.Content>
 					</Accordion.Item>
@@ -349,28 +355,28 @@
 </section>
 
 <!-- CTA Section -->
-<section class="border-b border-border">
-	<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'scale' }}>
-		<div class="col-span-12 bg-background p-4 md:col-span-8 md:p-8 lg:p-12">
-			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">READY TO START?</span>
-			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">LET'S BUILD SOMETHING GREAT</h2>
+<section class="min-h-[60vh] border-b border-border">
+	<div class="grid h-full min-h-[60vh] grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'scale' }}>
+		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:col-span-8 md:px-12 lg:px-16">
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">03 — READY TO START?</span>
+			<h2 class="font-display mt-4 text-4xl font-bold uppercase md:text-5xl lg:text-6xl">LET'S BUILD SOMETHING GREAT</h2>
 			<p class="font-body mt-4 max-w-lg text-muted-foreground">
 				Whether you have a detailed brief or just a rough idea, we'd love to hear about it.
 			</p>
-			<div class="mt-6 flex gap-2">
-				<Button onclick={() => selectTopic('quote')} class="font-ui tracking-wider">
+			<div class="mt-8 flex gap-4">
+				<Button onclick={() => selectTopic('quote')} size="xl" class="font-ui tracking-wider">
 					GET A QUOTE
-					<ArrowRight class="ml-2 h-4 w-4" />
+					<ArrowRight class="ml-2 h-5 w-5" />
 				</Button>
-				<Button href="mailto:hello@mostlywhat.systems" variant="outline" class="font-ui tracking-wider">
+				<Button href="mailto:hello@mostlywhat.systems" variant="outline" size="xl" class="font-ui tracking-wider">
 					EMAIL US
 				</Button>
 			</div>
 		</div>
-		<div class="col-span-12 flex items-center justify-center bg-primary/10 p-4 md:col-span-4 md:p-8">
+		<div class="col-span-12 flex items-center justify-center bg-primary/10 px-6 py-12 md:col-span-4 md:px-12 lg:px-16">
 			<div class="text-center">
 				<p class="font-mono text-[10px] tracking-widest text-muted-foreground">QUICK CONTACT</p>
-				<a href="mailto:hello@mostlywhat.systems" class="font-display mt-2 block text-lg uppercase text-primary hover:underline">
+				<a href="mailto:hello@mostlywhat.systems" class="font-display mt-2 block text-base uppercase text-primary hover:underline">
 					HELLO@MOSTLYWHAT.SYSTEMS
 				</a>
 			</div>

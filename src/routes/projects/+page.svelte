@@ -27,7 +27,7 @@
 </svelte:head>
 
 <!-- Hero Section - Full Viewport -->
-<section class="relative flex h-[calc(100dvh-6rem)] flex-col border-b border-border">
+<section class="relative flex h-dvh flex-col border-b border-border">
 	<!-- Image Background -->
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<img 
@@ -39,7 +39,7 @@
 	</div>
 
 	<!-- Hero Content - Positioned at Bottom -->
-	<div class="flex flex-1 flex-col justify-end px-6 pb-8 md:px-8 lg:px-12" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
+	<div class="flex flex-1 flex-col justify-end px-6 pb-8 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
 		<div class="grid grid-cols-12 gap-4">
 			<div class="col-span-12 lg:col-span-8">
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">SELECTED WORK</span>
@@ -56,7 +56,7 @@
 	<!-- Stats Bar -->
 	<div class="grid grid-cols-12 gap-px border-t border-border bg-border">
 		{#each stats as { value, label } (label)}
-			<div class="col-span-4 bg-card/80 p-4 backdrop-blur-sm">
+			<div class="col-span-4 bg-card/80 px-6 py-4 backdrop-blur-sm md:px-12 lg:px-16">
 				<span class="font-display text-lg font-bold text-primary md:text-2xl">{value}</span>
 				<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
 			</div>
@@ -87,7 +87,7 @@
 </section>
 
 <!-- Projects Grid - Minimum Height Section -->
-<section class="min-h-[80vh] border-b border-border">
+<section class="min-h-dvh border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
 		{#each filteredProjects as project (project.slug)}
 			<a 
@@ -101,7 +101,7 @@
 					</div>
 				</div>
 				
-				<div class="flex flex-1 flex-col p-6">
+				<div class="flex flex-1 flex-col px-6 py-6 md:px-12 lg:px-16">
 					<div class="flex items-center justify-between text-xs">
 						<span class="font-mono uppercase text-primary">{project.category}</span>
 						<span class="font-mono text-muted-foreground">{project.year}</span>
@@ -119,7 +119,7 @@
 				</div>
 			</a>
 		{:else}
-			<div class="col-span-12 flex min-h-[40vh] items-center justify-center bg-background p-8">
+			<div class="col-span-12 flex min-h-[40vh] items-center justify-center bg-background px-6 py-12 md:px-12 lg:px-16">
 				<p class="font-body text-center text-muted-foreground">No projects found.</p>
 			</div>
 		{/each}
@@ -127,9 +127,9 @@
 </section>
 
 <!-- CTA Section -->
-<section class="border-b border-border">
-	<div class="grid grid-cols-12 gap-px bg-border">
-		<div class="col-span-12 flex flex-col justify-center bg-background p-8 lg:col-span-6 lg:p-12">
+<section class="min-h-dvh border-b border-border">
+	<div class="grid h-full min-h-dvh grid-cols-12 gap-px bg-border">
+		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-16 md:px-12 lg:col-span-6 lg:px-16">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">START BUILDING</span>
 			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl lg:text-5xl">HAVE A PROJECT?</h2>
 			<p class="font-body mt-4 max-w-md text-muted-foreground">Let's discuss how we can bring your vision to life.</p>
@@ -138,7 +138,7 @@
 				<ArrowRight class="ml-2 h-4 w-4" />
 			</Button>
 		</div>
-		<div class="col-span-12 flex flex-col justify-center bg-card p-8 lg:col-span-6 lg:p-12">
+		<div class="col-span-12 flex flex-col justify-center bg-card px-6 py-16 md:px-12 lg:col-span-6 lg:px-16">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTACT</span>
 			<a href="mailto:hello@mostlywhat.systems" class="font-display mt-4 block text-xl text-primary transition-colors hover:text-primary/80 md:text-2xl">
 				HELLO@MOSTLYWHAT.SYSTEMS
