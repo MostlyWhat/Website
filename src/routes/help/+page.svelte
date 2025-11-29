@@ -3,140 +3,87 @@
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import { Input } from '$lib/components/ui/input';
+	import CTASection from '$lib/components/layout/CTASection.svelte';
 	import { 
-		Search, BookOpen, Zap, Shield, HelpCircle, Wrench, 
-		ArrowRight, ExternalLink, FileText, MessageSquare
+		ArrowRight, ArrowLeft, Rocket, Code,  
+		ChevronRight, Sparkles, Users, Clock
 	} from '@lucide/svelte';
 
-	let searchQuery = $state('');
-	let selectedCategory = $state<string | null>(null);
+	// Step-based navigation state
+	let currentStep = $state<number>(0);
+	let selectedPath = $state<string | null>(null);
 
-	const stats = [
-		{ value: '50+', label: 'ARTICLES' },
-		{ value: '6', label: 'CATEGORIES' },
-		{ value: '24H', label: 'RESPONSE' }
-	];
-
-	// Help categories
-	const categories = [
-		{ id: 'getting-started', icon: Zap, title: 'GETTING STARTED', desc: 'New to MostlyWhat? Start here', count: 8 },
-		{ id: 'services', icon: BookOpen, title: 'SERVICES', desc: 'Learn about our offerings', count: 12 },
-		{ id: 'process', icon: Wrench, title: 'PROCESS', desc: 'How we work together', count: 6 },
-		{ id: 'technical', icon: Shield, title: 'TECHNICAL', desc: 'Tech stack and integrations', count: 10 },
-		{ id: 'billing', icon: FileText, title: 'BILLING', desc: 'Payments and invoicing', count: 5 },
-		{ id: 'support', icon: HelpCircle, title: 'SUPPORT', desc: 'Get help with issues', count: 7 }
-	];
-
-	// Help articles
-	const articles = [
-		{ 
-			id: 'what-we-do',
-			category: 'getting-started',
-			title: 'What Does MostlyWhat Systems Do?',
-			excerpt: 'An overview of our services, capabilities, and the types of projects we take on.',
-			readTime: '3 min'
+	// Quick paths based on user situation
+	const quickPaths = [
+		{
+			id: 'new-client',
+			icon: Rocket,
+			title: "I'M NEW HERE",
+			subtitle: 'First time learning about us',
+			color: 'text-green-400',
+			articles: [
+				{ title: 'What Does MostlyWhat Do?', href: '/help/what-we-do', time: '3 min' },
+				{ title: 'Our Services Overview', href: '/help/services-overview', time: '4 min' },
+				{ title: 'How to Start a Project', href: '/help/starting-project', time: '4 min' }
+			]
 		},
-		{ 
-			id: 'project-process',
-			category: 'getting-started',
-			title: 'How Our Project Process Works',
-			excerpt: 'From initial consultation to launch, here is what to expect when working with us.',
-			readTime: '5 min'
+		{
+			id: 'want-project',
+			icon: Sparkles,
+			title: 'I WANT A PROJECT',
+			subtitle: 'Ready to work together',
+			color: 'text-primary',
+			articles: [
+				{ title: 'How Our Process Works', href: '/help/project-process', time: '5 min' },
+				{ title: 'Pricing & Estimates', href: '/help/pricing', time: '4 min' },
+				{ title: 'Project Timelines', href: '/help/timeline', time: '3 min' }
+			]
 		},
-		{ 
-			id: 'starting-project',
-			category: 'getting-started',
-			title: 'How to Start a Project',
-			excerpt: 'Step-by-step guide to initiating a new project with our team.',
-			readTime: '4 min'
+		{
+			id: 'existing-client',
+			icon: Users,
+			title: "I'M A CLIENT",
+			subtitle: 'Already working with us',
+			color: 'text-blue-400',
+			articles: [
+				{ title: 'Communication & Updates', href: '/help/communication', time: '4 min' },
+				{ title: 'Post-Launch Support', href: '/help/maintenance', time: '4 min' },
+				{ title: 'Invoicing & Payment', href: '/help/invoicing', time: '3 min' }
+			]
 		},
-		{ 
-			id: 'web-development',
-			category: 'services',
-			title: 'Web Development Services',
-			excerpt: 'Full-stack web development with SvelteKit, React, and modern technologies.',
-			readTime: '6 min'
-		},
-		{ 
-			id: 'design-systems',
-			category: 'services',
-			title: 'Design Systems & Brand Identity',
-			excerpt: 'Creating cohesive visual languages and scalable design systems.',
-			readTime: '5 min'
-		},
-		{ 
-			id: 'tech-stack',
-			category: 'technical',
-			title: 'Our Technology Stack',
-			excerpt: 'SvelteKit, TypeScript, TailwindCSS, Cloudflare, and the tools we use.',
-			readTime: '4 min'
-		},
-		{ 
-			id: 'integrations',
-			category: 'technical',
-			title: 'Third-Party Integrations',
-			excerpt: 'CMS, payment systems, analytics, and other integrations we support.',
-			readTime: '5 min'
-		},
-		{ 
-			id: 'timeline',
-			category: 'process',
-			title: 'Project Timelines',
-			excerpt: 'Understanding typical project durations and delivery schedules.',
-			readTime: '3 min'
-		},
-		{ 
-			id: 'communication',
-			category: 'process',
-			title: 'Communication & Collaboration',
-			excerpt: 'How we stay in touch and work together throughout the project.',
-			readTime: '4 min'
-		},
-		{ 
-			id: 'pricing',
-			category: 'billing',
-			title: 'Pricing & Estimates',
-			excerpt: 'How we structure pricing and provide project estimates.',
-			readTime: '4 min'
-		},
-		{ 
-			id: 'invoicing',
-			category: 'billing',
-			title: 'Invoicing & Payment',
-			excerpt: 'Payment terms, methods, and milestone-based billing.',
-			readTime: '3 min'
-		},
-		{ 
-			id: 'maintenance',
-			category: 'support',
-			title: 'Post-Launch Support',
-			excerpt: 'Ongoing maintenance, updates, and support options.',
-			readTime: '4 min'
+		{
+			id: 'technical',
+			icon: Code,
+			title: 'TECHNICAL QUESTIONS',
+			subtitle: 'Stack, tools, and methods',
+			color: 'text-yellow-400',
+			articles: [
+				{ title: 'Our Technology Stack', href: '/help/tech-stack', time: '4 min' },
+				{ title: 'Third-Party Integrations', href: '/help/integrations', time: '5 min' },
+				{ title: 'Design Systems Approach', href: '/help/design-systems', time: '5 min' }
+			]
 		}
 	];
 
-	// Popular/featured articles
-	const popularArticles = articles.slice(0, 4);
+	// Common questions (quick answers)
+	const commonQuestions = [
+		{ q: 'How long does a typical project take?', a: '6-12 weeks from kickoff to launch, depending on scope.' },
+		{ q: 'Do you work with startups?', a: 'Yes! We have flexible engagement models for different budgets.' },
+		{ q: 'What technologies do you use?', a: 'SvelteKit, TypeScript, TailwindCSS, deployed on Cloudflare.' },
+		{ q: 'Do you provide ongoing support?', a: 'We offer maintenance packages for monitoring and updates.' }
+	];
 
-	// Filter articles
-	const filteredArticles = $derived(() => {
-		let result = articles;
-		
-		if (selectedCategory) {
-			result = result.filter(a => a.category === selectedCategory);
-		}
-		
-		if (searchQuery.trim()) {
-			const query = searchQuery.toLowerCase();
-			result = result.filter(a => 
-				a.title.toLowerCase().includes(query) || 
-				a.excerpt.toLowerCase().includes(query)
-			);
-		}
-		
-		return result;
-	});
+	function selectPath(id: string) {
+		selectedPath = id;
+		currentStep = 1;
+	}
+
+	function goBack() {
+		currentStep = 0;
+		selectedPath = null;
+	}
+
+	const selectedPathData = $derived(quickPaths.find(p => p.id === selectedPath));
 </script>
 
 <svelte:head>
@@ -145,7 +92,7 @@
 </svelte:head>
 
 <!-- Hero Section -->
-<section class="relative flex min-h-[60vh] flex-col border-b border-border">
+<section class="relative flex h-dvh flex-col border-b border-border">
 	<!-- Image Background -->
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<img 
@@ -161,159 +108,132 @@
 		<div class="mb-8 max-w-3xl">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">KNOWLEDGE BASE</span>
 			<h1 class="font-display mt-4 text-4xl font-black uppercase leading-[0.9] tracking-tight md:text-6xl lg:text-7xl">
-				HOW CAN WE HELP?
+				HOW CAN WE<br />HELP YOU?
 			</h1>
 			<p class="font-body mt-4 max-w-xl text-base text-muted-foreground">
-				Browse our knowledge base or search for specific topics.
+				Select your situation below to find the most relevant information.
 			</p>
-		</div>
-	</div>
-
-	<!-- Search Bar -->
-	<div class="border-t border-border bg-card/80 px-6 py-4 backdrop-blur-sm md:px-12 lg:px-16">
-		<div class="relative">
-			<Search class="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-			<Input 
-				type="search" 
-				bind:value={searchQuery} 
-				placeholder="Search help articles..." 
-				class="font-body h-10 pl-12 text-sm"
-			/>
 		</div>
 	</div>
 
 	<!-- Stats Bar -->
 	<div class="grid grid-cols-12 gap-px border-t border-border bg-border">
-		{#each stats as { value, label } (label)}
-			<div class="col-span-4 bg-card/80 px-6 py-3 backdrop-blur-sm md:px-12 lg:px-16">
-				<span class="font-display text-lg font-bold text-primary">{value}</span>
-				<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
-			</div>
-		{/each}
+		<div class="col-span-4 bg-card/80 px-6 py-3 backdrop-blur-sm md:px-12 lg:px-16">
+			<span class="font-display text-lg font-bold text-primary">QUICK</span>
+			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">ANSWERS</p>
+		</div>
+		<div class="col-span-4 bg-card/80 px-6 py-3 backdrop-blur-sm md:px-12 lg:px-16">
+			<span class="font-display text-lg font-bold text-primary">4</span>
+			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">PATHS</p>
+		</div>
+		<div class="col-span-4 bg-card/80 px-6 py-3 backdrop-blur-sm md:px-12 lg:px-16">
+			<span class="font-display text-lg font-bold text-primary">24H</span>
+			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">RESPONSE</p>
+		</div>
 	</div>
 </section>
 
-<!-- Categories Grid -->
-<section class="border-b border-border">
-	<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
-		{#each categories as { id, icon: Icon, title, desc, count } (id)}
-			<button
+<!-- Quick Path Selection -->
+{#if currentStep === 0}
+	<section class="border-b border-border">
+		<div class="grid grid-cols-12 gap-px bg-border">
+			<div class="col-span-12 bg-card px-6 py-4 md:px-12 lg:px-16">
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">STEP 1</span>
+				<span class="font-mono ml-4 text-[10px] tracking-widest text-primary">WHAT DESCRIBES YOU BEST?</span>
+			</div>
+		</div>
+		<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
+			{#each quickPaths as path (path.id)}
+				<button
+					type="button"
+					onclick={() => selectPath(path.id)}
+					class="group col-span-12 flex items-center gap-6 bg-background px-6 py-8 text-left transition-colors hover:bg-card md:col-span-6 md:px-12 lg:px-16"
+				>
+					<div class="flex h-14 w-14 shrink-0 items-center justify-center border border-border bg-card transition-colors group-hover:border-primary">
+						<path.icon class="h-6 w-6 {path.color}" />
+					</div>
+					<div class="flex-1">
+						<h3 class="font-ui text-sm font-semibold tracking-wider group-hover:text-primary">{path.title}</h3>
+						<p class="font-body mt-1 text-xs text-muted-foreground">{path.subtitle}</p>
+					</div>
+					<ChevronRight class="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary" />
+				</button>
+			{/each}
+		</div>
+	</section>
+
+	<!-- Quick Answers -->
+	<section class="border-b border-border">
+		<div class="grid grid-cols-12 gap-px bg-border">
+			<div class="col-span-12 bg-card px-6 py-4 md:px-12 lg:px-16">
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">QUICK ANSWERS</span>
+			</div>
+		</div>
+		<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
+			{#each commonQuestions as { q, a } (q)}
+				<div class="col-span-12 bg-background px-6 py-6 md:col-span-6 md:px-12 lg:px-16">
+					<h4 class="font-ui text-xs font-semibold tracking-wider text-primary">{q}</h4>
+					<p class="font-body mt-2 text-sm text-muted-foreground">{a}</p>
+				</div>
+			{/each}
+		</div>
+	</section>
+
+{:else if currentStep === 1 && selectedPathData}
+	<!-- Selected Path Articles -->
+	<section class="border-b border-border">
+		<div class="grid grid-cols-12 gap-px bg-border">
+			<button 
 				type="button"
-				onclick={() => selectedCategory = selectedCategory === id ? null : id}
-				class="group col-span-6 flex flex-col bg-background px-6 py-6 text-left transition-colors hover:bg-card md:col-span-4 md:px-8 lg:col-span-2 lg:px-6 {selectedCategory === id ? 'bg-primary/10 ring-1 ring-primary' : ''}"
+				onclick={goBack}
+				class="col-span-12 flex items-center gap-2 bg-card px-6 py-4 text-left transition-colors hover:bg-card/80 md:px-12 lg:px-16"
 			>
-				<div class="flex h-10 w-10 items-center justify-center border border-border bg-card">
-					<Icon class="h-4 w-4 text-primary" />
-				</div>
-				<h3 class="font-ui mt-3 text-[11px] font-semibold tracking-wider">{title}</h3>
-				<p class="font-body mt-1 text-[10px] text-muted-foreground">{desc}</p>
-				<span class="font-mono mt-2 text-[10px] tracking-wider text-muted-foreground">{count} ARTICLES</span>
+				<ArrowLeft class="h-4 w-4 text-muted-foreground" />
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">BACK</span>
+				<span class="font-mono ml-4 text-[10px] tracking-widest text-primary">{selectedPathData.title}</span>
 			</button>
-		{/each}
-	</div>
-</section>
-
-<!-- Articles Section -->
-<section class="border-b border-border">
-	<div class="grid grid-cols-12 gap-px bg-border">
-		<!-- Sidebar -->
-		<div class="col-span-12 bg-background px-6 py-8 md:px-12 lg:col-span-3 lg:px-16 lg:py-10" use:scrollAnimate={{ animation: 'fade' }}>
-			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">
-				{selectedCategory ? 'FILTERED BY' : 'SHOWING'}
-			</span>
-			<h2 class="font-display mt-2 text-2xl font-bold uppercase">
-				{selectedCategory ? categories.find(c => c.id === selectedCategory)?.title : 'POPULAR'}
-			</h2>
-			
-			{#if selectedCategory}
-				<Button variant="outline" size="lg" class="font-ui mt-4 tracking-wider" onclick={() => selectedCategory = null}>
-					CLEAR FILTER
-				</Button>
-			{/if}
-
-			<!-- Quick Links -->
-			<div class="mt-6">
-				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">QUICK LINKS</span>
-				<div class="mt-3 space-y-2">
-					<a href={localizeHref('/contact')} class="font-ui flex items-center gap-2 text-xs tracking-wider text-muted-foreground hover:text-primary">
-						<MessageSquare class="h-3.5 w-3.5" />
-						CONTACT SUPPORT
-					</a>
-					<a href={localizeHref('/docs')} class="font-ui flex items-center gap-2 text-xs tracking-wider text-muted-foreground hover:text-primary">
-						<ExternalLink class="h-3.5 w-3.5" />
-						DOCUMENTATION
-					</a>
+		</div>
+		<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
+			<div class="col-span-12 flex items-center gap-4 bg-background px-6 py-8 md:px-12 lg:px-16">
+				<div class="flex h-12 w-12 items-center justify-center border border-primary bg-primary/10">
+					<selectedPathData.icon class="h-5 w-5 text-primary" />
+				</div>
+				<div>
+					<h2 class="font-display text-2xl font-bold uppercase">{selectedPathData.title}</h2>
+					<p class="font-body text-sm text-muted-foreground">{selectedPathData.subtitle}</p>
 				</div>
 			</div>
+			{#each selectedPathData.articles as article (article.href)}
+				<a
+					href={localizeHref(article.href)}
+					class="group col-span-12 flex items-center justify-between bg-background px-6 py-6 transition-colors hover:bg-card md:col-span-6 lg:col-span-4 md:px-12 lg:px-8"
+				>
+					<div>
+						<h3 class="font-ui text-sm font-semibold tracking-wider group-hover:text-primary">{article.title}</h3>
+						<span class="font-mono mt-1 flex items-center gap-1 text-[10px] text-muted-foreground">
+							<Clock class="h-3 w-3" />
+							{article.time} read
+						</span>
+					</div>
+					<ArrowRight class="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary" />
+				</a>
+			{/each}
 		</div>
+	</section>
+{/if}
 
-		<!-- Articles Grid -->
-		<div class="col-span-12 lg:col-span-9">
-			{#if filteredArticles().length > 0}
-				<div class="grid grid-cols-1 gap-px bg-border md:grid-cols-2" use:scrollAnimate={{ animation: 'stagger' }}>
-					{#each filteredArticles() as { id, category, title, excerpt, readTime } (id)}
-						<a
-							href={localizeHref(`/help/${id}`)}
-							class="group flex flex-col bg-background px-6 py-6 transition-colors hover:bg-card md:px-12 lg:px-16"
-						>
-							<span class="font-mono text-[10px] tracking-widest text-primary">
-								{categories.find(c => c.id === category)?.title}
-							</span>
-							<h3 class="font-ui mt-2 text-sm font-semibold tracking-wider group-hover:text-primary">{title}</h3>
-							<p class="font-body mt-1 flex-1 text-[11px] text-muted-foreground">{excerpt}</p>
-							<span class="font-mono mt-3 flex items-center gap-2 text-[10px] tracking-wider text-muted-foreground">
-								{readTime} READ
-								<ArrowRight class="h-3 w-3 transition-transform group-hover:translate-x-1" />
-							</span>
-						</a>
-					{/each}
-				</div>
-			{:else}
-				<div class="flex min-h-[300px] flex-col items-center justify-center bg-background px-6 py-12 text-center md:px-12 lg:px-16">
-					<HelpCircle class="mb-4 h-8 w-8 text-muted-foreground" />
-					<p class="font-ui text-sm text-muted-foreground">No articles found</p>
-					<Button variant="outline" size="lg" class="font-ui mt-4 tracking-wider" onclick={() => { searchQuery = ''; selectedCategory = null; }}>
-						CLEAR FILTERS
-					</Button>
-				</div>
-			{/if}
-		</div>
-	</div>
-</section>
-
-<!-- CTA Section -->
-<section class="border-b border-border">
-	<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'scale' }}>
-		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-10 md:px-12 lg:col-span-6 lg:px-16">
-			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">STILL NEED HELP?</span>
-			<h2 class="font-display mt-3 text-2xl font-bold uppercase md:text-3xl">CONTACT OUR TEAM</h2>
-			<p class="font-body mt-3 text-sm text-muted-foreground">
-				Can't find what you're looking for? Our team is here to help.
-			</p>
-			<div class="mt-6 flex flex-wrap gap-3">
-				<Button href={localizeHref('/contact')} class="font-ui tracking-wider">
-					GET IN TOUCH
-					<ArrowRight class="ml-2 h-4 w-4" />
-				</Button>
-			</div>
-		</div>
-		<div class="col-span-12 grid grid-cols-2 gap-px bg-border lg:col-span-6">
-			<div class="flex flex-col justify-center bg-card px-6 py-6 md:px-12 lg:px-16">
-				<span class="font-display text-xl font-bold text-primary">24H</span>
-				<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">AVG. RESPONSE</p>
-			</div>
-			<div class="flex flex-col justify-center bg-card px-6 py-6 md:px-12 lg:px-16">
-				<span class="font-display text-xl font-bold text-primary">100%</span>
-				<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">SATISFACTION</p>
-			</div>
-			<div class="flex flex-col justify-center bg-card px-6 py-6 md:px-12 lg:px-16">
-				<span class="font-display text-xl font-bold text-primary">50+</span>
-				<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">HELP ARTICLES</p>
-			</div>
-			<div class="flex flex-col justify-center bg-card px-6 py-6 md:px-12 lg:px-16">
-				<span class="font-display text-xl font-bold text-primary">6</span>
-				<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">CATEGORIES</p>
-			</div>
-		</div>
-	</div>
-</section>
+<!-- Contact CTA -->
+<CTASection
+	variant="split"
+	label="STILL NEED HELP?"
+	title="CONTACT OUR TEAM"
+	description="Can't find what you're looking for? Our team is here to help."
+	buttonText="GET IN TOUCH"
+	buttonHref="/contact"
+	stats={[
+		{ value: '24H', label: 'AVG. RESPONSE' },
+		{ value: '100%', label: 'SATISFACTION' },
+		{ value: 'GLOBAL', label: 'AVAILABILITY' },
+		{ value: 'FREE', label: 'CONSULTATION' }
+	]}
+/>

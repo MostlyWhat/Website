@@ -17,7 +17,8 @@ export interface ContentSection {
 // Parse markdown and extract sections for TOC
 function extractSections(markdown: string): ContentSection[] {
     const sections: ContentSection[] = [];
-    const headingRegex = /^##\s+(\d+)\s*[—–-]\s*(.+)$/gm;
+    // Match both formats: "## 01 — Title" and "## 1 — Title"
+    const headingRegex = /^##\s+0?(\d+)\s*[—–-]\s*(.+)$/gm;
     let match;
 
     while ((match = headingRegex.exec(markdown)) !== null) {

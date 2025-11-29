@@ -35,7 +35,7 @@
 </svelte:head>
 
 <!-- Hero Section -->
-<section class="relative flex min-h-[60vh] flex-col border-b border-border">
+<section class="relative flex h-dvh flex-col border-b border-border">
 	<!-- Image Background -->
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<img 
