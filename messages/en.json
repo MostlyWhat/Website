@@ -1,4 +1,115 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-	"hello_world": "Hello, {name} from en!"
+	
+	"site_name": "MostlyWhat Systems",
+	"site_tagline": "Building Worlds for the Web",
+	"site_description": "An independent studio building high-fidelity websites, products, and design systems with a focus on speed, clarity, and a touch of sci-fi industrial realism.",
+	
+	"nav_home": "Home",
+	"nav_about": "About",
+	"nav_services": "Services",
+	"nav_projects": "Projects",
+	"nav_blog": "Blog",
+	"nav_contact": "Contact",
+	"nav_docs": "Documentation",
+	
+	"footer_tagline": "An independent studio building high-fidelity websites, products, and design systems.",
+	"footer_navigation": "Navigation",
+	"footer_resources": "Resources",
+	"footer_legal": "Legal",
+	"footer_rights": "All rights reserved.",
+	"footer_trademark": "MostlyWhat Systems is a registered trademark.",
+	
+	"legal_privacy": "Privacy Policy",
+	"legal_terms": "Terms of Service",
+	"legal_cookies": "Cookie Policy",
+	
+	"hero_title": "Building Worlds for the Web",
+	"hero_subtitle": "An independent studio building high-fidelity websites, products, and design systems with a focus on speed, clarity, and a touch of sci-fi industrial realism.",
+	"hero_cta_primary": "Start a Project",
+	"hero_cta_secondary": "View Work",
+	
+	"stats_response_time": "Response time",
+	"stats_response_value": "~24h",
+	"stats_locations": "Locations",
+	"stats_locations_value": "Remote • Global",
+	"stats_stack": "Stack",
+	"stats_stack_value": "SvelteKit • TS",
+	
+	"services_title": "Strategy, Design, and Engineering",
+	"services_subtitle": "A balanced stack of capabilities to plan, prototype, and ship high-quality digital products.",
+	
+	"service_strategy_title": "Product Strategy",
+	"service_strategy_number": "01",
+	"service_strategy_desc": "Discovery, roadmapping, and measurable outcomes.",
+	
+	"service_brand_title": "Brand & Visual",
+	"service_brand_number": "02",
+	"service_brand_desc": "Identity systems, design language, and art direction.",
+	
+	"service_ux_title": "UX & Prototyping",
+	"service_ux_number": "03",
+	"service_ux_desc": "Flows, wireframes, and interactive prototypes.",
+	
+	"service_engineering_title": "Web Engineering",
+	"service_engineering_number": "04",
+	"service_engineering_desc": "SvelteKit, TypeScript, and performant delivery.",
+	
+	"service_platforms_title": "Platforms",
+	"service_platforms_number": "05",
+	"service_platforms_desc": "Headless CMS, e-commerce, and third-party integrations.",
+	
+	"service_growth_title": "Growth",
+	"service_growth_number": "06",
+	"service_growth_desc": "Analytics, SEO, experimentation, and iteration.",
+	
+	"capabilities_title": "What We Bring to the Table",
+	"capabilities_subtitle": "Full-stack expertise across product, design, and engineering to take you from zero to one—and beyond.",
+	"capability_speed": "Speed",
+	"capability_speed_desc": "Rapid prototyping and delivery",
+	"capability_quality": "Quality",
+	"capability_quality_desc": "A11y, performance, and reliability",
+	"capability_process": "Process",
+	"capability_process_desc": "Transparent, iterative, collaborative",
+	"capability_support": "Support",
+	"capability_support_desc": "Launch, measure, and improve",
+	
+	"process_title": "From Idea to Reality",
+	"process_step1_title": "Tell Us Your Vision",
+	"process_step1_desc": "Share your product idea and requirements with our team through a simple consultation.",
+	"process_step2_title": "Design & Plan",
+	"process_step2_desc": "We create a detailed design and project roadmap tailored to your specific needs.",
+	"process_step3_title": "Build & Test",
+	"process_step3_desc": "Our experts develop your product using proven methodologies and rigorous testing.",
+	"process_step4_title": "Launch & Support",
+	"process_step4_desc": "We deliver your finished product and provide ongoing support for your success.",
+	
+	"cta_title": "Ready to Ship Faster?",
+	"cta_subtitle": "Join the teams who have already accelerated their development workflow. Start building today.",
+	"cta_button_primary": "Start a Project",
+	"cta_button_secondary": "Talk to Sales",
+	"cta_disclaimer": "No commitment required • Free consultation • Quick response",
+	
+	"about_title": "About Us",
+	"about_subtitle": "A compact, senior team of hands-on partners across strategy, design, and code.",
+	
+	"projects_title": "Recent Projects",
+	"projects_subtitle": "A selection of case studies showcasing our work.",
+	
+	"blog_title": "Latest Updates",
+	"blog_subtitle": "Thoughts, tutorials, and announcements from the team.",
+	"blog_read_more": "Read more",
+	
+	"contact_title": "Get in Touch",
+	"contact_subtitle": "Have a project in mind? Let's talk about how we can help.",
+	"contact_form_name": "Name",
+	"contact_form_email": "Email",
+	"contact_form_company": "Company",
+	"contact_form_message": "Message",
+	"contact_form_submit": "Send Message",
+	"contact_form_success": "Thanks for reaching out! We'll get back to you soon.",
+	
+	"error_404_title": "Page Not Found",
+	"error_404_subtitle": "The page you're looking for doesn't exist or has been moved.",
+	"error_404_button": "Go Home"
 }
