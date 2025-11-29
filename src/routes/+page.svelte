@@ -38,8 +38,8 @@
 	<meta name="description" content={m.site_description()} />
 </svelte:head>
 
-<!-- Hero Section - Full Viewport -->
-<section class="relative flex min-h-[100dvh] flex-col border-b border-border">
+<!-- Hero Section - Full Viewport with Bottom-aligned Content -->
+<section class="relative flex h-[calc(100dvh-6rem)] flex-col border-b border-border">
 	<!-- Image Background -->
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<img 
@@ -50,38 +50,52 @@
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
 	</div>
 
-	<!-- Hero Content - Centered -->
-	<div class="flex flex-1 flex-col items-center justify-center px-6 py-20 text-center md:px-8 lg:px-12" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
-		<span class="font-mono text-[10px] tracking-widest text-muted-foreground">MOSTLYWHAT SYSTEMS</span>
-		<h1 class="font-display mt-6 max-w-5xl text-5xl font-black uppercase leading-[0.9] tracking-tight md:text-7xl lg:text-8xl xl:text-9xl">
-			{m.hero_title()}
-		</h1>
-		<p class="font-body mt-8 max-w-2xl text-lg text-muted-foreground md:text-xl">{m.hero_subtitle()}</p>
-		<div class="mt-10 flex flex-wrap justify-center gap-3">
-			<Button href={localizeHref('/contact')} size="lg" class="font-ui h-14 px-8 text-base tracking-wider">
-				START PROJECT
-				<ArrowRight class="ml-2 h-5 w-5" />
-			</Button>
-			<Button href={localizeHref('/projects')} variant="outline" size="lg" class="font-ui h-14 px-8 text-base tracking-wider">
-				VIEW WORK
-			</Button>
+	<!-- Hero Content - Left-aligned, Bottom-positioned -->
+	<div class="flex flex-1 flex-col justify-end px-6 pb-8 md:px-8 lg:px-12" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
+		<div class="grid grid-cols-12 gap-4 lg:gap-8">
+			<div class="col-span-12 lg:col-span-8">
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">MOSTLYWHAT SYSTEMS</span>
+				<h1 class="font-display mt-4 text-5xl font-black uppercase leading-[0.9] tracking-tight md:text-7xl lg:text-8xl">
+					{m.hero_title()}
+				</h1>
+			</div>
+			<div class="col-span-12 flex flex-col justify-end lg:col-span-4">
+				<p class="font-body text-muted-foreground">{m.hero_subtitle()}</p>
+				<div class="mt-6 flex flex-wrap gap-3">
+					<Button href={localizeHref('/contact')} class="font-ui tracking-wider">
+						START PROJECT
+						<ArrowRight class="ml-2 h-4 w-4" />
+					</Button>
+					<Button href={localizeHref('/projects')} variant="outline" class="font-ui tracking-wider">
+						VIEW WORK
+					</Button>
+				</div>
+			</div>
 		</div>
 	</div>
 
-	<!-- Trusted By Bar -->
-	<div class="border-t border-border bg-background/50 backdrop-blur-sm">
-		<div class="flex flex-col items-center gap-4 px-6 py-6 md:flex-row md:justify-center md:gap-8 lg:px-12">
-			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">TRUSTED BY</span>
-			<div class="flex flex-wrap justify-center gap-4 md:gap-8">
-				{#each trustedBy as company (company)}
-					<span class="font-mono text-xs tracking-wider text-muted-foreground/70">{company.toUpperCase()}</span>
-				{/each}
-			</div>
+	<!-- Stats Bar -->
+	<div class="grid grid-cols-2 gap-px border-t border-border bg-border md:grid-cols-4">
+		<div class="bg-card/80 p-4 backdrop-blur-sm md:p-6">
+			<span class="font-display text-lg font-bold text-primary md:text-2xl">~24H</span>
+			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">RESPONSE TIME</p>
+		</div>
+		<div class="bg-card/80 p-4 backdrop-blur-sm md:p-6">
+			<span class="font-display text-lg font-bold text-primary md:text-2xl">100%</span>
+			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">SATISFACTION</p>
+		</div>
+		<div class="bg-card/80 p-4 backdrop-blur-sm md:p-6">
+			<span class="font-display text-lg font-bold text-primary md:text-2xl">5+</span>
+			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">YEARS EXP</p>
+		</div>
+		<div class="bg-card/80 p-4 backdrop-blur-sm md:p-6">
+			<span class="font-display text-lg font-bold text-primary md:text-2xl">50+</span>
+			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">PROJECTS</p>
 		</div>
 	</div>
 </section>
 
-<!-- Services Section - Large Cards -->
+<!-- Services Section -->
 <section class="border-b border-border py-24 md:py-32">
 	<div class="px-6 md:px-8 lg:px-12" use:scrollAnimate={{ animation: 'fade' }}>
 		<div class="mx-auto max-w-6xl">

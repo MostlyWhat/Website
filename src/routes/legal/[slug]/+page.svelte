@@ -38,19 +38,26 @@
 		<!-- Sticky Sidebar -->
 		<div class="col-span-12 border-b border-border bg-background lg:col-span-3 lg:border-b-0 lg:border-r">
 			<div class="sticky top-16 p-6 md:p-8 lg:p-12" use:scrollAnimate={{ animation: 'fade' }}>
-				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">NAVIGATION</span>
-				<nav class="mt-4">
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTENTS</span>
+				<nav class="mt-4 space-y-2">
+					{#each doc.sections as section (section.id)}
+						<a href="#{section.id}" class="font-ui block text-xs tracking-wider text-muted-foreground hover:text-primary">
+							{section.number} — {section.title}
+						</a>
+					{/each}
+				</nav>
+				<div class="mt-6 border-t border-border pt-4">
 					<a href={localizeHref('/legal')} class="font-ui flex items-center gap-2 text-xs tracking-wider text-muted-foreground hover:text-primary">
 						<ArrowLeft class="h-3 w-3" />
 						BACK TO LEGAL
 					</a>
-				</nav>
+				</div>
 			</div>
 		</div>
 
 		<!-- Main Content -->
 		<article class="col-span-12 bg-background p-6 md:p-8 lg:col-span-9 lg:p-12" use:scrollAnimate={{ animation: 'fade' }}>
-			<div class="prose prose-sm max-w-3xl dark:prose-invert prose-headings:font-ui prose-headings:font-semibold prose-headings:tracking-wider prose-headings:text-primary prose-h1:text-lg prose-h2:text-sm prose-h2:uppercase prose-p:font-body prose-p:text-muted-foreground prose-li:font-body prose-li:text-muted-foreground prose-strong:text-foreground">
+			<div class="max-w-3xl space-y-8">
 				{@html doc.content}
 			</div>
 		</article>

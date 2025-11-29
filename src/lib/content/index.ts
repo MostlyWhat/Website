@@ -7,6 +7,58 @@ marked.setOptions({
     breaks: true
 });
 
+// Extract sections from markdown for navigation
+export interface ContentSection {
+    id: string;
+    number: string;
+    title: string;
+}
+
+// Parse markdown and extract sections for TOC
+function extractSections(markdown: string): ContentSection[] {
+    const sections: ContentSection[] = [];
+    const headingRegex = /^##\s+(\d+)\s*[—–-]\s*(.+)$/gm;
+    let match;
+    
+    while ((match = headingRegex.exec(markdown)) !== null) {
+        const number = match[1].padStart(2, '0');
+        const title = match[2].trim().toUpperCase();
+        const id = title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+        sections.push({ id, number, title });
+    }
+    
+    return sections;
+}
+
+// Custom renderer for styled headings
+function renderStyledContent(markdown: string): string {
+    // First, convert ## headings to styled versions
+    let processed = markdown.replace(
+        /^##\s+(\d+)\s*[—–-]\s*(.+)$/gm,
+        (_, num, title) => {
+            const number = num.padStart(2, '0');
+            const id = title.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+            return `<h2 id="${id}" class="font-ui text-sm font-semibold tracking-wider text-primary">${number} — ${title.trim().toUpperCase()}</h2>`;
+        }
+    );
+    
+    // Convert # headings (main title - usually skip as we show it separately)
+    processed = processed.replace(
+        /^#\s+(.+)$/gm,
+        (_, title) => `<h1 class="font-display text-2xl font-bold uppercase tracking-tight">${title.trim()}</h1>`
+    );
+    
+    // Parse the rest with marked
+    const html = marked.parse(processed) as string;
+    
+    // Add styling to paragraphs and lists
+    return html
+        .replace(/<p>/g, '<p class="font-body text-sm text-muted-foreground mt-4">')
+        .replace(/<ul>/g, '<ul class="font-body list-disc list-inside space-y-1 text-sm text-muted-foreground mt-2">')
+        .replace(/<li>/g, '<li>')
+        .replace(/<strong>/g, '<strong class="text-foreground">');
+}
+
 export interface BlogPost {
     slug: string;
     title: string;
@@ -18,6 +70,7 @@ export interface BlogPost {
     featured?: boolean;
     tags?: string[];
     content: string;
+    sections: ContentSection[];
 }
 
 export interface Service {
@@ -28,6 +81,7 @@ export interface Service {
     description: string;
     features: string[];
     content: string;
+    sections: ContentSection[];
 }
 
 export interface LegalDoc {
@@ -35,6 +89,7 @@ export interface LegalDoc {
     title: string;
     lastUpdated: string;
     content: string;
+    sections: ContentSection[];
 }
 
 export interface Project {
@@ -47,16 +102,21 @@ export interface Project {
     tags: string[];
     featured?: boolean;
     content: string;
+    sections: ContentSection[];
 }
 
 // Parse frontmatter from markdown and convert body to HTML
-function parseFrontmatter(content: string): { frontmatter: Record<string, unknown>; body: string } {
+function parseFrontmatter(content: string, styled = false): { frontmatter: Record<string, unknown>; body: string; sections: ContentSection[] } {
     // Handle different line endings (Windows vs Unix)
     const normalizedContent = content.replace(/\r\n/g, '\n');
     const match = normalizedContent.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
 
     if (!match) {
-        return { frontmatter: {}, body: marked.parse(normalizedContent) as string };
+        return { 
+            frontmatter: {}, 
+            body: styled ? renderStyledContent(normalizedContent) : marked.parse(normalizedContent) as string,
+            sections: extractSections(normalizedContent)
+        };
     }
 
     const frontmatterStr = match[1];
@@ -99,7 +159,10 @@ function parseFrontmatter(content: string): { frontmatter: Record<string, unknow
         }
     });
 
-    return { frontmatter, body: marked.parse(body) as string };
+    const sections = extractSections(body);
+    const renderedBody = styled ? renderStyledContent(body) : marked.parse(body) as string;
+
+    return { frontmatter, body: renderedBody, sections };
 }
 
 // Use eager imports for reliability
@@ -113,7 +176,7 @@ export function loadBlogPosts(): BlogPost[] {
     const posts: BlogPost[] = [];
 
     for (const [path, content] of Object.entries(blogModules)) {
-        const { frontmatter, body } = parseFrontmatter(content);
+        const { frontmatter, body, sections } = parseFrontmatter(content, true);
         const slug = path.split('/').pop()?.replace('.md', '') || '';
 
         posts.push({
@@ -126,7 +189,8 @@ export function loadBlogPosts(): BlogPost[] {
             author: frontmatter.author as string,
             featured: frontmatter.featured as boolean,
             tags: frontmatter.tags as string[],
-            content: body
+            content: body,
+            sections
         });
     }
 
@@ -141,7 +205,7 @@ export function loadBlogPost(slug: string): BlogPost | null {
 
     if (!content) return null;
 
-    const { frontmatter, body } = parseFrontmatter(content);
+    const { frontmatter, body, sections } = parseFrontmatter(content, true);
 
     return {
         slug,
@@ -153,7 +217,8 @@ export function loadBlogPost(slug: string): BlogPost | null {
         author: frontmatter.author as string,
         featured: frontmatter.featured as boolean,
         tags: frontmatter.tags as string[],
-        content: body
+        content: body,
+        sections
     };
 }
 
@@ -162,14 +227,15 @@ export function loadLegalDocs(): LegalDoc[] {
     const docs: LegalDoc[] = [];
 
     for (const [path, content] of Object.entries(legalModules)) {
-        const { frontmatter, body } = parseFrontmatter(content);
+        const { frontmatter, body, sections } = parseFrontmatter(content, true);
         const slug = path.split('/').pop()?.replace('.md', '') || '';
 
         docs.push({
             slug,
             title: (frontmatter.title as string) || '',
             lastUpdated: (frontmatter.lastUpdated as string) || '',
-            content: body
+            content: body,
+            sections
         });
     }
 
@@ -183,13 +249,14 @@ export function loadLegalDoc(slug: string): LegalDoc | null {
 
     if (!content) return null;
 
-    const { frontmatter, body } = parseFrontmatter(content);
+    const { frontmatter, body, sections } = parseFrontmatter(content, true);
 
     return {
         slug,
         title: (frontmatter.title as string) || '',
         lastUpdated: (frontmatter.lastUpdated as string) || '',
-        content: body
+        content: body,
+        sections
     };
 }
 
@@ -198,7 +265,7 @@ export function loadProjects(): Project[] {
     const projects: Project[] = [];
 
     for (const [path, content] of Object.entries(projectModules)) {
-        const { frontmatter, body } = parseFrontmatter(content);
+        const { frontmatter, body, sections } = parseFrontmatter(content, true);
         const slug = path.split('/').pop()?.replace('.md', '') || '';
 
         projects.push({
@@ -210,7 +277,8 @@ export function loadProjects(): Project[] {
             description: (frontmatter.description as string) || '',
             tags: (frontmatter.tags as string[]) || [],
             featured: frontmatter.featured as boolean,
-            content: body
+            content: body,
+            sections
         });
     }
 
@@ -225,7 +293,7 @@ export function loadProject(slug: string): Project | null {
 
     if (!content) return null;
 
-    const { frontmatter, body } = parseFrontmatter(content);
+    const { frontmatter, body, sections } = parseFrontmatter(content, true);
 
     return {
         slug,
@@ -236,7 +304,8 @@ export function loadProject(slug: string): Project | null {
         description: (frontmatter.description as string) || '',
         tags: (frontmatter.tags as string[]) || [],
         featured: frontmatter.featured as boolean,
-        content: body
+        content: body,
+        sections
     };
 }
 
@@ -245,7 +314,7 @@ export function loadServices(): Service[] {
     const services: Service[] = [];
 
     for (const [path, content] of Object.entries(serviceModules)) {
-        const { frontmatter, body } = parseFrontmatter(content);
+        const { frontmatter, body, sections } = parseFrontmatter(content, true);
         const slug = path.split('/').pop()?.replace('.md', '') || '';
 
         services.push({
@@ -255,7 +324,8 @@ export function loadServices(): Service[] {
             tagline: (frontmatter.tagline as string) || '',
             description: (frontmatter.description as string) || '',
             features: (frontmatter.features as string[]) || [],
-            content: body
+            content: body,
+            sections
         });
     }
 
@@ -270,7 +340,7 @@ export function loadService(slug: string): Service | null {
 
     if (!content) return null;
 
-    const { frontmatter, body } = parseFrontmatter(content);
+    const { frontmatter, body, sections } = parseFrontmatter(content, true);
 
     return {
         slug,
@@ -279,6 +349,7 @@ export function loadService(slug: string): Service | null {
         tagline: (frontmatter.tagline as string) || '',
         description: (frontmatter.description as string) || '',
         features: (frontmatter.features as string[]) || [],
-        content: body
+        content: body,
+        sections
     };
 }

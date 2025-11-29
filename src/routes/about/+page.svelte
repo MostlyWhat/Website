@@ -29,7 +29,7 @@
 	<meta name="description" content={m.about_subtitle()} />
 </svelte:head>
 
-<!-- Hero Section -->
+<!-- Hero Section - Full Height with Bottom Content -->
 <section class="relative flex h-[calc(100dvh-6rem)] flex-col border-b border-border">
 	<!-- Image Background -->
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
@@ -41,11 +41,11 @@
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
 	</div>
 
-	<!-- Hero Content - Positioned at Bottom -->
+	<!-- Hero Content - Left-aligned, Bottom-positioned -->
 	<div class="flex flex-1 flex-col justify-end px-6 pb-8 md:px-8 lg:px-12" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
-		<div class="grid grid-cols-12 gap-4">
+		<div class="grid grid-cols-12 gap-4 lg:gap-8">
 			<div class="col-span-12 lg:col-span-8">
-				<span class="font-mono text-xs tracking-widest text-muted-foreground">ABOUT</span>
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">ABOUT</span>
 				<h1 class="font-display mt-4 text-5xl font-black uppercase leading-[0.9] tracking-tight md:text-7xl lg:text-8xl">
 					{m.about_title()}
 				</h1>
@@ -59,20 +59,20 @@
 	<!-- Stats Bar -->
 	<div class="grid grid-cols-2 gap-px border-t border-border bg-border md:grid-cols-4">
 		<div class="bg-card/80 p-4 backdrop-blur-sm md:p-6">
-			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">FOUNDED</span>
-			<p class="font-display mt-1 text-sm font-bold md:text-base">2022</p>
+			<span class="font-display text-lg font-bold text-primary md:text-2xl">2022</span>
+			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">FOUNDED</p>
 		</div>
 		<div class="bg-card/80 p-4 backdrop-blur-sm md:p-6">
-			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">FOCUS</span>
-			<p class="font-display mt-1 text-sm font-bold md:text-base">WEB PRODUCTS</p>
+			<span class="font-display text-lg font-bold text-primary md:text-2xl">WEB</span>
+			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">FOCUS</p>
 		</div>
 		<div class="bg-card/80 p-4 backdrop-blur-sm md:p-6">
-			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">PROJECTS</span>
-			<p class="font-display mt-1 text-sm font-bold md:text-base">50+</p>
+			<span class="font-display text-lg font-bold text-primary md:text-2xl">50+</span>
+			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">PROJECTS</p>
 		</div>
 		<div class="bg-card/80 p-4 backdrop-blur-sm md:p-6">
-			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">PHILOSOPHY</span>
-			<p class="font-display mt-1 text-sm font-bold md:text-base">SHIP FAST</p>
+			<span class="font-display text-lg font-bold text-primary md:text-2xl">SHIP</span>
+			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">FAST</p>
 		</div>
 	</div>
 </section>

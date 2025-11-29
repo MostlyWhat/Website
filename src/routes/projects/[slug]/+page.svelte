@@ -3,58 +3,41 @@
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import { ArrowLeft, ArrowRight, Calendar, Clock, Tag } from '@lucide/svelte';
+	import { ArrowLeft, ArrowRight } from '@lucide/svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
-	const { post } = data;
-
-	function formatDate(dateStr: string): string {
-		return new Date(dateStr).toLocaleDateString('en-US', {
-			year: 'numeric',
-			month: 'long',
-			day: 'numeric'
-		});
-	}
+	const { project } = data;
 </script>
 
 <svelte:head>
-	<title>{post.title} — {m.site_name()}</title>
-	<meta name="description" content={post.excerpt} />
+	<title>{project.title} — {m.site_name()}</title>
+	<meta name="description" content={project.description} />
 </svelte:head>
 
-<!-- Article Header -->
+<!-- Hero Section -->
 <section class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
 		<div class="col-span-12 bg-background p-6 md:p-8 lg:col-span-8 lg:p-12" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
 			<div class="flex items-center gap-4 text-xs">
-				<span class="font-mono uppercase text-primary">{post.category}</span>
-				<span class="font-mono flex items-center gap-1 text-muted-foreground">
-					<Calendar class="h-3 w-3" />
-					{formatDate(post.date)}
-				</span>
-				<span class="font-mono flex items-center gap-1 text-muted-foreground">
-					<Clock class="h-3 w-3" />
-					{post.readTime}
-				</span>
+				<span class="font-mono uppercase text-primary">{project.category}</span>
+				<span class="font-mono text-muted-foreground">{project.year}</span>
 			</div>
 			<h1 class="font-display mt-4 text-3xl font-black uppercase leading-[0.95] tracking-tight md:text-4xl lg:text-5xl">
-				{post.title}
+				{project.title}
 			</h1>
-			<p class="font-body mt-4 text-lg text-muted-foreground">{post.excerpt}</p>
+			<p class="font-body mt-4 text-lg text-muted-foreground">{project.description}</p>
 		</div>
 		<div class="col-span-12 flex flex-col justify-between bg-card p-6 md:p-8 lg:col-span-4 lg:p-12">
-			{#if post.author}
-				<div>
-					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">AUTHOR</span>
-					<p class="font-ui mt-1 text-sm font-semibold">{post.author}</p>
-				</div>
-			{/if}
-			{#if post.tags && post.tags.length > 0}
+			<div>
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CLIENT</span>
+				<p class="font-ui mt-1 text-sm font-semibold">{project.client}</p>
+			</div>
+			{#if project.tags && project.tags.length > 0}
 				<div class="mt-6">
-					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">TAGS</span>
+					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">TECHNOLOGIES</span>
 					<div class="mt-2 flex flex-wrap gap-2">
-						{#each post.tags as tag (tag)}
+						{#each project.tags as tag (tag)}
 							<span class="font-mono border border-border px-2 py-1 text-[10px] uppercase tracking-wider text-muted-foreground">{tag}</span>
 						{/each}
 					</div>
@@ -64,7 +47,7 @@
 	</div>
 </section>
 
-<!-- Article Content -->
+<!-- Project Content -->
 <section class="border-b border-border">
 	<div class="grid grid-cols-12">
 		<!-- Sticky Sidebar -->
@@ -72,41 +55,41 @@
 			<div class="sticky top-24 p-6 md:p-8 lg:p-12">
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTENTS</span>
 				<nav class="mt-4 space-y-2">
-					{#each post.sections as section (section.id)}
+					{#each project.sections as section (section.id)}
 						<a href="#{section.id}" class="font-ui block text-xs tracking-wider text-muted-foreground hover:text-primary">
 							{section.number} — {section.title}
 						</a>
 					{/each}
 				</nav>
 				<div class="mt-6 border-t border-border pt-4">
-					<a href={localizeHref('/blog')} class="font-ui flex items-center gap-2 text-xs tracking-wider text-muted-foreground hover:text-primary">
+					<a href={localizeHref('/projects')} class="font-ui flex items-center gap-2 text-xs tracking-wider text-muted-foreground hover:text-primary">
 						<ArrowLeft class="h-3 w-3" />
-						BACK TO BLOG
+						BACK TO PROJECTS
 					</a>
 				</div>
 			</div>
 		</div>
 		
-		<!-- Article Body -->
+		<!-- Project Body -->
 		<article class="col-span-12 bg-background p-6 md:p-8 lg:col-span-9 lg:p-12">
 			<div class="max-w-3xl space-y-8">
-				{@html post.content}
+				{@html project.content}
 			</div>
 		</article>
 	</div>
 </section>
 
-<!-- Next Article CTA -->
+<!-- More Projects CTA -->
 <section class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
 		<div class="col-span-12 flex flex-col justify-center bg-background p-6 md:p-8 lg:col-span-6 lg:p-12">
-			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTINUE READING</span>
-			<h2 class="font-display mt-4 text-2xl font-bold uppercase md:text-3xl">EXPLORE MORE</h2>
-			<p class="font-body mt-4 text-muted-foreground">Check out our other articles and insights.</p>
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">MORE WORK</span>
+			<h2 class="font-display mt-4 text-2xl font-bold uppercase md:text-3xl">EXPLORE MORE PROJECTS</h2>
+			<p class="font-body mt-4 text-muted-foreground">Check out our other case studies and work samples.</p>
 		</div>
 		<div class="col-span-12 flex items-center justify-center bg-card p-6 md:p-8 lg:col-span-6 lg:p-12">
-			<Button href={localizeHref('/blog')} class="font-ui uppercase tracking-wider">
-				VIEW ALL ARTICLES
+			<Button href={localizeHref('/projects')} class="font-ui uppercase tracking-wider">
+				VIEW ALL PROJECTS
 				<ArrowRight class="ml-2 h-4 w-4" />
 			</Button>
 		</div>
