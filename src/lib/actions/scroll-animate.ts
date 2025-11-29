@@ -29,135 +29,135 @@
  * ```
  */
 
-export type AnimationType = 
-	| 'fade'        // Fade in from bottom (default)
-	| 'slide-left'  // Slide in from left
-	| 'slide-right' // Slide in from right
-	| 'scale'       // Scale up from smaller
-	| 'stagger';    // Stagger children animations
+export type AnimationType =
+    | 'fade'        // Fade in from bottom (default)
+    | 'slide-left'  // Slide in from left
+    | 'slide-right' // Slide in from right
+    | 'scale'       // Scale up from smaller
+    | 'stagger';    // Stagger children animations
 
 export interface ScrollAnimateOptions {
-	/**
-	 * Type of animation to apply
-	 * @default 'fade'
-	 */
-	animation?: AnimationType;
-	
-	/**
-	 * Delay before animation starts (in ms)
-	 * @default 0
-	 */
-	delay?: number;
-	
-	/**
-	 * How much of the element must be visible to trigger (0-1)
-	 * @default 0.1
-	 */
-	threshold?: number;
-	
-	/**
-	 * Whether animation should replay when element leaves and re-enters viewport
-	 * @default false
-	 */
-	repeat?: boolean;
-	
-	/**
-	 * Root margin for intersection observer (CSS margin syntax)
-	 * @default '0px 0px -50px 0px'
-	 */
-	rootMargin?: string;
-	
-	/**
-	 * Whether the element starts visible (useful for above-the-fold content)
-	 * @default false
-	 */
-	startVisible?: boolean;
+    /**
+     * Type of animation to apply
+     * @default 'fade'
+     */
+    animation?: AnimationType;
+
+    /**
+     * Delay before animation starts (in ms)
+     * @default 0
+     */
+    delay?: number;
+
+    /**
+     * How much of the element must be visible to trigger (0-1)
+     * @default 0.1
+     */
+    threshold?: number;
+
+    /**
+     * Whether animation should replay when element leaves and re-enters viewport
+     * @default false
+     */
+    repeat?: boolean;
+
+    /**
+     * Root margin for intersection observer (CSS margin syntax)
+     * @default '0px 0px -50px 0px'
+     */
+    rootMargin?: string;
+
+    /**
+     * Whether the element starts visible (useful for above-the-fold content)
+     * @default false
+     */
+    startVisible?: boolean;
 }
 
 const animationClasses: Record<AnimationType, string> = {
-	'fade': 'fade-in-section',
-	'slide-left': 'slide-in-left',
-	'slide-right': 'slide-in-right',
-	'scale': 'scale-in',
-	'stagger': 'stagger-children'
+    'fade': 'fade-in-section',
+    'slide-left': 'slide-in-left',
+    'slide-right': 'slide-in-right',
+    'scale': 'scale-in',
+    'stagger': 'stagger-children'
 };
 
 /**
  * Svelte action for scroll-triggered animations
  */
 export function scrollAnimate(node: HTMLElement, options: ScrollAnimateOptions = {}) {
-	const {
-		animation = 'fade',
-		delay = 0,
-		threshold = 0.1,
-		repeat = false,
-		rootMargin = '0px 0px -50px 0px',
-		startVisible = false
-	} = options;
+    const {
+        animation = 'fade',
+        delay = 0,
+        threshold = 0.1,
+        repeat = false,
+        rootMargin = '0px 0px -50px 0px',
+        startVisible = false
+    } = options;
 
-	const animationClass = animationClasses[animation];
-	
-	// Add the animation class
-	node.classList.add(animationClass);
-	
-	// Apply delay if specified
-	if (delay > 0) {
-		node.style.transitionDelay = `${delay}ms`;
-	}
-	
-	// If startVisible, immediately show
-	if (startVisible) {
-		node.classList.add('visible');
-		return { destroy() {} };
-	}
+    const animationClass = animationClasses[animation];
 
-	// Check for reduced motion preference
-	const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-	if (prefersReducedMotion) {
-		node.classList.add('visible');
-		return { destroy() {} };
-	}
+    // Add the animation class
+    node.classList.add(animationClass);
 
-	let hasAnimated = false;
+    // Apply delay if specified
+    if (delay > 0) {
+        node.style.transitionDelay = `${delay}ms`;
+    }
 
-	const observer = new IntersectionObserver(
-		(entries) => {
-			entries.forEach((entry) => {
-				if (entry.isIntersecting) {
-					if (!hasAnimated || repeat) {
-						// Small delay to ensure CSS is applied
-						requestAnimationFrame(() => {
-							node.classList.add('visible');
-						});
-						hasAnimated = true;
-					}
-				} else if (repeat && hasAnimated) {
-					node.classList.remove('visible');
-				}
-			});
-		},
-		{
-			threshold,
-			rootMargin
-		}
-	);
+    // If startVisible, immediately show
+    if (startVisible) {
+        node.classList.add('visible');
+        return { destroy() { } };
+    }
 
-	observer.observe(node);
+    // Check for reduced motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+        node.classList.add('visible');
+        return { destroy() { } };
+    }
 
-	return {
-		update(newOptions: ScrollAnimateOptions) {
-			// Handle option updates if needed
-			if (newOptions.delay !== undefined && newOptions.delay !== delay) {
-				node.style.transitionDelay = `${newOptions.delay}ms`;
-			}
-		},
-		destroy() {
-			observer.disconnect();
-			if (delay > 0) {
-				node.style.transitionDelay = '';
-			}
-		}
-	};
+    let hasAnimated = false;
+
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    if (!hasAnimated || repeat) {
+                        // Small delay to ensure CSS is applied
+                        requestAnimationFrame(() => {
+                            node.classList.add('visible');
+                        });
+                        hasAnimated = true;
+                    }
+                } else if (repeat && hasAnimated) {
+                    node.classList.remove('visible');
+                }
+            });
+        },
+        {
+            threshold,
+            rootMargin
+        }
+    );
+
+    observer.observe(node);
+
+    return {
+        update(newOptions: ScrollAnimateOptions) {
+            // Handle option updates if needed
+            if (newOptions.delay !== undefined && newOptions.delay !== delay) {
+                node.style.transitionDelay = `${newOptions.delay}ms`;
+            }
+        },
+        destroy() {
+            observer.disconnect();
+            if (delay > 0) {
+                node.style.transitionDelay = '';
+            }
+        }
+    };
 }
 
 /**
@@ -165,55 +165,55 @@ export function scrollAnimate(node: HTMLElement, options: ScrollAnimateOptions =
  * Use this when you have many elements to animate
  */
 export function createScrollAnimateObserver(options: Omit<ScrollAnimateOptions, 'animation'> = {}) {
-	const {
-		threshold = 0.1,
-		repeat = false,
-		rootMargin = '0px 0px -50px 0px'
-	} = options;
+    const {
+        threshold = 0.1,
+        repeat = false,
+        rootMargin = '0px 0px -50px 0px'
+    } = options;
 
-	const prefersReducedMotion = typeof window !== 'undefined' 
-		? window.matchMedia('(prefers-reduced-motion: reduce)').matches 
-		: false;
+    const prefersReducedMotion = typeof window !== 'undefined'
+        ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        : false;
 
-	const observer = new IntersectionObserver(
-		(entries) => {
-			entries.forEach((entry) => {
-				if (entry.isIntersecting) {
-					requestAnimationFrame(() => {
-						entry.target.classList.add('visible');
-					});
-					if (!repeat) {
-						observer.unobserve(entry.target);
-					}
-				} else if (repeat) {
-					entry.target.classList.remove('visible');
-				}
-			});
-		},
-		{
-			threshold,
-			rootMargin
-		}
-	);
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    requestAnimationFrame(() => {
+                        entry.target.classList.add('visible');
+                    });
+                    if (!repeat) {
+                        observer.unobserve(entry.target);
+                    }
+                } else if (repeat) {
+                    entry.target.classList.remove('visible');
+                }
+            });
+        },
+        {
+            threshold,
+            rootMargin
+        }
+    );
 
-	return {
-		observe(element: HTMLElement, animation: AnimationType = 'fade') {
-			element.classList.add(animationClasses[animation]);
-			
-			if (prefersReducedMotion) {
-				element.classList.add('visible');
-				return;
-			}
-			
-			observer.observe(element);
-		},
-		unobserve(element: HTMLElement) {
-			observer.unobserve(element);
-		},
-		disconnect() {
-			observer.disconnect();
-		}
-	};
+    return {
+        observe(element: HTMLElement, animation: AnimationType = 'fade') {
+            element.classList.add(animationClasses[animation]);
+
+            if (prefersReducedMotion) {
+                element.classList.add('visible');
+                return;
+            }
+
+            observer.observe(element);
+        },
+        unobserve(element: HTMLElement) {
+            observer.unobserve(element);
+        },
+        disconnect() {
+            observer.disconnect();
+        }
+    };
 }
 
 export default scrollAnimate;
