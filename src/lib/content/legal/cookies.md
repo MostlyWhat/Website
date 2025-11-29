@@ -1,3 +1,9 @@
+---
+title: "Cookie Policy"
+slug: "cookies"
+lastUpdated: "January 2024"
+---
+
 # Cookie Policy
 
 **Last Updated: January 2024**

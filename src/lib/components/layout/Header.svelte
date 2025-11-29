@@ -90,7 +90,7 @@
 		<!-- Right Controls -->
 		<div class="col-span-6 flex items-stretch sm:col-span-8 lg:col-span-3">
 			<!-- Language Switcher -->
-			<div class="lang-menu relative flex w-20 items-stretch border-l border-border">
+			<div class="lang-menu relative hidden flex-1 items-stretch border-l border-border sm:flex">
 				<button
 					type="button"
 					class="font-mono flex w-full items-center justify-center gap-1.5 text-xs tracking-wider text-muted-foreground transition-colors hover:text-foreground"
@@ -124,7 +124,7 @@
 			<!-- Contact CTA -->
 			<a
 				href={localizeHref('/contact')}
-				class="font-ui hidden w-28 items-center justify-center gap-2 border-l border-border bg-primary text-xs tracking-widest text-primary-foreground transition-colors hover:bg-primary/90 sm:flex"
+				class="font-ui hidden flex-1 items-center justify-center gap-2 border-l border-border bg-primary text-xs tracking-widest text-primary-foreground transition-colors hover:bg-primary/90 sm:flex"
 			>
 				CONTACT
 				<ArrowUpRight class="h-3.5 w-3.5" />
@@ -194,4 +194,4 @@
 </header>
 
 <!-- Spacer for fixed header -->
-<div class="h-16" class:h-24={breadcrumbs().length > 0}></div>
+<div class="{breadcrumbs().length > 0 ? 'h-24' : 'h-16'}"></div>

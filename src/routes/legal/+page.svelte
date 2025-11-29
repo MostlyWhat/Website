@@ -35,15 +35,14 @@
 </svelte:head>
 
 <!-- Hero Section -->
-<section class="relative flex h-[calc(100dvh-4rem)] flex-col border-b border-border">
-	<!-- Video/Image Background Placeholder -->
+<section class="relative flex h-[calc(100dvh-6rem)] flex-col border-b border-border">
+	<!-- Image Background -->
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<img 
 			src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=2070&auto=format&fit=crop" 
 			alt="" 
-			class="h-full w-full object-cover opacity-20"
+			class="h-full w-full object-cover brightness-[0.15]"
 		/>
-		<div class="absolute inset-0 bg-gradient-to-br from-background via-background/95 to-primary/10"></div>
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
 	</div>
 

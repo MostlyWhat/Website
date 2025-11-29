@@ -3,9 +3,9 @@
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import { ArrowRight, Zap, Shield, Users, Headphones } from '@lucide/svelte';
+	import { ArrowRight, Zap, Shield, Users, Headphones, type Icon } from '@lucide/svelte';
 
-	const services = [
+	const services: { number: string; title: string; desc: string }[] = [
 		{ number: '01', title: m.service_strategy_title(), desc: m.service_strategy_desc() },
 		{ number: '02', title: m.service_brand_title(), desc: m.service_brand_desc() },
 		{ number: '03', title: m.service_ux_title(), desc: m.service_ux_desc() },
@@ -14,20 +14,20 @@
 		{ number: '06', title: m.service_growth_title(), desc: m.service_growth_desc() }
 	];
 
-	const capabilities = [
+	const capabilities: { icon: typeof Icon; title: string; desc: string }[] = [
 		{ icon: Zap, title: m.capability_speed(), desc: m.capability_speed_desc() },
 		{ icon: Shield, title: m.capability_quality(), desc: m.capability_quality_desc() },
 		{ icon: Users, title: m.capability_process(), desc: m.capability_process_desc() },
 		{ icon: Headphones, title: m.capability_support(), desc: m.capability_support_desc() }
 	];
 
-	const stats = [
+	const stats: { label: string; value: string }[] = [
 		{ label: 'RESPONSE', value: '~24H' },
 		{ label: 'LOCATIONS', value: 'GLOBAL' },
 		{ label: 'STACK', value: 'SVELTE + TS' }
 	];
 
-	const process = [
+	const process: { step: string; title: string; desc: string }[] = [
 		{ step: '01', title: m.process_step1_title(), desc: m.process_step1_desc() },
 		{ step: '02', title: m.process_step2_title(), desc: m.process_step2_desc() },
 		{ step: '03', title: m.process_step3_title(), desc: m.process_step3_desc() },
@@ -42,14 +42,13 @@
 
 <!-- Hero Section - Full Viewport -->
 <section class="relative flex h-[calc(100dvh-4rem)] flex-col border-b border-border">
-	<!-- Video/Image Background Placeholder -->
+	<!-- Image Background -->
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<img 
 			src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2070&auto=format&fit=crop" 
 			alt="" 
-			class="h-full w-full object-cover opacity-20"
+			class="h-full w-full object-cover brightness-[0.15]"
 		/>
-		<div class="absolute inset-0 bg-gradient-to-br from-background via-background/95 to-primary/10"></div>
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
 	</div>
 

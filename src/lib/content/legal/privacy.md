@@ -1,3 +1,9 @@
+---
+title: "Privacy Policy"
+slug: "privacy"
+lastUpdated: "January 2024"
+---
+
 # Privacy Policy
 
 **Last Updated: January 2024**

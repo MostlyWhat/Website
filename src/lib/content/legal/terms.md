@@ -1,3 +1,9 @@
+---
+title: "Terms of Service"
+slug: "terms"
+lastUpdated: "January 2024"
+---
+
 # Terms of Service
 
 **Last Updated: January 2024**

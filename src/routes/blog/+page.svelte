@@ -4,67 +4,16 @@
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { ArrowRight, ChevronRight } from '@lucide/svelte';
+	import type { PageData } from './$types';
 
-	const posts = [
-		{
-			slug: 'introducing-our-design-system',
-			title: 'Introducing Our Design System',
-			excerpt: 'A deep dive into the design principles and component library powering our projects.',
-			category: 'Design',
-			date: '2024-01-15',
-			readTime: '8 min',
-			featured: true
-		},
-		{
-			slug: 'sveltekit-cloudflare-workers',
-			title: 'Deploying SvelteKit on Cloudflare Workers',
-			excerpt: 'A comprehensive guide to deploying high-performance SvelteKit applications on the edge.',
-			category: 'Engineering',
-			date: '2024-01-10',
-			readTime: '12 min',
-			featured: true
-		},
-		{
-			slug: 'accessibility-first-development',
-			title: 'Accessibility-First Development',
-			excerpt: 'Why we build with accessibility as a core requirement, not an afterthought.',
-			category: 'Development',
-			date: '2024-01-05',
-			readTime: '6 min'
-		},
-		{
-			slug: 'the-case-for-sveltekit',
-			title: 'The Case for SvelteKit in 2024',
-			excerpt: 'Why we chose SvelteKit as our primary framework and how it benefits our clients.',
-			category: 'Engineering',
-			date: '2023-12-20',
-			readTime: '10 min'
-		},
-		{
-			slug: 'design-system-documentation',
-			title: 'Documenting Design Systems Effectively',
-			excerpt: 'Best practices for creating design system documentation that teams actually use.',
-			category: 'Design',
-			date: '2023-12-15',
-			readTime: '7 min'
-		},
-		{
-			slug: 'performance-optimization-tips',
-			title: 'Web Performance Optimization Tips',
-			excerpt: 'Practical techniques to achieve perfect Core Web Vitals scores.',
-			category: 'Performance',
-			date: '2023-12-10',
-			readTime: '9 min'
-		}
-	];
+	let { data }: { data: PageData } = $props();
 
-	const categories = ['All', 'Design', 'Engineering', 'Development', 'Performance'];
 	let selectedCategory = $state('All');
 
 	const filteredPosts = $derived(
 		selectedCategory === 'All' 
-			? posts 
-			: posts.filter(p => p.category === selectedCategory)
+			? data.posts 
+			: data.posts.filter(p => p.category === selectedCategory)
 	);
 
 	function formatDate(dateStr: string): string {
@@ -83,20 +32,19 @@
 
 <!-- Hero Section - Full Viewport -->
 <section class="relative flex h-[calc(100dvh-4rem)] flex-col border-b border-border">
-	<!-- Video/Image Background Placeholder -->
+	<!-- Image Background -->
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<img 
 			src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2070&auto=format&fit=crop" 
 			alt="" 
-			class="h-full w-full object-cover opacity-20"
+			class="h-full w-full object-cover brightness-[0.15]"
 		/>
-		<div class="absolute inset-0 bg-gradient-to-br from-background via-background/95 to-primary/10"></div>
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
 	</div>
 
 	<!-- Hero Content - Positioned at Bottom -->
 	<div class="flex flex-1 flex-col justify-end px-6 pb-8 md:px-8 lg:px-12" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
-		<div class="grid grid-cols-12 gap-4">
+		<div class="grid grid-cols-12 gap-4 lg:gap-8">
 			<div class="col-span-12 lg:col-span-8">
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">INSIGHTS & UPDATES</span>
 				<h1 class="font-display mt-4 text-5xl font-black uppercase leading-[0.9] tracking-tight md:text-7xl lg:text-8xl">
@@ -112,11 +60,11 @@
 	<!-- Stats Bar -->
 	<div class="grid grid-cols-12 gap-px border-t border-border bg-border">
 		<div class="col-span-4 bg-card/80 p-4 backdrop-blur-sm">
-			<span class="font-display text-lg font-bold text-primary md:text-2xl">{posts.length}</span>
+			<span class="font-display text-lg font-bold text-primary md:text-2xl">{data.posts.length}</span>
 			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">ARTICLES</p>
 		</div>
 		<div class="col-span-4 bg-card/80 p-4 backdrop-blur-sm">
-			<span class="font-display text-lg font-bold text-primary md:text-2xl">{categories.length - 1}</span>
+			<span class="font-display text-lg font-bold text-primary md:text-2xl">{data.categories.length - 1}</span>
 			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">CATEGORIES</p>
 		</div>
 		<div class="col-span-4 bg-card/80 p-4 backdrop-blur-sm">
@@ -126,19 +74,17 @@
 	</div>
 </section>
 
-<!-- Filter Bar - Full Width Even Distribution -->
+<!-- Filter Bar -->
 <section class="border-b border-border">
-	<div class="grid grid-cols-6 gap-px bg-border">
-		<!-- Filter Label -->
-		<div class="col-span-1 flex items-center justify-center bg-card p-4">
+	<div class="grid auto-cols-fr grid-flow-col gap-px bg-border">
+		<div class="flex items-center justify-center bg-card px-4 py-4">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">FILTER</span>
 		</div>
-		<!-- Filter Options -->
-		{#each categories as category (category)}
+		{#each data.categories as category (category)}
 			<button
 				type="button"
 				onclick={() => selectedCategory = category}
-				class="font-mono flex items-center justify-center bg-background p-4 text-xs uppercase tracking-wider transition-colors {selectedCategory === category ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-card hover:text-foreground'}"
+				class="font-mono flex items-center justify-center bg-background px-4 py-4 text-xs uppercase tracking-wider transition-colors {selectedCategory === category ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-card hover:text-foreground'}"
 			>
 				{category}
 			</button>
@@ -146,7 +92,7 @@
 	</div>
 </section>
 
-<!-- Posts Grid - Minimum Height Section -->
+<!-- Posts Grid -->
 <section class="min-h-[80vh] border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
 		{#each filteredPosts as post (post.slug)}
@@ -161,7 +107,7 @@
 					</div>
 				</div>
 				
-				<div class="flex flex-1 flex-col p-6">
+				<div class="flex flex-1 flex-col p-6 lg:p-8">
 					<div class="flex items-center gap-3 text-xs">
 						<span class="font-mono uppercase text-primary">{post.category}</span>
 						<span class="font-mono text-muted-foreground">{formatDate(post.date)}</span>
@@ -190,12 +136,12 @@
 <!-- Newsletter CTA -->
 <section class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
-		<div class="col-span-12 flex flex-col justify-center bg-background p-8 lg:col-span-6 lg:p-12">
+		<div class="col-span-12 flex flex-col justify-center bg-background p-6 md:p-8 lg:col-span-6 lg:p-12">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">STAY INFORMED</span>
 			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl lg:text-5xl">NEWSLETTER</h2>
 			<p class="font-body mt-4 max-w-md text-muted-foreground">Get notified when we publish new articles and insights.</p>
 		</div>
-		<div class="col-span-12 flex flex-col justify-center bg-card p-8 lg:col-span-6 lg:p-12">
+		<div class="col-span-12 flex flex-col justify-center bg-card p-6 md:p-8 lg:col-span-6 lg:p-12">
 			<div class="flex flex-col gap-4 sm:flex-row">
 				<input 
 					type="email" 

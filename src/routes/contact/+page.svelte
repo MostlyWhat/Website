@@ -130,15 +130,14 @@
 </svelte:head>
 
 <!-- Hero Section -->
-<section class="relative flex h-[calc(100dvh-4rem)] flex-col border-b border-border">
-	<!-- Video/Image Background Placeholder -->
+<section class="relative flex h-[calc(100dvh-6rem)] flex-col border-b border-border">
+	<!-- Image Background -->
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<img 
 			src="https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=2074&auto=format&fit=crop" 
 			alt="" 
-			class="h-full w-full object-cover opacity-20"
+			class="h-full w-full object-cover brightness-[0.15]"
 		/>
-		<div class="absolute inset-0 bg-gradient-to-br from-background via-background/95 to-primary/10"></div>
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
 	</div>
 
@@ -322,7 +321,7 @@
 		</div>
 
 		<!-- FAQ Accordion (Right) -->
-		<div class="bg-card p-4 md:p-6 lg:p-8" use:scrollAnimate={{ animation: 'fade' }}>
+		<div class="bg-card" use:scrollAnimate={{ animation: 'fade' }}>
 			<Accordion.Root class="space-y-px">
 				{#each faqs as { id, q, a } (id)}
 					<Accordion.Item value={id} class="border-0">
