@@ -34,8 +34,8 @@
 	<meta name="description" content={m.site_description()} />
 </svelte:head>
 
-<!-- Hero Section - Full Viewport -->
-<section class="relative flex h-dvh flex-col border-b border-border">
+<!-- Hero Section - Reduced Height -->
+<section class="relative flex min-h-[85vh] flex-col border-b border-border">
 	<!-- Image Background -->
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<img 
@@ -50,16 +50,16 @@
 	<div class="flex flex-1 flex-col justify-end px-6 pb-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
 		<div class="mb-12 max-w-4xl">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">MOSTLYWHAT SYSTEMS</span>
-			<h1 class="font-display mt-6 text-5xl font-black uppercase leading-[0.9] tracking-tight md:text-7xl lg:text-8xl xl:text-9xl">
+			<h1 class="font-display mt-4 text-4xl font-black uppercase leading-[0.9] tracking-tight md:text-6xl lg:text-7xl xl:text-8xl">
 				{m.hero_title()}
 			</h1>
-			<p class="font-body mt-8 max-w-xl text-lg text-muted-foreground">{m.hero_subtitle()}</p>
-			<div class="mt-10 flex flex-wrap gap-4">
-				<Button href={localizeHref('/contact')} size="xl" class="font-ui tracking-wider">
+			<p class="font-body mt-6 max-w-xl text-base text-muted-foreground md:text-lg">{m.hero_subtitle()}</p>
+			<div class="mt-8 flex flex-wrap gap-3">
+				<Button href={localizeHref('/contact')} size="lg" class="font-ui tracking-wider">
 					START PROJECT
-					<ArrowRight class="ml-2 h-5 w-5" />
+					<ArrowRight class="ml-2 h-4 w-4" />
 				</Button>
-				<Button href={localizeHref('/projects')} variant="outline" size="xl" class="font-ui tracking-wider">
+				<Button href={localizeHref('/projects')} variant="outline" size="lg" class="font-ui tracking-wider">
 					VIEW WORK
 				</Button>
 			</div>
@@ -68,20 +68,20 @@
 
 	<!-- Stats Bar - Grid -->
 	<div class="grid grid-cols-12 gap-px border-t border-border bg-border">
-		<div class="col-span-6 bg-background/80 px-6 py-5 backdrop-blur-sm md:col-span-3 md:px-12 lg:px-16">
-			<span class="font-display text-xl font-bold text-primary md:text-2xl">~24H</span>
+		<div class="col-span-6 bg-background/80 px-6 py-4 backdrop-blur-sm md:col-span-3 md:px-12 lg:px-16">
+			<span class="font-display text-lg font-bold text-primary md:text-xl">~24H</span>
 			<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">RESPONSE TIME</p>
 		</div>
-		<div class="col-span-6 bg-background/80 px-6 py-5 backdrop-blur-sm md:col-span-3 md:px-12 lg:px-16">
-			<span class="font-display text-xl font-bold text-primary md:text-2xl">100%</span>
+		<div class="col-span-6 bg-background/80 px-6 py-4 backdrop-blur-sm md:col-span-3 md:px-12 lg:px-16">
+			<span class="font-display text-lg font-bold text-primary md:text-xl">100%</span>
 			<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">SATISFACTION</p>
 		</div>
-		<div class="col-span-6 bg-background/80 px-6 py-5 backdrop-blur-sm md:col-span-3 md:px-12 lg:px-16">
-			<span class="font-display text-xl font-bold text-primary md:text-2xl">5+</span>
+		<div class="col-span-6 bg-background/80 px-6 py-4 backdrop-blur-sm md:col-span-3 md:px-12 lg:px-16">
+			<span class="font-display text-lg font-bold text-primary md:text-xl">5+</span>
 			<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">YEARS EXP</p>
 		</div>
-		<div class="col-span-6 bg-background/80 px-6 py-5 backdrop-blur-sm md:col-span-3 md:px-12 lg:px-16">
-			<span class="font-display text-xl font-bold text-primary md:text-2xl">50+</span>
+		<div class="col-span-6 bg-background/80 px-6 py-4 backdrop-blur-sm md:col-span-3 md:px-12 lg:px-16">
+			<span class="font-display text-lg font-bold text-primary md:text-xl">50+</span>
 			<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">PROJECTS</p>
 		</div>
 	</div>
@@ -189,15 +189,15 @@
 <section class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
 		<!-- Left: Hook & Description -->
-		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-16 md:col-span-6 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'scale' }}>
+		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:col-span-6 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'scale' }}>
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">04 — READY TO START?</span>
-			<h2 class="font-display mt-6 text-3xl font-bold uppercase md:text-4xl lg:text-5xl">{m.cta_title()}</h2>
-			<p class="font-body mt-6 text-base text-muted-foreground md:text-lg">{m.cta_subtitle()}</p>
-			<p class="font-mono mt-6 text-[10px] tracking-wider text-muted-foreground">{m.cta_disclaimer()}</p>
+			<h2 class="font-display mt-4 text-2xl font-bold uppercase md:text-3xl lg:text-4xl">{m.cta_title()}</h2>
+			<p class="font-body mt-4 text-sm text-muted-foreground md:text-base">{m.cta_subtitle()}</p>
+			<p class="font-mono mt-4 text-[10px] tracking-wider text-muted-foreground">{m.cta_disclaimer()}</p>
 		</div>
 		
 		<!-- Right: Actions & Form -->
-		<div class="col-span-12 flex flex-col justify-center bg-card px-6 py-16 md:col-span-6 md:px-12 lg:px-16">
+		<div class="col-span-12 flex flex-col justify-center bg-card px-6 py-12 md:col-span-6 md:px-12 lg:px-16">
 			<div class="space-y-4">
 				<a 
 					href={localizeHref('/contact')} 

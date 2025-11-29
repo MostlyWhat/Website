@@ -35,7 +35,7 @@
 </svelte:head>
 
 <!-- Hero Section -->
-<section class="relative flex h-[calc(100dvh-6rem)] flex-col border-b border-border">
+<section class="relative flex min-h-[60vh] flex-col border-b border-border">
 	<!-- Image Background -->
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<img 
@@ -46,35 +46,31 @@
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
 	</div>
 
-	<!-- Hero Content - Positioned at Bottom -->
-	<div class="flex flex-1 flex-col justify-end px-6 pb-8 md:px-8 lg:px-12" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
-		<div class="grid grid-cols-12 gap-4">
-			<div class="col-span-12 lg:col-span-8">
-				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">DOCUMENTS</span>
-				<h1 class="font-display mt-4 text-5xl font-black uppercase leading-[0.9] tracking-tight md:text-7xl lg:text-8xl">
-					LEGAL
-				</h1>
-			</div>
-			<div class="col-span-12 flex flex-col justify-end lg:col-span-4">
-				<p class="font-body text-muted-foreground">
-					Transparency matters. Find all our legal documents and policies here.
-				</p>
-			</div>
+	<!-- Hero Content -->
+	<div class="flex flex-1 flex-col justify-end px-6 pb-8 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
+		<div class="mb-8 max-w-3xl">
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">DOCUMENTS</span>
+			<h1 class="font-display mt-4 text-4xl font-black uppercase leading-[0.9] tracking-tight md:text-6xl lg:text-7xl">
+				LEGAL
+			</h1>
+			<p class="font-body mt-4 max-w-xl text-base text-muted-foreground">
+				Transparency matters. Find all our legal documents and policies here.
+			</p>
 		</div>
 	</div>
 
 	<!-- Stats Bar -->
 	<div class="grid grid-cols-12 gap-px border-t border-border bg-border">
-		<div class="col-span-4 bg-card/80 p-4 backdrop-blur-sm">
-			<span class="font-display text-lg font-bold text-primary md:text-2xl">3</span>
+		<div class="col-span-4 bg-card/80 px-6 py-3 backdrop-blur-sm md:px-12 lg:px-16">
+			<span class="font-display text-lg font-bold text-primary">3</span>
 			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">DOCUMENTS</p>
 		</div>
-		<div class="col-span-4 bg-card/80 p-4 backdrop-blur-sm">
-			<span class="font-display text-lg font-bold text-primary md:text-2xl">2024</span>
+		<div class="col-span-4 bg-card/80 px-6 py-3 backdrop-blur-sm md:px-12 lg:px-16">
+			<span class="font-display text-lg font-bold text-primary">2024</span>
 			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">LAST UPDATED</p>
 		</div>
-		<div class="col-span-4 bg-card/80 p-4 backdrop-blur-sm">
-			<span class="font-display text-lg font-bold text-primary md:text-2xl">GDPR</span>
+		<div class="col-span-4 bg-card/80 px-6 py-3 backdrop-blur-sm md:px-12 lg:px-16">
+			<span class="font-display text-lg font-bold text-primary">GDPR</span>
 			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">COMPLIANT</p>
 		</div>
 	</div>

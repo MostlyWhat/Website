@@ -6,7 +6,15 @@
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
-	const { doc } = data;
+	
+	// Reactive doc that updates when data changes
+	let doc = $derived(data.doc);
+	
+	// Scroll to top when document changes
+	$effect(() => {
+		doc.slug; // Track slug changes
+		window.scrollTo({ top: 0, behavior: 'instant' });
+	});
 </script>
 
 <svelte:head>
@@ -35,8 +43,15 @@
 <!-- Content Section -->
 <section class="border-b border-border">
 	<div class="grid grid-cols-12">
-		<!-- Sticky Sidebar -->
-		<div class="col-span-12 border-b border-border bg-background lg:col-span-3 lg:border-b-0 lg:border-r">
+		<!-- Main Content - Now on Left -->
+		<article class="col-span-12 bg-background px-6 py-12 md:px-12 lg:col-span-9 lg:border-r lg:border-border lg:px-16 lg:py-16" use:scrollAnimate={{ animation: 'fade' }}>
+			<div class="max-w-3xl">
+				{@html doc.content}
+			</div>
+		</article>
+
+		<!-- Sticky Sidebar - Now on Right -->
+		<div class="col-span-12 border-t border-border bg-background lg:col-span-3 lg:border-t-0">
 			<div class="sticky top-24 px-6 py-8 md:px-12 lg:px-8 lg:py-12" use:scrollAnimate={{ animation: 'fade' }}>
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTENTS</span>
 				<nav class="mt-4 flex flex-col gap-3">
@@ -58,13 +73,6 @@
 				</div>
 			</div>
 		</div>
-
-		<!-- Main Content -->
-		<article class="col-span-12 bg-background px-6 py-12 md:px-12 lg:col-span-9 lg:px-16 lg:py-16" use:scrollAnimate={{ animation: 'fade' }}>
-			<div class="max-w-3xl">
-				{@html doc.content}
-			</div>
-		</article>
 	</div>
 </section>
 
@@ -78,6 +86,7 @@
 	<div class="grid grid-cols-12 gap-px bg-border">
 		<a 
 			href={localizeHref('/legal/privacy')} 
+			data-sveltekit-replacestate
 			class="col-span-12 bg-background p-6 transition-colors hover:bg-card md:col-span-4 {doc.slug === 'privacy' ? 'border-l-2 border-l-primary' : ''}"
 		>
 			<h3 class="font-ui text-xs font-semibold tracking-wider">PRIVACY POLICY</h3>
@@ -85,6 +94,7 @@
 		</a>
 		<a 
 			href={localizeHref('/legal/terms')} 
+			data-sveltekit-replacestate
 			class="col-span-12 bg-background p-6 transition-colors hover:bg-card md:col-span-4 {doc.slug === 'terms' ? 'border-l-2 border-l-primary' : ''}"
 		>
 			<h3 class="font-ui text-xs font-semibold tracking-wider">TERMS OF SERVICE</h3>
@@ -92,6 +102,7 @@
 		</a>
 		<a 
 			href={localizeHref('/legal/cookies')} 
+			data-sveltekit-replacestate
 			class="col-span-12 bg-background p-6 transition-colors hover:bg-card md:col-span-4 {doc.slug === 'cookies' ? 'border-l-2 border-l-primary' : ''}"
 		>
 			<h3 class="font-ui text-xs font-semibold tracking-wider">COOKIE POLICY</h3>

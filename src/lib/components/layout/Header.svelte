@@ -110,6 +110,7 @@
 							{@const targetLocale = lang as Locale}
 							<a
 								href={localizeHref(page.url.pathname.replace(/^\/(en|th)/, '') || '/', { locale: targetLocale })}
+								data-sveltekit-reload
 								class="font-mono flex items-center gap-3 px-4 py-3 text-xs tracking-wider transition-colors {lang === currentLocale
 									? 'bg-primary text-primary-foreground'
 									: 'text-muted-foreground hover:bg-card hover:text-foreground'}"

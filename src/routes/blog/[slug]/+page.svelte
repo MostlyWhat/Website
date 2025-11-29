@@ -67,8 +67,15 @@
 <!-- Article Content -->
 <section class="border-b border-border">
 	<div class="grid grid-cols-12">
-		<!-- Sticky Sidebar -->
-		<div class="col-span-12 border-b border-border bg-card lg:col-span-3 lg:border-b-0 lg:border-r">
+		<!-- Article Body - Now on Left -->
+		<article class="col-span-12 bg-background px-6 py-12 md:px-12 lg:col-span-9 lg:border-r lg:border-border lg:px-16 lg:py-16">
+			<div class="max-w-3xl">
+				{@html post.content}
+			</div>
+		</article>
+		
+		<!-- Sticky Sidebar - Now on Right -->
+		<div class="col-span-12 border-t border-border bg-card lg:col-span-3 lg:border-t-0">
 			<div class="sticky top-24 px-6 py-8 md:px-12 lg:px-8 lg:py-12">
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTENTS</span>
 				<nav class="mt-4 flex flex-col gap-3">
@@ -90,25 +97,18 @@
 				</div>
 			</div>
 		</div>
-		
-		<!-- Article Body -->
-		<article class="col-span-12 bg-background px-6 py-12 md:px-12 lg:col-span-9 lg:px-16 lg:py-16">
-			<div class="max-w-3xl">
-				{@html post.content}
-			</div>
-		</article>
 	</div>
 </section>
 
 <!-- Next Article CTA -->
-<section class="min-h-dvh border-b border-border">
-	<div class="grid h-full min-h-dvh grid-cols-12 gap-px bg-border">
-		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-16 md:px-12 lg:col-span-6 lg:px-16">
+<section class="border-b border-border">
+	<div class="grid grid-cols-12 gap-px bg-border">
+		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:px-12 lg:col-span-6 lg:px-16">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTINUE READING</span>
-			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl lg:text-5xl">EXPLORE MORE</h2>
-			<p class="font-body mt-4 text-muted-foreground">Check out our other articles and insights.</p>
+			<h2 class="font-display mt-4 text-2xl font-bold uppercase md:text-3xl">EXPLORE MORE</h2>
+			<p class="font-body mt-2 text-sm text-muted-foreground">Check out our other articles and insights.</p>
 		</div>
-		<div class="col-span-12 flex items-center justify-center bg-card px-6 py-16 md:px-12 lg:col-span-6 lg:px-16">
+		<div class="col-span-12 flex items-center justify-center bg-card px-6 py-12 md:px-12 lg:col-span-6 lg:px-16">
 			<Button href={localizeHref('/blog')} class="font-ui uppercase tracking-wider">
 				VIEW ALL ARTICLES
 				<ArrowRight class="ml-2 h-4 w-4" />

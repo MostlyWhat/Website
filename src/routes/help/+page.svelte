@@ -144,8 +144,8 @@
 	<meta name="description" content="Find answers to common questions about working with MostlyWhat Systems." />
 </svelte:head>
 
-<!-- Hero Section - Full Viewport -->
-<section class="relative flex h-dvh flex-col border-b border-border">
+<!-- Hero Section -->
+<section class="relative flex min-h-[60vh] flex-col border-b border-border">
 	<!-- Image Background -->
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<img 
@@ -156,32 +156,28 @@
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
 	</div>
 
-	<!-- Hero Content - Positioned at Bottom -->
+	<!-- Hero Content -->
 	<div class="flex flex-1 flex-col justify-end px-6 pb-8 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
-		<div class="grid grid-cols-12 gap-4">
-			<div class="col-span-12 lg:col-span-8">
-				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">KNOWLEDGE BASE</span>
-				<h1 class="font-display mt-4 text-5xl font-black uppercase leading-[0.9] tracking-tight md:text-7xl lg:text-8xl">
-					HOW CAN WE HELP?
-				</h1>
-			</div>
-			<div class="col-span-12 flex flex-col justify-end lg:col-span-4">
-				<p class="font-body text-muted-foreground">
-					Browse our knowledge base or search for specific topics.
-				</p>
-			</div>
+		<div class="mb-8 max-w-3xl">
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">KNOWLEDGE BASE</span>
+			<h1 class="font-display mt-4 text-4xl font-black uppercase leading-[0.9] tracking-tight md:text-6xl lg:text-7xl">
+				HOW CAN WE HELP?
+			</h1>
+			<p class="font-body mt-4 max-w-xl text-base text-muted-foreground">
+				Browse our knowledge base or search for specific topics.
+			</p>
 		</div>
 	</div>
 
 	<!-- Search Bar -->
-	<div class="border-t border-border bg-card/80 px-6 py-4 backdrop-blur-sm md:px-12 md:py-6 lg:px-16">
+	<div class="border-t border-border bg-card/80 px-6 py-4 backdrop-blur-sm md:px-12 lg:px-16">
 		<div class="relative">
 			<Search class="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
 			<Input 
 				type="search" 
 				bind:value={searchQuery} 
 				placeholder="Search help articles..." 
-				class="font-body h-12 pl-12 text-base"
+				class="font-body h-10 pl-12 text-sm"
 			/>
 		</div>
 	</div>
@@ -189,8 +185,8 @@
 	<!-- Stats Bar -->
 	<div class="grid grid-cols-12 gap-px border-t border-border bg-border">
 		{#each stats as { value, label } (label)}
-			<div class="col-span-4 bg-card/80 px-6 py-4 backdrop-blur-sm md:px-12 lg:px-16">
-				<span class="font-display text-lg font-bold text-primary md:text-2xl">{value}</span>
+			<div class="col-span-4 bg-card/80 px-6 py-3 backdrop-blur-sm md:px-12 lg:px-16">
+				<span class="font-display text-lg font-bold text-primary">{value}</span>
 				<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
 			</div>
 		{/each}
@@ -288,37 +284,34 @@
 <!-- CTA Section -->
 <section class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'scale' }}>
-		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:px-12 lg:col-span-6 lg:px-16">
+		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-10 md:px-12 lg:col-span-6 lg:px-16">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">STILL NEED HELP?</span>
-			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">CONTACT OUR TEAM</h2>
-			<p class="font-body mt-4 text-muted-foreground">
+			<h2 class="font-display mt-3 text-2xl font-bold uppercase md:text-3xl">CONTACT OUR TEAM</h2>
+			<p class="font-body mt-3 text-sm text-muted-foreground">
 				Can't find what you're looking for? Our team is here to help.
 			</p>
-			<div class="mt-6 flex flex-wrap gap-4">
-				<Button href={localizeHref('/contact')} size="lg" class="font-ui tracking-wider">
+			<div class="mt-6 flex flex-wrap gap-3">
+				<Button href={localizeHref('/contact')} class="font-ui tracking-wider">
 					GET IN TOUCH
 					<ArrowRight class="ml-2 h-4 w-4" />
-				</Button>
-				<Button href={localizeHref('/support')} variant="outline" size="lg" class="font-ui tracking-wider">
-					SUPPORT
 				</Button>
 			</div>
 		</div>
 		<div class="col-span-12 grid grid-cols-2 gap-px bg-border lg:col-span-6">
-			<div class="flex flex-col justify-center bg-card px-6 py-8 md:px-12 lg:px-16">
-				<span class="font-display text-2xl font-bold text-primary">24H</span>
+			<div class="flex flex-col justify-center bg-card px-6 py-6 md:px-12 lg:px-16">
+				<span class="font-display text-xl font-bold text-primary">24H</span>
 				<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">AVG. RESPONSE</p>
 			</div>
-			<div class="flex flex-col justify-center bg-card px-6 py-8 md:px-12 lg:px-16">
-				<span class="font-display text-2xl font-bold text-primary">100%</span>
+			<div class="flex flex-col justify-center bg-card px-6 py-6 md:px-12 lg:px-16">
+				<span class="font-display text-xl font-bold text-primary">100%</span>
 				<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">SATISFACTION</p>
 			</div>
-			<div class="flex flex-col justify-center bg-card px-6 py-8 md:px-12 lg:px-16">
-				<span class="font-display text-2xl font-bold text-primary">50+</span>
+			<div class="flex flex-col justify-center bg-card px-6 py-6 md:px-12 lg:px-16">
+				<span class="font-display text-xl font-bold text-primary">50+</span>
 				<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">HELP ARTICLES</p>
 			</div>
-			<div class="flex flex-col justify-center bg-card px-6 py-8 md:px-12 lg:px-16">
-				<span class="font-display text-2xl font-bold text-primary">6</span>
+			<div class="flex flex-col justify-center bg-card px-6 py-6 md:px-12 lg:px-16">
+				<span class="font-display text-xl font-bold text-primary">6</span>
 				<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">CATEGORIES</p>
 			</div>
 		</div>

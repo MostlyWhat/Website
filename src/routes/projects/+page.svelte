@@ -26,8 +26,8 @@
 	<meta name="description" content={m.projects_subtitle()} />
 </svelte:head>
 
-<!-- Hero Section - Full Viewport -->
-<section class="relative flex h-dvh flex-col border-b border-border">
+<!-- Hero Section -->
+<section class="relative flex min-h-[70vh] flex-col border-b border-border">
 	<!-- Image Background -->
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<img 
@@ -38,26 +38,22 @@
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
 	</div>
 
-	<!-- Hero Content - Positioned at Bottom -->
+	<!-- Hero Content -->
 	<div class="flex flex-1 flex-col justify-end px-6 pb-8 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
-		<div class="grid grid-cols-12 gap-4">
-			<div class="col-span-12 lg:col-span-8">
-				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">SELECTED WORK</span>
-				<h1 class="font-display mt-4 text-5xl font-black uppercase leading-[0.9] tracking-tight md:text-7xl lg:text-8xl">
-					{m.projects_title()}
-				</h1>
-			</div>
-			<div class="col-span-12 flex flex-col justify-end lg:col-span-4">
-				<p class="font-body text-muted-foreground">{m.projects_subtitle()}</p>
-			</div>
+		<div class="mb-8 max-w-3xl">
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">SELECTED WORK</span>
+			<h1 class="font-display mt-4 text-4xl font-black uppercase leading-[0.9] tracking-tight md:text-6xl lg:text-7xl">
+				{m.projects_title()}
+			</h1>
+			<p class="font-body mt-4 max-w-xl text-base text-muted-foreground">{m.projects_subtitle()}</p>
 		</div>
 	</div>
 
 	<!-- Stats Bar -->
 	<div class="grid grid-cols-12 gap-px border-t border-border bg-border">
 		{#each stats as { value, label } (label)}
-			<div class="col-span-4 bg-card/80 px-6 py-4 backdrop-blur-sm md:px-12 lg:px-16">
-				<span class="font-display text-lg font-bold text-primary md:text-2xl">{value}</span>
+			<div class="col-span-4 bg-card/80 px-6 py-3 backdrop-blur-sm md:px-12 lg:px-16">
+				<span class="font-display text-lg font-bold text-primary">{value}</span>
 				<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
 			</div>
 		{/each}
@@ -66,18 +62,18 @@
 
 <!-- Filter Bar -->
 <section class="border-b border-border">
-	<div class="flex">
+	<div class="grid grid-cols-12 gap-px bg-border">
 		<!-- Filter Label -->
-		<div class="flex w-24 shrink-0 items-center justify-center border-r border-border bg-card">
+		<div class="col-span-2 flex items-center bg-card px-6 py-3 md:col-span-1 md:px-12 lg:px-8">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">FILTER</span>
 		</div>
 		<!-- Filter Options -->
-		<div class="flex flex-1 overflow-x-auto">
+		<div class="col-span-10 flex overflow-x-auto md:col-span-11">
 			{#each data.categories as category (category)}
 				<button
 					type="button"
 					onclick={() => selectedCategory = category}
-					class="font-mono flex flex-1 items-center justify-center border-r border-border px-4 py-4 text-xs uppercase tracking-wider transition-colors last:border-r-0 {selectedCategory === category ? 'bg-primary text-primary-foreground' : 'bg-background text-muted-foreground hover:bg-card hover:text-foreground'}"
+					class="font-mono flex flex-1 items-center justify-center border-l border-border bg-background px-3 py-3 text-[10px] uppercase tracking-wider transition-colors {selectedCategory === category ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-card hover:text-foreground'}"
 				>
 					{category}
 				</button>

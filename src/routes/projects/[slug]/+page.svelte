@@ -50,8 +50,15 @@
 <!-- Project Content -->
 <section class="border-b border-border">
 	<div class="grid grid-cols-12">
-		<!-- Sticky Sidebar -->
-		<div class="col-span-12 border-b border-border bg-card lg:col-span-3 lg:border-b-0 lg:border-r">
+		<!-- Project Body - Now on Left -->
+		<article class="col-span-12 bg-background px-6 py-12 md:px-12 lg:col-span-9 lg:border-r lg:border-border lg:px-16 lg:py-16">
+			<div class="max-w-3xl">
+				{@html project.content}
+			</div>
+		</article>
+		
+		<!-- Sticky Sidebar - Now on Right -->
+		<div class="col-span-12 border-t border-border bg-card lg:col-span-3 lg:border-t-0">
 			<div class="sticky top-24 px-6 py-8 md:px-12 lg:px-8 lg:py-12">
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTENTS</span>
 				<nav class="mt-4 flex flex-col gap-3">
@@ -73,13 +80,6 @@
 				</div>
 			</div>
 		</div>
-		
-		<!-- Project Body -->
-		<article class="col-span-12 bg-background px-6 py-12 md:px-12 lg:col-span-9 lg:px-16 lg:py-16">
-			<div class="max-w-3xl">
-				{@html project.content}
-			</div>
-		</article>
 	</div>
 </section>
 

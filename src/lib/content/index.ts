@@ -33,12 +33,12 @@ function extractSections(markdown: string): ContentSection[] {
 // Custom renderer for styled headings
 function renderStyledContent(markdown: string, options?: { stripTitle?: boolean }): string {
     let processed = markdown;
-    
+
     // Strip the main title (# heading) if requested - we show it separately in the UI
     if (options?.stripTitle) {
         processed = processed.replace(/^#\s+.+\n+/m, '');
     }
-    
+
     // Also strip any description/excerpt that immediately follows the title
     // (often the first paragraph before the first ## heading)
     if (options?.stripTitle) {
@@ -53,14 +53,14 @@ function renderStyledContent(markdown: string, options?: { stripTitle?: boolean 
             }
         }
     }
-    
+
     // Convert ## headings to styled versions
     processed = processed.replace(
         /^##\s+(\d+)\s*[—–-]\s*(.+)$/gm,
         (_, num, title) => {
             const number = num.padStart(2, '0');
             const id = title.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-            return `<h2 id="${id}" class="font-ui mt-8 text-sm font-semibold tracking-wider text-primary scroll-mt-24">${number} — ${title.trim().toUpperCase()}</h2>`;
+            return `<h2 id="${id}" class="font-ui mt-12 mb-4 text-base font-bold tracking-wider text-primary scroll-mt-24">${number} — ${title.trim().toUpperCase()}</h2>`;
         }
     );
 
@@ -69,14 +69,14 @@ function renderStyledContent(markdown: string, options?: { stripTitle?: boolean 
         /^##\s+(.+)$/gm,
         (_, title) => {
             const id = title.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-            return `<h2 id="${id}" class="font-ui mt-8 text-sm font-semibold tracking-wider text-primary scroll-mt-24">${title.trim().toUpperCase()}</h2>`;
+            return `<h2 id="${id}" class="font-ui mt-12 mb-4 text-base font-bold tracking-wider text-primary scroll-mt-24">${title.trim().toUpperCase()}</h2>`;
         }
     );
 
     // Convert ### headings
     processed = processed.replace(
         /^###\s+(.+)$/gm,
-        (_, title) => `<h3 class="font-ui mt-6 text-xs font-semibold tracking-wider text-foreground">${title.trim()}</h3>`
+        (_, title) => `<h3 class="font-ui mt-8 mb-3 text-sm font-semibold tracking-wider text-foreground">${title.trim()}</h3>`
     );
 
     // Convert # headings (main title - only if not stripped)
@@ -90,7 +90,7 @@ function renderStyledContent(markdown: string, options?: { stripTitle?: boolean 
     // Parse the rest with marked
     const html = marked.parse(processed) as string;
 
-    // Add styling to paragraphs and lists
+    // Add styling to paragraphs, lists, and code blocks
     return html
         .replace(/<p>/g, '<p class="font-body text-sm leading-relaxed text-muted-foreground mt-4">')
         .replace(/<ul>/g, '<ul class="font-body list-disc list-inside space-y-2 text-sm text-muted-foreground mt-4 ml-4">')
@@ -99,7 +99,10 @@ function renderStyledContent(markdown: string, options?: { stripTitle?: boolean 
         .replace(/<strong>/g, '<strong class="font-semibold text-foreground">')
         .replace(/<a /g, '<a class="text-primary hover:underline" ')
         .replace(/<blockquote>/g, '<blockquote class="border-l-2 border-primary pl-4 italic text-muted-foreground mt-4">')
-        .replace(/<code>/g, '<code class="font-mono text-xs bg-card px-1.5 py-0.5 rounded text-primary">');
+        .replace(/<pre>/g, '<pre class="font-mono mt-6 mb-4 p-4 bg-card border border-border rounded-lg overflow-x-auto text-xs leading-relaxed">')
+        .replace(/<code>/g, '<code class="font-mono text-xs text-primary">')
+        .replace(/<pre class="font-mono mt-6 mb-4 p-4 bg-card border border-border rounded-lg overflow-x-auto text-xs leading-relaxed"><code class="font-mono text-xs text-primary">/g, '<pre class="font-mono mt-6 mb-4 p-4 bg-card border border-border rounded-lg overflow-x-auto text-xs leading-relaxed"><code class="font-mono text-foreground">')
+        .replace(/<p class="font-body text-sm leading-relaxed text-muted-foreground mt-4"><code/g, '<p class="font-body text-sm leading-relaxed text-muted-foreground mt-4"><code class="font-mono text-xs bg-card px-1.5 py-0.5 rounded border border-border text-primary"');
 }
 
 export interface BlogPost {

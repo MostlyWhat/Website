@@ -140,7 +140,7 @@
 </svelte:head>
 
 <!-- Hero Section -->
-<section class="relative flex h-dvh flex-col border-b border-border">
+<section class="relative flex min-h-[70vh] flex-col border-b border-border">
 	<!-- Image Background -->
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<img 
@@ -153,16 +153,12 @@
 
 	<!-- Hero Content -->
 	<div class="flex flex-1 flex-col justify-end px-6 pb-8 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
-		<div class="grid grid-cols-12 gap-4">
-			<div class="col-span-12 lg:col-span-8">
-				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTACT</span>
-				<h1 class="font-display mt-4 text-5xl font-black uppercase leading-[0.9] tracking-tight md:text-7xl lg:text-8xl">
-					{m.contact_title()}
-				</h1>
-			</div>
-			<div class="col-span-12 flex flex-col justify-end lg:col-span-4">
-				<p class="font-body text-muted-foreground">{m.contact_subtitle()}</p>
-			</div>
+		<div class="mb-8 max-w-3xl">
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTACT</span>
+			<h1 class="font-display mt-4 text-4xl font-black uppercase leading-[0.9] tracking-tight md:text-6xl lg:text-7xl">
+				{m.contact_title()}
+			</h1>
+			<p class="font-body mt-4 max-w-xl text-base text-muted-foreground">{m.contact_subtitle()}</p>
 		</div>
 	</div>
 
@@ -172,14 +168,14 @@
 			{#if href}
 				<a
 					href={localizeHref(href)}
-					class="group col-span-6 flex flex-col bg-background px-6 py-5 transition-colors hover:bg-card md:px-12 lg:col-span-3 lg:px-16"
+					class="group col-span-6 flex flex-col bg-background px-6 py-4 transition-colors hover:bg-card md:px-12 lg:col-span-3 lg:px-8"
 				>
-					<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">
-						<Icon class="h-5 w-5 text-primary" />
+					<div class="flex h-10 w-10 items-center justify-center border border-border bg-card">
+						<Icon class="h-4 w-4 text-primary" />
 					</div>
-					<h3 class="font-ui mt-4 text-xs font-semibold tracking-wider">{title}</h3>
-					<p class="font-body mt-1 flex-1 text-[11px] text-muted-foreground">{desc}</p>
-					<span class="font-mono mt-3 flex items-center gap-1 text-[10px] tracking-wider text-primary">
+					<h3 class="font-ui mt-3 text-xs font-semibold tracking-wider">{title}</h3>
+					<p class="font-body mt-1 flex-1 text-[10px] text-muted-foreground">{desc}</p>
+					<span class="font-mono mt-2 flex items-center gap-1 text-[10px] tracking-wider text-primary">
 						{action}
 						<ArrowRight class="h-3 w-3 transition-transform group-hover:translate-x-1" />
 					</span>
@@ -188,14 +184,14 @@
 				<button
 					type="button"
 					onclick={() => selectTopic(id)}
-					class="group col-span-6 flex flex-col bg-background px-6 py-5 text-left transition-colors hover:bg-card md:px-12 lg:col-span-3 lg:px-16 {selectedTopic === id ? 'bg-primary/10 ring-1 ring-primary' : ''}"
+					class="group col-span-6 flex flex-col bg-background px-6 py-4 text-left transition-colors hover:bg-card md:px-12 lg:col-span-3 lg:px-8 {selectedTopic === id ? 'bg-primary/10 ring-1 ring-primary' : ''}"
 				>
-					<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">
-						<Icon class="h-5 w-5 text-primary" />
+					<div class="flex h-10 w-10 items-center justify-center border border-border bg-card">
+						<Icon class="h-4 w-4 text-primary" />
 					</div>
-					<h3 class="font-ui mt-4 text-xs font-semibold tracking-wider">{title}</h3>
-					<p class="font-body mt-1 flex-1 text-[11px] text-muted-foreground">{desc}</p>
-					<span class="font-mono mt-3 flex items-center gap-1 text-[10px] tracking-wider text-primary">
+					<h3 class="font-ui mt-3 text-xs font-semibold tracking-wider">{title}</h3>
+					<p class="font-body mt-1 flex-1 text-[10px] text-muted-foreground">{desc}</p>
+					<span class="font-mono mt-2 flex items-center gap-1 text-[10px] tracking-wider text-primary">
 						{action}
 						<ArrowRight class="h-3 w-3 transition-transform group-hover:translate-x-1" />
 					</span>
@@ -308,43 +304,30 @@
 {/if}
 
 <!-- FAQ Section with Accordion -->
-<section class="min-h-[80vh] border-b border-border">
-	<div class="grid h-full grid-cols-12 gap-px bg-border">
+<section class="border-b border-border">
+	<div class="grid grid-cols-12 gap-px bg-border">
 		<!-- FAQ Info (Left) -->
-		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:px-12 lg:col-span-6 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
+		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:px-12 lg:col-span-5 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">02 — FAQ</span>
-			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">COMMON QUESTIONS</h2>
-			<p class="font-body mt-4 text-muted-foreground">
-				Find answers to frequently asked questions about our process, pricing, and services. 
-				Can't find what you're looking for?
+			<h2 class="font-display mt-4 text-2xl font-bold uppercase md:text-3xl">COMMON QUESTIONS</h2>
+			<p class="font-body mt-3 text-sm text-muted-foreground">
+				Find answers to frequently asked questions about our process and services.
 			</p>
-			<Button href={localizeHref('/help')} variant="outline" size="lg" class="font-ui mt-6 w-fit tracking-wider">
+			<Button href={localizeHref('/help')} variant="outline" class="font-ui mt-6 w-fit tracking-wider">
 				VISIT HELP CENTER
 				<ExternalLink class="ml-2 h-4 w-4" />
 			</Button>
-			
-			<!-- Quick Stats -->
-			<div class="mt-8 grid grid-cols-2 gap-px bg-border">
-				<div class="bg-card p-4">
-					<p class="font-display text-2xl font-bold text-primary">50+</p>
-					<p class="font-mono text-[10px] tracking-widest text-muted-foreground">PROJECTS DELIVERED</p>
-				</div>
-				<div class="bg-card p-4">
-					<p class="font-display text-2xl font-bold text-primary">24H</p>
-					<p class="font-mono text-[10px] tracking-widest text-muted-foreground">AVG. RESPONSE TIME</p>
-				</div>
-			</div>
 		</div>
 
 		<!-- FAQ Accordion (Right) -->
-		<div class="col-span-12 flex flex-col justify-center bg-card lg:col-span-6" use:scrollAnimate={{ animation: 'fade' }}>
+		<div class="col-span-12 flex flex-col justify-center bg-card lg:col-span-7" use:scrollAnimate={{ animation: 'fade' }}>
 			<Accordion.Root class="divide-y divide-border">
 				{#each faqs as { id, q, a } (id)}
 					<Accordion.Item value={id} class="border-0">
-						<Accordion.Trigger class="font-ui w-full bg-background px-6 py-4 text-left text-sm font-medium tracking-wide hover:bg-muted/50 md:px-12 lg:px-16 [&[data-state=open]]:bg-primary/5 [&[data-state=open]]:text-primary">
+						<Accordion.Trigger class="font-ui w-full bg-background px-6 py-3 text-left text-xs font-medium tracking-wide hover:bg-muted/50 md:px-12 lg:px-16 [&[data-state=open]]:bg-primary/5 [&[data-state=open]]:text-primary">
 							{q}
 						</Accordion.Trigger>
-						<Accordion.Content class="font-body bg-background px-6 pb-4 pt-0 text-sm leading-relaxed text-muted-foreground md:px-12 lg:px-16">
+						<Accordion.Content class="font-body bg-background px-6 pb-3 pt-0 text-xs leading-relaxed text-muted-foreground md:px-12 lg:px-16">
 							{a}
 						</Accordion.Content>
 					</Accordion.Item>
@@ -359,24 +342,24 @@
 	<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'scale' }}>
 		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:col-span-8 md:px-12 lg:px-16">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">03 — READY TO START?</span>
-			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">LET'S BUILD SOMETHING GREAT</h2>
-			<p class="font-body mt-4 max-w-lg text-muted-foreground">
+			<h2 class="font-display mt-3 text-2xl font-bold uppercase md:text-3xl">LET'S BUILD SOMETHING GREAT</h2>
+			<p class="font-body mt-3 max-w-lg text-sm text-muted-foreground">
 				Whether you have a detailed brief or just a rough idea, we'd love to hear about it.
 			</p>
-			<div class="mt-6 flex flex-wrap gap-4">
-				<Button onclick={() => selectTopic('quote')} size="lg" class="font-ui tracking-wider">
+			<div class="mt-6 flex flex-wrap gap-3">
+				<Button onclick={() => selectTopic('quote')} class="font-ui tracking-wider">
 					GET A QUOTE
 					<ArrowRight class="ml-2 h-4 w-4" />
 				</Button>
-				<Button href="mailto:hello@mostlywhat.systems" variant="outline" size="lg" class="font-ui tracking-wider">
+				<Button href="mailto:hello@mostlywhat.systems" variant="outline" class="font-ui tracking-wider">
 					EMAIL US
 				</Button>
 			</div>
 		</div>
-		<div class="col-span-12 flex items-center justify-center bg-primary/10 px-6 py-12 md:col-span-4 md:px-12 lg:px-16">
+		<div class="col-span-12 flex items-center justify-center bg-primary/10 px-6 py-8 md:col-span-4 md:px-12 lg:px-16">
 			<div class="text-center">
 				<p class="font-mono text-[10px] tracking-widest text-muted-foreground">QUICK CONTACT</p>
-				<a href="mailto:hello@mostlywhat.systems" class="font-display mt-2 block text-base uppercase text-primary hover:underline">
+				<a href="mailto:hello@mostlywhat.systems" class="font-ui mt-2 block text-sm uppercase text-primary hover:underline">
 					HELLO@MOSTLYWHAT.SYSTEMS
 				</a>
 			</div>
