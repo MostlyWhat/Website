@@ -65,12 +65,23 @@
 	};
 </script>
 
-<section
-	{id}
-	class="{paddingClasses[padding]} {backgroundClasses[background]} {className}"
-	use:scrollAnimate={animate ? { animation: animate } : undefined}
->
-	<div class="{containerClasses[container]} mx-auto px-4">
-		{@render children()}
-	</div>
-</section>
+{#if animate}
+	<section
+		{id}
+		class="{paddingClasses[padding]} {backgroundClasses[background]} {className}"
+		use:scrollAnimate={{ animation: animate }}
+	>
+		<div class="{containerClasses[container]} mx-auto px-4">
+			{@render children()}
+		</div>
+	</section>
+{:else}
+	<section
+		{id}
+		class="{paddingClasses[padding]} {backgroundClasses[background]} {className}"
+	>
+		<div class="{containerClasses[container]} mx-auto px-4">
+			{@render children()}
+		</div>
+	</section>
+{/if}

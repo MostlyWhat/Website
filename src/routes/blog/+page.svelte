@@ -87,10 +87,10 @@
 
 <!-- Hero Section -->
 <Section padding="xl">
-	<div class="mx-auto max-w-3xl text-center" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
+	<div use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
 		<p class="font-ui mb-2 text-sm uppercase tracking-wider text-primary">Blog</p>
 		<h1 class="vt-title mb-6 text-4xl md:text-5xl lg:text-6xl">{m.blog_title()}</h1>
-		<p class="font-body text-lg text-muted-foreground md:text-xl">{m.blog_subtitle()}</p>
+		<p class="font-body max-w-2xl text-lg text-muted-foreground md:text-xl">{m.blog_subtitle()}</p>
 	</div>
 </Section>
 
@@ -209,18 +209,20 @@
 
 <!-- Newsletter CTA -->
 <Section background="card" padding="xl">
-	<div class="mx-auto max-w-2xl text-center" use:scrollAnimate={{ animation: 'scale' }}>
-		<h2 class="font-display mb-4 text-3xl">Stay Updated</h2>
-		<p class="font-body mb-6 text-muted-foreground">
-			Get notified when we publish new articles, tutorials, and updates.
-		</p>
-		<div class="flex flex-col gap-4 sm:flex-row sm:justify-center">
+	<div class="grid gap-8 lg:grid-cols-2 lg:items-center" use:scrollAnimate={{ animation: 'scale' }}>
+		<div>
+			<h2 class="font-display mb-4 text-3xl">Stay Updated</h2>
+			<p class="font-body text-muted-foreground">
+				Get notified when we publish new articles, tutorials, and updates.
+			</p>
+		</div>
+		<div class="flex flex-col gap-4 sm:flex-row">
 			<input 
 				type="email" 
 				placeholder="your@email.com"
-				class="font-body h-12 border border-border bg-background px-4 placeholder:text-muted-foreground focus:border-primary focus:outline-none sm:w-64"
+				class="font-body h-12 flex-1 border border-border bg-background px-4 placeholder:text-muted-foreground focus:border-primary focus:outline-none"
 			/>
-			<Button size="lg" class="font-ui">
+			<Button size="lg" class="font-ui shrink-0">
 				Subscribe
 				<ArrowRight class="ml-2 h-5 w-5" />
 			</Button>

@@ -136,7 +136,7 @@
 
 <!-- Process Section -->
 <Section id="process" background="card">
-	<div class="mb-12 text-center" use:scrollAnimate={{ animation: 'fade' }}>
+	<div class="mb-12" use:scrollAnimate={{ animation: 'fade' }}>
 		<p class="font-ui mb-2 text-sm uppercase tracking-wider text-primary">Process</p>
 		<h2 class="h2 text-3xl md:text-4xl">{m.process_title()}</h2>
 	</div>
@@ -154,18 +154,26 @@
 
 <!-- CTA Section -->
 <Section padding="xl">
-	<div class="text-center" use:scrollAnimate={{ animation: 'scale' }}>
-		<h2 class="font-display mb-4 text-3xl md:text-4xl lg:text-5xl">{m.cta_title()}</h2>
-		<p class="font-body mx-auto mb-8 max-w-2xl text-lg text-muted-foreground">{m.cta_subtitle()}</p>
-		<div class="flex flex-wrap justify-center gap-4">
-			<Button href="/contact" size="lg" class="font-ui">
-				{m.cta_button_primary()}
-				<ArrowRight class="ml-2 h-5 w-5" />
-			</Button>
-			<Button href="/contact" variant="outline" size="lg" class="font-ui">
-				{m.cta_button_secondary()}
-			</Button>
+	<div class="grid gap-8 lg:grid-cols-2 lg:items-center" use:scrollAnimate={{ animation: 'scale' }}>
+		<div>
+			<h2 class="font-display mb-4 text-3xl md:text-4xl lg:text-5xl">{m.cta_title()}</h2>
+			<p class="font-body mb-8 max-w-xl text-lg text-muted-foreground">{m.cta_subtitle()}</p>
+			<div class="flex flex-wrap gap-4">
+				<Button href="/contact" size="lg" class="font-ui">
+					{m.cta_button_primary()}
+					<ArrowRight class="ml-2 h-5 w-5" />
+				</Button>
+				<Button href="/contact" variant="outline" size="lg" class="font-ui">
+					{m.cta_button_secondary()}
+				</Button>
+			</div>
+			<p class="font-body mt-6 text-sm text-muted-foreground">{m.cta_disclaimer()}</p>
 		</div>
-		<p class="font-body mt-6 text-sm text-muted-foreground">{m.cta_disclaimer()}</p>
+		<div class="border border-border bg-card p-8">
+			<p class="font-ui mb-2 text-sm uppercase tracking-wider text-muted-foreground">Quick contact</p>
+			<a href="mailto:hello@mostlywhat.systems" class="font-display block text-2xl text-primary hover:underline">
+				hello@mostlywhat.systems
+			</a>
+		</div>
 	</div>
 </Section>

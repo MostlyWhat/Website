@@ -14,7 +14,6 @@
 
 /* ============================================
    MOSTLYWHAT SYSTEMS DESIGN TOKENS
-   Inspired by: IBM Carbon, Metro, Render.com, Marathon
    ============================================ */
 
 :root {
@@ -117,24 +116,6 @@
 	--font-body: "Hubot Sans Variable", system-ui, sans-serif;
 	--font-ui: "Chakra Petch", system-ui, sans-serif;
 	--font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
-}
-
-/* Light mode overrides */
-.light {
-	--background: var(--white);
-	--foreground: var(--black-900);
-	--card: var(--gray-50);
-	--card-foreground: var(--black-900);
-	--popover: var(--white);
-	--popover-foreground: var(--black-900);
-	--primary: var(--cobalt-600);
-	--primary-foreground: var(--white);
-	--secondary: var(--gray-100);
-	--secondary-foreground: var(--black-900);
-	--muted: var(--gray-100);
-	--muted-foreground: var(--gray-500);
-	--border: var(--gray-200);
-	--input: var(--gray-100);
 }
 
 @theme inline {
