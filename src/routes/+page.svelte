@@ -42,7 +42,7 @@
 </svelte:head>
 
 <!-- Hero Section - Full Viewport -->
-<section class="relative flex min-h-[calc(100dvh-4rem)] flex-col">
+<section class="relative flex h-[calc(100dvh-4rem)] flex-col border-b border-border">
 	<!-- Grid Background -->
 	<div class="pointer-events-none absolute inset-0 -z-10">
 		<div class="absolute inset-0 bg-gradient-to-br from-background via-background to-primary/5"></div>
@@ -50,10 +50,10 @@
 	</div>
 
 	<!-- Hero Content -->
-	<div class="flex flex-1 flex-col justify-end p-4 pb-8 md:p-6 lg:p-8" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
+	<div class="flex flex-1 flex-col justify-end px-4 pb-8 md:px-6 lg:px-8" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
 		<div class="grid grid-cols-12 gap-4">
 			<div class="col-span-12 lg:col-span-8">
-				<p class="font-mono text-xs tracking-widest text-primary">// MOSTLYWHAT SYSTEMS</p>
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">MOSTLYWHAT SYSTEMS</span>
 				<h1 class="font-display mt-4 text-5xl font-black uppercase leading-[0.9] tracking-tight md:text-7xl lg:text-8xl xl:text-9xl">
 					{m.hero_title()}
 				</h1>
@@ -74,11 +74,10 @@
 	</div>
 
 	<!-- Stats Bar -->
-	<div class="grid grid-cols-3 gap-px border-t border-border bg-border">
+	<div class="grid grid-cols-12 gap-px border-t border-border bg-border">
 		{#each stats as { label, value }}
-			<div class="bg-card/80 p-4 backdrop-blur-sm md:p-6">
-				<p class="font-mono text-[10px] tracking-widest text-muted-foreground">{label}</p>
-				<p class="font-display mt-1 text-sm font-bold md:text-base">{value}</p>
+			<div class="col-span-4 bg-card/80 p-4 backdrop-blur-sm md:p-6">
+				<span class="font-display mt-1 text-sm font-bold md:text-base">{value}</span>
 			</div>
 		{/each}
 	</div>
@@ -88,8 +87,8 @@
 <section class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
 		<!-- Section Label -->
-		<div class="col-span-12 bg-background p-4 md:p-6 lg:col-span-4 lg:p-8" use:scrollAnimate={{ animation: 'fade' }}>
-			<p class="font-mono text-[10px] tracking-widest text-primary">// SERVICES</p>
+		<div class="col-span-12 bg-background p-6 md:p-8 lg:col-span-4 lg:p-12" use:scrollAnimate={{ animation: 'fade' }}>
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">WHAT WE DO</span>
 			<h2 class="font-display mt-2 text-2xl font-bold uppercase md:text-3xl">{m.services_title()}</h2>
 			<p class="font-body mt-2 text-sm text-muted-foreground">{m.services_subtitle()}</p>
 		</div>
@@ -126,8 +125,8 @@
 <section class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
 		<!-- Section Label -->
-		<div class="col-span-12 bg-background p-4 md:p-6 lg:col-span-3 lg:p-8" use:scrollAnimate={{ animation: 'fade' }}>
-			<p class="font-mono text-[10px] tracking-widest text-primary">// PROCESS</p>
+		<div class="col-span-12 bg-background p-6 md:p-8 lg:col-span-3 lg:p-12" use:scrollAnimate={{ animation: 'fade' }}>
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">HOW WE WORK</span>
 			<h2 class="font-display mt-2 text-2xl font-bold uppercase md:text-3xl">{m.process_title()}</h2>
 		</div>
 		
@@ -147,8 +146,8 @@
 <!-- CTA Section -->
 <section class="border-b border-border">
 	<div class="grid grid-cols-1 gap-px bg-border lg:grid-cols-2" use:scrollAnimate={{ animation: 'scale' }}>
-		<div class="bg-background p-4 md:p-8 lg:p-12">
-			<p class="font-mono text-[10px] tracking-widest text-primary">// READY?</p>
+		<div class="bg-background p-6 md:p-8 lg:p-12">
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">READY?</span>
 			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl lg:text-5xl">{m.cta_title()}</h2>
 			<p class="font-body mt-4 max-w-lg text-muted-foreground">{m.cta_subtitle()}</p>
 			<div class="mt-6 flex flex-wrap gap-2">
@@ -157,16 +156,16 @@
 			</div>
 			<p class="font-mono mt-4 text-[10px] tracking-wider text-muted-foreground">{m.cta_disclaimer()}</p>
 		</div>
-		<div class="bg-card p-4 md:p-8 lg:p-12">
-			<p class="font-mono text-[10px] tracking-widest text-muted-foreground">// QUICK CONTACT</p>
+		<div class="bg-card p-6 md:p-8 lg:p-12">
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">QUICK CONTACT</span>
 			<a href="mailto:hello@mostlywhat.systems" class="font-display mt-2 block text-xl text-primary hover:underline md:text-2xl">HELLO@MOSTLYWHAT.SYSTEMS</a>
 			<div class="mt-6 grid grid-cols-2 gap-px bg-border">
 				<div class="bg-background p-4">
-					<p class="font-mono text-[10px] tracking-widest text-muted-foreground">RESPONSE</p>
+					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">RESPONSE</span>
 					<p class="font-ui mt-1 text-sm font-semibold">~24 HOURS</p>
 				</div>
 				<div class="bg-background p-4">
-					<p class="font-mono text-[10px] tracking-widest text-muted-foreground">BASED IN</p>
+					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">BASED IN</span>
 					<p class="font-ui mt-1 text-sm font-semibold">REMOTE • GLOBAL</p>
 				</div>
 			</div>

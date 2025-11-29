@@ -1,8 +1,9 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages';
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
+	import { localizeHref } from '$lib/paraglide/runtime';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import { ArrowRight, ArrowDown, Tag, Calendar, Clock, ChevronRight } from '@lucide/svelte';
+	import { ArrowRight, ChevronRight } from '@lucide/svelte';
 
 	const posts = [
 		{
@@ -80,65 +81,74 @@
 	<meta name="description" content={m.blog_subtitle()} />
 </svelte:head>
 
-<!-- Hero Section - Full Screen -->
-<section class="relative flex min-h-[calc(100dvh-4rem)] flex-col border-b border-border">
+<!-- Hero Section - Full Viewport -->
+<section class="relative flex h-[calc(100dvh-4rem)] flex-col border-b border-border">
 	<!-- Grid Background -->
-	<div class="absolute inset-0 -z-10 bg-gradient-to-br from-background via-background to-primary/5">
+	<div class="pointer-events-none absolute inset-0 -z-10">
+		<div class="absolute inset-0 bg-gradient-to-br from-background via-background to-primary/5"></div>
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
 	</div>
 
 	<!-- Hero Content -->
-	<div class="flex flex-1 items-end p-4 pb-12 md:p-6 lg:p-8" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
-		<div class="grid w-full gap-4 lg:grid-cols-12">
-			<div class="lg:col-span-8">
-				<p class="font-mono text-xs tracking-widest text-primary">// BLOG</p>
-				<h1 class="font-display mt-2 text-4xl font-black uppercase leading-[0.9] tracking-tight md:text-6xl lg:text-7xl">
+	<div class="flex flex-1 flex-col justify-end px-4 pb-8 md:px-6 lg:px-8" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
+		<div class="grid grid-cols-12 gap-4">
+			<div class="col-span-12 lg:col-span-8">
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">INSIGHTS & UPDATES</span>
+				<h1 class="font-display mt-4 text-5xl font-black uppercase leading-[0.9] tracking-tight md:text-7xl lg:text-8xl">
 					{m.blog_title()}
 				</h1>
 			</div>
-			<div class="lg:col-span-4 lg:flex lg:flex-col lg:justify-end">
+			<div class="col-span-12 flex flex-col justify-end lg:col-span-4">
 				<p class="font-body text-muted-foreground">{m.blog_subtitle()}</p>
 			</div>
 		</div>
 	</div>
 
 	<!-- Stats Bar -->
-	<div class="grid grid-cols-3 gap-px border-t border-border bg-border">
-		<div class="bg-card/80 p-3 backdrop-blur-sm md:p-4">
+	<div class="grid grid-cols-12 gap-px border-t border-border bg-border">
+		<div class="col-span-4 bg-card/80 p-4 backdrop-blur-sm">
 			<span class="font-display text-lg font-bold text-primary md:text-2xl">{posts.length}</span>
-			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground md:text-xs">ARTICLES</p>
+			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">ARTICLES</p>
 		</div>
-		<div class="bg-card/80 p-3 backdrop-blur-sm md:p-4">
+		<div class="col-span-4 bg-card/80 p-4 backdrop-blur-sm">
 			<span class="font-display text-lg font-bold text-primary md:text-2xl">{categories.length - 1}</span>
-			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground md:text-xs">CATEGORIES</p>
+			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">CATEGORIES</p>
 		</div>
-		<div class="bg-card/80 p-3 backdrop-blur-sm md:p-4">
+		<div class="col-span-4 bg-card/80 p-4 backdrop-blur-sm">
 			<span class="font-display text-lg font-bold text-primary md:text-2xl">WEEKLY</span>
-			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground md:text-xs">UPDATES</p>
-		</div>
-	</div>
-
-	<!-- Category Filter -->
-	<div class="border-t border-border bg-card/50 backdrop-blur-sm">
-		<div class="flex flex-wrap gap-px bg-border">
-			{#each categories as category}
-				<button
-					type="button"
-					onclick={() => selectedCategory = category}
-					class="font-mono bg-background px-4 py-3 text-xs uppercase tracking-wider transition-colors {selectedCategory === category ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-card hover:text-foreground'}"
-				>
-					{category}
-				</button>
-			{/each}
+			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">UPDATES</p>
 		</div>
 	</div>
 </section>
 
-<!-- Posts Grid -->
+<!-- Filter Bar - Full Width Even Distribution -->
 <section class="border-b border-border">
-	<div class="grid gap-px bg-border md:grid-cols-2 lg:grid-cols-3" use:scrollAnimate={{ animation: 'stagger' }}>
+	<div class="grid grid-cols-6 gap-px bg-border">
+		<!-- Filter Label -->
+		<div class="col-span-1 flex items-center justify-center bg-card p-4">
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">FILTER</span>
+		</div>
+		<!-- Filter Options -->
+		{#each categories as category}
+			<button
+				type="button"
+				onclick={() => selectedCategory = category}
+				class="font-mono flex items-center justify-center bg-background p-4 text-xs uppercase tracking-wider transition-colors {selectedCategory === category ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-card hover:text-foreground'}"
+			>
+				{category}
+			</button>
+		{/each}
+	</div>
+</section>
+
+<!-- Posts Grid - Minimum Height Section -->
+<section class="min-h-[80vh] border-b border-border">
+	<div class="grid grid-cols-12 gap-px bg-border">
 		{#each filteredPosts as post}
-			<a href="/blog/{post.slug}" class="stagger-children group flex flex-col bg-background transition-colors hover:bg-card">
+			<a 
+				href={localizeHref(`/blog/${post.slug}`)} 
+				class="group col-span-12 flex flex-col bg-background transition-colors hover:bg-card md:col-span-6 lg:col-span-4"
+			>
 				<!-- Image placeholder -->
 				<div class="aspect-video border-b border-border bg-card">
 					<div class="flex h-full items-center justify-center">
@@ -146,50 +156,52 @@
 					</div>
 				</div>
 				
-				<div class="flex flex-1 flex-col p-4">
+				<div class="flex flex-1 flex-col p-6">
 					<div class="flex items-center gap-3 text-xs">
 						<span class="font-mono uppercase text-primary">{post.category}</span>
 						<span class="font-mono text-muted-foreground">{formatDate(post.date)}</span>
 						<span class="font-mono text-muted-foreground">{post.readTime}</span>
 					</div>
 					
-					<h2 class="font-ui mt-2 text-sm font-semibold transition-colors group-hover:text-primary">
+					<h2 class="font-ui mt-3 text-base font-semibold transition-colors group-hover:text-primary">
 						{post.title}
 					</h2>
-					<p class="font-body mt-1 flex-1 text-xs text-muted-foreground">{post.excerpt}</p>
+					<p class="font-body mt-2 flex-1 text-sm text-muted-foreground">{post.excerpt}</p>
 					
-					<div class="font-mono mt-3 flex items-center gap-1 text-xs text-primary">
+					<div class="font-mono mt-4 flex items-center gap-1 text-xs text-primary">
 						{m.blog_read_more()}
 						<ChevronRight class="h-3 w-3 transition-transform group-hover:translate-x-1" />
 					</div>
 				</div>
 			</a>
 		{:else}
-			<div class="col-span-full bg-background p-8">
+			<div class="col-span-12 flex min-h-[40vh] items-center justify-center bg-background p-8">
 				<p class="font-body text-center text-muted-foreground">No posts found in this category.</p>
 			</div>
 		{/each}
 	</div>
 </section>
 
-<!-- Newsletter CTA -->
-<section class="border-b border-border">
-	<div class="grid gap-px bg-border lg:grid-cols-2" use:scrollAnimate={{ animation: 'scale' }}>
-		<div class="bg-background p-4 md:p-6 lg:p-8">
-			<p class="font-mono text-xs tracking-widest text-primary">// NEWSLETTER</p>
-			<h2 class="font-display mt-2 text-2xl font-bold uppercase md:text-3xl">STAY UPDATED</h2>
-			<p class="font-body mt-2 text-sm text-muted-foreground">Get notified when we publish new articles.</p>
+<!-- Newsletter CTA - Tall Section -->
+<section class="min-h-[50vh] border-b border-border">
+	<div class="grid h-full grid-cols-12 gap-px bg-border">
+		<div class="col-span-12 flex flex-col justify-center bg-background p-8 lg:col-span-6 lg:p-12">
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">STAY INFORMED</span>
+			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl lg:text-5xl">NEWSLETTER</h2>
+			<p class="font-body mt-4 max-w-md text-muted-foreground">Get notified when we publish new articles and insights.</p>
 		</div>
-		<div class="flex items-center gap-2 bg-card p-4 md:p-6 lg:p-8">
-			<input 
-				type="email" 
-				placeholder="YOUR@EMAIL.COM"
-				class="font-mono h-10 flex-1 border border-border bg-background px-3 text-xs uppercase tracking-wider placeholder:text-muted-foreground focus:border-primary focus:outline-none"
-			/>
-			<Button class="font-ui shrink-0 uppercase">
-				SUBSCRIBE
-				<ArrowRight class="ml-2 h-4 w-4" />
-			</Button>
+		<div class="col-span-12 flex flex-col justify-center bg-card p-8 lg:col-span-6 lg:p-12">
+			<div class="flex flex-col gap-4 sm:flex-row">
+				<input 
+					type="email" 
+					placeholder="YOUR@EMAIL.COM"
+					class="font-mono h-12 flex-1 border border-border bg-background px-4 text-xs uppercase tracking-wider placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+				/>
+				<Button class="font-ui h-12 shrink-0 px-8 uppercase tracking-wider">
+					SUBSCRIBE
+					<ArrowRight class="ml-2 h-4 w-4" />
+				</Button>
+			</div>
 		</div>
 	</div>
 </section>

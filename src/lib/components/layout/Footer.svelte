@@ -32,27 +32,23 @@
 </script>
 
 <footer class="border-t border-border bg-background">
-	<!-- Main Footer Grid -->
+	<!-- Main Footer Grid - 12 column edge to edge -->
 	<div class="grid grid-cols-12 gap-px bg-border">
-		<!-- Brand Column -->
-		<div class="col-span-12 bg-background p-6 md:col-span-6 lg:col-span-4 lg:p-8">
-			<div class="flex items-center gap-2">
-				<span class="font-mono text-xs text-primary">//</span>
-				<span class="font-display text-lg font-black tracking-widest">MOSTLYWHAT</span>
-			</div>
-			<p class="font-mono mt-1 text-xs tracking-wider text-muted-foreground">SYSTEMS</p>
+		<!-- Brand Column - 3 cols -->
+		<div class="col-span-12 bg-background p-6 md:col-span-6 lg:col-span-3 lg:p-8">
+			<span class="font-display text-lg font-black tracking-wider">MOSTLYWHAT SYSTEMS</span>
 			<p class="font-body mt-4 text-sm text-muted-foreground">
 				{m.footer_tagline()}
 			</p>
 			
 			<!-- Social Links -->
-			<div class="mt-6 flex gap-px bg-border">
+			<div class="mt-6 grid grid-cols-3 gap-px bg-border">
 				{#each social as { href, label, fullLabel, icon: Icon }}
 					<a
 						{href}
 						target="_blank"
 						rel="noopener noreferrer"
-						class="group flex flex-1 flex-col items-center gap-1 bg-card py-3 transition-colors hover:bg-primary/10"
+						class="group flex flex-col items-center gap-1 bg-card py-3 transition-colors hover:bg-primary/10"
 						aria-label={fullLabel}
 					>
 						<Icon class="h-4 w-4 text-muted-foreground group-hover:text-primary" />
@@ -62,9 +58,9 @@
 			</div>
 		</div>
 
-		<!-- Navigation Columns -->
-		<div class="col-span-4 bg-background p-6 md:col-span-2 lg:p-8">
-			<h3 class="font-mono text-[10px] tracking-widest text-primary">// NAVIGATE</h3>
+		<!-- Navigation Columns - each 3 cols on desktop -->
+		<div class="col-span-4 bg-background p-6 md:col-span-2 lg:col-span-3 lg:p-8">
+			<h3 class="font-mono text-[10px] tracking-widest text-muted-foreground">NAVIGATE</h3>
 			<ul class="mt-4 space-y-2">
 				{#each navigation.company as { href, label }}
 					<li>
@@ -79,8 +75,8 @@
 			</ul>
 		</div>
 
-		<div class="col-span-4 bg-background p-6 md:col-span-2 lg:p-8">
-			<h3 class="font-mono text-[10px] tracking-widest text-primary">// RESOURCES</h3>
+		<div class="col-span-4 bg-background p-6 md:col-span-2 lg:col-span-3 lg:p-8">
+			<h3 class="font-mono text-[10px] tracking-widest text-muted-foreground">RESOURCES</h3>
 			<ul class="mt-4 space-y-2">
 				{#each navigation.resources as { href, label }}
 					<li>
@@ -95,8 +91,8 @@
 			</ul>
 		</div>
 
-		<div class="col-span-4 bg-background p-6 md:col-span-2 lg:p-8">
-			<h3 class="font-mono text-[10px] tracking-widest text-primary">// LEGAL</h3>
+		<div class="col-span-4 bg-background p-6 md:col-span-2 lg:col-span-3 lg:p-8">
+			<h3 class="font-mono text-[10px] tracking-widest text-muted-foreground">LEGAL</h3>
 			<ul class="mt-4 space-y-2">
 				{#each navigation.legal as { href, label }}
 					<li>
@@ -112,14 +108,14 @@
 		</div>
 	</div>
 
-	<!-- Bottom Bar -->
+	<!-- Bottom Bar - 12 column -->
 	<div class="grid grid-cols-12 gap-px border-t border-border bg-border">
-		<div class="col-span-12 flex flex-col items-center justify-between gap-2 bg-background px-6 py-4 sm:flex-row md:col-span-8">
+		<div class="col-span-12 flex items-center justify-between bg-background px-6 py-4 lg:col-span-9">
 			<p class="font-mono text-[10px] tracking-wider text-muted-foreground">
-				© 2018-{currentYear} MOSTLYWHAT SYSTEMS. {m.footer_rights().toUpperCase()}
+				© 2018—{currentYear} MOSTLYWHAT SYSTEMS. {m.footer_rights().toUpperCase()}
 			</p>
 		</div>
-		<div class="col-span-12 flex items-center justify-center bg-card px-6 py-4 md:col-span-4">
+		<div class="col-span-12 flex items-center justify-center bg-card px-6 py-4 lg:col-span-3">
 			<a
 				href={localizeHref('/contact')}
 				class="font-ui flex items-center gap-2 text-xs tracking-widest text-primary transition-colors hover:text-primary/80"

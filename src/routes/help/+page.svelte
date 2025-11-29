@@ -12,6 +12,12 @@
 	let searchQuery = $state('');
 	let selectedCategory = $state<string | null>(null);
 
+	const stats = [
+		{ value: '50+', label: 'ARTICLES' },
+		{ value: '6', label: 'CATEGORIES' },
+		{ value: '24H', label: 'RESPONSE' }
+	];
+
 	// Help categories
 	const categories = [
 		{ id: 'getting-started', icon: Zap, title: 'GETTING STARTED', desc: 'New to MostlyWhat? Start here', count: 8 },
@@ -138,8 +144,8 @@
 	<meta name="description" content="Find answers to common questions about working with MostlyWhat Systems." />
 </svelte:head>
 
-<!-- Hero Section -->
-<section class="relative flex min-h-[calc(50dvh-4rem)] flex-col">
+<!-- Hero Section - Full Viewport -->
+<section class="relative flex h-[calc(100dvh-4rem)] flex-col border-b border-border">
 	<!-- Grid Background -->
 	<div class="pointer-events-none absolute inset-0 -z-10">
 		<div class="absolute inset-0 bg-gradient-to-br from-background via-background to-primary/5"></div>
@@ -147,11 +153,11 @@
 	</div>
 
 	<!-- Hero Content -->
-	<div class="flex flex-1 flex-col justify-end p-4 pb-8 md:p-6 lg:p-8" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
+	<div class="flex flex-1 flex-col justify-end px-4 pb-8 md:px-6 lg:px-8" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
 		<div class="grid grid-cols-12 gap-4">
 			<div class="col-span-12 lg:col-span-8">
-				<p class="font-mono text-xs tracking-widest text-primary">// HELP CENTER</p>
-				<h1 class="font-display mt-4 text-4xl font-black uppercase leading-[0.9] tracking-tight md:text-6xl lg:text-7xl">
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">KNOWLEDGE BASE</span>
+				<h1 class="font-display mt-4 text-5xl font-black uppercase leading-[0.9] tracking-tight md:text-7xl lg:text-8xl">
 					HOW CAN WE HELP?
 				</h1>
 			</div>
@@ -174,6 +180,16 @@
 				class="font-body h-12 pl-12 text-base"
 			/>
 		</div>
+	</div>
+
+	<!-- Stats Bar -->
+	<div class="grid grid-cols-12 gap-px border-t border-border bg-border">
+		{#each stats as { value, label }}
+			<div class="col-span-4 bg-card/80 p-4 backdrop-blur-sm">
+				<span class="font-display text-lg font-bold text-primary md:text-2xl">{value}</span>
+				<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
+			</div>
+		{/each}
 	</div>
 </section>
 
@@ -200,9 +216,11 @@
 	<div class="grid grid-cols-12 gap-px bg-border">
 		<!-- Sidebar -->
 		<div class="col-span-12 bg-background p-4 md:p-6 lg:col-span-3 lg:p-8" use:scrollAnimate={{ animation: 'fade' }}>
-			<p class="font-mono text-[10px] tracking-widest text-primary">// {selectedCategory ? categories.find(c => c.id === selectedCategory)?.title : 'ALL ARTICLES'}</p>
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">
+				{selectedCategory ? 'FILTERED BY' : 'SHOWING'}
+			</span>
 			<h2 class="font-display mt-2 text-2xl font-bold uppercase">
-				{selectedCategory ? 'BROWSE' : 'POPULAR'}
+				{selectedCategory ? categories.find(c => c.id === selectedCategory)?.title : 'POPULAR'}
 			</h2>
 			
 			{#if selectedCategory}
@@ -213,7 +231,7 @@
 
 			<!-- Quick Links -->
 			<div class="mt-8">
-				<p class="font-mono text-[10px] tracking-widest text-muted-foreground">// QUICK LINKS</p>
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">QUICK LINKS</span>
 				<div class="mt-3 space-y-1">
 					<a href={localizeHref('/contact')} class="font-ui flex items-center gap-2 text-xs tracking-wider text-muted-foreground hover:text-primary">
 						<MessageSquare class="h-3.5 w-3.5" />
@@ -264,8 +282,8 @@
 <!-- CTA Section -->
 <section class="border-b border-border">
 	<div class="grid grid-cols-1 gap-px bg-border lg:grid-cols-2" use:scrollAnimate={{ animation: 'scale' }}>
-		<div class="bg-background p-4 md:p-8 lg:p-12">
-			<p class="font-mono text-[10px] tracking-widest text-primary">// STILL NEED HELP?</p>
+		<div class="bg-background p-6 md:p-8 lg:p-12">
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">STILL NEED HELP?</span>
 			<h2 class="font-display mt-4 text-3xl font-bold uppercase">CONTACT OUR TEAM</h2>
 			<p class="font-body mt-4 text-muted-foreground">
 				Can't find what you're looking for? Our team is here to help.
@@ -275,23 +293,26 @@
 					GET IN TOUCH
 					<ArrowRight class="ml-2 h-4 w-4" />
 				</Button>
+				<Button href={localizeHref('/support')} variant="outline" class="font-ui tracking-wider">
+					SUPPORT
+				</Button>
 			</div>
 		</div>
 		<div class="grid grid-cols-2 gap-px bg-border">
 			<div class="bg-card p-4 md:p-6">
-				<p class="font-display text-2xl font-bold text-primary">24H</p>
+				<span class="font-display text-2xl font-bold text-primary">24H</span>
 				<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">AVG. RESPONSE</p>
 			</div>
 			<div class="bg-card p-4 md:p-6">
-				<p class="font-display text-2xl font-bold text-primary">100%</p>
+				<span class="font-display text-2xl font-bold text-primary">100%</span>
 				<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">SATISFACTION</p>
 			</div>
 			<div class="bg-card p-4 md:p-6">
-				<p class="font-display text-2xl font-bold text-primary">50+</p>
+				<span class="font-display text-2xl font-bold text-primary">50+</span>
 				<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">HELP ARTICLES</p>
 			</div>
 			<div class="bg-card p-4 md:p-6">
-				<p class="font-display text-2xl font-bold text-primary">6</p>
+				<span class="font-display text-2xl font-bold text-primary">6</span>
 				<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">CATEGORIES</p>
 			</div>
 		</div>

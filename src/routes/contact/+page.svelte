@@ -141,7 +141,7 @@
 	<div class="flex flex-1 flex-col justify-end p-4 pb-8 md:p-6 lg:p-8" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
 		<div class="grid grid-cols-12 gap-4">
 			<div class="col-span-12 lg:col-span-8">
-				<p class="font-mono text-xs tracking-widest text-primary">// CONTACT</p>
+				<span class="font-mono text-xs tracking-widest text-muted-foreground">CONTACT</span>
 				<h1 class="font-display mt-4 text-5xl font-black uppercase leading-[0.9] tracking-tight md:text-7xl lg:text-8xl">
 					{m.contact_title()}
 				</h1>
@@ -206,7 +206,7 @@
 					</div>
 				{:else}
 					<div class="mb-6">
-						<p class="font-mono text-[10px] tracking-widest text-primary">// {selectedTopic?.toUpperCase()} FORM</p>
+						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">{selectedTopic?.toUpperCase()} FORM</span>
 						<h2 class="font-display mt-2 text-2xl font-bold uppercase">TELL US ABOUT YOUR PROJECT</h2>
 					</div>
 					
@@ -247,7 +247,7 @@
 
 			<!-- Contact Info Sidebar -->
 			<div class="col-span-12 bg-card p-4 md:p-6 lg:col-span-5 lg:p-8">
-				<p class="font-mono text-[10px] tracking-widest text-primary">// CONTACT INFO</p>
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTACT INFO</span>
 				
 				<div class="mt-6 space-y-4">
 					{#each contactInfo as { icon: Icon, label, value, href }}
@@ -269,7 +269,7 @@
 
 				<!-- Social Links -->
 				<div class="mt-6">
-					<p class="font-mono text-[10px] tracking-widest text-muted-foreground">// CONNECT</p>
+					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONNECT</span>
 					<div class="mt-3 grid grid-cols-3 gap-px bg-border">
 						<a href="https://github.com/MostlyWhat" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center gap-1 bg-background py-3 transition-colors hover:bg-primary/10">
 							<span class="font-mono text-xs text-muted-foreground">GH</span>
@@ -292,7 +292,7 @@
 	<div class="grid grid-cols-1 gap-px bg-border lg:grid-cols-2">
 		<!-- FAQ Info (Left) -->
 		<div class="bg-background p-4 md:p-6 lg:p-8" use:scrollAnimate={{ animation: 'fade' }}>
-			<p class="font-mono text-[10px] tracking-widest text-primary">// FAQ</p>
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">FAQ</span>
 			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">COMMON QUESTIONS</h2>
 			<p class="font-body mt-4 text-muted-foreground">
 				Find answers to frequently asked questions about our process, pricing, and services. 
@@ -338,7 +338,7 @@
 <section class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'scale' }}>
 		<div class="col-span-12 bg-background p-4 md:col-span-8 md:p-8 lg:p-12">
-			<p class="font-mono text-[10px] tracking-widest text-primary">// READY TO START?</p>
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">READY TO START?</span>
 			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">LET'S BUILD SOMETHING GREAT</h2>
 			<p class="font-body mt-4 max-w-lg text-muted-foreground">
 				Whether you have a detailed brief or just a rough idea, we'd love to hear about it.

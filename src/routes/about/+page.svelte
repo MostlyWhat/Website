@@ -41,7 +41,7 @@
 	<div class="flex flex-1 flex-col justify-end p-4 pb-8 md:p-6 lg:p-8" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
 		<div class="grid grid-cols-12 gap-4">
 			<div class="col-span-12 lg:col-span-8">
-				<p class="font-mono text-xs tracking-widest text-primary">// ABOUT</p>
+				<span class="font-mono text-xs tracking-widest text-muted-foreground">ABOUT</span>
 				<h1 class="font-display mt-4 text-5xl font-black uppercase leading-[0.9] tracking-tight md:text-7xl lg:text-8xl">
 					{m.about_title()}
 				</h1>
@@ -77,7 +77,7 @@
 <section class="border-b border-border">
 	<div class="grid grid-cols-1 gap-px bg-border lg:grid-cols-2">
 		<div class="bg-background p-4 md:p-6 lg:p-8" use:scrollAnimate={{ animation: 'fade' }}>
-			<p class="font-mono text-[10px] tracking-widest text-primary">// STORY</p>
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">STORY</span>
 			<h2 class="font-display mt-4 text-2xl font-bold uppercase md:text-3xl">OUR ORIGIN</h2>
 			<div class="font-body mt-4 space-y-3 text-sm text-muted-foreground">
 				<p>MostlyWhat Systems started as a solo venture—a desire to build websites and products that felt different. Not just functional, but intentional.</p>
@@ -103,7 +103,7 @@
 <section class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
 		<div class="col-span-12 bg-background p-4 md:p-6 lg:col-span-3 lg:p-8" use:scrollAnimate={{ animation: 'fade' }}>
-			<p class="font-mono text-[10px] tracking-widest text-primary">// VALUES</p>
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">VALUES</span>
 			<h2 class="font-display mt-4 text-2xl font-bold uppercase md:text-3xl">WHAT WE STAND FOR</h2>
 		</div>
 		<div class="col-span-12 grid grid-cols-2 gap-px bg-border lg:col-span-9 lg:grid-cols-4" use:scrollAnimate={{ animation: 'stagger' }}>
@@ -124,7 +124,7 @@
 <section class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
 		<div class="col-span-12 bg-background p-4 md:p-6 lg:col-span-3 lg:p-8" use:scrollAnimate={{ animation: 'fade' }}>
-			<p class="font-mono text-[10px] tracking-widest text-primary">// TECHNOLOGY</p>
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">TECHNOLOGY</span>
 			<h2 class="font-display mt-4 text-2xl font-bold uppercase md:text-3xl">OUR STACK</h2>
 		</div>
 		<div class="col-span-12 grid grid-cols-2 gap-px bg-border lg:col-span-9 lg:grid-cols-4" use:scrollAnimate={{ animation: 'stagger' }}>
@@ -149,7 +149,7 @@
 <section class="border-b border-border">
 	<div class="grid grid-cols-1 gap-px bg-border lg:grid-cols-2" use:scrollAnimate={{ animation: 'fade' }}>
 		<div class="bg-background p-4 md:p-6 lg:p-8">
-			<p class="font-mono text-[10px] tracking-widest text-primary">// TEAM</p>
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">TEAM</span>
 			<h2 class="font-display mt-4 text-2xl font-bold uppercase md:text-3xl">THE PEOPLE</h2>
 		</div>
 		<div class="bg-background p-4 md:p-6 lg:p-8">
@@ -171,7 +171,7 @@
 <section class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'scale' }}>
 		<div class="col-span-12 bg-background p-4 md:col-span-8 md:p-8 lg:p-12">
-			<p class="font-mono text-[10px] tracking-widest text-primary">// READY?</p>
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">READY?</span>
 			<h2 class="font-display mt-4 text-2xl font-bold uppercase md:text-3xl">READY TO WORK TOGETHER?</h2>
 			<p class="font-body mt-2 text-sm text-muted-foreground">Let's build something great. Get in touch to discuss your project.</p>
 			<Button href={localizeHref('/contact')} class="font-ui mt-6 tracking-wider">

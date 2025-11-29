@@ -2,7 +2,7 @@
 	import { page } from '$app/state';
 	import * as m from '$lib/paraglide/messages';
 	import { getLocale, locales, localizeHref, type Locale } from '$lib/paraglide/runtime';
-	import { Menu, X, ArrowUpRight, Globe, ChevronDown } from '@lucide/svelte';
+	import { Menu, X, ArrowUpRight, Globe, ChevronDown, ChevronRight } from '@lucide/svelte';
 
 	let mobileMenuOpen = $state(false);
 	let langMenuOpen = $state(false);
@@ -50,32 +50,35 @@
 
 	const currentLocale = $derived(getLocale());
 	
-	// Get current path for breadcrumb display
-	const currentPath = $derived(() => {
+	// Get current path segments for breadcrumb
+	const breadcrumbs = $derived(() => {
 		const pathname = page.url.pathname.replace(/^\/(en|th)/, '') || '/';
-		if (pathname === '/') return null;
-		const segment = pathname.split('/')[1];
-		return segment ? segment.toUpperCase() : null;
+		if (pathname === '/') return [];
+		const segments = pathname.split('/').filter(Boolean);
+		return segments.map((seg, i) => ({
+			label: seg.toUpperCase().replace(/-/g, ' '),
+			href: '/' + segments.slice(0, i + 1).join('/'),
+			isLast: i === segments.length - 1
+		}));
 	});
 </script>
 
 <header class="vt-nav fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/95 backdrop-blur-sm">
-	<!-- Main header row -->
-	<div class="grid h-16 grid-cols-12 items-stretch border-b border-border">
+	<!-- Main header row - edge to edge grid -->
+	<div class="grid h-16 grid-cols-12 border-b border-border">
 		<!-- Logo Section -->
-		<div class="col-span-4 flex items-center border-r border-border px-4 lg:col-span-3">
-			<a href="/" class="flex items-center gap-2" onclick={closeMobileMenu}>
-				<span class="font-mono text-xs text-primary">//</span>
-				<span class="font-display text-sm font-black tracking-widest lg:text-base">MOSTLYWHAT</span>
+		<div class="col-span-6 flex items-center border-r border-border px-4 sm:col-span-4 lg:col-span-3">
+			<a href={localizeHref('/')} class="flex items-center gap-3" onclick={closeMobileMenu}>
+				<span class="font-display text-sm font-black tracking-wider lg:text-base">MOSTLYWHAT SYSTEMS</span>
 			</a>
 		</div>
 
-		<!-- Desktop Navigation - Center -->
-		<nav class="col-span-6 hidden items-stretch lg:flex">
+		<!-- Desktop Navigation - centered grid -->
+		<nav class="col-span-6 hidden grid-cols-4 lg:grid">
 			{#each navigation as { href, key }}
 				<a
 					href={localizeHref(href)}
-					class="font-ui flex items-center border-r border-border px-6 text-xs tracking-widest transition-colors {isActive(href)
+					class="font-ui flex items-center justify-center border-r border-border text-xs tracking-widest transition-colors {isActive(href)
 						? 'bg-primary/10 text-primary'
 						: 'text-muted-foreground hover:bg-card hover:text-foreground'}"
 				>
@@ -85,12 +88,12 @@
 		</nav>
 
 		<!-- Right Controls -->
-		<div class="col-span-8 flex items-stretch justify-end lg:col-span-3">
+		<div class="col-span-6 flex items-stretch sm:col-span-8 lg:col-span-3">
 			<!-- Language Switcher -->
-			<div class="lang-menu relative flex items-stretch border-l border-border">
+			<div class="lang-menu relative flex flex-1 items-stretch border-l border-border">
 				<button
 					type="button"
-					class="font-mono flex items-center gap-2 px-4 text-xs tracking-wider text-muted-foreground transition-colors hover:text-foreground"
+					class="font-mono flex w-full items-center justify-center gap-2 px-4 text-xs tracking-wider text-muted-foreground transition-colors hover:text-foreground"
 					onclick={() => (langMenuOpen = !langMenuOpen)}
 					aria-expanded={langMenuOpen}
 				>
@@ -99,8 +102,8 @@
 					<ChevronDown class="h-3 w-3 transition-transform {langMenuOpen ? 'rotate-180' : ''}" />
 				</button>
 
-							{#if langMenuOpen}
-					<div class="absolute right-0 top-full z-50 border border-border bg-background shadow-lg">
+				{#if langMenuOpen}
+					<div class="absolute right-0 top-full z-50 w-full min-w-[140px] border border-t-0 border-border bg-background shadow-lg">
 						{#each locales as lang}
 							{@const targetLocale = lang as Locale}
 							<a
@@ -121,7 +124,7 @@
 			<!-- Contact CTA -->
 			<a
 				href={localizeHref('/contact')}
-				class="font-ui hidden items-center gap-2 border-l border-border bg-primary px-6 text-xs tracking-widest text-primary-foreground transition-colors hover:bg-primary/90 sm:flex"
+				class="font-ui hidden items-center justify-center gap-2 border-l border-border bg-primary px-6 text-xs tracking-widest text-primary-foreground transition-colors hover:bg-primary/90 sm:flex"
 			>
 				CONTACT
 				<ArrowUpRight class="h-3.5 w-3.5" />
@@ -144,12 +147,20 @@
 		</div>
 	</div>
 
-	<!-- Breadcrumb Bar (shows current section) -->
-	{#if currentPath()}
+	<!-- Breadcrumb Bar -->
+	{#if breadcrumbs().length > 0}
 		<div class="flex h-8 items-center border-b border-border bg-card/50 px-4">
-			<span class="font-mono text-[10px] tracking-wider text-muted-foreground">
-				<span class="text-primary">//</span> HOME / <span class="text-foreground">{currentPath()}</span>
-			</span>
+			<nav class="font-mono flex items-center gap-1 text-[10px] tracking-wider">
+				<a href={localizeHref('/')} class="text-muted-foreground transition-colors hover:text-primary">HOME</a>
+				{#each breadcrumbs() as { label, href, isLast }}
+					<ChevronRight class="h-3 w-3 text-muted-foreground/50" />
+					{#if isLast}
+						<span class="text-foreground">{label}</span>
+					{:else}
+						<a href={localizeHref(href)} class="text-muted-foreground transition-colors hover:text-primary">{label}</a>
+					{/if}
+				{/each}
+			</nav>
 		</div>
 	{/if}
 
@@ -181,5 +192,5 @@
 	{/if}
 </header>
 
-<!-- Spacer for fixed header (adjusts based on breadcrumb visibility) -->
-<div class="h-16" class:h-24={currentPath()}></div>
+<!-- Spacer for fixed header -->
+<div class="h-16" class:h-24={breadcrumbs().length > 0}></div>

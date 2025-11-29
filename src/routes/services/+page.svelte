@@ -38,7 +38,7 @@
 	<div class="flex flex-1 flex-col justify-end p-4 pb-8 md:p-6 lg:p-8" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
 		<div class="grid grid-cols-12 gap-4">
 			<div class="col-span-12 lg:col-span-8">
-				<p class="font-mono text-xs tracking-widest text-primary">// SERVICES</p>
+				<span class="font-mono text-xs tracking-widest text-muted-foreground">SERVICES</span>
 				<h1 class="font-display mt-4 text-5xl font-black uppercase leading-[0.9] tracking-tight md:text-7xl lg:text-8xl">
 					{m.services_title()}
 				</h1>
@@ -96,14 +96,14 @@
 <section class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
 		<div class="col-span-12 bg-background p-4 md:p-6 lg:col-span-3 lg:p-8" use:scrollAnimate={{ animation: 'fade' }}>
-			<p class="font-mono text-[10px] tracking-widest text-primary">// ENGAGEMENT</p>
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">ENGAGEMENT</span>
 			<h2 class="font-display mt-4 text-2xl font-bold uppercase md:text-3xl">HOW WE WORK</h2>
 		</div>
 		<div class="col-span-12 grid grid-cols-1 gap-px bg-border md:grid-cols-3 lg:col-span-9" use:scrollAnimate={{ animation: 'stagger' }}>
 			{#each packages as pkg}
 				<div class="stagger-children flex flex-col {pkg.featured ? 'bg-primary/10' : 'bg-background'} p-4 md:p-6">
 					{#if pkg.featured}
-						<span class="font-mono mb-2 text-[10px] tracking-widest text-primary">// POPULAR</span>
+						<span class="font-mono mb-2 text-[10px] tracking-widest text-muted-foreground">POPULAR</span>
 					{/if}
 					<h3 class="font-display text-xl">{pkg.name}</h3>
 					<div class="mt-1">
@@ -129,7 +129,7 @@
 <section class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
 		<div class="col-span-12 bg-background p-4 md:p-6 lg:col-span-3 lg:p-8" use:scrollAnimate={{ animation: 'fade' }}>
-			<p class="font-mono text-[10px] tracking-widest text-primary">// PROCESS</p>
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">PROCESS</span>
 			<h2 class="font-display mt-4 text-2xl font-bold uppercase md:text-3xl">{m.process_title()}</h2>
 		</div>
 		<div class="col-span-12 grid grid-cols-2 gap-px bg-border lg:col-span-9 lg:grid-cols-4" use:scrollAnimate={{ animation: 'stagger' }}>
@@ -161,7 +161,7 @@
 <section class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'scale' }}>
 		<div class="col-span-12 bg-background p-4 md:col-span-8 md:p-8 lg:p-12">
-			<p class="font-mono text-[10px] tracking-widest text-primary">// READY?</p>
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">READY?</span>
 			<h2 class="font-display mt-4 text-2xl font-bold uppercase md:text-3xl">{m.cta_title()}</h2>
 			<p class="font-body mt-2 text-sm text-muted-foreground">{m.cta_subtitle()}</p>
 			<Button href={localizeHref('/contact')} class="font-ui mt-6 tracking-wider">
