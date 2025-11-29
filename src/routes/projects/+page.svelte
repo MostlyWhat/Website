@@ -21,9 +21,9 @@
 	);
 
 	const stats = [
-		{ value: '20+', label: 'Projects Delivered' },
-		{ value: '100%', label: 'Client Satisfaction' },
-		{ value: '5+', label: 'Years Experience' }
+		{ value: '20+', label: 'PROJECTS DELIVERED' },
+		{ value: '100%', label: 'CLIENT SATISFACTION' },
+		{ value: '5+', label: 'YEARS EXPERIENCE' }
 	];
 </script>
 
@@ -33,15 +33,17 @@
 </svelte:head>
 
 <!-- Hero Section - Full Screen -->
-<section class="relative flex min-h-[60vh] flex-col border-b border-border">
+<section class="relative flex min-h-[calc(100dvh-4rem)] flex-col border-b border-border">
+	<!-- Grid Background -->
 	<div class="absolute inset-0 -z-10 bg-gradient-to-br from-background via-background to-primary/5">
-		<div class="absolute inset-0 opacity-10" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
+		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
 	</div>
 
+	<!-- Hero Content -->
 	<div class="flex flex-1 items-end p-4 pb-12 md:p-6 lg:p-8" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
 		<div class="grid w-full gap-4 lg:grid-cols-12">
 			<div class="lg:col-span-8">
-				<p class="font-mono text-xs uppercase tracking-wider text-primary">Portfolio</p>
+				<p class="font-mono text-xs tracking-widest text-primary">// PROJECTS</p>
 				<h1 class="font-display mt-2 text-4xl font-black uppercase leading-[0.9] tracking-tight md:text-6xl lg:text-7xl">
 					{m.projects_title()}
 				</h1>
@@ -50,6 +52,16 @@
 				<p class="font-body text-muted-foreground">{m.projects_subtitle()}</p>
 			</div>
 		</div>
+	</div>
+
+	<!-- Stats Bar -->
+	<div class="grid grid-cols-3 gap-px border-t border-border bg-border">
+		{#each stats as { value, label }}
+			<div class="bg-card/80 p-3 backdrop-blur-sm md:p-4">
+				<span class="font-display text-lg font-bold text-primary md:text-2xl">{value}</span>
+				<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground md:text-xs">{label}</p>
+			</div>
+		{/each}
 	</div>
 
 	<!-- Category Filter -->
@@ -105,32 +117,21 @@
 	</div>
 </section>
 
-<!-- Stats Grid -->
-<section class="border-b border-border">
-	<div class="grid gap-px bg-border md:grid-cols-3" use:scrollAnimate={{ animation: 'stagger' }}>
-		{#each stats as { value, label }}
-			<div class="stagger-children bg-card p-4 md:p-6">
-				<span class="font-display text-4xl font-bold text-primary">{value}</span>
-				<p class="font-mono mt-1 text-xs uppercase tracking-wider text-muted-foreground">{label}</p>
-			</div>
-		{/each}
-	</div>
-</section>
-
 <!-- CTA Section -->
 <section class="border-b border-border">
-	<div class="grid lg:grid-cols-2" use:scrollAnimate={{ animation: 'scale' }}>
-		<div class="p-4 md:p-6 lg:p-8">
-			<h2 class="font-display text-2xl font-bold uppercase md:text-3xl">Have a Project in Mind?</h2>
+	<div class="grid gap-px bg-border lg:grid-cols-2" use:scrollAnimate={{ animation: 'scale' }}>
+		<div class="bg-background p-4 md:p-6 lg:p-8">
+			<p class="font-mono text-xs tracking-widest text-primary">// GET STARTED</p>
+			<h2 class="font-display mt-2 text-2xl font-bold uppercase md:text-3xl">HAVE A PROJECT IN MIND?</h2>
 			<p class="font-body mt-2 text-sm text-muted-foreground">Let's discuss how we can bring your vision to life.</p>
-			<Button href="/contact" class="font-ui mt-4">
+			<Button href="/contact" class="font-ui mt-4 uppercase">
 				{m.cta_button_primary()}
 				<ArrowRight class="ml-2 h-4 w-4" />
 			</Button>
 		</div>
-		<div class="border-t border-border bg-card p-4 md:p-6 lg:border-l lg:border-t-0 lg:p-8">
-			<p class="font-mono text-xs uppercase text-muted-foreground">Get in touch</p>
-			<a href="mailto:hello@mostlywhat.systems" class="font-display mt-1 block text-lg text-primary hover:underline">hello@mostlywhat.systems</a>
+		<div class="flex flex-col justify-center bg-card p-4 md:p-6 lg:p-8">
+			<p class="font-mono text-xs uppercase tracking-widest text-muted-foreground">// CONTACT</p>
+			<a href="mailto:hello@mostlywhat.systems" class="font-display mt-1 block text-lg text-primary hover:underline">HELLO@MOSTLYWHAT.SYSTEMS</a>
 		</div>
 	</div>
 </section>

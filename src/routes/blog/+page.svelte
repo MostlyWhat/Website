@@ -81,18 +81,40 @@
 </svelte:head>
 
 <!-- Hero Section - Full Screen -->
-<section class="relative flex min-h-[60vh] flex-col border-b border-border">
+<section class="relative flex min-h-[calc(100dvh-4rem)] flex-col border-b border-border">
+	<!-- Grid Background -->
 	<div class="absolute inset-0 -z-10 bg-gradient-to-br from-background via-background to-primary/5">
-		<div class="absolute inset-0 opacity-10" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
+		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
 	</div>
 
+	<!-- Hero Content -->
 	<div class="flex flex-1 items-end p-4 pb-12 md:p-6 lg:p-8" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
-		<div class="w-full">
-			<p class="font-mono text-xs uppercase tracking-wider text-primary">Blog</p>
-			<h1 class="font-display mt-2 text-4xl font-black uppercase leading-[0.9] tracking-tight md:text-6xl lg:text-7xl">
-				{m.blog_title()}
-			</h1>
-			<p class="font-body mt-4 max-w-xl text-muted-foreground">{m.blog_subtitle()}</p>
+		<div class="grid w-full gap-4 lg:grid-cols-12">
+			<div class="lg:col-span-8">
+				<p class="font-mono text-xs tracking-widest text-primary">// BLOG</p>
+				<h1 class="font-display mt-2 text-4xl font-black uppercase leading-[0.9] tracking-tight md:text-6xl lg:text-7xl">
+					{m.blog_title()}
+				</h1>
+			</div>
+			<div class="lg:col-span-4 lg:flex lg:flex-col lg:justify-end">
+				<p class="font-body text-muted-foreground">{m.blog_subtitle()}</p>
+			</div>
+		</div>
+	</div>
+
+	<!-- Stats Bar -->
+	<div class="grid grid-cols-3 gap-px border-t border-border bg-border">
+		<div class="bg-card/80 p-3 backdrop-blur-sm md:p-4">
+			<span class="font-display text-lg font-bold text-primary md:text-2xl">{posts.length}</span>
+			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground md:text-xs">ARTICLES</p>
+		</div>
+		<div class="bg-card/80 p-3 backdrop-blur-sm md:p-4">
+			<span class="font-display text-lg font-bold text-primary md:text-2xl">{categories.length - 1}</span>
+			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground md:text-xs">CATEGORIES</p>
+		</div>
+		<div class="bg-card/80 p-3 backdrop-blur-sm md:p-4">
+			<span class="font-display text-lg font-bold text-primary md:text-2xl">WEEKLY</span>
+			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground md:text-xs">UPDATES</p>
 		</div>
 	</div>
 
@@ -152,20 +174,20 @@
 
 <!-- Newsletter CTA -->
 <section class="border-b border-border">
-	<div class="grid lg:grid-cols-2" use:scrollAnimate={{ animation: 'scale' }}>
-		<div class="p-4 md:p-6 lg:p-8">
-			<p class="font-mono text-xs uppercase tracking-wider text-primary">Newsletter</p>
-			<h2 class="font-display mt-2 text-2xl font-bold uppercase md:text-3xl">Stay Updated</h2>
+	<div class="grid gap-px bg-border lg:grid-cols-2" use:scrollAnimate={{ animation: 'scale' }}>
+		<div class="bg-background p-4 md:p-6 lg:p-8">
+			<p class="font-mono text-xs tracking-widest text-primary">// NEWSLETTER</p>
+			<h2 class="font-display mt-2 text-2xl font-bold uppercase md:text-3xl">STAY UPDATED</h2>
 			<p class="font-body mt-2 text-sm text-muted-foreground">Get notified when we publish new articles.</p>
 		</div>
-		<div class="flex items-center gap-2 border-t border-border bg-card p-4 md:p-6 lg:border-l lg:border-t-0 lg:p-8">
+		<div class="flex items-center gap-2 bg-card p-4 md:p-6 lg:p-8">
 			<input 
 				type="email" 
-				placeholder="your@email.com"
-				class="font-body h-10 flex-1 border border-border bg-background px-3 text-sm placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+				placeholder="YOUR@EMAIL.COM"
+				class="font-mono h-10 flex-1 border border-border bg-background px-3 text-xs uppercase tracking-wider placeholder:text-muted-foreground focus:border-primary focus:outline-none"
 			/>
-			<Button class="font-ui shrink-0">
-				Subscribe
+			<Button class="font-ui shrink-0 uppercase">
+				SUBSCRIBE
 				<ArrowRight class="ml-2 h-4 w-4" />
 			</Button>
 		</div>
