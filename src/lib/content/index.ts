@@ -54,7 +54,7 @@ function parseFrontmatter(content: string): { frontmatter: Record<string, unknow
     // Handle different line endings (Windows vs Unix)
     const normalizedContent = content.replace(/\r\n/g, '\n');
     const match = normalizedContent.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
-    
+
     if (!match) {
         return { frontmatter: {}, body: marked.parse(normalizedContent) as string };
     }
@@ -138,7 +138,7 @@ export function loadBlogPosts(): BlogPost[] {
 export function loadBlogPost(slug: string): BlogPost | null {
     const path = `/src/lib/content/blog/${slug}.md`;
     const content = blogModules[path];
-    
+
     if (!content) return null;
 
     const { frontmatter, body } = parseFrontmatter(content);
@@ -180,7 +180,7 @@ export function loadLegalDocs(): LegalDoc[] {
 export function loadLegalDoc(slug: string): LegalDoc | null {
     const path = `/src/lib/content/legal/${slug}.md`;
     const content = legalModules[path];
-    
+
     if (!content) return null;
 
     const { frontmatter, body } = parseFrontmatter(content);
@@ -222,7 +222,7 @@ export function loadProjects(): Project[] {
 export function loadProject(slug: string): Project | null {
     const path = `/src/lib/content/projects/${slug}.md`;
     const content = projectModules[path];
-    
+
     if (!content) return null;
 
     const { frontmatter, body } = parseFrontmatter(content);
@@ -267,7 +267,7 @@ export function loadServices(): Service[] {
 export function loadService(slug: string): Service | null {
     const path = `/src/lib/content/services/${slug}.md`;
     const content = serviceModules[path];
-    
+
     if (!content) return null;
 
     const { frontmatter, body } = parseFrontmatter(content);
