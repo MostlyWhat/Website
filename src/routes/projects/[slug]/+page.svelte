@@ -76,7 +76,7 @@
 		
 		<!-- Project Body -->
 		<article class="col-span-12 bg-background px-6 py-12 md:px-12 lg:col-span-9 lg:px-16 lg:py-16">
-			<div class="prose prose-invert max-w-3xl">
+			<div class="max-w-3xl">
 				{@html project.content}
 			</div>
 		</article>
@@ -84,15 +84,15 @@
 </section>
 
 <!-- More Projects CTA -->
-<section class="min-h-dvh border-b border-border">
-	<div class="grid h-full min-h-dvh grid-cols-12 gap-px bg-border">
-		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-16 md:px-12 lg:col-span-6 lg:px-16">
+<section class="border-b border-border">
+	<div class="grid grid-cols-12 gap-px bg-border">
+		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:px-12 lg:col-span-6 lg:px-16">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">MORE WORK</span>
-			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl lg:text-5xl">EXPLORE MORE PROJECTS</h2>
+			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">EXPLORE MORE PROJECTS</h2>
 			<p class="font-body mt-4 text-muted-foreground">Check out our other case studies and work samples.</p>
 		</div>
-		<div class="col-span-12 flex items-center justify-center bg-card px-6 py-16 md:px-12 lg:col-span-6 lg:px-16">
-			<Button href={localizeHref('/projects')} class="font-ui uppercase tracking-wider">
+		<div class="col-span-12 flex items-center justify-center bg-card px-6 py-12 md:px-12 lg:col-span-6 lg:px-16">
+			<Button href={localizeHref('/projects')} size="lg" class="font-ui uppercase tracking-wider">
 				VIEW ALL PROJECTS
 				<ArrowRight class="ml-2 h-4 w-4" />
 			</Button>

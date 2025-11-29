@@ -49,8 +49,11 @@
 	<!-- Main Footer Grid - 12 column edge to edge -->
 	<div class="grid grid-cols-12 gap-px bg-border">
 		<!-- Brand Column - 3 cols -->
-		<div class="col-span-12 bg-background p-6 md:col-span-6 lg:col-span-3 lg:p-8">
-			<span class="font-display text-lg font-black tracking-wider">MOSTLYWHAT SYSTEMS</span>
+		<div class="col-span-12 bg-background px-6 py-8 md:col-span-6 md:px-12 lg:col-span-3 lg:px-16">
+			<div class="flex items-center gap-2">
+				<span class="font-display text-lg font-black tracking-wider text-primary">MOSTLYWHAT</span>
+				<span class="font-display text-lg font-black tracking-wider text-foreground">SYSTEMS</span>
+			</div>
 			<p class="font-body mt-4 text-sm text-muted-foreground">
 				{m.footer_tagline()}
 			</p>
@@ -73,7 +76,7 @@
 		</div>
 
 		<!-- Navigation Columns - each 3 cols on desktop -->
-		<div class="col-span-4 bg-background p-6 md:col-span-2 lg:col-span-3 lg:p-8">
+		<div class="col-span-4 bg-background px-4 py-6 md:col-span-2 md:px-6 lg:col-span-3 lg:px-8">
 			<h3 class="font-mono text-[10px] tracking-widest text-muted-foreground">NAVIGATE</h3>
 			<ul class="mt-4 space-y-2">
 				{#each navigation.company as { href, label } (href)}
@@ -89,7 +92,7 @@
 			</ul>
 		</div>
 
-		<div class="col-span-4 bg-background p-6 md:col-span-2 lg:col-span-3 lg:p-8">
+		<div class="col-span-4 bg-background px-4 py-6 md:col-span-2 md:px-6 lg:col-span-3 lg:px-8">
 			<h3 class="font-mono text-[10px] tracking-widest text-muted-foreground">RESOURCES</h3>
 			<ul class="mt-4 space-y-2">
 				{#each navigation.resources as { href, label } (href)}
@@ -105,7 +108,7 @@
 			</ul>
 		</div>
 
-		<div class="col-span-4 bg-background p-6 md:col-span-2 lg:col-span-3 lg:p-8">
+		<div class="col-span-4 bg-background px-4 py-6 md:col-span-2 md:px-6 lg:col-span-3 lg:px-8">
 			<h3 class="font-mono text-[10px] tracking-widest text-muted-foreground">LEGAL</h3>
 			<ul class="mt-4 space-y-2">
 				{#each navigation.legal as { href, label } (href)}
@@ -124,7 +127,7 @@
 
 	<!-- Bottom Bar - 12 column -->
 	<div class="grid grid-cols-12 gap-px border-t border-border bg-border">
-		<div class="col-span-12 flex items-center justify-between bg-background px-6 py-4 lg:col-span-9">
+		<div class="col-span-12 flex items-center justify-between bg-background px-6 py-4 md:px-12 lg:col-span-9 lg:px-16">
 			<p class="font-mono text-[10px] tracking-wider text-muted-foreground">
 				© 2018—{currentYear} MOSTLYWHAT SYSTEMS. {m.footer_rights().toUpperCase()}
 			</p>

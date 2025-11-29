@@ -204,12 +204,12 @@
 			<button
 				type="button"
 				onclick={() => selectedCategory = selectedCategory === id ? null : id}
-				class="group col-span-6 flex flex-col bg-background px-6 py-5 text-left transition-colors hover:bg-card md:col-span-4 md:px-12 lg:col-span-2 lg:px-16 {selectedCategory === id ? 'bg-primary/10 ring-1 ring-primary' : ''}"
+				class="group col-span-6 flex flex-col bg-background px-6 py-6 text-left transition-colors hover:bg-card md:col-span-4 md:px-8 lg:col-span-2 lg:px-6 {selectedCategory === id ? 'bg-primary/10 ring-1 ring-primary' : ''}"
 			>
-				<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">
-					<Icon class="h-5 w-5 text-primary" />
+				<div class="flex h-10 w-10 items-center justify-center border border-border bg-card">
+					<Icon class="h-4 w-4 text-primary" />
 				</div>
-				<h3 class="font-ui mt-4 text-[11px] font-semibold tracking-wider">{title}</h3>
+				<h3 class="font-ui mt-3 text-[11px] font-semibold tracking-wider">{title}</h3>
 				<p class="font-body mt-1 text-[10px] text-muted-foreground">{desc}</p>
 				<span class="font-mono mt-2 text-[10px] tracking-wider text-muted-foreground">{count} ARTICLES</span>
 			</button>
@@ -218,10 +218,10 @@
 </section>
 
 <!-- Articles Section -->
-<section class="min-h-[80vh] border-b border-border">
+<section class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
 		<!-- Sidebar -->
-		<div class="col-span-12 bg-background px-6 py-10 md:px-12 lg:col-span-3 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
+		<div class="col-span-12 bg-background px-6 py-8 md:px-12 lg:col-span-3 lg:px-16 lg:py-10" use:scrollAnimate={{ animation: 'fade' }}>
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">
 				{selectedCategory ? 'FILTERED BY' : 'SHOWING'}
 			</span>
@@ -236,9 +236,9 @@
 			{/if}
 
 			<!-- Quick Links -->
-			<div class="mt-8">
+			<div class="mt-6">
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">QUICK LINKS</span>
-				<div class="mt-3 space-y-1">
+				<div class="mt-3 space-y-2">
 					<a href={localizeHref('/contact')} class="font-ui flex items-center gap-2 text-xs tracking-wider text-muted-foreground hover:text-primary">
 						<MessageSquare class="h-3.5 w-3.5" />
 						CONTACT SUPPORT
@@ -286,38 +286,38 @@
 </section>
 
 <!-- CTA Section -->
-<section class="min-h-[60vh] border-b border-border">
-	<div class="grid h-full min-h-[60vh] grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'scale' }}>
+<section class="border-b border-border">
+	<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'scale' }}>
 		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:px-12 lg:col-span-6 lg:px-16">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">STILL NEED HELP?</span>
-			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl lg:text-5xl">CONTACT OUR TEAM</h2>
+			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">CONTACT OUR TEAM</h2>
 			<p class="font-body mt-4 text-muted-foreground">
 				Can't find what you're looking for? Our team is here to help.
 			</p>
-			<div class="mt-6 flex gap-4">
-				<Button href={localizeHref('/contact')} size="xl" class="font-ui tracking-wider">
+			<div class="mt-6 flex flex-wrap gap-4">
+				<Button href={localizeHref('/contact')} size="lg" class="font-ui tracking-wider">
 					GET IN TOUCH
-					<ArrowRight class="ml-2 h-5 w-5" />
+					<ArrowRight class="ml-2 h-4 w-4" />
 				</Button>
-				<Button href={localizeHref('/support')} variant="outline" size="xl" class="font-ui tracking-wider">
+				<Button href={localizeHref('/support')} variant="outline" size="lg" class="font-ui tracking-wider">
 					SUPPORT
 				</Button>
 			</div>
 		</div>
 		<div class="col-span-12 grid grid-cols-2 gap-px bg-border lg:col-span-6">
-			<div class="flex flex-col justify-center bg-card px-6 py-10 md:px-12 lg:px-16">
+			<div class="flex flex-col justify-center bg-card px-6 py-8 md:px-12 lg:px-16">
 				<span class="font-display text-2xl font-bold text-primary">24H</span>
 				<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">AVG. RESPONSE</p>
 			</div>
-			<div class="flex flex-col justify-center bg-card px-6 py-10 md:px-12 lg:px-16">
+			<div class="flex flex-col justify-center bg-card px-6 py-8 md:px-12 lg:px-16">
 				<span class="font-display text-2xl font-bold text-primary">100%</span>
 				<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">SATISFACTION</p>
 			</div>
-			<div class="flex flex-col justify-center bg-card px-6 py-10 md:px-12 lg:px-16">
+			<div class="flex flex-col justify-center bg-card px-6 py-8 md:px-12 lg:px-16">
 				<span class="font-display text-2xl font-bold text-primary">50+</span>
 				<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">HELP ARTICLES</p>
 			</div>
-			<div class="flex flex-col justify-center bg-card px-6 py-10 md:px-12 lg:px-16">
+			<div class="flex flex-col justify-center bg-card px-6 py-8 md:px-12 lg:px-16">
 				<span class="font-display text-2xl font-bold text-primary">6</span>
 				<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">CATEGORIES</p>
 			</div>

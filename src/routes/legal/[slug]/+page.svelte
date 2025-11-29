@@ -17,13 +17,13 @@
 <!-- Hero Section -->
 <section class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
-		<div class="col-span-12 bg-background p-6 md:p-8 lg:col-span-8 lg:p-12" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
+		<div class="col-span-12 bg-background px-6 py-12 md:px-12 lg:col-span-8 lg:px-16 lg:py-16" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">LEGAL</span>
-			<h1 class="font-display mt-4 text-4xl font-black uppercase leading-[0.9] tracking-tight md:text-5xl lg:text-6xl">
+			<h1 class="font-display mt-4 text-3xl font-black uppercase leading-[0.9] tracking-tight md:text-4xl lg:text-5xl">
 				{doc.title}
 			</h1>
 		</div>
-		<div class="col-span-12 flex items-center bg-card p-6 md:p-8 lg:col-span-4 lg:p-12">
+		<div class="col-span-12 flex items-center bg-card px-6 py-12 md:px-12 lg:col-span-4 lg:px-16 lg:py-16">
 			<div>
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">LAST UPDATED</span>
 				<p class="font-display mt-1 text-sm font-bold md:text-base">{doc.lastUpdated.toUpperCase()}</p>
@@ -37,16 +37,20 @@
 	<div class="grid grid-cols-12">
 		<!-- Sticky Sidebar -->
 		<div class="col-span-12 border-b border-border bg-background lg:col-span-3 lg:border-b-0 lg:border-r">
-			<div class="sticky top-16 p-6 md:p-8 lg:p-12" use:scrollAnimate={{ animation: 'fade' }}>
+			<div class="sticky top-24 px-6 py-8 md:px-12 lg:px-8 lg:py-12" use:scrollAnimate={{ animation: 'fade' }}>
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTENTS</span>
-				<nav class="mt-4 space-y-2">
-					{#each doc.sections as section (section.id)}
-						<a href="#{section.id}" class="font-ui block text-xs tracking-wider text-muted-foreground hover:text-primary">
-							{section.number} — {section.title}
+				<nav class="mt-4 flex flex-col gap-3">
+					{#each doc.sections as section, i (section.id)}
+						<a 
+							href="#{section.id}" 
+							class="font-ui group flex items-start gap-3 text-xs tracking-wider text-muted-foreground transition-colors hover:text-primary"
+						>
+							<span class="font-mono text-[10px] text-primary/50 group-hover:text-primary">{String(i + 1).padStart(2, '0')}</span>
+							<span class="border-b border-transparent group-hover:border-primary">{section.title}</span>
 						</a>
 					{/each}
 				</nav>
-				<div class="mt-6 border-t border-border pt-4">
+				<div class="mt-8 border-t border-border pt-6">
 					<a href={localizeHref('/legal')} class="font-ui flex items-center gap-2 text-xs tracking-wider text-muted-foreground hover:text-primary">
 						<ArrowLeft class="h-3 w-3" />
 						BACK TO LEGAL
@@ -56,8 +60,8 @@
 		</div>
 
 		<!-- Main Content -->
-		<article class="col-span-12 bg-background p-6 md:p-8 lg:col-span-9 lg:p-12" use:scrollAnimate={{ animation: 'fade' }}>
-			<div class="max-w-3xl space-y-8">
+		<article class="col-span-12 bg-background px-6 py-12 md:px-12 lg:col-span-9 lg:px-16 lg:py-16" use:scrollAnimate={{ animation: 'fade' }}>
+			<div class="max-w-3xl">
 				{@html doc.content}
 			</div>
 		</article>

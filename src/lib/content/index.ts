@@ -31,32 +31,75 @@ function extractSections(markdown: string): ContentSection[] {
 }
 
 // Custom renderer for styled headings
-function renderStyledContent(markdown: string): string {
-    // First, convert ## headings to styled versions
-    let processed = markdown.replace(
+function renderStyledContent(markdown: string, options?: { stripTitle?: boolean }): string {
+    let processed = markdown;
+    
+    // Strip the main title (# heading) if requested - we show it separately in the UI
+    if (options?.stripTitle) {
+        processed = processed.replace(/^#\s+.+\n+/m, '');
+    }
+    
+    // Also strip any description/excerpt that immediately follows the title
+    // (often the first paragraph before the first ## heading)
+    if (options?.stripTitle) {
+        // Remove first paragraph if it appears before any ## heading
+        const firstH2Index = processed.search(/^##\s+/m);
+        if (firstH2Index > 0) {
+            const beforeH2 = processed.slice(0, firstH2Index);
+            // Check if there's just a paragraph (no headings)
+            if (!beforeH2.match(/^#/m)) {
+                // Remove leading paragraph(s) before first section
+                processed = processed.slice(firstH2Index);
+            }
+        }
+    }
+    
+    // Convert ## headings to styled versions
+    processed = processed.replace(
         /^##\s+(\d+)\s*[—–-]\s*(.+)$/gm,
         (_, num, title) => {
             const number = num.padStart(2, '0');
             const id = title.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-            return `<h2 id="${id}" class="font-ui text-sm font-semibold tracking-wider text-primary">${number} — ${title.trim().toUpperCase()}</h2>`;
+            return `<h2 id="${id}" class="font-ui mt-8 text-sm font-semibold tracking-wider text-primary scroll-mt-24">${number} — ${title.trim().toUpperCase()}</h2>`;
         }
     );
 
-    // Convert # headings (main title - usually skip as we show it separately)
+    // Convert regular ## headings (without numbers)
     processed = processed.replace(
-        /^#\s+(.+)$/gm,
-        (_, title) => `<h1 class="font-display text-2xl font-bold uppercase tracking-tight">${title.trim()}</h1>`
+        /^##\s+(.+)$/gm,
+        (_, title) => {
+            const id = title.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+            return `<h2 id="${id}" class="font-ui mt-8 text-sm font-semibold tracking-wider text-primary scroll-mt-24">${title.trim().toUpperCase()}</h2>`;
+        }
     );
+
+    // Convert ### headings
+    processed = processed.replace(
+        /^###\s+(.+)$/gm,
+        (_, title) => `<h3 class="font-ui mt-6 text-xs font-semibold tracking-wider text-foreground">${title.trim()}</h3>`
+    );
+
+    // Convert # headings (main title - only if not stripped)
+    if (!options?.stripTitle) {
+        processed = processed.replace(
+            /^#\s+(.+)$/gm,
+            (_, title) => `<h1 class="font-display text-2xl font-bold uppercase tracking-tight">${title.trim()}</h1>`
+        );
+    }
 
     // Parse the rest with marked
     const html = marked.parse(processed) as string;
 
     // Add styling to paragraphs and lists
     return html
-        .replace(/<p>/g, '<p class="font-body text-sm text-muted-foreground mt-4">')
-        .replace(/<ul>/g, '<ul class="font-body list-disc list-inside space-y-1 text-sm text-muted-foreground mt-2">')
-        .replace(/<li>/g, '<li>')
-        .replace(/<strong>/g, '<strong class="text-foreground">');
+        .replace(/<p>/g, '<p class="font-body text-sm leading-relaxed text-muted-foreground mt-4">')
+        .replace(/<ul>/g, '<ul class="font-body list-disc list-inside space-y-2 text-sm text-muted-foreground mt-4 ml-4">')
+        .replace(/<ol>/g, '<ol class="font-body list-decimal list-inside space-y-2 text-sm text-muted-foreground mt-4 ml-4">')
+        .replace(/<li>/g, '<li class="leading-relaxed">')
+        .replace(/<strong>/g, '<strong class="font-semibold text-foreground">')
+        .replace(/<a /g, '<a class="text-primary hover:underline" ')
+        .replace(/<blockquote>/g, '<blockquote class="border-l-2 border-primary pl-4 italic text-muted-foreground mt-4">')
+        .replace(/<code>/g, '<code class="font-mono text-xs bg-card px-1.5 py-0.5 rounded text-primary">');
 }
 
 export interface BlogPost {
@@ -106,7 +149,7 @@ export interface Project {
 }
 
 // Parse frontmatter from markdown and convert body to HTML
-function parseFrontmatter(content: string, styled = false): { frontmatter: Record<string, unknown>; body: string; sections: ContentSection[] } {
+function parseFrontmatter(content: string, options?: { styled?: boolean; stripTitle?: boolean }): { frontmatter: Record<string, unknown>; body: string; sections: ContentSection[] } {
     // Handle different line endings (Windows vs Unix)
     const normalizedContent = content.replace(/\r\n/g, '\n');
     const match = normalizedContent.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
@@ -114,7 +157,7 @@ function parseFrontmatter(content: string, styled = false): { frontmatter: Recor
     if (!match) {
         return {
             frontmatter: {},
-            body: styled ? renderStyledContent(normalizedContent) : marked.parse(normalizedContent) as string,
+            body: options?.styled ? renderStyledContent(normalizedContent, { stripTitle: options?.stripTitle }) : marked.parse(normalizedContent) as string,
             sections: extractSections(normalizedContent)
         };
     }
@@ -160,7 +203,7 @@ function parseFrontmatter(content: string, styled = false): { frontmatter: Recor
     });
 
     const sections = extractSections(body);
-    const renderedBody = styled ? renderStyledContent(body) : marked.parse(body) as string;
+    const renderedBody = options?.styled ? renderStyledContent(body, { stripTitle: options?.stripTitle }) : marked.parse(body) as string;
 
     return { frontmatter, body: renderedBody, sections };
 }
@@ -176,7 +219,7 @@ export function loadBlogPosts(): BlogPost[] {
     const posts: BlogPost[] = [];
 
     for (const [path, content] of Object.entries(blogModules)) {
-        const { frontmatter, body, sections } = parseFrontmatter(content, true);
+        const { frontmatter, body, sections } = parseFrontmatter(content, { styled: true, stripTitle: true });
         const slug = path.split('/').pop()?.replace('.md', '') || '';
 
         posts.push({
@@ -205,7 +248,7 @@ export function loadBlogPost(slug: string): BlogPost | null {
 
     if (!content) return null;
 
-    const { frontmatter, body, sections } = parseFrontmatter(content, true);
+    const { frontmatter, body, sections } = parseFrontmatter(content, { styled: true, stripTitle: true });
 
     return {
         slug,
@@ -227,7 +270,7 @@ export function loadLegalDocs(): LegalDoc[] {
     const docs: LegalDoc[] = [];
 
     for (const [path, content] of Object.entries(legalModules)) {
-        const { frontmatter, body, sections } = parseFrontmatter(content, true);
+        const { frontmatter, body, sections } = parseFrontmatter(content, { styled: true, stripTitle: true });
         const slug = path.split('/').pop()?.replace('.md', '') || '';
 
         docs.push({
@@ -249,7 +292,7 @@ export function loadLegalDoc(slug: string): LegalDoc | null {
 
     if (!content) return null;
 
-    const { frontmatter, body, sections } = parseFrontmatter(content, true);
+    const { frontmatter, body, sections } = parseFrontmatter(content, { styled: true, stripTitle: true });
 
     return {
         slug,
@@ -265,7 +308,7 @@ export function loadProjects(): Project[] {
     const projects: Project[] = [];
 
     for (const [path, content] of Object.entries(projectModules)) {
-        const { frontmatter, body, sections } = parseFrontmatter(content, true);
+        const { frontmatter, body, sections } = parseFrontmatter(content, { styled: true, stripTitle: true });
         const slug = path.split('/').pop()?.replace('.md', '') || '';
 
         projects.push({
@@ -293,7 +336,7 @@ export function loadProject(slug: string): Project | null {
 
     if (!content) return null;
 
-    const { frontmatter, body, sections } = parseFrontmatter(content, true);
+    const { frontmatter, body, sections } = parseFrontmatter(content, { styled: true, stripTitle: true });
 
     return {
         slug,
@@ -314,7 +357,7 @@ export function loadServices(): Service[] {
     const services: Service[] = [];
 
     for (const [path, content] of Object.entries(serviceModules)) {
-        const { frontmatter, body, sections } = parseFrontmatter(content, true);
+        const { frontmatter, body, sections } = parseFrontmatter(content, { styled: true });
         const slug = path.split('/').pop()?.replace('.md', '') || '';
 
         services.push({
@@ -340,7 +383,7 @@ export function loadService(slug: string): Service | null {
 
     if (!content) return null;
 
-    const { frontmatter, body, sections } = parseFrontmatter(content, true);
+    const { frontmatter, body, sections } = parseFrontmatter(content, { styled: true });
 
     return {
         slug,

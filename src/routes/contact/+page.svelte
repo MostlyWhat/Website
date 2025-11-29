@@ -354,21 +354,21 @@
 	</div>
 </section>
 
-<!-- CTA Section -->
-<section class="min-h-[60vh] border-b border-border">
-	<div class="grid h-full min-h-[60vh] grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'scale' }}>
+<!-- CTA Section - Clean Split Layout -->
+<section class="border-b border-border">
+	<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'scale' }}>
 		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:col-span-8 md:px-12 lg:px-16">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">03 — READY TO START?</span>
-			<h2 class="font-display mt-4 text-4xl font-bold uppercase md:text-5xl lg:text-6xl">LET'S BUILD SOMETHING GREAT</h2>
+			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">LET'S BUILD SOMETHING GREAT</h2>
 			<p class="font-body mt-4 max-w-lg text-muted-foreground">
 				Whether you have a detailed brief or just a rough idea, we'd love to hear about it.
 			</p>
-			<div class="mt-8 flex gap-4">
-				<Button onclick={() => selectTopic('quote')} size="xl" class="font-ui tracking-wider">
+			<div class="mt-6 flex flex-wrap gap-4">
+				<Button onclick={() => selectTopic('quote')} size="lg" class="font-ui tracking-wider">
 					GET A QUOTE
-					<ArrowRight class="ml-2 h-5 w-5" />
+					<ArrowRight class="ml-2 h-4 w-4" />
 				</Button>
-				<Button href="mailto:hello@mostlywhat.systems" variant="outline" size="xl" class="font-ui tracking-wider">
+				<Button href="mailto:hello@mostlywhat.systems" variant="outline" size="lg" class="font-ui tracking-wider">
 					EMAIL US
 				</Button>
 			</div>

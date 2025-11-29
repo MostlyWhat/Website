@@ -3,7 +3,7 @@
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import { ArrowRight, Zap, Shield, Users, Headphones, Code, Palette, BarChart3, Layers, Globe, type Icon } from '@lucide/svelte';
+	import { ArrowRight, ArrowUpRight, Mail, Zap, Shield, Users, Headphones, Code, Palette, BarChart3, Layers, Globe, type Icon } from '@lucide/svelte';
 
 	const services: { icon: typeof Icon; number: string; title: string; desc: string }[] = [
 		{ icon: Layers, number: '01', title: m.service_strategy_title(), desc: m.service_strategy_desc() },
@@ -185,32 +185,53 @@
 	</div>
 </section>
 
-<!-- CTA Section -->
-<section class="relative flex min-h-[60vh] flex-col border-b border-border">
-	<!-- Background -->
-	<div class="pointer-events-none absolute inset-0 -z-10">
-		<img 
-			src="https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=2074&auto=format&fit=crop" 
-			alt="" 
-			class="h-full w-full object-cover brightness-[0.15]"
-		/>
-	</div>
-
-	<div class="flex flex-1 flex-col justify-center px-6 py-16 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'scale' }}>
-		<div class="max-w-3xl">
+<!-- CTA Section - Clean Split Layout -->
+<section class="border-b border-border">
+	<div class="grid grid-cols-12 gap-px bg-border">
+		<!-- Left: Hook & Description -->
+		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-16 md:col-span-6 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'scale' }}>
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">04 — READY TO START?</span>
-			<h2 class="font-display mt-6 text-4xl font-bold uppercase md:text-5xl lg:text-6xl">{m.cta_title()}</h2>
-			<p class="font-body mt-6 max-w-xl text-lg text-muted-foreground">{m.cta_subtitle()}</p>
-			<div class="mt-8 flex flex-wrap gap-4">
-				<Button href={localizeHref('/contact')} size="xl" class="font-ui tracking-wider">
-					START PROJECT
-					<ArrowRight class="ml-2 h-5 w-5" />
-				</Button>
-				<Button href={localizeHref('/contact')} variant="outline" size="xl" class="font-ui tracking-wider">
-					SCHEDULE CALL
-				</Button>
-			</div>
+			<h2 class="font-display mt-6 text-3xl font-bold uppercase md:text-4xl lg:text-5xl">{m.cta_title()}</h2>
+			<p class="font-body mt-6 text-base text-muted-foreground md:text-lg">{m.cta_subtitle()}</p>
 			<p class="font-mono mt-6 text-[10px] tracking-wider text-muted-foreground">{m.cta_disclaimer()}</p>
+		</div>
+		
+		<!-- Right: Actions & Form -->
+		<div class="col-span-12 flex flex-col justify-center bg-card px-6 py-16 md:col-span-6 md:px-12 lg:px-16">
+			<div class="space-y-4">
+				<a 
+					href={localizeHref('/contact')} 
+					class="group flex items-center justify-between border border-border bg-background px-6 py-4 transition-colors hover:border-primary hover:bg-primary/5"
+				>
+					<div>
+						<span class="font-ui block text-sm tracking-widest">START A PROJECT</span>
+						<span class="font-mono mt-1 block text-[10px] tracking-wider text-muted-foreground">Tell us about your idea</span>
+					</div>
+					<ArrowRight class="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary" />
+				</a>
+				
+				<a 
+					href="mailto:hello@mostlywhat.systems" 
+					class="group flex items-center justify-between border border-border bg-background px-6 py-4 transition-colors hover:border-primary hover:bg-primary/5"
+				>
+					<div>
+						<span class="font-ui block text-sm tracking-widest">EMAIL DIRECTLY</span>
+						<span class="font-mono mt-1 block text-[10px] tracking-wider text-muted-foreground">hello@mostlywhat.systems</span>
+					</div>
+					<Mail class="h-5 w-5 text-muted-foreground group-hover:text-primary" />
+				</a>
+				
+				<a 
+					href={localizeHref('/projects')} 
+					class="group flex items-center justify-between border border-border bg-background px-6 py-4 transition-colors hover:border-primary hover:bg-primary/5"
+				>
+					<div>
+						<span class="font-ui block text-sm tracking-widest">VIEW OUR WORK</span>
+						<span class="font-mono mt-1 block text-[10px] tracking-wider text-muted-foreground">See recent projects</span>
+					</div>
+					<ArrowUpRight class="h-5 w-5 text-muted-foreground group-hover:text-primary" />
+				</a>
+			</div>
 		</div>
 	</div>
 </section>

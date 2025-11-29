@@ -3,6 +3,7 @@
 	import * as m from '$lib/paraglide/messages';
 	import { getLocale, locales, localizeHref, type Locale } from '$lib/paraglide/runtime';
 	import { Menu, X, ArrowUpRight, Globe, ChevronDown, ChevronRight } from '@lucide/svelte';
+	import { GlitchText } from '$lib/components/ui/glitch-text';
 
 	let mobileMenuOpen = $state(false);
 	let langMenuOpen = $state(false);
@@ -67,9 +68,10 @@
 	<!-- Main header row - edge to edge grid -->
 	<div class="grid h-16 grid-cols-12 border-b border-border">
 		<!-- Logo Section -->
-		<div class="col-span-6 flex items-center border-r border-border px-4 sm:col-span-4 lg:col-span-3">
-			<a href={localizeHref('/')} class="flex items-center gap-3" onclick={closeMobileMenu}>
-				<span class="font-display text-sm font-black tracking-wider lg:text-base">MOSTLYWHAT SYSTEMS</span>
+		<div class="col-span-6 flex items-center border-r border-border px-6 sm:col-span-4 md:px-12 lg:col-span-3 lg:px-16">
+			<a href={localizeHref('/')} class="group flex items-center gap-3" onclick={closeMobileMenu}>
+				<span class="font-display text-sm font-black tracking-wider text-primary transition-colors group-hover:text-foreground lg:text-base">MOSTLYWHAT</span>
+				<span class="font-display hidden text-sm font-black tracking-wider text-foreground sm:inline lg:text-base">SYSTEMS</span>
 			</a>
 		</div>
 
@@ -78,11 +80,11 @@
 			{#each navigation as { href, key } (href)}
 				<a
 					href={localizeHref(href)}
-					class="font-ui flex items-center justify-center border-r border-border text-xs tracking-widest transition-colors {isActive(href)
+					class="font-ui group flex items-center justify-center border-r border-border text-xs tracking-widest transition-colors {isActive(href)
 						? 'bg-primary/10 text-primary'
 						: 'text-muted-foreground hover:bg-card hover:text-foreground'}"
 				>
-					{key}
+					<GlitchText text={key} class="tracking-widest" />
 				</a>
 			{/each}
 		</nav>
@@ -149,7 +151,7 @@
 
 	<!-- Breadcrumb Bar -->
 	{#if breadcrumbs().length > 0}
-		<div class="flex h-8 items-center border-b border-border bg-card/50 px-4">
+		<div class="flex h-8 items-center border-b border-border bg-card/50 px-6 md:px-12 lg:px-16">
 			<nav class="font-mono flex items-center gap-1 text-[10px] tracking-wider">
 				<a href={localizeHref('/')} class="text-muted-foreground transition-colors hover:text-primary">HOME</a>
 				{#each breadcrumbs() as { label, href, isLast }}

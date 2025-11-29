@@ -93,7 +93,7 @@
 		
 		<!-- Article Body -->
 		<article class="col-span-12 bg-background px-6 py-12 md:px-12 lg:col-span-9 lg:px-16 lg:py-16">
-			<div class="prose prose-invert max-w-3xl">
+			<div class="max-w-3xl">
 				{@html post.content}
 			</div>
 		</article>

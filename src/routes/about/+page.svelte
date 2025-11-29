@@ -3,7 +3,7 @@
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import { ArrowRight, Target, Lightbulb, Users, Rocket } from '@lucide/svelte';
+	import { ArrowRight, ArrowUpRight, Target, Lightbulb, Users, Rocket } from '@lucide/svelte';
 
 	const values = [
 		{ icon: Target, title: 'CLARITY FIRST', desc: 'Clear communication, transparent processes, honest feedback.' },
@@ -166,26 +166,39 @@
 	</div>
 </section>
 
-<!-- CTA Section -->
-<section class="relative flex min-h-[60vh] flex-col border-b border-border">
-	<div class="pointer-events-none absolute inset-0 -z-10">
-		<img 
-			src="https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=2074&auto=format&fit=crop" 
-			alt="" 
-			class="h-full w-full object-cover brightness-[0.15]"
-		/>
-	</div>
-	<div class="flex flex-1 flex-col justify-center px-6 py-16 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'scale' }}>
-		<div class="max-w-3xl">
+<!-- CTA Section - Clean Split Layout -->
+<section class="border-b border-border">
+	<div class="grid grid-cols-12 gap-px bg-border">
+		<!-- Left: Hook & Description -->
+		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-16 md:col-span-6 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'scale' }}>
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">05 — READY?</span>
-			<h2 class="font-display mt-6 text-4xl font-bold uppercase md:text-5xl lg:text-6xl">READY TO WORK TOGETHER?</h2>
-			<p class="font-body mt-6 max-w-xl text-lg text-muted-foreground">Let's build something great. Get in touch to discuss your project.</p>
-			<div class="mt-8 flex flex-wrap gap-4">
-				<Button href={localizeHref('/contact')} size="xl" class="font-ui tracking-wider">
-					START A CONVERSATION
-					<ArrowRight class="ml-2 h-5 w-5" />
-				</Button>
-			</div>
+			<h2 class="font-display mt-6 text-3xl font-bold uppercase md:text-4xl lg:text-5xl">READY TO WORK TOGETHER?</h2>
+			<p class="font-body mt-6 text-base text-muted-foreground md:text-lg">Let's build something great. Get in touch to discuss your project.</p>
+		</div>
+		
+		<!-- Right: Actions -->
+		<div class="col-span-12 flex flex-col justify-center gap-4 bg-card px-6 py-16 md:col-span-6 md:px-12 lg:px-16">
+			<a 
+				href={localizeHref('/contact')} 
+				class="group flex items-center justify-between border border-border bg-background px-6 py-4 transition-colors hover:border-primary hover:bg-primary/5"
+			>
+				<div>
+					<span class="font-ui block text-sm tracking-widest">START A CONVERSATION</span>
+					<span class="font-mono mt-1 block text-[10px] tracking-wider text-muted-foreground">Let's discuss your project</span>
+				</div>
+				<ArrowRight class="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary" />
+			</a>
+			
+			<a 
+				href="mailto:hello@mostlywhat.systems" 
+				class="group flex items-center justify-between border border-border bg-background px-6 py-4 transition-colors hover:border-primary hover:bg-primary/5"
+			>
+				<div>
+					<span class="font-ui block text-sm tracking-widest">EMAIL DIRECTLY</span>
+					<span class="font-mono mt-1 block text-[10px] tracking-wider text-muted-foreground">hello@mostlywhat.systems</span>
+				</div>
+				<ArrowUpRight class="h-5 w-5 text-muted-foreground group-hover:text-primary" />
+			</a>
 		</div>
 	</div>
 </section>
