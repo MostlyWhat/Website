@@ -19,14 +19,14 @@ function extractSections(markdown: string): ContentSection[] {
     const sections: ContentSection[] = [];
     const headingRegex = /^##\s+(\d+)\s*[—–-]\s*(.+)$/gm;
     let match;
-    
+
     while ((match = headingRegex.exec(markdown)) !== null) {
         const number = match[1].padStart(2, '0');
         const title = match[2].trim().toUpperCase();
         const id = title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
         sections.push({ id, number, title });
     }
-    
+
     return sections;
 }
 
@@ -41,16 +41,16 @@ function renderStyledContent(markdown: string): string {
             return `<h2 id="${id}" class="font-ui text-sm font-semibold tracking-wider text-primary">${number} — ${title.trim().toUpperCase()}</h2>`;
         }
     );
-    
+
     // Convert # headings (main title - usually skip as we show it separately)
     processed = processed.replace(
         /^#\s+(.+)$/gm,
         (_, title) => `<h1 class="font-display text-2xl font-bold uppercase tracking-tight">${title.trim()}</h1>`
     );
-    
+
     // Parse the rest with marked
     const html = marked.parse(processed) as string;
-    
+
     // Add styling to paragraphs and lists
     return html
         .replace(/<p>/g, '<p class="font-body text-sm text-muted-foreground mt-4">')
@@ -112,8 +112,8 @@ function parseFrontmatter(content: string, styled = false): { frontmatter: Recor
     const match = normalizedContent.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
 
     if (!match) {
-        return { 
-            frontmatter: {}, 
+        return {
+            frontmatter: {},
             body: styled ? renderStyledContent(normalizedContent) : marked.parse(normalizedContent) as string,
             sections: extractSections(normalizedContent)
         };
