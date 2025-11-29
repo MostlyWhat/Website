@@ -28,16 +28,19 @@
 
 <!-- Content Section -->
 <section class="border-b border-border">
-	<div class="grid grid-cols-12 gap-px bg-border">
-		<div class="col-span-12 bg-background p-6 md:p-8 lg:col-span-3 lg:p-12" use:scrollAnimate={{ animation: 'fade' }}>
-			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTENTS</span>
-			<nav class="mt-4 space-y-2">
-				<a href="#what" class="font-ui block text-xs tracking-wider text-muted-foreground hover:text-primary">01 — WHAT ARE COOKIES</a>
-				<a href="#how" class="font-ui block text-xs tracking-wider text-muted-foreground hover:text-primary">02 — HOW WE USE THEM</a>
-				<a href="#types" class="font-ui block text-xs tracking-wider text-muted-foreground hover:text-primary">03 — COOKIE TYPES</a>
-				<a href="#manage" class="font-ui block text-xs tracking-wider text-muted-foreground hover:text-primary">04 — MANAGING COOKIES</a>
-				<a href="#contact" class="font-ui block text-xs tracking-wider text-muted-foreground hover:text-primary">05 — CONTACT US</a>
-			</nav>
+	<div class="grid grid-cols-12">
+		<!-- Sticky Sidebar -->
+		<div class="col-span-12 border-b border-border bg-background lg:col-span-3 lg:border-b-0 lg:border-r">
+			<div class="sticky top-16 p-6 md:p-8 lg:p-12" use:scrollAnimate={{ animation: 'fade' }}>
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTENTS</span>
+				<nav class="mt-4 space-y-2">
+					<a href="#what" class="font-ui block text-xs tracking-wider text-muted-foreground hover:text-primary">01 — WHAT ARE COOKIES</a>
+					<a href="#how" class="font-ui block text-xs tracking-wider text-muted-foreground hover:text-primary">02 — HOW WE USE THEM</a>
+					<a href="#types" class="font-ui block text-xs tracking-wider text-muted-foreground hover:text-primary">03 — COOKIE TYPES</a>
+					<a href="#manage" class="font-ui block text-xs tracking-wider text-muted-foreground hover:text-primary">04 — MANAGING COOKIES</a>
+					<a href="#contact" class="font-ui block text-xs tracking-wider text-muted-foreground hover:text-primary">05 — CONTACT US</a>
+				</nav>
+			</div>
 		</div>
 		<article class="col-span-12 bg-background p-6 md:p-8 lg:col-span-9 lg:p-12" use:scrollAnimate={{ animation: 'fade' }}>
 			<div class="max-w-3xl space-y-8">

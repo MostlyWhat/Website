@@ -83,14 +83,19 @@
 
 <!-- Hero Section - Full Viewport -->
 <section class="relative flex h-[calc(100dvh-4rem)] flex-col border-b border-border">
-	<!-- Grid Background -->
-	<div class="pointer-events-none absolute inset-0 -z-10">
-		<div class="absolute inset-0 bg-gradient-to-br from-background via-background to-primary/5"></div>
+	<!-- Video/Image Background Placeholder -->
+	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+		<img 
+			src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2070&auto=format&fit=crop" 
+			alt="" 
+			class="h-full w-full object-cover opacity-20"
+		/>
+		<div class="absolute inset-0 bg-gradient-to-br from-background via-background/95 to-primary/10"></div>
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
 	</div>
 
-	<!-- Hero Content -->
-	<div class="flex flex-1 flex-col justify-end px-4 pb-8 md:px-6 lg:px-8" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
+	<!-- Hero Content - Positioned at Bottom -->
+	<div class="flex flex-1 flex-col justify-end px-6 pb-8 md:px-8 lg:px-12" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
 		<div class="grid grid-cols-12 gap-4">
 			<div class="col-span-12 lg:col-span-8">
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">INSIGHTS & UPDATES</span>

@@ -28,18 +28,21 @@
 
 <!-- Content Section -->
 <section class="border-b border-border">
-	<div class="grid grid-cols-12 gap-px bg-border">
-		<div class="col-span-12 bg-background p-6 md:p-8 lg:col-span-3 lg:p-12" use:scrollAnimate={{ animation: 'fade' }}>
-			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTENTS</span>
-			<nav class="mt-4 space-y-2">
-				<a href="#information" class="font-ui block text-xs tracking-wider text-muted-foreground hover:text-primary">01 — INFORMATION WE COLLECT</a>
-				<a href="#usage" class="font-ui block text-xs tracking-wider text-muted-foreground hover:text-primary">02 — HOW WE USE IT</a>
-				<a href="#sharing" class="font-ui block text-xs tracking-wider text-muted-foreground hover:text-primary">03 — INFORMATION SHARING</a>
-				<a href="#security" class="font-ui block text-xs tracking-wider text-muted-foreground hover:text-primary">04 — DATA SECURITY</a>
-				<a href="#cookies" class="font-ui block text-xs tracking-wider text-muted-foreground hover:text-primary">05 — COOKIES</a>
-				<a href="#rights" class="font-ui block text-xs tracking-wider text-muted-foreground hover:text-primary">06 — YOUR RIGHTS</a>
-				<a href="#contact" class="font-ui block text-xs tracking-wider text-muted-foreground hover:text-primary">07 — CONTACT US</a>
-			</nav>
+	<div class="grid grid-cols-12">
+		<!-- Sticky Sidebar -->
+		<div class="col-span-12 border-b border-border bg-background lg:col-span-3 lg:border-b-0 lg:border-r">
+			<div class="sticky top-16 p-6 md:p-8 lg:p-12" use:scrollAnimate={{ animation: 'fade' }}>
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTENTS</span>
+				<nav class="mt-4 space-y-2">
+					<a href="#information" class="font-ui block text-xs tracking-wider text-muted-foreground hover:text-primary">01 — INFORMATION WE COLLECT</a>
+					<a href="#usage" class="font-ui block text-xs tracking-wider text-muted-foreground hover:text-primary">02 — HOW WE USE IT</a>
+					<a href="#sharing" class="font-ui block text-xs tracking-wider text-muted-foreground hover:text-primary">03 — INFORMATION SHARING</a>
+					<a href="#security" class="font-ui block text-xs tracking-wider text-muted-foreground hover:text-primary">04 — DATA SECURITY</a>
+					<a href="#cookies" class="font-ui block text-xs tracking-wider text-muted-foreground hover:text-primary">05 — COOKIES</a>
+					<a href="#rights" class="font-ui block text-xs tracking-wider text-muted-foreground hover:text-primary">06 — YOUR RIGHTS</a>
+					<a href="#contact" class="font-ui block text-xs tracking-wider text-muted-foreground hover:text-primary">07 — CONTACT US</a>
+				</nav>
+			</div>
 		</div>
 		<article class="col-span-12 bg-background p-6 md:p-8 lg:col-span-9 lg:p-12" use:scrollAnimate={{ animation: 'fade' }}>
 			<div class="max-w-3xl space-y-8">

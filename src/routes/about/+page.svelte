@@ -30,15 +30,20 @@
 </svelte:head>
 
 <!-- Hero Section -->
-<section class="relative flex min-h-[calc(100dvh-4rem)] flex-col">
-	<!-- Grid Background -->
-	<div class="pointer-events-none absolute inset-0 -z-10">
-		<div class="absolute inset-0 bg-gradient-to-br from-background via-background to-primary/5"></div>
+<section class="relative flex h-[calc(100dvh-4rem)] flex-col border-b border-border">
+	<!-- Video/Image Background Placeholder -->
+	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+		<img 
+			src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop" 
+			alt="" 
+			class="h-full w-full object-cover opacity-20"
+		/>
+		<div class="absolute inset-0 bg-gradient-to-br from-background via-background/95 to-primary/10"></div>
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
 	</div>
 
-	<!-- Hero Content -->
-	<div class="flex flex-1 flex-col justify-center px-4 md:px-6 lg:px-8" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
+	<!-- Hero Content - Positioned at Bottom -->
+	<div class="flex flex-1 flex-col justify-end px-6 pb-8 md:px-8 lg:px-12" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
 		<div class="grid grid-cols-12 gap-4">
 			<div class="col-span-12 lg:col-span-8">
 				<span class="font-mono text-xs tracking-widest text-muted-foreground">ABOUT</span>
@@ -51,24 +56,22 @@
 			</div>
 		</div>
 	</div>
-</section>
 
-<!-- Stats Bar -->
-<section class="border-b border-border">
-	<div class="grid grid-cols-2 gap-px bg-border md:grid-cols-4">
-		<div class="bg-card p-4 md:p-6">
+	<!-- Stats Bar -->
+	<div class="grid grid-cols-2 gap-px border-t border-border bg-border md:grid-cols-4">
+		<div class="bg-card/80 p-4 backdrop-blur-sm md:p-6">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">FOUNDED</span>
 			<p class="font-display mt-1 text-sm font-bold md:text-base">2022</p>
 		</div>
-		<div class="bg-card p-4 md:p-6">
+		<div class="bg-card/80 p-4 backdrop-blur-sm md:p-6">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">FOCUS</span>
 			<p class="font-display mt-1 text-sm font-bold md:text-base">WEB PRODUCTS</p>
 		</div>
-		<div class="bg-card p-4 md:p-6">
+		<div class="bg-card/80 p-4 backdrop-blur-sm md:p-6">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">PROJECTS</span>
 			<p class="font-display mt-1 text-sm font-bold md:text-base">50+</p>
 		</div>
-		<div class="bg-card p-4 md:p-6">
+		<div class="bg-card/80 p-4 backdrop-blur-sm md:p-6">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">PHILOSOPHY</span>
 			<p class="font-display mt-1 text-sm font-bold md:text-base">SHIP FAST</p>
 		</div>

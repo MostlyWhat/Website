@@ -124,7 +124,7 @@
 			<!-- Contact CTA -->
 			<a
 				href={localizeHref('/contact')}
-				class="font-ui hidden flex-1 items-center justify-center gap-2 border-l border-border bg-primary text-xs tracking-widest text-primary-foreground transition-colors hover:bg-primary/90 sm:flex"
+				class="font-ui hidden w-28 items-center justify-center gap-2 border-l border-border bg-primary text-xs tracking-widest text-primary-foreground transition-colors hover:bg-primary/90 sm:flex"
 			>
 				CONTACT
 				<ArrowUpRight class="h-3.5 w-3.5" />
