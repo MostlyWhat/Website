@@ -86,7 +86,7 @@
 		{#each documents as { icon: Icon, title, description, href, updated } (title)}
 			<a
 				href={localizeHref(href)}
-				class="stagger-children group col-span-12 flex flex-col bg-background p-6 transition-colors hover:bg-card md:col-span-6 lg:col-span-4 lg:p-8"
+				class="group col-span-12 flex flex-col bg-background p-6 transition-colors hover:bg-card md:col-span-6 lg:col-span-4 lg:p-8"
 			>
 				<div class="flex items-start justify-between">
 					<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">

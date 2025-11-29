@@ -31,7 +31,7 @@
 </svelte:head>
 
 <!-- Hero Section - Full Viewport -->
-<section class="relative flex h-[calc(100dvh-4rem)] flex-col border-b border-border">
+<section class="relative flex h-[calc(100dvh-6rem)] flex-col border-b border-border">
 	<!-- Image Background -->
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<img 
@@ -76,19 +76,23 @@
 
 <!-- Filter Bar -->
 <section class="border-b border-border">
-	<div class="grid auto-cols-fr grid-flow-col gap-px bg-border">
-		<div class="flex items-center justify-center bg-card px-4 py-4">
+	<div class="flex">
+		<!-- Filter Label -->
+		<div class="flex w-24 shrink-0 items-center justify-center border-r border-border bg-card">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">FILTER</span>
 		</div>
-		{#each data.categories as category (category)}
-			<button
-				type="button"
-				onclick={() => selectedCategory = category}
-				class="font-mono flex items-center justify-center bg-background px-4 py-4 text-xs uppercase tracking-wider transition-colors {selectedCategory === category ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-card hover:text-foreground'}"
-			>
-				{category}
-			</button>
-		{/each}
+		<!-- Filter Options -->
+		<div class="flex flex-1 overflow-x-auto">
+			{#each data.categories as category (category)}
+				<button
+					type="button"
+					onclick={() => selectedCategory = category}
+					class="font-mono flex flex-1 items-center justify-center border-r border-border px-4 py-4 text-xs uppercase tracking-wider transition-colors last:border-r-0 {selectedCategory === category ? 'bg-primary text-primary-foreground' : 'bg-background text-muted-foreground hover:bg-card hover:text-foreground'}"
+				>
+					{category}
+				</button>
+			{/each}
+		</div>
 	</div>
 </section>
 

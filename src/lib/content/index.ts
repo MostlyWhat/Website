@@ -247,3 +247,57 @@ export async function loadLegalDoc(slug: string): Promise<LegalDoc | null> {
         return null;
     }
 }
+
+// Load all projects
+export async function loadProjects(): Promise<Project[]> {
+    const modules = import.meta.glob('/src/lib/content/projects/*.md', { query: '?raw', import: 'default' });
+    const projects: Project[] = [];
+
+    for (const [path, loader] of Object.entries(modules)) {
+        const content = (await loader()) as string;
+        const { frontmatter, body } = parseFrontmatter(content);
+        const slug = path.split('/').pop()?.replace('.md', '') || '';
+
+        projects.push({
+            slug,
+            title: (frontmatter.title as string) || '',
+            client: (frontmatter.client as string) || '',
+            category: (frontmatter.category as string) || '',
+            year: (frontmatter.year as string) || '',
+            description: (frontmatter.description as string) || '',
+            tags: (frontmatter.tags as string[]) || [],
+            featured: frontmatter.featured as boolean,
+            content: body
+        });
+    }
+
+    // Sort by year, newest first
+    return projects.sort((a, b) => b.year.localeCompare(a.year));
+}
+
+// Load a single project
+export async function loadProject(slug: string): Promise<Project | null> {
+    try {
+        const modules = import.meta.glob('/src/lib/content/projects/*.md', { query: '?raw', import: 'default' });
+        const path = `/src/lib/content/projects/${slug}.md`;
+
+        if (!modules[path]) return null;
+
+        const content = (await modules[path]()) as string;
+        const { frontmatter, body } = parseFrontmatter(content);
+
+        return {
+            slug,
+            title: (frontmatter.title as string) || '',
+            client: (frontmatter.client as string) || '',
+            category: (frontmatter.category as string) || '',
+            year: (frontmatter.year as string) || '',
+            description: (frontmatter.description as string) || '',
+            tags: (frontmatter.tags as string[]) || [],
+            featured: frontmatter.featured as boolean,
+            content: body
+        };
+    } catch {
+        return null;
+    }
+}

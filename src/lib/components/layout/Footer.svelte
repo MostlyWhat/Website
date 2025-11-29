@@ -1,11 +1,23 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages';
 	import { localizeHref } from '$lib/paraglide/runtime';
-	import { Github, Twitter, Mail, ArrowUpRight } from '@lucide/svelte';
+	import { Github, Twitter, Mail, ArrowUpRight, type Icon } from '@lucide/svelte';
 
 	const currentYear = new Date().getFullYear();
 
-	const navigation = {
+	interface NavLink {
+		href: string;
+		label: string;
+	}
+
+	interface SocialLink {
+		href: string;
+		label: string;
+		fullLabel: string;
+		icon: typeof Icon;
+	}
+
+	const navigation: { company: NavLink[]; resources: NavLink[]; legal: NavLink[] } = {
 		company: [
 			{ href: '/about', label: 'ABOUT' },
 			{ href: '/services', label: 'SERVICES' },
@@ -15,16 +27,18 @@
 		],
 		resources: [
 			{ href: '/docs', label: 'DOCS' },
-			{ href: '/help', label: 'HELP CENTER' }
+			{ href: '/help', label: 'HELP CENTER' },
+			{ href: '/support', label: 'SUPPORT' }
 		],
 		legal: [
+			{ href: '/legal', label: 'ALL DOCUMENTS' },
 			{ href: '/legal/privacy', label: 'PRIVACY' },
 			{ href: '/legal/terms', label: 'TERMS' },
 			{ href: '/legal/cookies', label: 'COOKIES' }
 		]
 	};
 
-	const social = [
+	const social: SocialLink[] = [
 		{ href: 'https://github.com/mostlywhat', label: 'GH', fullLabel: 'GITHUB', icon: Github },
 		{ href: 'https://x.com/mostlywhat', label: 'X', fullLabel: 'TWITTER', icon: Twitter },
 		{ href: 'mailto:hello@mostlywhat.systems', label: 'EM', fullLabel: 'EMAIL', icon: Mail }

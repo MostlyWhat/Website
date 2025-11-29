@@ -13,9 +13,13 @@
 
 <!-- Error Hero - Full Viewport -->
 <section class="relative flex h-[calc(100dvh-4rem)] flex-col border-b border-border">
-	<!-- Grid Background -->
-	<div class="pointer-events-none absolute inset-0 -z-10">
-		<div class="absolute inset-0 bg-gradient-to-br from-background via-background to-destructive/5"></div>
+	<!-- Image Background -->
+	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+		<img 
+			src="https://images.unsplash.com/photo-1594322436404-5a0526db4d13?q=80&w=2029&auto=format&fit=crop" 
+			alt="" 
+			class="h-full w-full object-cover brightness-[0.15]"
+		/>
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
 	</div>
 
@@ -65,22 +69,22 @@
 		</div>
 		
 		<div class="col-span-12 grid grid-cols-2 gap-px bg-border lg:col-span-8 lg:grid-cols-4" use:scrollAnimate={{ animation: 'stagger' }}>
-			<a href={localizeHref('/')} class="stagger-children group flex flex-col bg-background p-4 transition-colors hover:bg-card md:p-6">
+			<a href={localizeHref('/')} class="group flex flex-col bg-background p-4 transition-colors hover:bg-card md:p-6">
 				<span class="font-mono text-xs text-primary">01</span>
 				<h3 class="font-ui mt-2 text-xs font-semibold uppercase tracking-wider group-hover:text-primary">HOME</h3>
 				<p class="font-body mt-1 text-[11px] text-muted-foreground">Return to homepage</p>
 			</a>
-			<a href={localizeHref('/projects')} class="stagger-children group flex flex-col bg-background p-4 transition-colors hover:bg-card md:p-6">
+			<a href={localizeHref('/projects')} class="group flex flex-col bg-background p-4 transition-colors hover:bg-card md:p-6">
 				<span class="font-mono text-xs text-primary">02</span>
 				<h3 class="font-ui mt-2 text-xs font-semibold uppercase tracking-wider group-hover:text-primary">PROJECTS</h3>
 				<p class="font-body mt-1 text-[11px] text-muted-foreground">View our work</p>
 			</a>
-			<a href={localizeHref('/services')} class="stagger-children group flex flex-col bg-background p-4 transition-colors hover:bg-card md:p-6">
+			<a href={localizeHref('/services')} class="group flex flex-col bg-background p-4 transition-colors hover:bg-card md:p-6">
 				<span class="font-mono text-xs text-primary">03</span>
 				<h3 class="font-ui mt-2 text-xs font-semibold uppercase tracking-wider group-hover:text-primary">SERVICES</h3>
 				<p class="font-body mt-1 text-[11px] text-muted-foreground">What we offer</p>
 			</a>
-			<a href={localizeHref('/contact')} class="stagger-children group flex flex-col bg-background p-4 transition-colors hover:bg-card md:p-6">
+			<a href={localizeHref('/contact')} class="group flex flex-col bg-background p-4 transition-colors hover:bg-card md:p-6">
 				<span class="font-mono text-xs text-primary">04</span>
 				<h3 class="font-ui mt-2 text-xs font-semibold uppercase tracking-wider group-hover:text-primary">CONTACT</h3>
 				<p class="font-body mt-1 text-[11px] text-muted-foreground">Get in touch</p>

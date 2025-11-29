@@ -55,8 +55,8 @@
 		}
 	];
 
-	// FAQ data
-	const faqs = [
+	// FAQ data - expanded with more questions
+	const faqs: { id: string; q: string; a: string }[] = [
 		{ 
 			id: 'timeline',
 			q: 'What is your typical project timeline?', 
@@ -86,6 +86,16 @@
 			id: 'remote',
 			q: 'Can you work with remote clients?', 
 			a: 'Absolutely! We work with clients globally using async communication, scheduled calls, and collaborative tools like Figma and GitHub.' 
+		},
+		{ 
+			id: 'pricing',
+			q: 'How do you price your services?', 
+			a: 'We offer both fixed-price projects and time-and-materials engagements. Pricing depends on scope, timeline, and complexity. Contact us for a custom quote.' 
+		},
+		{ 
+			id: 'revisions',
+			q: 'How many revisions are included?', 
+			a: 'Our projects include 2-3 revision rounds per phase. We collaborate closely throughout to minimize surprises and ensure alignment.' 
 		}
 	];
 
@@ -162,7 +172,7 @@
 			{#if href}
 				<a
 					{href}
-					class="stagger-children group flex flex-col bg-background p-4 transition-colors hover:bg-card md:p-6"
+					class="group flex flex-col bg-background p-4 transition-colors hover:bg-card md:p-6"
 				>
 					<Icon class="mb-3 h-5 w-5 text-primary" />
 					<h3 class="font-ui text-xs font-semibold tracking-wider">{title}</h3>
@@ -176,7 +186,7 @@
 				<button
 					type="button"
 					onclick={() => selectTopic(id)}
-					class="stagger-children group flex flex-col bg-background p-4 text-left transition-colors hover:bg-card md:p-6 {selectedTopic === id ? 'bg-primary/10 ring-1 ring-primary' : ''}"
+					class="group flex flex-col bg-background p-4 text-left transition-colors hover:bg-card md:p-6 {selectedTopic === id ? 'bg-primary/10 ring-1 ring-primary' : ''}"
 				>
 					<Icon class="mb-3 h-5 w-5 text-primary" />
 					<h3 class="font-ui text-xs font-semibold tracking-wider">{title}</h3>
@@ -215,7 +225,7 @@
 					</div>
 					
 					<form onsubmit={handleSubmit} class="space-y-4">
-						<div class="grid grid-cols-2 gap-px bg-border">
+						<div class="grid grid-cols-2 gap-px border border-border bg-border">
 							<div class="bg-background p-3">
 								<Label for="name" class="font-mono text-[10px] tracking-widest text-muted-foreground">NAME *</Label>
 								<Input id="name" bind:value={name} required placeholder="John Doe" class="font-body mt-1 border-0 bg-transparent p-0 text-sm focus-visible:ring-0" />
@@ -322,13 +332,13 @@
 
 		<!-- FAQ Accordion (Right) -->
 		<div class="bg-card" use:scrollAnimate={{ animation: 'fade' }}>
-			<Accordion.Root class="space-y-px">
+			<Accordion.Root class="divide-y divide-border">
 				{#each faqs as { id, q, a } (id)}
 					<Accordion.Item value={id} class="border-0">
-						<Accordion.Trigger class="font-ui w-full bg-background px-4 py-4 text-left text-xs tracking-wider hover:bg-muted [&[data-state=open]]:bg-primary/10 [&[data-state=open]]:text-primary">
+						<Accordion.Trigger class="font-ui w-full bg-background px-6 py-5 text-left text-sm font-medium tracking-wide hover:bg-muted/50 [&[data-state=open]]:bg-primary/5 [&[data-state=open]]:text-primary">
 							{q}
 						</Accordion.Trigger>
-						<Accordion.Content class="font-body bg-background px-4 pb-4 text-sm text-muted-foreground">
+						<Accordion.Content class="font-body bg-background px-6 pb-5 pt-0 text-sm leading-relaxed text-muted-foreground">
 							{a}
 						</Accordion.Content>
 					</Accordion.Item>

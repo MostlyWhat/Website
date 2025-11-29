@@ -74,7 +74,7 @@
 <section class="border-b border-border">
 	<div class="grid grid-cols-2 gap-px bg-border lg:grid-cols-3" use:scrollAnimate={{ animation: 'stagger' }}>
 		{#each services as { icon: Icon, number, title, desc, features } (number)}
-			<div class="stagger-children flex flex-col bg-background p-4 transition-colors hover:bg-card md:p-6">
+			<div class="flex flex-col bg-background p-4 transition-colors hover:bg-card md:p-6">
 				<div class="flex items-start justify-between">
 					<div class="flex h-10 w-10 items-center justify-center border border-border">
 						<Icon class="h-5 w-5 text-primary" />
@@ -105,7 +105,7 @@
 		</div>
 		<div class="col-span-12 grid grid-cols-1 gap-px bg-border md:grid-cols-3 lg:col-span-9" use:scrollAnimate={{ animation: 'stagger' }}>
 			{#each packages as pkg (pkg.name)}
-				<div class="stagger-children flex flex-col {pkg.featured ? 'bg-primary/10' : 'bg-background'} p-4 md:p-6">
+				<div class="flex flex-col {pkg.featured ? 'bg-primary/10' : 'bg-background'} p-4 md:p-6">
 					{#if pkg.featured}
 						<span class="font-mono mb-2 text-[10px] tracking-widest text-muted-foreground">POPULAR</span>
 					{/if}
@@ -137,22 +137,22 @@
 			<h2 class="font-display mt-4 text-2xl font-bold uppercase md:text-3xl">{m.process_title()}</h2>
 		</div>
 		<div class="col-span-12 grid grid-cols-2 gap-px bg-border lg:col-span-9 lg:grid-cols-4" use:scrollAnimate={{ animation: 'stagger' }}>
-			<div class="stagger-children bg-background p-4 md:p-6">
+			<div class="bg-background p-4 md:p-6">
 				<span class="font-display text-3xl text-primary/20">01</span>
 				<h3 class="font-ui mt-2 text-xs font-semibold tracking-wider">{m.process_step1_title().toUpperCase()}</h3>
 				<p class="font-body mt-1 text-[11px] text-muted-foreground">{m.process_step1_desc()}</p>
 			</div>
-			<div class="stagger-children bg-background p-4 md:p-6">
+			<div class="bg-background p-4 md:p-6">
 				<span class="font-display text-3xl text-primary/20">02</span>
 				<h3 class="font-ui mt-2 text-xs font-semibold tracking-wider">{m.process_step2_title().toUpperCase()}</h3>
 				<p class="font-body mt-1 text-[11px] text-muted-foreground">{m.process_step2_desc()}</p>
 			</div>
-			<div class="stagger-children bg-background p-4 md:p-6">
+			<div class="bg-background p-4 md:p-6">
 				<span class="font-display text-3xl text-primary/20">03</span>
 				<h3 class="font-ui mt-2 text-xs font-semibold tracking-wider">{m.process_step3_title().toUpperCase()}</h3>
 				<p class="font-body mt-1 text-[11px] text-muted-foreground">{m.process_step3_desc()}</p>
 			</div>
-			<div class="stagger-children bg-background p-4 md:p-6">
+			<div class="bg-background p-4 md:p-6">
 				<span class="font-display text-3xl text-primary/20">04</span>
 				<h3 class="font-ui mt-2 text-xs font-semibold tracking-wider">{m.process_step4_title().toUpperCase()}</h3>
 				<p class="font-body mt-1 text-[11px] text-muted-foreground">{m.process_step4_desc()}</p>

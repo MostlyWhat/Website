@@ -112,7 +112,7 @@
 		</div>
 		<div class="col-span-12 grid grid-cols-2 gap-px bg-border lg:col-span-9 lg:grid-cols-4" use:scrollAnimate={{ animation: 'stagger' }}>
 			{#each values as { icon: Icon, title, desc } (title)}
-				<div class="stagger-children bg-background p-4 md:p-6">
+				<div class="bg-background p-4 md:p-6">
 					<div class="mb-3 flex h-10 w-10 items-center justify-center border border-border">
 						<Icon class="h-5 w-5 text-primary" />
 					</div>
@@ -133,7 +133,7 @@
 		</div>
 		<div class="col-span-12 grid grid-cols-2 gap-px bg-border lg:col-span-9 lg:grid-cols-4" use:scrollAnimate={{ animation: 'stagger' }}>
 			{#each tech as { category, items } (category)}
-				<div class="stagger-children bg-card p-4 md:p-6">
+				<div class="bg-card p-4 md:p-6">
 					<h3 class="font-mono text-[10px] tracking-widest text-primary">{category}</h3>
 					<ul class="font-body mt-3 space-y-1 text-xs">
 						{#each items as item (item)}

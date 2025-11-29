@@ -4,25 +4,18 @@
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { ArrowRight, ArrowUpRight } from '@lucide/svelte';
+	import type { PageData } from './$types';
 
-	const projects = [
-		{ slug: 'design-system', title: 'Enterprise Design System', client: 'Tech Startup', category: 'Design System', year: '2024', description: 'Comprehensive design system with 50+ components.', tags: ['SvelteKit', 'TypeScript', 'TailwindCSS'], featured: true },
-		{ slug: 'saas-platform', title: 'SaaS Dashboard', client: 'FinTech Company', category: 'Web App', year: '2024', description: 'Real-time analytics with complex visualizations.', tags: ['SvelteKit', 'D3.js', 'PostgreSQL'], featured: true },
-		{ slug: 'ecommerce', title: 'Headless E-commerce', client: 'Retail Brand', category: 'E-commerce', year: '2023', description: 'High-performance storefront with headless CMS.', tags: ['SvelteKit', 'Shopify', 'Stripe'], featured: true },
-		{ slug: 'marketing-site', title: 'Product Marketing Site', client: 'B2B SaaS', category: 'Marketing', year: '2023', description: 'Conversion-focused website with A/B testing.', tags: ['SvelteKit', 'Contentful', 'Analytics'] },
-		{ slug: 'documentation', title: 'Developer Documentation', client: 'API Platform', category: 'Docs', year: '2023', description: 'Interactive API docs with live playground.', tags: ['SvelteKit', 'MDX', 'OpenAPI'] },
-		{ slug: 'internal-tools', title: 'Internal Tools Suite', client: 'Enterprise', category: 'Tools', year: '2023', description: 'Custom tooling for operations and reporting.', tags: ['SvelteKit', 'Drizzle', 'Cloudflare'] }
-	];
+	let { data }: { data: PageData } = $props();
 
-	const categories = ['All', 'Design System', 'Web App', 'E-commerce', 'Marketing', 'Docs', 'Tools'];
 	let selectedCategory = $state('All');
 
 	const filteredProjects = $derived(
-		selectedCategory === 'All' ? projects : projects.filter(p => p.category === selectedCategory)
+		selectedCategory === 'All' ? data.projects : data.projects.filter(p => p.category === selectedCategory)
 	);
 
-	const stats = [
-		{ value: '20+', label: 'PROJECTS' },
+	const stats: { value: string; label: string }[] = [
+		{ value: `${data.projects.length}+`, label: 'PROJECTS' },
 		{ value: '100%', label: 'SATISFACTION' },
 		{ value: '5+', label: 'YEARS' }
 	];
@@ -71,23 +64,25 @@
 	</div>
 </section>
 
-<!-- Filter Bar - Full Width Even Distribution -->
+<!-- Filter Bar -->
 <section class="border-b border-border">
-	<div class="grid grid-cols-8 gap-px bg-border">
+	<div class="flex">
 		<!-- Filter Label -->
-		<div class="col-span-1 flex items-center justify-center bg-card p-4">
+		<div class="flex w-24 shrink-0 items-center justify-center border-r border-border bg-card">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">FILTER</span>
 		</div>
 		<!-- Filter Options -->
-		{#each categories as category (category)}
-			<button
-				type="button"
-				onclick={() => selectedCategory = category}
-				class="font-mono flex items-center justify-center bg-background p-4 text-xs uppercase tracking-wider transition-colors {selectedCategory === category ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-card hover:text-foreground'}"
-			>
-				{category}
-			</button>
-		{/each}
+		<div class="flex flex-1 overflow-x-auto">
+			{#each data.categories as category (category)}
+				<button
+					type="button"
+					onclick={() => selectedCategory = category}
+					class="font-mono flex flex-1 items-center justify-center border-r border-border px-4 py-4 text-xs uppercase tracking-wider transition-colors last:border-r-0 {selectedCategory === category ? 'bg-primary text-primary-foreground' : 'bg-background text-muted-foreground hover:bg-card hover:text-foreground'}"
+				>
+					{category}
+				</button>
+			{/each}
+		</div>
 	</div>
 </section>
 

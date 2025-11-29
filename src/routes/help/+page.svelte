@@ -204,7 +204,7 @@
 			<button
 				type="button"
 				onclick={() => selectedCategory = selectedCategory === id ? null : id}
-				class="stagger-children group flex flex-col bg-background p-4 text-left transition-colors hover:bg-card md:p-6 {selectedCategory === id ? 'bg-primary/10 ring-1 ring-primary' : ''}"
+				class="group flex flex-col bg-background p-4 text-left transition-colors hover:bg-card md:p-6 {selectedCategory === id ? 'bg-primary/10 ring-1 ring-primary' : ''}"
 			>
 				<Icon class="mb-3 h-5 w-5 text-primary" />
 				<h3 class="font-ui text-[11px] font-semibold tracking-wider">{title}</h3>
@@ -256,7 +256,7 @@
 					{#each filteredArticles() as { id, category, title, excerpt, readTime } (id)}
 						<a
 							href={localizeHref(`/help/${id}`)}
-							class="stagger-children group flex flex-col bg-background p-4 transition-colors hover:bg-card md:p-6"
+							class="group flex flex-col bg-background p-4 transition-colors hover:bg-card md:p-6"
 						>
 							<span class="font-mono text-[10px] tracking-widest text-primary">
 								{categories.find(c => c.id === category)?.title}

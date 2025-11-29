@@ -100,7 +100,7 @@
 </svelte:head>
 
 <!-- Hero Section - Full Viewport -->
-<section class="relative flex h-[calc(100dvh-4rem)] flex-col border-b border-border">
+<section class="relative flex h-[calc(100dvh-6rem)] flex-col border-b border-border">
 	<!-- Grid Background -->
 	<div class="pointer-events-none absolute inset-0 -z-10">
 		<div class="absolute inset-0 bg-gradient-to-br from-background via-background to-primary/5"></div>
@@ -141,7 +141,7 @@
 		{#each supportChannels as { icon: Icon, title, desc, action, href } (title)}
 			<a
 				{href}
-				class="stagger-children col-span-12 flex flex-col bg-background p-6 transition-colors hover:bg-card md:col-span-6 lg:col-span-3"
+				class="col-span-12 flex flex-col bg-background p-6 transition-colors hover:bg-card md:col-span-6 lg:col-span-3"
 			>
 				<Icon class="mb-4 h-6 w-6 text-primary" />
 				<h3 class="font-ui text-xs font-semibold tracking-wider">{title}</h3>
@@ -359,7 +359,7 @@
 		<!-- Questions -->
 		<div class="col-span-12 grid grid-cols-1 gap-px bg-border md:grid-cols-2 lg:col-span-8" use:scrollAnimate={{ animation: 'stagger' }}>
 			{#each faq as { q, a }, i (i)}
-				<div class="stagger-children bg-background p-6 md:p-8">
+				<div class="bg-background p-6 md:p-8">
 					<h3 class="font-ui text-sm font-semibold tracking-wider">{q}</h3>
 					<p class="font-body mt-2 text-[11px] text-muted-foreground">{a}</p>
 				</div>

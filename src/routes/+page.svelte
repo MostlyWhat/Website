@@ -97,7 +97,7 @@
 		<!-- Services Grid -->
 		<div class="col-span-12 grid grid-cols-2 gap-px bg-border md:grid-cols-3 lg:col-span-8" use:scrollAnimate={{ animation: 'stagger' }}>
 			{#each services as { number, title, desc } (number)}
-				<div class="stagger-children bg-background p-4 transition-colors hover:bg-card md:p-6">
+				<div class="bg-background p-4 transition-colors hover:bg-card md:p-6">
 					<span class="font-mono text-xs text-primary">{number}</span>
 					<h3 class="font-ui mt-2 text-xs font-semibold uppercase tracking-wider">{title}</h3>
 					<p class="font-body mt-1 text-[11px] text-muted-foreground">{desc}</p>
@@ -111,7 +111,7 @@
 <section class="border-b border-border">
 	<div class="grid grid-cols-2 gap-px bg-border lg:grid-cols-4" use:scrollAnimate={{ animation: 'stagger' }}>
 		{#each capabilities as { icon: Icon, title, desc } (title)}
-			<div class="stagger-children flex flex-col bg-card p-4 md:p-6">
+			<div class="flex flex-col bg-card p-4 md:p-6">
 				<div class="mb-3 flex h-10 w-10 items-center justify-center border border-border bg-background">
 					<Icon class="h-5 w-5 text-primary" />
 				</div>
@@ -134,7 +134,7 @@
 		<!-- Process Steps -->
 		<div class="col-span-12 grid grid-cols-2 gap-px bg-border lg:col-span-9 lg:grid-cols-4" use:scrollAnimate={{ animation: 'stagger' }}>
 			{#each process as { step, title, desc } (step)}
-				<div class="stagger-children bg-background p-4 md:p-6">
+				<div class="bg-background p-4 md:p-6">
 					<span class="font-display text-4xl font-black text-primary/20">{step}</span>
 					<h3 class="font-ui mt-2 text-xs font-semibold uppercase tracking-wider">{title}</h3>
 					<p class="font-body mt-1 text-[11px] text-muted-foreground">{desc}</p>
