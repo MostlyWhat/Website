@@ -3,11 +3,11 @@ import type { PageLoad } from './$types';
 
 // Help article content
 const helpArticles: Record<string, { title: string; category: string; content: string; readTime: string }> = {
-	'what-we-do': {
-		title: 'What Does MostlyWhat Systems Do?',
-		category: 'getting-started',
-		readTime: '3 min',
-		content: `
+    'what-we-do': {
+        title: 'What Does MostlyWhat Systems Do?',
+        category: 'getting-started',
+        readTime: '3 min',
+        content: `
 ## 01 — OVERVIEW
 
 MostlyWhat Systems is a web development studio specializing in modern, high-performance websites and applications. We work with startups, agencies, and product teams who need thoughtful, well-crafted digital experiences.
@@ -31,12 +31,12 @@ We believe in shipping fast without sacrificing quality. Every project follows o
 
 We partner with teams who value craft and clear communication. Whether you're a startup launching your first product or an established company modernizing your digital presence, we can help.
 `
-	},
-	'project-process': {
-		title: 'How Our Project Process Works',
-		category: 'getting-started',
-		readTime: '5 min',
-		content: `
+    },
+    'project-process': {
+        title: 'How Our Project Process Works',
+        category: 'getting-started',
+        readTime: '5 min',
+        content: `
 ## 01 — DISCOVERY
 
 Every project starts with understanding your goals, audience, and constraints. We conduct stakeholder interviews, competitive analysis, and define clear success metrics.
@@ -53,12 +53,12 @@ Using modern technologies like SvelteKit and TypeScript, we build performant, ac
 
 We handle deployment, monitoring setup, and documentation. Post-launch, we offer maintenance packages to keep your product running smoothly.
 `
-	},
-	'starting-project': {
-		title: 'How to Start a Project',
-		category: 'getting-started',
-		readTime: '4 min',
-		content: `
+    },
+    'starting-project': {
+        title: 'How to Start a Project',
+        category: 'getting-started',
+        readTime: '4 min',
+        content: `
 ## 01 — GET IN TOUCH
 
 Reach out through our contact form or email us at hello@mostlywhat.systems. Tell us about your project, timeline, and budget.
@@ -75,12 +75,12 @@ If we're aligned, we'll prepare a detailed proposal including scope, timeline, a
 
 Once you approve the proposal, we'll schedule a kickoff meeting, set up project tools, and begin the discovery phase.
 `
-	},
-	'web-development': {
-		title: 'Web Development Services',
-		category: 'services',
-		readTime: '6 min',
-		content: `
+    },
+    'web-development': {
+        title: 'Web Development Services',
+        category: 'services',
+        readTime: '6 min',
+        content: `
 ## 01 — MODERN STACK
 
 We specialize in SvelteKit, TypeScript, and TailwindCSS. Our sites are fast, accessible, and built to last.
@@ -97,12 +97,12 @@ We follow WCAG 2.1 guidelines and build with semantic HTML. Everyone should be a
 
 We deploy to modern platforms like Cloudflare, Vercel, and Netlify. Your site will be fast for users anywhere in the world.
 `
-	},
-	'design-systems': {
-		title: 'Design Systems & Brand Identity',
-		category: 'services',
-		readTime: '5 min',
-		content: `
+    },
+    'design-systems': {
+        title: 'Design Systems & Brand Identity',
+        category: 'services',
+        readTime: '5 min',
+        content: `
 ## 01 — BRAND IDENTITY
 
 We create cohesive visual identities including logos, color palettes, typography, and brand guidelines.
@@ -119,12 +119,12 @@ We create interactive prototypes in Figma that feel like the real thing. Test id
 
 We provide detailed specifications, assets, and documentation for smooth developer handoff.
 `
-	},
-	'tech-stack': {
-		title: 'Our Technology Stack',
-		category: 'technical',
-		readTime: '4 min',
-		content: `
+    },
+    'tech-stack': {
+        title: 'Our Technology Stack',
+        category: 'technical',
+        readTime: '4 min',
+        content: `
 ## 01 — FRONTEND
 
 - SvelteKit for applications and marketing sites
@@ -149,12 +149,12 @@ We provide detailed specifications, assets, and documentation for smooth develop
 - Figma for design and prototyping
 - Linear for project management
 `
-	},
-	'integrations': {
-		title: 'Third-Party Integrations',
-		category: 'technical',
-		readTime: '5 min',
-		content: `
+    },
+    'integrations': {
+        title: 'Third-Party Integrations',
+        category: 'technical',
+        readTime: '5 min',
+        content: `
 ## 01 — CMS PLATFORMS
 
 We integrate with headless CMS platforms like Contentful, Sanity, Strapi, and Payload CMS.
@@ -171,12 +171,12 @@ Stripe, Paddle, and LemonSqueezy for subscription and one-time payments.
 
 Google Analytics 4, Plausible, Fathom, and PostHog for user analytics and insights.
 `
-	},
-	'timeline': {
-		title: 'Project Timelines',
-		category: 'process',
-		readTime: '3 min',
-		content: `
+    },
+    'timeline': {
+        title: 'Project Timelines',
+        category: 'process',
+        readTime: '3 min',
+        content: `
 ## 01 — SPRINT PROJECTS
 
 2-4 weeks for focused, single-deliverable projects like landing pages or design sprints.
@@ -193,12 +193,12 @@ Continuous engagement for teams who need dedicated capacity and strategic suppor
 
 Timeline depends on scope, complexity, feedback turnaround, and third-party dependencies.
 `
-	},
-	'communication': {
-		title: 'Communication & Collaboration',
-		category: 'process',
-		readTime: '4 min',
-		content: `
+    },
+    'communication': {
+        title: 'Communication & Collaboration',
+        category: 'process',
+        readTime: '4 min',
+        content: `
 ## 01 — ASYNC FIRST
 
 We use Slack, Linear, and GitHub for day-to-day communication. No unnecessary meetings.
@@ -215,12 +215,12 @@ You'll have access to Figma files, GitHub repos, and project boards for full tra
 
 We document decisions, processes, and technical details for future reference.
 `
-	},
-	'pricing': {
-		title: 'Pricing & Estimates',
-		category: 'billing',
-		readTime: '4 min',
-		content: `
+    },
+    'pricing': {
+        title: 'Pricing & Estimates',
+        category: 'billing',
+        readTime: '4 min',
+        content: `
 ## 01 — PROJECT-BASED
 
 Fixed-price for well-defined projects. You'll know the cost upfront.
@@ -237,12 +237,12 @@ Monthly commitment for ongoing work. Best value for long-term partnerships.
 
 We provide detailed estimates with breakdowns by phase. No hidden costs.
 `
-	},
-	'invoicing': {
-		title: 'Invoicing & Payment',
-		category: 'billing',
-		readTime: '3 min',
-		content: `
+    },
+    'invoicing': {
+        title: 'Invoicing & Payment',
+        category: 'billing',
+        readTime: '3 min',
+        content: `
 ## 01 — PAYMENT TERMS
 
 Net 15 for most invoices. Larger projects may have milestone-based payments.
@@ -259,12 +259,12 @@ Projects typically start with a 50% deposit. Balance due on completion.
 
 You'll receive detailed invoices with time tracking and deliverable summaries.
 `
-	},
-	'maintenance': {
-		title: 'Post-Launch Support',
-		category: 'support',
-		readTime: '4 min',
-		content: `
+    },
+    'maintenance': {
+        title: 'Post-Launch Support',
+        category: 'support',
+        readTime: '4 min',
+        content: `
 ## 01 — MAINTENANCE PACKAGES
 
 Monthly plans for updates, security patches, and bug fixes.
@@ -281,18 +281,18 @@ Regular dependency updates, CMS upgrades, and platform maintenance.
 
 Direct access to our team for urgent issues and feature requests.
 `
-	}
+    }
 };
 
 export const load: PageLoad = ({ params }) => {
-	const article = helpArticles[params.slug];
-	
-	if (!article) {
-		error(404, 'Article not found');
-	}
-	
-	return {
-		slug: params.slug,
-		...article
-	};
+    const article = helpArticles[params.slug];
+
+    if (!article) {
+        error(404, 'Article not found');
+    }
+
+    return {
+        slug: params.slug,
+        ...article
+    };
 };
