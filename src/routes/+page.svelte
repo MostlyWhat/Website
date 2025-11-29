@@ -3,8 +3,7 @@
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import { ArrowRight, ArrowDown, Zap, Shield, Users, Headphones } from '@lucide/svelte';
-	import { HERO_HEIGHTS, GRID_PATTERNS } from '$lib/utils/grid';
+	import { ArrowRight, Zap, Shield, Users, Headphones } from '@lucide/svelte';
 
 	const services = [
 		{ number: '01', title: m.service_strategy_title(), desc: m.service_strategy_desc() },
@@ -50,7 +49,7 @@
 	</div>
 
 	<!-- Hero Content -->
-	<div class="flex flex-1 flex-col justify-end px-4 pb-8 md:px-6 lg:px-8" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
+	<div class="flex flex-1 flex-col justify-center px-4 md:px-6 lg:px-8" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
 		<div class="grid grid-cols-12 gap-4">
 			<div class="col-span-12 lg:col-span-8">
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">MOSTLYWHAT SYSTEMS</span>
@@ -67,17 +66,15 @@
 			</div>
 		</div>
 	</div>
+</section>
 
-	<!-- Scroll Indicator -->
-	<div class="flex justify-center py-4">
-		<ArrowDown class="h-5 w-5 animate-bounce text-muted-foreground" />
-	</div>
-
-	<!-- Stats Bar -->
-	<div class="grid grid-cols-12 gap-px border-t border-border bg-border">
-		{#each stats as { label, value }}
-			<div class="col-span-4 bg-card/80 p-4 backdrop-blur-sm md:p-6">
-				<span class="font-display mt-1 text-sm font-bold md:text-base">{value}</span>
+<!-- Stats Bar -->
+<section class="border-b border-border">
+	<div class="grid grid-cols-12 gap-px bg-border">
+		{#each stats as { label, value } (label)}
+			<div class="col-span-4 bg-card p-4 md:p-6">
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">{label}</span>
+				<p class="font-display mt-1 text-sm font-bold md:text-base">{value}</p>
 			</div>
 		{/each}
 	</div>
@@ -95,7 +92,7 @@
 		
 		<!-- Services Grid -->
 		<div class="col-span-12 grid grid-cols-2 gap-px bg-border md:grid-cols-3 lg:col-span-8" use:scrollAnimate={{ animation: 'stagger' }}>
-			{#each services as { number, title, desc }}
+			{#each services as { number, title, desc } (number)}
 				<div class="stagger-children bg-background p-4 transition-colors hover:bg-card md:p-6">
 					<span class="font-mono text-xs text-primary">{number}</span>
 					<h3 class="font-ui mt-2 text-xs font-semibold uppercase tracking-wider">{title}</h3>
@@ -109,7 +106,7 @@
 <!-- Capabilities Grid - 2→4 columns -->
 <section class="border-b border-border">
 	<div class="grid grid-cols-2 gap-px bg-border lg:grid-cols-4" use:scrollAnimate={{ animation: 'stagger' }}>
-		{#each capabilities as { icon: Icon, title, desc }}
+		{#each capabilities as { icon: Icon, title, desc } (title)}
 			<div class="stagger-children flex flex-col bg-card p-4 md:p-6">
 				<div class="mb-3 flex h-10 w-10 items-center justify-center border border-border bg-background">
 					<Icon class="h-5 w-5 text-primary" />
@@ -132,7 +129,7 @@
 		
 		<!-- Process Steps -->
 		<div class="col-span-12 grid grid-cols-2 gap-px bg-border lg:col-span-9 lg:grid-cols-4" use:scrollAnimate={{ animation: 'stagger' }}>
-			{#each process as { step, title, desc }}
+			{#each process as { step, title, desc } (step)}
 				<div class="stagger-children bg-background p-4 md:p-6">
 					<span class="font-display text-4xl font-black text-primary/20">{step}</span>
 					<h3 class="font-ui mt-2 text-xs font-semibold uppercase tracking-wider">{title}</h3>

@@ -69,7 +69,7 @@
 <!-- Services Grid -->
 <section class="border-b border-border">
 	<div class="grid grid-cols-2 gap-px bg-border lg:grid-cols-3" use:scrollAnimate={{ animation: 'stagger' }}>
-		{#each services as { icon: Icon, number, title, desc, features }}
+		{#each services as { icon: Icon, number, title, desc, features } (number)}
 			<div class="stagger-children flex flex-col bg-background p-4 transition-colors hover:bg-card md:p-6">
 				<div class="flex items-start justify-between">
 					<div class="flex h-10 w-10 items-center justify-center border border-border">
@@ -80,7 +80,7 @@
 				<h3 class="font-ui mt-3 text-xs font-semibold tracking-wider">{title}</h3>
 				<p class="font-body mt-1 text-[11px] text-muted-foreground">{desc}</p>
 				<ul class="mt-3 space-y-1">
-					{#each features as feature}
+					{#each features as feature (feature)}
 						<li class="font-mono flex items-center gap-2 text-[10px] tracking-wider text-muted-foreground">
 							<Check class="h-3 w-3 shrink-0 text-primary" />
 							{feature}
@@ -100,7 +100,7 @@
 			<h2 class="font-display mt-4 text-2xl font-bold uppercase md:text-3xl">HOW WE WORK</h2>
 		</div>
 		<div class="col-span-12 grid grid-cols-1 gap-px bg-border md:grid-cols-3 lg:col-span-9" use:scrollAnimate={{ animation: 'stagger' }}>
-			{#each packages as pkg}
+			{#each packages as pkg (pkg.name)}
 				<div class="stagger-children flex flex-col {pkg.featured ? 'bg-primary/10' : 'bg-background'} p-4 md:p-6">
 					{#if pkg.featured}
 						<span class="font-mono mb-2 text-[10px] tracking-widest text-muted-foreground">POPULAR</span>
@@ -111,7 +111,7 @@
 						<span class="font-mono ml-2 text-[10px] tracking-widest text-muted-foreground">{pkg.duration}</span>
 					</div>
 					<ul class="mt-3 space-y-1">
-						{#each pkg.features as feature}
+						{#each pkg.features as feature (feature)}
 							<li class="font-mono flex items-center gap-2 text-[10px] tracking-wider text-muted-foreground">
 								<Check class="h-3 w-3 shrink-0 text-primary" />
 								{feature}

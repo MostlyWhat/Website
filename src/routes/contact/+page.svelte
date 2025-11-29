@@ -154,7 +154,7 @@
 
 	<!-- Contact Options Grid -->
 	<div class="grid grid-cols-2 gap-px border-t border-border bg-border lg:grid-cols-4" use:scrollAnimate={{ animation: 'stagger' }}>
-		{#each contactOptions as { id, icon: Icon, title, desc, action, href }}
+		{#each contactOptions as { id, icon: Icon, title, desc, action, href } (id)}
 			{#if href}
 				<a
 					{href}
@@ -250,7 +250,7 @@
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTACT INFO</span>
 				
 				<div class="mt-6 space-y-4">
-					{#each contactInfo as { icon: Icon, label, value, href }}
+					{#each contactInfo as { icon: Icon, label, value, href } (label)}
 						<div class="border border-border bg-background p-4">
 							<div class="flex items-start gap-3">
 								<Icon class="h-4 w-4 text-muted-foreground" />
@@ -319,7 +319,7 @@
 		<!-- FAQ Accordion (Right) -->
 		<div class="bg-card p-4 md:p-6 lg:p-8" use:scrollAnimate={{ animation: 'fade' }}>
 			<Accordion.Root class="space-y-px">
-				{#each faqs as { id, q, a }}
+				{#each faqs as { id, q, a } (id)}
 					<Accordion.Item value={id} class="border-0">
 						<Accordion.Trigger class="font-ui w-full bg-background px-4 py-4 text-left text-xs tracking-wider hover:bg-muted [&[data-state=open]]:bg-primary/10 [&[data-state=open]]:text-primary">
 							{q}

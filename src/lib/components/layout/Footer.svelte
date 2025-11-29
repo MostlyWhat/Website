@@ -43,7 +43,7 @@
 			
 			<!-- Social Links -->
 			<div class="mt-6 grid grid-cols-3 gap-px bg-border">
-				{#each social as { href, label, fullLabel, icon: Icon }}
+				{#each social as { href, label, fullLabel, icon: Icon } (label)}
 					<a
 						{href}
 						target="_blank"
@@ -62,7 +62,7 @@
 		<div class="col-span-4 bg-background p-6 md:col-span-2 lg:col-span-3 lg:p-8">
 			<h3 class="font-mono text-[10px] tracking-widest text-muted-foreground">NAVIGATE</h3>
 			<ul class="mt-4 space-y-2">
-				{#each navigation.company as { href, label }}
+				{#each navigation.company as { href, label } (href)}
 					<li>
 						<a
 							href={localizeHref(href)}
@@ -78,7 +78,7 @@
 		<div class="col-span-4 bg-background p-6 md:col-span-2 lg:col-span-3 lg:p-8">
 			<h3 class="font-mono text-[10px] tracking-widest text-muted-foreground">RESOURCES</h3>
 			<ul class="mt-4 space-y-2">
-				{#each navigation.resources as { href, label }}
+				{#each navigation.resources as { href, label } (href)}
 					<li>
 						<a
 							href={localizeHref(href)}
@@ -94,7 +94,7 @@
 		<div class="col-span-4 bg-background p-6 md:col-span-2 lg:col-span-3 lg:p-8">
 			<h3 class="font-mono text-[10px] tracking-widest text-muted-foreground">LEGAL</h3>
 			<ul class="mt-4 space-y-2">
-				{#each navigation.legal as { href, label }}
+				{#each navigation.legal as { href, label } (href)}
 					<li>
 						<a
 							href={localizeHref(href)}

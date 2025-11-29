@@ -75,7 +75,7 @@
 
 		<!-- Desktop Navigation - centered grid -->
 		<nav class="col-span-6 hidden grid-cols-4 lg:grid">
-			{#each navigation as { href, key }}
+			{#each navigation as { href, key } (href)}
 				<a
 					href={localizeHref(href)}
 					class="font-ui flex items-center justify-center border-r border-border text-xs tracking-widest transition-colors {isActive(href)
@@ -90,10 +90,10 @@
 		<!-- Right Controls -->
 		<div class="col-span-6 flex items-stretch sm:col-span-8 lg:col-span-3">
 			<!-- Language Switcher -->
-			<div class="lang-menu relative flex flex-1 items-stretch border-l border-border">
+			<div class="lang-menu relative flex w-20 items-stretch border-l border-border">
 				<button
 					type="button"
-					class="font-mono flex w-full items-center justify-center gap-2 px-4 text-xs tracking-wider text-muted-foreground transition-colors hover:text-foreground"
+					class="font-mono flex w-full items-center justify-center gap-1.5 text-xs tracking-wider text-muted-foreground transition-colors hover:text-foreground"
 					onclick={() => (langMenuOpen = !langMenuOpen)}
 					aria-expanded={langMenuOpen}
 				>
@@ -124,7 +124,7 @@
 			<!-- Contact CTA -->
 			<a
 				href={localizeHref('/contact')}
-				class="font-ui hidden items-center justify-center gap-2 border-l border-border bg-primary px-6 text-xs tracking-widest text-primary-foreground transition-colors hover:bg-primary/90 sm:flex"
+				class="font-ui hidden flex-1 items-center justify-center gap-2 border-l border-border bg-primary text-xs tracking-widest text-primary-foreground transition-colors hover:bg-primary/90 sm:flex"
 			>
 				CONTACT
 				<ArrowUpRight class="h-3.5 w-3.5" />
@@ -164,29 +164,30 @@
 		</div>
 	{/if}
 
-	<!-- Mobile Navigation -->
+	<!-- Mobile Navigation - Full Screen -->
 	{#if mobileMenuOpen}
-		<nav class="border-t border-border bg-background lg:hidden">
-			<div class="grid grid-cols-2 gap-px bg-border">
-				{#each navigation as { href, key }}
+		<nav class="fixed inset-0 top-16 z-40 flex flex-col bg-background lg:hidden">
+			<div class="flex flex-1 flex-col">
+				{#each navigation as { href, key } (href)}
 					<a
 						href={localizeHref(href)}
-						class="font-ui flex items-center justify-center bg-background py-4 text-xs tracking-widest transition-colors {isActive(href)
+						class="font-display flex items-center border-b border-border px-6 py-6 text-2xl font-bold uppercase tracking-wider transition-colors {isActive(href)
 							? 'bg-primary/10 text-primary'
-							: 'text-muted-foreground hover:bg-card'}"
+							: 'text-foreground hover:bg-card'}"
 						onclick={closeMobileMenu}
 					>
 						{key}
+						<ChevronRight class="ml-auto h-5 w-5 text-muted-foreground" />
 					</a>
 				{/each}
 			</div>
 			<a
 				href={localizeHref('/contact')}
-				class="font-ui flex items-center justify-center gap-2 bg-primary py-4 text-xs tracking-widest text-primary-foreground"
+				class="font-display flex items-center justify-center gap-3 bg-primary py-6 text-xl font-bold uppercase tracking-widest text-primary-foreground"
 				onclick={closeMobileMenu}
 			>
 				CONTACT
-				<ArrowUpRight class="h-3.5 w-3.5" />
+				<ArrowUpRight class="h-5 w-5" />
 			</a>
 		</nav>
 	{/if}

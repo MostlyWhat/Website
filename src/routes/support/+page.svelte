@@ -126,7 +126,7 @@
 
 	<!-- Stats Bar -->
 	<div class="grid grid-cols-12 gap-px border-t border-border bg-border">
-		{#each stats as { value, label }}
+		{#each stats as { value, label } (label)}
 			<div class="col-span-4 bg-card/80 p-4 backdrop-blur-sm">
 				<span class="font-display text-lg font-bold text-primary md:text-2xl">{value}</span>
 				<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
@@ -138,7 +138,7 @@
 <!-- Support Channels -->
 <section class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
-		{#each supportChannels as { icon: Icon, title, desc, action, href }}
+		{#each supportChannels as { icon: Icon, title, desc, action, href } (title)}
 			<a
 				{href}
 				class="stagger-children col-span-12 flex flex-col bg-background p-6 transition-colors hover:bg-card md:col-span-6 lg:col-span-3"
@@ -358,7 +358,7 @@
 
 		<!-- Questions -->
 		<div class="col-span-12 grid grid-cols-1 gap-px bg-border md:grid-cols-2 lg:col-span-8" use:scrollAnimate={{ animation: 'stagger' }}>
-			{#each faq as { q, a }}
+			{#each faq as { q, a }, i (i)}
 				<div class="stagger-children bg-background p-6 md:p-8">
 					<h3 class="font-ui text-sm font-semibold tracking-wider">{q}</h3>
 					<p class="font-body mt-2 text-[11px] text-muted-foreground">{a}</p>

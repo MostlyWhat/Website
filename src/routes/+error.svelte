@@ -1,76 +1,111 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import * as m from '$lib/paraglide/messages';
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
-	import Section from '$lib/components/layout/Section.svelte';
-	import Tile from '$lib/components/layout/Tile.svelte';
+	import { localizeHref } from '$lib/paraglide/runtime';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import { Home, ArrowLeft, Search, FileQuestion } from '@lucide/svelte';
+	import { Home, ArrowLeft, FileQuestion, ArrowRight } from '@lucide/svelte';
 </script>
 
 <svelte:head>
-	<title>{m.error_404_title()} — {m.site_name()}</title>
+	<title>{page.status} — {m.site_name()}</title>
 </svelte:head>
 
-<Section padding="xl" class="min-h-[60vh] flex items-center justify-center">
-	<div class="text-center" use:scrollAnimate={{ animation: 'scale', startVisible: true }}>
-		<!-- 404 Display -->
-		<div class="relative mb-8">
-			<div class="font-display text-[12rem] leading-none text-primary/10 md:text-[16rem]">404</div>
-			<div class="absolute inset-0 flex items-center justify-center">
-				<div class="border border-border bg-background p-6">
-					<FileQuestion class="h-16 w-16 text-primary" />
+<!-- Error Hero - Full Viewport -->
+<section class="relative flex h-[calc(100dvh-4rem)] flex-col border-b border-border">
+	<!-- Grid Background -->
+	<div class="pointer-events-none absolute inset-0 -z-10">
+		<div class="absolute inset-0 bg-gradient-to-br from-background via-background to-destructive/5"></div>
+		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
+	</div>
+
+	<!-- Hero Content -->
+	<div class="flex flex-1 flex-col justify-center px-4 md:px-6 lg:px-8" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
+		<div class="grid grid-cols-12 gap-4">
+			<div class="col-span-12 lg:col-span-8">
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">ERROR {page.status}</span>
+				<h1 class="font-display mt-4 text-5xl font-black uppercase leading-[0.9] tracking-tight md:text-7xl lg:text-8xl xl:text-9xl">
+					{#if page.status === 404}
+						PAGE NOT FOUND
+					{:else}
+						SOMETHING WENT WRONG
+					{/if}
+				</h1>
+			</div>
+			<div class="col-span-12 flex flex-col justify-end lg:col-span-4">
+				<p class="font-body text-base text-muted-foreground md:text-lg">
+					{#if page.status === 404}
+						{m.error_404_subtitle()}
+					{:else}
+						An unexpected error occurred. Please try again or contact support if the problem persists.
+					{/if}
+				</p>
+				<div class="mt-4 flex gap-2">
+					<Button href={localizeHref('/')} class="font-ui tracking-wider">
+						<Home class="mr-2 h-4 w-4" />
+						HOME
+					</Button>
+					<Button variant="outline" class="font-ui tracking-wider" onclick={() => history.back()}>
+						<ArrowLeft class="mr-2 h-4 w-4" />
+						GO BACK
+					</Button>
 				</div>
 			</div>
 		</div>
+	</div>
+</section>
 
-		<!-- Error Message -->
-		<h1 class="font-display mb-4 text-3xl md:text-4xl">{m.error_404_title()}</h1>
-		<p class="font-body mx-auto mb-8 max-w-md text-lg text-muted-foreground">
-			{m.error_404_subtitle()}
-		</p>
-
-		<!-- Actions -->
-		<div class="flex flex-wrap justify-center gap-4">
-			<Button href="/" size="lg" class="font-ui">
-				<Home class="mr-2 h-5 w-5" />
-				{m.error_404_button()}
-			</Button>
-			<Button variant="outline" size="lg" class="font-ui" onclick={() => history.back()}>
-				<ArrowLeft class="mr-2 h-5 w-5" />
-				Go Back
-			</Button>
+<!-- Quick Links Section -->
+<section class="border-b border-border">
+	<div class="grid grid-cols-12 gap-px bg-border">
+		<div class="col-span-12 bg-background p-6 md:p-8 lg:col-span-4 lg:p-12" use:scrollAnimate={{ animation: 'fade' }}>
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">NAVIGATION</span>
+			<h2 class="font-display mt-2 text-2xl font-bold uppercase md:text-3xl">WHERE TO GO</h2>
+			<p class="font-body mt-2 text-sm text-muted-foreground">Here are some helpful links to get you back on track.</p>
 		</div>
-
-		<!-- Helpful Links -->
-		<div class="mt-12 grid gap-4 text-left sm:grid-cols-3" use:scrollAnimate={{ animation: 'stagger' }}>
-			<a href="/" class="group">
-				<Tile interactive padding="md">
-					<h3 class="font-ui font-semibold group-hover:text-primary transition-colors">Home</h3>
-					<p class="font-body text-sm text-muted-foreground">Return to the homepage</p>
-				</Tile>
+		
+		<div class="col-span-12 grid grid-cols-2 gap-px bg-border lg:col-span-8 lg:grid-cols-4" use:scrollAnimate={{ animation: 'stagger' }}>
+			<a href={localizeHref('/')} class="stagger-children group flex flex-col bg-background p-4 transition-colors hover:bg-card md:p-6">
+				<span class="font-mono text-xs text-primary">01</span>
+				<h3 class="font-ui mt-2 text-xs font-semibold uppercase tracking-wider group-hover:text-primary">HOME</h3>
+				<p class="font-body mt-1 text-[11px] text-muted-foreground">Return to homepage</p>
 			</a>
-			<a href="/projects" class="group">
-				<Tile interactive padding="md">
-					<h3 class="font-ui font-semibold group-hover:text-primary transition-colors">Projects</h3>
-					<p class="font-body text-sm text-muted-foreground">View our work</p>
-				</Tile>
+			<a href={localizeHref('/projects')} class="stagger-children group flex flex-col bg-background p-4 transition-colors hover:bg-card md:p-6">
+				<span class="font-mono text-xs text-primary">02</span>
+				<h3 class="font-ui mt-2 text-xs font-semibold uppercase tracking-wider group-hover:text-primary">PROJECTS</h3>
+				<p class="font-body mt-1 text-[11px] text-muted-foreground">View our work</p>
 			</a>
-			<a href="/contact" class="group">
-				<Tile interactive padding="md">
-					<h3 class="font-ui font-semibold group-hover:text-primary transition-colors">Contact</h3>
-					<p class="font-body text-sm text-muted-foreground">Get in touch</p>
-				</Tile>
+			<a href={localizeHref('/services')} class="stagger-children group flex flex-col bg-background p-4 transition-colors hover:bg-card md:p-6">
+				<span class="font-mono text-xs text-primary">03</span>
+				<h3 class="font-ui mt-2 text-xs font-semibold uppercase tracking-wider group-hover:text-primary">SERVICES</h3>
+				<p class="font-body mt-1 text-[11px] text-muted-foreground">What we offer</p>
+			</a>
+			<a href={localizeHref('/contact')} class="stagger-children group flex flex-col bg-background p-4 transition-colors hover:bg-card md:p-6">
+				<span class="font-mono text-xs text-primary">04</span>
+				<h3 class="font-ui mt-2 text-xs font-semibold uppercase tracking-wider group-hover:text-primary">CONTACT</h3>
+				<p class="font-body mt-1 text-[11px] text-muted-foreground">Get in touch</p>
 			</a>
 		</div>
+	</div>
+</section>
 
-		<!-- Terminal-style message -->
-		<div class="mx-auto mt-12 max-w-lg border border-border bg-card p-4 text-left" use:scrollAnimate={{ animation: 'fade' }}>
+<!-- Terminal Section -->
+<section class="border-b border-border">
+	<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'scale' }}>
+		<div class="col-span-12 bg-card p-6 md:col-span-8 md:p-8 lg:p-12">
 			<div class="font-mono text-sm">
-				<p class="text-muted-foreground">$ <span class="text-primary">curl</span> {'{'}current_url{'}'}</p>
-				<p class="mt-2 text-red-400">Error: 404 Not Found</p>
+				<p class="text-muted-foreground">$ <span class="text-primary">curl</span> {page.url.pathname}</p>
+				<p class="mt-2 text-red-400">Error: {page.status} {page.error?.message || 'Not Found'}</p>
 				<p class="text-muted-foreground">The requested resource could not be located.</p>
 				<p class="mt-2 text-muted-foreground">$ <span class="animate-pulse">_</span></p>
 			</div>
 		</div>
+		<div class="col-span-12 flex items-center justify-center bg-primary/10 p-6 md:col-span-4 md:p-8">
+			<div class="text-center">
+				<FileQuestion class="mx-auto mb-2 h-12 w-12 text-primary" />
+				<p class="font-mono text-[10px] tracking-widest text-muted-foreground">STATUS CODE</p>
+				<p class="font-display mt-1 text-4xl font-bold text-primary">{page.status}</p>
+			</div>
+		</div>
 	</div>
-</Section>
+</section>

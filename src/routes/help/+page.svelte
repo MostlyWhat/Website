@@ -184,7 +184,7 @@
 
 	<!-- Stats Bar -->
 	<div class="grid grid-cols-12 gap-px border-t border-border bg-border">
-		{#each stats as { value, label }}
+		{#each stats as { value, label } (label)}
 			<div class="col-span-4 bg-card/80 p-4 backdrop-blur-sm">
 				<span class="font-display text-lg font-bold text-primary md:text-2xl">{value}</span>
 				<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
@@ -196,7 +196,7 @@
 <!-- Categories Grid -->
 <section class="border-b border-border">
 	<div class="grid grid-cols-2 gap-px bg-border md:grid-cols-3 lg:grid-cols-6" use:scrollAnimate={{ animation: 'stagger' }}>
-		{#each categories as { id, icon: Icon, title, desc, count }}
+		{#each categories as { id, icon: Icon, title, desc, count } (id)}
 			<button
 				type="button"
 				onclick={() => selectedCategory = selectedCategory === id ? null : id}
@@ -249,7 +249,7 @@
 		<div class="col-span-12 lg:col-span-9">
 			{#if filteredArticles().length > 0}
 				<div class="grid grid-cols-1 gap-px bg-border md:grid-cols-2" use:scrollAnimate={{ animation: 'stagger' }}>
-					{#each filteredArticles() as { id, category, title, excerpt, readTime }}
+					{#each filteredArticles() as { id, category, title, excerpt, readTime } (id)}
 						<a
 							href={localizeHref(`/help/${id}`)}
 							class="stagger-children group flex flex-col bg-background p-4 transition-colors hover:bg-card md:p-6"

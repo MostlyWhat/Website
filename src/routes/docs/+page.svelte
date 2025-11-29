@@ -92,7 +92,7 @@
 		<div class="flex items-center justify-center bg-card p-4">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">JUMP TO</span>
 		</div>
-		{#each sections as { id, title, icon: Icon }}
+		{#each sections as { id, title, icon: Icon } (id)}
 			<a
 				href="#{id}"
 				class="font-mono flex items-center justify-center gap-2 bg-background p-4 text-xs tracking-wider text-muted-foreground transition-colors hover:bg-card hover:text-primary"
@@ -120,7 +120,7 @@
 		<div class="col-span-12 bg-card p-8 lg:col-span-8 lg:p-12">
 			<p class="font-mono mb-4 text-[10px] tracking-widest text-muted-foreground">12-COLUMN GRID</p>
 			<div class="grid grid-cols-12 gap-px bg-border">
-				{#each Array(12) as _, i}
+				{#each Array(12) as _, i (i)}
 					<div class="flex items-center justify-center bg-background py-4">
 						<span class="font-mono text-xs text-muted-foreground">{i + 1}</span>
 					</div>
@@ -161,7 +161,7 @@
 		
 		<!-- Color Swatches -->
 		<div class="col-span-12 grid grid-cols-2 gap-px bg-border lg:col-span-9 lg:grid-cols-3">
-			{#each colors as color}
+			{#each colors as color (color.name)}
 				<div class="flex flex-col bg-background">
 					<div class="h-24 {color.class}"></div>
 					<div class="flex items-center justify-between p-4">
@@ -201,7 +201,7 @@
 		
 		<!-- Font Samples -->
 		<div class="col-span-12 grid grid-cols-1 gap-px bg-border lg:col-span-9 lg:grid-cols-2">
-			{#each fonts as font}
+			{#each fonts as font (font.name)}
 				<div class="flex flex-col bg-background p-6">
 					<span class="font-mono text-[10px] tracking-widest text-primary">{font.usage.toUpperCase()}</span>
 					<p class="{font.class} mt-2 text-2xl">{font.name}</p>
@@ -274,7 +274,7 @@
 		
 		<!-- Animation Types -->
 		<div class="col-span-12 grid grid-cols-2 gap-px bg-border lg:col-span-9 lg:grid-cols-4">
-			{#each ['fade', 'slide-left', 'slide-right', 'scale'] as anim}
+			{#each ['fade', 'slide-left', 'slide-right', 'scale'] as anim (anim)}
 				<div class="flex flex-col bg-background p-6">
 					<span class="font-mono text-[10px] tracking-widest text-primary">{anim.toUpperCase()}</span>
 					<p class="font-body mt-2 text-sm text-muted-foreground">

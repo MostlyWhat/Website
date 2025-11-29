@@ -38,7 +38,7 @@
 	</div>
 
 	<!-- Hero Content -->
-	<div class="flex flex-1 flex-col justify-end p-4 pb-8 md:p-6 lg:p-8" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
+	<div class="flex flex-1 flex-col justify-center px-4 md:px-6 lg:px-8" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
 		<div class="grid grid-cols-12 gap-4">
 			<div class="col-span-12 lg:col-span-8">
 				<span class="font-mono text-xs tracking-widest text-muted-foreground">ABOUT</span>
@@ -51,23 +51,25 @@
 			</div>
 		</div>
 	</div>
+</section>
 
-	<!-- Stats Bar -->
-	<div class="grid grid-cols-2 gap-px border-t border-border bg-border md:grid-cols-4">
-		<div class="bg-card/80 p-4 backdrop-blur-sm md:p-6">
-			<p class="font-mono text-[10px] tracking-widest text-muted-foreground">FOUNDED</p>
+<!-- Stats Bar -->
+<section class="border-b border-border">
+	<div class="grid grid-cols-2 gap-px bg-border md:grid-cols-4">
+		<div class="bg-card p-4 md:p-6">
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">FOUNDED</span>
 			<p class="font-display mt-1 text-sm font-bold md:text-base">2022</p>
 		</div>
-		<div class="bg-card/80 p-4 backdrop-blur-sm md:p-6">
-			<p class="font-mono text-[10px] tracking-widest text-muted-foreground">FOCUS</p>
+		<div class="bg-card p-4 md:p-6">
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">FOCUS</span>
 			<p class="font-display mt-1 text-sm font-bold md:text-base">WEB PRODUCTS</p>
 		</div>
-		<div class="bg-card/80 p-4 backdrop-blur-sm md:p-6">
-			<p class="font-mono text-[10px] tracking-widest text-muted-foreground">PROJECTS</p>
+		<div class="bg-card p-4 md:p-6">
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">PROJECTS</span>
 			<p class="font-display mt-1 text-sm font-bold md:text-base">50+</p>
 		</div>
-		<div class="bg-card/80 p-4 backdrop-blur-sm md:p-6">
-			<p class="font-mono text-[10px] tracking-widest text-muted-foreground">PHILOSOPHY</p>
+		<div class="bg-card p-4 md:p-6">
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">PHILOSOPHY</span>
 			<p class="font-display mt-1 text-sm font-bold md:text-base">SHIP FAST</p>
 		</div>
 	</div>
@@ -107,7 +109,7 @@
 			<h2 class="font-display mt-4 text-2xl font-bold uppercase md:text-3xl">WHAT WE STAND FOR</h2>
 		</div>
 		<div class="col-span-12 grid grid-cols-2 gap-px bg-border lg:col-span-9 lg:grid-cols-4" use:scrollAnimate={{ animation: 'stagger' }}>
-			{#each values as { icon: Icon, title, desc }}
+			{#each values as { icon: Icon, title, desc } (title)}
 				<div class="stagger-children bg-background p-4 md:p-6">
 					<div class="mb-3 flex h-10 w-10 items-center justify-center border border-border">
 						<Icon class="h-5 w-5 text-primary" />
@@ -128,11 +130,11 @@
 			<h2 class="font-display mt-4 text-2xl font-bold uppercase md:text-3xl">OUR STACK</h2>
 		</div>
 		<div class="col-span-12 grid grid-cols-2 gap-px bg-border lg:col-span-9 lg:grid-cols-4" use:scrollAnimate={{ animation: 'stagger' }}>
-			{#each tech as { category, items }}
+			{#each tech as { category, items } (category)}
 				<div class="stagger-children bg-card p-4 md:p-6">
 					<h3 class="font-mono text-[10px] tracking-widest text-primary">{category}</h3>
 					<ul class="font-body mt-3 space-y-1 text-xs">
-						{#each items as item}
+						{#each items as item (item)}
 							<li class="flex items-center gap-2">
 								<span class="h-1 w-1 bg-primary"></span>
 								{item}
@@ -153,7 +155,7 @@
 			<h2 class="font-display mt-4 text-2xl font-bold uppercase md:text-3xl">THE PEOPLE</h2>
 		</div>
 		<div class="bg-background p-4 md:p-6 lg:p-8">
-			{#each team as { name, role, desc }}
+			{#each team as { name, role, desc } (name)}
 				<div class="flex items-start gap-4">
 					<div class="h-12 w-12 shrink-0 border border-border bg-primary/10"></div>
 					<div>

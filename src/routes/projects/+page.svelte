@@ -58,7 +58,7 @@
 
 	<!-- Stats Bar -->
 	<div class="grid grid-cols-12 gap-px border-t border-border bg-border">
-		{#each stats as { value, label }}
+		{#each stats as { value, label } (label)}
 			<div class="col-span-4 bg-card/80 p-4 backdrop-blur-sm">
 				<span class="font-display text-lg font-bold text-primary md:text-2xl">{value}</span>
 				<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
@@ -75,7 +75,7 @@
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">FILTER</span>
 		</div>
 		<!-- Filter Options -->
-		{#each categories as category}
+		{#each categories as category (category)}
 			<button
 				type="button"
 				onclick={() => selectedCategory = category}
@@ -90,7 +90,7 @@
 <!-- Projects Grid - Minimum Height Section -->
 <section class="min-h-[80vh] border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
-		{#each filteredProjects as project}
+		{#each filteredProjects as project (project.slug)}
 			<a 
 				href={localizeHref(`/projects/${project.slug}`)} 
 				class="group col-span-12 flex flex-col bg-background transition-colors hover:bg-card md:col-span-6 lg:col-span-4"
@@ -127,9 +127,9 @@
 	</div>
 </section>
 
-<!-- CTA Section - Tall Section -->
-<section class="min-h-[50vh] border-b border-border">
-	<div class="grid h-full grid-cols-12 gap-px bg-border">
+<!-- CTA Section -->
+<section class="border-b border-border">
+	<div class="grid grid-cols-12 gap-px bg-border">
 		<div class="col-span-12 flex flex-col justify-center bg-background p-8 lg:col-span-6 lg:p-12">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">START BUILDING</span>
 			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl lg:text-5xl">HAVE A PROJECT?</h2>
