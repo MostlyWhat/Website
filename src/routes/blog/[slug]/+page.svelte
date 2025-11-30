@@ -70,7 +70,7 @@
 	<div class="grid grid-cols-12">
 		<!-- Sticky Sidebar - Left -->
 		<div class="col-span-12 border-b border-border bg-card lg:col-span-3 lg:border-b-0 lg:border-r lg:border-border">
-			<div class="sticky top-24 px-6 py-8 md:px-12 lg:px-8 lg:py-12">
+			<div class="sticky top-24 px-6 py-8 md:px-12 lg:px-16 lg:py-12">
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTENTS</span>
 				<nav class="mt-4 flex flex-col gap-3">
 					{#each post.sections as section, i (section.id)}
@@ -83,12 +83,13 @@
 						</a>
 					{/each}
 				</nav>
-				<div class="mt-8 border-t border-border pt-6">
-					<a href={localizeHref('/blog')} class="font-ui flex items-center gap-2 text-xs tracking-wider text-muted-foreground hover:text-primary">
-						<ArrowLeft class="h-3 w-3" />
-						BACK TO BLOG
-					</a>
-				</div>
+			</div>
+			<!-- Back link as full-width grid row -->
+			<div class="border-t border-border">
+				<a href={localizeHref('/blog')} class="font-ui flex items-center gap-2 px-6 py-4 text-xs tracking-wider text-muted-foreground hover:bg-card hover:text-primary md:px-12 lg:px-16">
+					<ArrowLeft class="h-3 w-3" />
+					BACK TO BLOG
+				</a>
 			</div>
 		</div>
 
@@ -103,9 +104,10 @@
 
 <!-- Next Article CTA -->
 <CTASection
+	variant="compact"
 	label="CONTINUE READING"
 	title="EXPLORE MORE ARTICLES"
-	description="Check out our other articles and insights on web development, design, and technology."
+	description="Check out our other articles and insights."
 	buttonText="VIEW ALL ARTICLES"
 	buttonHref="/blog"
 />

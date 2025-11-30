@@ -108,19 +108,37 @@ function renderStyledContent(markdown: string, options?: { stripTitle?: boolean 
     // Parse the rest with marked
     const html = marked.parse(processed) as string;
 
-    // Add styling to paragraphs, lists, and code blocks
+    // Add styling to paragraphs, lists, code blocks, tables, and other elements
     return html
         .replace(/<p>/g, '<p class="font-body text-sm leading-relaxed text-muted-foreground mt-4">')
         .replace(/<ul>/g, '<ul class="font-body list-disc list-inside space-y-2 text-sm text-muted-foreground mt-4 ml-4">')
         .replace(/<ol>/g, '<ol class="font-body list-decimal list-inside space-y-2 text-sm text-muted-foreground mt-4 ml-4">')
         .replace(/<li>/g, '<li class="leading-relaxed">')
         .replace(/<strong>/g, '<strong class="font-semibold text-foreground">')
+        .replace(/<em>/g, '<em class="italic">')
         .replace(/<a /g, '<a class="text-primary hover:underline" ')
         .replace(/<blockquote>/g, '<blockquote class="border-l-2 border-primary pl-4 italic text-muted-foreground mt-4">')
-        .replace(/<pre>/g, '<pre class="font-mono mt-6 mb-4 p-4 bg-card border border-border rounded-lg overflow-x-auto text-xs leading-relaxed">')
+        .replace(/<hr>/g, '<hr class="border-border my-8" />')
+        .replace(/<hr \/>/g, '<hr class="border-border my-8" />')
+        // Table styling
+        .replace(/<table>/g, '<div class="mt-6 mb-4 overflow-x-auto border border-border"><table class="w-full text-sm">')
+        .replace(/<\/table>/g, '</table></div>')
+        .replace(/<thead>/g, '<thead class="bg-card border-b border-border">')
+        .replace(/<tbody>/g, '<tbody class="divide-y divide-border">')
+        .replace(/<tr>/g, '<tr class="hover:bg-card/50 transition-colors">')
+        .replace(/<th>/g, '<th class="font-ui px-4 py-3 text-left text-xs font-semibold tracking-wider text-foreground">')
+        .replace(/<th align="left">/g, '<th class="font-ui px-4 py-3 text-left text-xs font-semibold tracking-wider text-foreground">')
+        .replace(/<th align="center">/g, '<th class="font-ui px-4 py-3 text-center text-xs font-semibold tracking-wider text-foreground">')
+        .replace(/<th align="right">/g, '<th class="font-ui px-4 py-3 text-right text-xs font-semibold tracking-wider text-foreground">')
+        .replace(/<td>/g, '<td class="font-body px-4 py-3 text-sm text-muted-foreground">')
+        .replace(/<td align="left">/g, '<td class="font-body px-4 py-3 text-left text-sm text-muted-foreground">')
+        .replace(/<td align="center">/g, '<td class="font-body px-4 py-3 text-center text-sm text-muted-foreground">')
+        .replace(/<td align="right">/g, '<td class="font-body px-4 py-3 text-right text-sm text-muted-foreground">')
+        // Code styling
+        .replace(/<pre>/g, '<pre class="font-mono mt-6 mb-4 p-4 bg-card border border-border overflow-x-auto text-xs leading-relaxed">')
         .replace(/<code>/g, '<code class="font-mono text-xs text-primary">')
-        .replace(/<pre class="font-mono mt-6 mb-4 p-4 bg-card border border-border rounded-lg overflow-x-auto text-xs leading-relaxed"><code class="font-mono text-xs text-primary">/g, '<pre class="font-mono mt-6 mb-4 p-4 bg-card border border-border rounded-lg overflow-x-auto text-xs leading-relaxed"><code class="font-mono text-foreground">')
-        .replace(/<p class="font-body text-sm leading-relaxed text-muted-foreground mt-4"><code/g, '<p class="font-body text-sm leading-relaxed text-muted-foreground mt-4"><code class="font-mono text-xs bg-card px-1.5 py-0.5 rounded border border-border text-primary"');
+        .replace(/<pre class="font-mono mt-6 mb-4 p-4 bg-card border border-border overflow-x-auto text-xs leading-relaxed"><code class="font-mono text-xs text-primary">/g, '<pre class="font-mono mt-6 mb-4 p-4 bg-card border border-border overflow-x-auto text-xs leading-relaxed"><code class="font-mono text-foreground">')
+        .replace(/<p class="font-body text-sm leading-relaxed text-muted-foreground mt-4"><code/g, '<p class="font-body text-sm leading-relaxed text-muted-foreground mt-4"><code class="font-mono text-xs bg-card px-1.5 py-0.5 border border-border text-primary"');
 }
 
 export interface BlogPost {

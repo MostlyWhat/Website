@@ -138,8 +138,9 @@
 	<section class="border-b border-border">
 		<div class="grid grid-cols-12 gap-px bg-border">
 			<div class="col-span-12 bg-card px-6 py-6 md:px-12 lg:px-16">
-				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">STEP 1</span>
-				<span class="font-mono ml-4 text-[10px] tracking-widest text-primary">WHAT DESCRIBES YOU BEST?</span>
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">STEP 1 OF 2</span>
+				<h2 class="font-display mt-2 text-lg font-bold uppercase">WHAT BRINGS YOU HERE TODAY?</h2>
+				<p class="font-body mt-1 text-sm text-muted-foreground">Select the option that best describes your situation so we can guide you to the right resources.</p>
 			</div>
 		</div>
 		<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
@@ -147,16 +148,18 @@
 				<button
 					type="button"
 					onclick={() => selectPath(path.id)}
-					class="group col-span-12 flex items-center gap-6 bg-background px-6 py-10 text-left transition-colors hover:bg-card md:col-span-6 md:px-12 lg:px-16"
+					class="group col-span-12 flex flex-col bg-background px-6 py-8 text-left transition-colors hover:bg-card md:px-12 lg:px-16"
 				>
-					<div class="flex h-16 w-16 shrink-0 items-center justify-center border border-border bg-card transition-colors group-hover:border-primary">
-						<path.icon class="h-7 w-7 {path.color}" />
+					<div class="flex items-start gap-6">
+						<div class="flex h-14 w-14 shrink-0 items-center justify-center border border-border bg-card transition-colors group-hover:border-primary group-hover:bg-primary/10">
+							<path.icon class="h-6 w-6 {path.color}" />
+						</div>
+						<div class="flex-1">
+							<h3 class="font-display text-lg font-bold tracking-wider group-hover:text-primary">{path.title}</h3>
+							<p class="font-body mt-2 text-sm leading-relaxed text-muted-foreground">{path.subtitle}</p>
+						</div>
+						<ChevronRight class="mt-2 h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary" />
 					</div>
-					<div class="flex-1">
-						<h3 class="font-ui text-base font-semibold tracking-wider group-hover:text-primary">{path.title}</h3>
-						<p class="font-body mt-2 text-sm text-muted-foreground">{path.subtitle}</p>
-					</div>
-					<ChevronRight class="h-6 w-6 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary" />
 				</button>
 			{/each}
 		</div>
@@ -167,13 +170,14 @@
 		<div class="grid grid-cols-12 gap-px bg-border">
 			<div class="col-span-12 bg-card px-6 py-6 md:px-12 lg:px-16">
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">QUICK ANSWERS</span>
+				<p class="font-body mt-1 text-sm text-muted-foreground">Common questions we get asked frequently.</p>
 			</div>
 		</div>
 		<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
 			{#each commonQuestions as { q, a } (q)}
-				<div class="col-span-12 bg-background px-6 py-8 md:col-span-6 md:px-12 lg:px-16">
+				<div class="col-span-12 bg-background px-6 py-6 md:col-span-6 md:px-12 lg:px-16">
 					<h4 class="font-ui text-sm font-semibold tracking-wider text-primary">{q}</h4>
-					<p class="font-body mt-3 text-sm leading-relaxed text-muted-foreground">{a}</p>
+					<p class="font-body mt-2 text-sm leading-relaxed text-muted-foreground">{a}</p>
 				</div>
 			{/each}
 		</div>
@@ -186,34 +190,41 @@
 			<button 
 				type="button"
 				onclick={goBack}
-				class="col-span-12 flex items-center gap-2 bg-card px-6 py-4 text-left transition-colors hover:bg-card/80 md:px-12 lg:px-16"
+				class="col-span-12 flex items-center gap-3 bg-card px-6 py-4 text-left transition-colors hover:bg-card/80 md:px-12 lg:px-16"
 			>
 				<ArrowLeft class="h-4 w-4 text-muted-foreground" />
-				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">BACK</span>
-				<span class="font-mono ml-4 text-[10px] tracking-widest text-primary">{selectedPathData.title}</span>
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">BACK TO STEP 1</span>
 			</button>
 		</div>
-		<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
-			<div class="col-span-12 flex items-center gap-4 bg-background px-6 py-8 md:px-12 lg:px-16">
-				<div class="flex h-12 w-12 items-center justify-center border border-primary bg-primary/10">
-					<selectedPathData.icon class="h-5 w-5 text-primary" />
-				</div>
-				<div>
-					<h2 class="font-display text-2xl font-bold uppercase">{selectedPathData.title}</h2>
-					<p class="font-body text-sm text-muted-foreground">{selectedPathData.subtitle}</p>
+		<div class="grid grid-cols-12 gap-px bg-border">
+			<div class="col-span-12 bg-background px-6 py-8 md:px-12 lg:px-16">
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">STEP 2 OF 2</span>
+				<div class="mt-4 flex items-center gap-4">
+					<div class="flex h-14 w-14 items-center justify-center border border-primary bg-primary/10">
+						<selectedPathData.icon class="h-6 w-6 text-primary" />
+					</div>
+					<div>
+						<h2 class="font-display text-2xl font-bold uppercase">{selectedPathData.title}</h2>
+						<p class="font-body mt-1 text-sm text-muted-foreground">Here are the most helpful articles for you.</p>
+					</div>
 				</div>
 			</div>
-			{#each selectedPathData.articles as article (article.href)}
+		</div>
+		<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
+			{#each selectedPathData.articles as article, i (article.href)}
 				<a
 					href={localizeHref(article.href)}
-					class="group col-span-12 flex items-center justify-between bg-background px-6 py-6 transition-colors hover:bg-card md:col-span-6 lg:col-span-4 md:px-12 lg:px-8"
+					class="group col-span-12 flex items-center justify-between bg-background px-6 py-6 transition-colors hover:bg-card md:px-12 lg:px-16"
 				>
-					<div>
-						<h3 class="font-ui text-sm font-semibold tracking-wider group-hover:text-primary">{article.title}</h3>
-						<span class="font-mono mt-1 flex items-center gap-1 text-[10px] text-muted-foreground">
-							<Clock class="h-3 w-3" />
-							{article.time} read
-						</span>
+					<div class="flex items-start gap-4">
+						<span class="font-mono text-lg font-bold text-primary/50 group-hover:text-primary">{String(i + 1).padStart(2, '0')}</span>
+						<div>
+							<h3 class="font-ui text-sm font-semibold tracking-wider group-hover:text-primary">{article.title}</h3>
+							<span class="font-mono mt-1 flex items-center gap-1 text-[10px] text-muted-foreground">
+								<Clock class="h-3 w-3" />
+								{article.time} read
+							</span>
+						</div>
 					</div>
 					<ArrowRight class="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary" />
 				</a>

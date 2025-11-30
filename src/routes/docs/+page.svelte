@@ -5,9 +5,21 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Input } from '$lib/components/ui/input';
-	import { ArrowRight, Copy, Check, Palette, Type, Layout, Layers, Zap, Box, Grid3x3 } from '@lucide/svelte';
+	import { Textarea } from '$lib/components/ui/textarea';
+	import { Switch } from '$lib/components/ui/switch';
+	import { Label } from '$lib/components/ui/label';
+	import * as Accordion from '$lib/components/ui/accordion';
+	import { Progress } from '$lib/components/ui/progress';
+	import { Separator } from '$lib/components/ui/separator';
+	import { GlitchText } from '$lib/components/ui/glitch-text';
+	import { Spinner } from '$lib/components/ui/spinner';
+	import { Kbd } from '$lib/components/ui/kbd';
+	import CTASection from '$lib/components/layout/CTASection.svelte';
+	import { ArrowRight, Copy, Check, Palette, Type, Layout, Layers, Zap, Box, Grid3x3, Component } from '@lucide/svelte';
 
 	let copiedItem = $state<string | null>(null);
+	let switchValue = $state(true);
+	let progressValue = $state(75);
 
 	function copyToClipboard(text: string, id: string) {
 		navigator.clipboard.writeText(text);
@@ -36,6 +48,7 @@
 		{ id: 'colors', title: 'COLORS', icon: Palette },
 		{ id: 'typography', title: 'TYPOGRAPHY', icon: Type },
 		{ id: 'components', title: 'COMPONENTS', icon: Box },
+		{ id: 'layout', title: 'LAYOUT', icon: Component },
 		{ id: 'animations', title: 'ANIMATIONS', icon: Zap },
 		{ id: 'patterns', title: 'PATTERNS', icon: Layers }
 	];
@@ -92,14 +105,14 @@
 
 <!-- Quick Navigation -->
 <section class="border-b border-border">
-	<div class="grid grid-cols-7 gap-px bg-border">
-		<div class="flex items-center justify-center bg-card p-4">
+	<div class="grid grid-cols-8 gap-px bg-border">
+		<div class="flex items-center justify-center bg-card px-6 py-4 md:px-12 lg:px-16">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">JUMP TO</span>
 		</div>
 		{#each sections as { id, title, icon: Icon } (id)}
 			<a
 				href="#{id}"
-				class="font-mono flex items-center justify-center gap-2 bg-background p-4 text-xs tracking-wider text-muted-foreground transition-colors hover:bg-card hover:text-primary"
+				class="font-mono flex items-center justify-center gap-2 bg-background px-4 py-4 text-xs tracking-wider text-muted-foreground transition-colors hover:bg-card hover:text-primary"
 			>
 				<Icon class="h-3.5 w-3.5" />
 				<span class="hidden sm:inline">{title}</span>
@@ -218,10 +231,10 @@
 </section>
 
 <!-- Components Section -->
-<section id="components" class="min-h-[80vh] border-b border-border">
+<section id="components" class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
 		<!-- Section Header -->
-		<div class="col-span-12 bg-background p-8 lg:col-span-3 lg:p-12">
+		<div class="col-span-12 bg-background px-6 py-8 md:px-12 lg:col-span-3 lg:px-16 lg:py-12">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">UI KIT</span>
 			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">COMPONENTS</h2>
 			<p class="font-body mt-4 text-muted-foreground">
@@ -232,18 +245,30 @@
 		<!-- Component Demos -->
 		<div class="col-span-12 grid grid-cols-1 gap-px bg-border lg:col-span-9">
 			<!-- Buttons -->
-			<div class="bg-background p-6">
+			<div class="bg-background px-6 py-6 md:px-12 lg:px-16">
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">BUTTONS</span>
 				<div class="mt-4 flex flex-wrap gap-4">
 					<Button class="font-ui">DEFAULT</Button>
 					<Button variant="outline" class="font-ui">OUTLINE</Button>
 					<Button variant="secondary" class="font-ui">SECONDARY</Button>
 					<Button variant="ghost" class="font-ui">GHOST</Button>
+					<Button size="lg" class="font-ui">LARGE</Button>
+					<Button size="sm" class="font-ui">SMALL</Button>
+				</div>
+			</div>
+			
+			<!-- Glitch Text -->
+			<div class="bg-card px-6 py-6 md:px-12 lg:px-16">
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">GLITCH TEXT</span>
+				<p class="font-body mt-2 text-xs text-muted-foreground">Hover over text to see effect</p>
+				<div class="mt-4 flex flex-wrap items-center gap-6">
+					<GlitchText text="HOVER ME" class="font-display text-2xl font-bold uppercase" />
+					<Button class="font-ui"><GlitchText text="BUTTON WITH GLITCH" /></Button>
 				</div>
 			</div>
 			
 			<!-- Badges -->
-			<div class="bg-card p-6">
+			<div class="bg-background px-6 py-6 md:px-12 lg:px-16">
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">BADGES</span>
 				<div class="mt-4 flex flex-wrap gap-4">
 					<Badge>DEFAULT</Badge>
@@ -253,11 +278,123 @@
 				</div>
 			</div>
 			
-			<!-- Inputs -->
-			<div class="bg-background p-6">
-				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">INPUTS</span>
-				<div class="mt-4 max-w-md">
-					<Input placeholder="ENTER TEXT..." class="font-mono text-xs uppercase tracking-wider" />
+			<!-- Form Elements -->
+			<div class="bg-card px-6 py-6 md:px-12 lg:px-16">
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">FORM ELEMENTS</span>
+				<div class="mt-4 grid max-w-2xl grid-cols-2 gap-4">
+					<div>
+						<Label class="font-mono text-[10px]">INPUT</Label>
+						<Input placeholder="ENTER TEXT..." class="font-mono mt-2 text-xs uppercase tracking-wider" />
+					</div>
+					<div>
+						<Label class="font-mono text-[10px]">TEXTAREA</Label>
+						<Textarea placeholder="LONGER TEXT..." class="font-mono mt-2 text-xs tracking-wider" rows={2} />
+					</div>
+				</div>
+				<div class="mt-4 flex items-center gap-4">
+					<div class="flex items-center gap-2">
+						<Switch bind:checked={switchValue} />
+						<Label class="font-mono text-[10px]">SWITCH {switchValue ? 'ON' : 'OFF'}</Label>
+					</div>
+				</div>
+			</div>
+			
+			<!-- Accordion -->
+			<div class="bg-background px-6 py-6 md:px-12 lg:px-16">
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">ACCORDION</span>
+				<div class="mt-4 max-w-xl">
+					<Accordion.Root class="divide-y divide-border border border-border">
+						<Accordion.Item value="item-1">
+							<Accordion.Trigger class="font-ui px-4 py-3 text-xs tracking-wider">FIRST ITEM</Accordion.Trigger>
+							<Accordion.Content class="font-body px-4 pb-3 text-sm text-muted-foreground">Content for the first accordion item.</Accordion.Content>
+						</Accordion.Item>
+						<Accordion.Item value="item-2">
+							<Accordion.Trigger class="font-ui px-4 py-3 text-xs tracking-wider">SECOND ITEM</Accordion.Trigger>
+							<Accordion.Content class="font-body px-4 pb-3 text-sm text-muted-foreground">Content for the second accordion item.</Accordion.Content>
+						</Accordion.Item>
+					</Accordion.Root>
+				</div>
+			</div>
+			
+			<!-- Progress & Spinner -->
+			<div class="bg-card px-6 py-6 md:px-12 lg:px-16">
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">PROGRESS & LOADING</span>
+				<div class="mt-4 max-w-xl space-y-4">
+					<div>
+						<Label class="font-mono text-[10px]">PROGRESS {progressValue}%</Label>
+						<Progress value={progressValue} class="mt-2" />
+					</div>
+					<div class="flex items-center gap-4">
+						<Spinner size="sm" />
+						<Spinner size="default" />
+						<Spinner size="lg" />
+						<span class="font-mono text-[10px] text-muted-foreground">SPINNER SIZES</span>
+					</div>
+				</div>
+			</div>
+			
+			<!-- Keyboard Shortcuts -->
+			<div class="bg-background px-6 py-6 md:px-12 lg:px-16">
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">KEYBOARD</span>
+				<div class="mt-4 flex flex-wrap items-center gap-4">
+					<div class="flex items-center gap-1">
+						<Kbd>⌘</Kbd><Kbd>K</Kbd>
+						<span class="font-mono ml-2 text-[10px] text-muted-foreground">Command menu</span>
+					</div>
+					<div class="flex items-center gap-1">
+						<Kbd>⌘</Kbd><Kbd>S</Kbd>
+						<span class="font-mono ml-2 text-[10px] text-muted-foreground">Save</span>
+					</div>
+					<div class="flex items-center gap-1">
+						<Kbd>Esc</Kbd>
+						<span class="font-mono ml-2 text-[10px] text-muted-foreground">Close</span>
+					</div>
+				</div>
+			</div>
+			
+			<!-- Separator -->
+			<div class="bg-card px-6 py-6 md:px-12 lg:px-16">
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">SEPARATOR</span>
+				<div class="mt-4 space-y-4">
+					<p class="font-body text-sm text-muted-foreground">Horizontal separator</p>
+					<Separator />
+					<div class="flex h-8 items-center gap-4">
+						<span class="font-mono text-xs">ITEM 1</span>
+						<Separator orientation="vertical" />
+						<span class="font-mono text-xs">ITEM 2</span>
+						<Separator orientation="vertical" />
+						<span class="font-mono text-xs">ITEM 3</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Layout Components Section -->
+<section id="layout" class="border-b border-border">
+	<div class="grid grid-cols-12 gap-px bg-border">
+		<!-- Section Header -->
+		<div class="col-span-12 bg-card px-6 py-8 md:px-12 lg:col-span-3 lg:px-16 lg:py-12">
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">LAYOUTS</span>
+			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">LAYOUT</h2>
+			<p class="font-body mt-4 text-muted-foreground">
+				Reusable layout components and sections.
+			</p>
+		</div>
+		
+		<!-- Layout Demos -->
+		<div class="col-span-12 grid grid-cols-1 gap-px bg-border lg:col-span-9">
+			<!-- CTA Variants -->
+			<div class="bg-background px-6 py-6 md:px-12 lg:px-16">
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CTA SECTION VARIANTS</span>
+				<p class="font-body mt-2 text-xs text-muted-foreground">Available variants: default, compact, minimal, split, large</p>
+				<div class="mt-4 space-y-2">
+					<code class="font-mono block text-xs text-primary">&lt;CTASection variant="default" title="..." /&gt;</code>
+					<code class="font-mono block text-xs text-primary">&lt;CTASection variant="compact" title="..." /&gt;</code>
+					<code class="font-mono block text-xs text-primary">&lt;CTASection variant="minimal" title="..." /&gt;</code>
+					<code class="font-mono block text-xs text-primary">&lt;CTASection variant="split" title="..." stats=&#123;[...]&#125; /&gt;</code>
+					<code class="font-mono block text-xs text-primary">&lt;CTASection variant="large" title="..." /&gt;</code>
 				</div>
 			</div>
 		</div>

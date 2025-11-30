@@ -66,20 +66,20 @@
 		</div>
 
 	{:else if variant === 'compact'}
-		<!-- Compact: Two column, reduced height -->
+		<!-- Compact: Single row, minimal height -->
 		<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'scale' }}>
-			<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-10 md:px-12 lg:col-span-6 lg:px-16">
+			<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-6 md:px-12 lg:col-span-8 lg:px-16">
 				{#if label}
 					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">{label}</span>
 				{/if}
-				<h2 class="font-display mt-3 text-2xl font-bold uppercase md:text-3xl">{title}</h2>
+				<h2 class="font-display mt-2 text-xl font-bold uppercase md:text-2xl">{title}</h2>
 				{#if description}
-					<p class="font-body mt-3 text-sm text-muted-foreground">{description}</p>
+					<p class="font-body mt-2 text-sm text-muted-foreground">{description}</p>
 				{/if}
 			</div>
-			<div class="col-span-12 flex items-center justify-center bg-card px-6 py-10 md:px-12 lg:col-span-6 lg:px-16">
+			<div class="col-span-12 flex items-center justify-center bg-card px-6 py-6 md:px-12 lg:col-span-4 lg:px-16">
 				{#if buttonText && buttonHref}
-					<Button href={localizeHref(buttonHref)} size="lg" class="font-ui uppercase tracking-wider">
+					<Button href={localizeHref(buttonHref)} class="font-ui uppercase tracking-wider">
 						{buttonText}
 						<ArrowRight class="ml-2 h-4 w-4" />
 					</Button>

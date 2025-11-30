@@ -4,14 +4,25 @@
 	interface Props {
 		text: string;
 		class?: string;
+		/** Only animate on hover (default true) */
 		hoverOnly?: boolean;
+		/** Start scrambled and reveal text (for hero text) */
+		scrambledStart?: boolean;
 	}
 
-	let { text, class: className = '', hoverOnly = true }: Props = $props();
+	let { text, class: className = '', hoverOnly = true, scrambledStart = false }: Props = $props();
 
-	const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
-	let displayText = $state(text);
+	const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*<>[]{}/_';
+	
+	// Generate scrambled text
+	function generateScrambled(str: string): string {
+		return str.split('').map(char => char === ' ' || char === '\n' ? char : chars[Math.floor(Math.random() * chars.length)]).join('');
+	}
+	
+	let displayText = $state(scrambledStart ? generateScrambled(text) : text);
 	let isAnimating = $state(false);
+	let hasRevealed = $state(false);
+	let spanElement: HTMLSpanElement;
 	let timeoutId: ReturnType<typeof setTimeout> | null = null;
 	let intervalId: ReturnType<typeof setInterval> | null = null;
 
@@ -29,7 +40,7 @@
 			displayText = originalText
 				.split('')
 				.map((char, index) => {
-					if (char === ' ') return ' ';
+					if (char === ' ' || char === '\n') return char;
 					if (index < iteration) {
 						return originalText[index];
 					}
@@ -41,35 +52,40 @@
 				if (intervalId) clearInterval(intervalId);
 				displayText = originalText;
 				isAnimating = false;
+				hasRevealed = true;
 			}
 
 			iteration += 1 / 2;
 		}, 30);
 	}
 
-	function stopGlitch() {
-		if (intervalId) {
-			clearInterval(intervalId);
-			intervalId = null;
-		}
-		displayText = text;
-		isAnimating = false;
-	}
-
 	function handleMouseEnter() {
-		if (hoverOnly) {
+		if (hoverOnly && !scrambledStart) {
+			startGlitch();
+		} else if (scrambledStart && hasRevealed) {
+			// Allow re-animation on hover after initial reveal
 			startGlitch();
 		}
 	}
 
-	function handleMouseLeave() {
-		// Let animation complete naturally
-	}
-
 	onMount(() => {
-		if (!hoverOnly) {
-			// Auto-play on mount
-			timeoutId = setTimeout(startGlitch, 500);
+		if (!hoverOnly || scrambledStart) {
+			// Auto-play on mount with slight delay
+			timeoutId = setTimeout(startGlitch, scrambledStart ? 300 : 500);
+		}
+		
+		// Also listen to parent element hover for better button support
+		if (hoverOnly && spanElement) {
+			const parent = spanElement.closest('a, button, [role="button"]');
+			if (parent) {
+				const handleParentEnter = () => handleMouseEnter();
+				parent.addEventListener('mouseenter', handleParentEnter);
+				return () => {
+					parent.removeEventListener('mouseenter', handleParentEnter);
+					if (timeoutId) clearTimeout(timeoutId);
+					if (intervalId) clearInterval(intervalId);
+				};
+			}
 		}
 		
 		return () => {
@@ -78,18 +94,18 @@
 		};
 	});
 
-	// Reset display text when text prop changes
+	// Reset display text when text prop changes (but not for scrambledStart until revealed)
 	$effect(() => {
-		if (!isAnimating) {
+		if (!isAnimating && (!scrambledStart || hasRevealed)) {
 			displayText = text;
 		}
 	});
 </script>
 
 <span 
-	class="font-mono {className}"
+	bind:this={spanElement}
+	class="{className}"
 	onmouseenter={handleMouseEnter}
-	onmouseleave={handleMouseLeave}
 	role="presentation"
 >
 	{displayText}
