@@ -7,9 +7,10 @@
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { Label } from '$lib/components/ui/label';
 	import * as Accordion from '$lib/components/ui/accordion';
+	import CTASection from '$lib/components/layout/CTASection.svelte';
 	import { 
 		Send, CheckCircle, MessageSquare, FileText, HelpCircle, Headphones,
-		ArrowRight, Mail, MapPin, Clock, ExternalLink
+		ArrowRight, Mail, MapPin, Clock
 	} from '@lucide/svelte';
 
 	// Contact form state
@@ -203,10 +204,10 @@
 
 <!-- Contact Form Section -->
 {#if selectedTopic}
-	<section class="min-h-[80vh] border-b border-border" use:scrollAnimate={{ animation: 'fade' }}>
-		<div class="grid grid-cols-12 gap-px bg-border">
+	<section id="form" class="border-b border-border py-16 lg:py-24" use:scrollAnimate={{ animation: 'fade' }}>
+		<div class="grid grid-cols-12 gap-8 px-6 md:px-12 lg:px-16">
 			<!-- Form -->
-			<div class="col-span-12 bg-background px-6 py-12 md:px-12 lg:col-span-7 lg:px-16">
+			<div class="col-span-12 lg:col-span-7">
 				{#if isSubmitted}
 					<div class="flex min-h-[400px] flex-col items-center justify-center text-center">
 						<div class="mb-4 flex h-12 w-12 items-center justify-center border border-primary bg-primary/10">
@@ -260,14 +261,14 @@
 			</div>
 
 			<!-- Contact Info Sidebar -->
-			<div class="col-span-12 bg-card px-6 py-12 md:px-12 lg:col-span-5 lg:px-16">
-				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTACT INFO</span>
-				
-				<div class="mt-6 space-y-4">
-					{#each contactInfo as { icon: Icon, label, value, href } (label)}
-						<div class="border border-border bg-background p-4">
-							<div class="flex items-start gap-3">
-								<div class="flex h-8 w-8 items-center justify-center border border-border">
+			<div class="col-span-12 lg:col-span-5">
+				<div class="border border-border bg-card p-6">
+					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTACT INFO</span>
+					
+					<div class="mt-6 space-y-4">
+						{#each contactInfo as { icon: Icon, label, value, href } (label)}
+							<div class="flex items-start gap-3 border-b border-border pb-4 last:border-0 last:pb-0">
+								<div class="flex h-10 w-10 items-center justify-center border border-border bg-background">
 									<Icon class="h-4 w-4 text-muted-foreground" />
 								</div>
 								<div>
@@ -279,22 +280,25 @@
 									{/if}
 								</div>
 							</div>
-						</div>
-					{/each}
+						{/each}
+					</div>
 				</div>
 
 				<!-- Social Links -->
-				<div class="mt-6">
-					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONNECT</span>
-					<div class="mt-3 grid grid-cols-3 gap-px bg-border">
-						<a href="https://github.com/MostlyWhat" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center gap-1 bg-background py-3 transition-colors hover:bg-primary/10">
-							<span class="font-mono text-xs text-muted-foreground">GH</span>
+				<div class="mt-6 border border-border p-6">
+					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONNECT WITH US</span>
+					<div class="mt-4 grid grid-cols-3 gap-2">
+						<a href="https://github.com/MostlyWhat" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center gap-1 border border-border bg-background py-4 transition-colors hover:border-primary hover:bg-primary/10">
+							<span class="font-mono text-sm font-bold">GH</span>
+							<span class="font-mono text-[10px] text-muted-foreground">GitHub</span>
 						</a>
-						<a href="https://twitter.com/MostlyWhat" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center gap-1 bg-background py-3 transition-colors hover:bg-primary/10">
-							<span class="font-mono text-xs text-muted-foreground">X</span>
+						<a href="https://twitter.com/MostlyWhat" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center gap-1 border border-border bg-background py-4 transition-colors hover:border-primary hover:bg-primary/10">
+							<span class="font-mono text-sm font-bold">X</span>
+							<span class="font-mono text-[10px] text-muted-foreground">Twitter</span>
 						</a>
-						<a href="https://linkedin.com/company/mostlywhat" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center gap-1 bg-background py-3 transition-colors hover:bg-primary/10">
-							<span class="font-mono text-xs text-muted-foreground">LI</span>
+						<a href="https://linkedin.com/company/mostlywhat" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center gap-1 border border-border bg-background py-4 transition-colors hover:border-primary hover:bg-primary/10">
+							<span class="font-mono text-sm font-bold">LI</span>
+							<span class="font-mono text-[10px] text-muted-foreground">LinkedIn</span>
 						</a>
 					</div>
 				</div>
@@ -304,65 +308,57 @@
 {/if}
 
 <!-- FAQ Section with Accordion -->
-<section class="border-b border-border">
-	<div class="grid grid-cols-12 gap-px bg-border">
-		<!-- FAQ Info (Left) -->
-		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:px-12 lg:col-span-5 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
+<section class="border-b border-border py-16 lg:py-24">
+	<div class="px-6 md:px-12 lg:px-16">
+		<div class="mb-12" use:scrollAnimate={{ animation: 'fade' }}>
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">02 — FAQ</span>
-			<h2 class="font-display mt-4 text-2xl font-bold uppercase md:text-3xl">COMMON QUESTIONS</h2>
-			<p class="font-body mt-3 text-sm text-muted-foreground">
+			<h2 class="font-display mt-4 text-2xl font-bold uppercase md:text-3xl lg:text-4xl">COMMON QUESTIONS</h2>
+			<p class="font-body mt-3 max-w-xl text-sm text-muted-foreground">
 				Find answers to frequently asked questions about our process and services.
 			</p>
-			<Button href={localizeHref('/help')} variant="outline" class="font-ui mt-6 w-fit tracking-wider">
-				VISIT HELP CENTER
-				<ExternalLink class="ml-2 h-4 w-4" />
-			</Button>
 		</div>
 
-		<!-- FAQ Accordion (Right) -->
-		<div class="col-span-12 flex flex-col justify-center bg-card lg:col-span-7" use:scrollAnimate={{ animation: 'fade' }}>
-			<Accordion.Root class="divide-y divide-border">
-				{#each faqs as { id, q, a } (id)}
-					<Accordion.Item value={id} class="border-0">
-						<Accordion.Trigger class="font-ui w-full bg-background px-6 py-3 text-left text-xs font-medium tracking-wide hover:bg-muted/50 md:px-12 lg:px-16 [&[data-state=open]]:bg-primary/5 [&[data-state=open]]:text-primary">
-							{q}
-						</Accordion.Trigger>
-						<Accordion.Content class="font-body bg-background px-6 pb-3 pt-0 text-xs leading-relaxed text-muted-foreground md:px-12 lg:px-16">
-							{a}
-						</Accordion.Content>
-					</Accordion.Item>
-				{/each}
-			</Accordion.Root>
-		</div>
-	</div>
-</section>
-
-<!-- CTA Section - Clean Split Layout -->
-<section class="border-b border-border">
-	<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'scale' }}>
-		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:col-span-8 md:px-12 lg:px-16">
-			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">03 — READY TO START?</span>
-			<h2 class="font-display mt-3 text-2xl font-bold uppercase md:text-3xl">LET'S BUILD SOMETHING GREAT</h2>
-			<p class="font-body mt-3 max-w-lg text-sm text-muted-foreground">
-				Whether you have a detailed brief or just a rough idea, we'd love to hear about it.
-			</p>
-			<div class="mt-6 flex flex-wrap gap-3">
-				<Button onclick={() => selectTopic('quote')} class="font-ui tracking-wider">
-					GET A QUOTE
-					<ArrowRight class="ml-2 h-4 w-4" />
-				</Button>
-				<Button href="mailto:hello@mostlywhat.systems" variant="outline" class="font-ui tracking-wider">
-					EMAIL US
-				</Button>
+		<div class="grid grid-cols-12 gap-8" use:scrollAnimate={{ animation: 'fade' }}>
+			<!-- FAQ Accordion -->
+			<div class="col-span-12 lg:col-span-8">
+				<Accordion.Root class="divide-y divide-border border border-border">
+					{#each faqs as { id, q, a } (id)}
+						<Accordion.Item value={id} class="border-0">
+							<Accordion.Trigger class="font-ui w-full bg-background px-6 py-4 text-left text-xs font-medium tracking-wide hover:bg-muted/50 [&[data-state=open]]:bg-primary/5 [&[data-state=open]]:text-primary">
+								{q}
+							</Accordion.Trigger>
+							<Accordion.Content class="font-body bg-background px-6 pb-4 pt-0 text-sm leading-relaxed text-muted-foreground">
+								{a}
+							</Accordion.Content>
+						</Accordion.Item>
+					{/each}
+				</Accordion.Root>
 			</div>
-		</div>
-		<div class="col-span-12 flex items-center justify-center bg-primary/10 px-6 py-8 md:col-span-4 md:px-12 lg:px-16">
-			<div class="text-center">
-				<p class="font-mono text-[10px] tracking-widest text-muted-foreground">QUICK CONTACT</p>
-				<a href="mailto:hello@mostlywhat.systems" class="font-ui mt-2 block text-sm uppercase text-primary hover:underline">
-					HELLO@MOSTLYWHAT.SYSTEMS
-				</a>
+
+			<!-- Help Center Link -->
+			<div class="col-span-12 lg:col-span-4">
+				<div class="border border-border bg-card p-6">
+					<HelpCircle class="h-8 w-8 text-primary" />
+					<h3 class="font-display mt-4 text-lg font-bold uppercase">NEED MORE HELP?</h3>
+					<p class="font-body mt-2 text-sm text-muted-foreground">
+						Browse our complete help center for detailed guides and documentation.
+					</p>
+					<Button href={localizeHref('/help')} variant="outline" class="font-ui mt-6 w-full tracking-wider">
+						VISIT HELP CENTER
+						<ArrowRight class="ml-2 h-4 w-4" />
+					</Button>
+				</div>
 			</div>
 		</div>
 	</div>
 </section>
+
+<!-- CTA Section - Large Variant -->
+<CTASection
+	variant="large"
+	label="READY TO START?"
+	title="LET'S BUILD SOMETHING GREAT TOGETHER"
+	description="Whether you have a detailed brief or just a rough idea, we'd love to hear about it. Get in touch and let's explore how we can help."
+	buttonText="GET A QUOTE"
+	buttonHref="/contact#quote"
+/>

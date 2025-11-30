@@ -4,7 +4,6 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { ArrowRight } from '@lucide/svelte';
 	import type { Snippet } from 'svelte';
-	import type { Component } from 'svelte';
 
 	interface Stat {
 		value: string;
@@ -13,7 +12,7 @@
 
 	interface Props {
 		/** CTA style variant */
-		variant?: 'default' | 'compact' | 'minimal' | 'split';
+		variant?: 'default' | 'compact' | 'minimal' | 'split' | 'large';
 		/** Small label above title */
 		label?: string;
 		/** Main heading */
@@ -24,6 +23,10 @@
 		buttonText?: string;
 		/** Button link */
 		buttonHref?: string;
+		/** Secondary button text */
+		secondaryButtonText?: string;
+		/** Secondary button link or action */
+		secondaryButtonHref?: string;
 		/** Stats to show (for split variant) */
 		stats?: Stat[];
 		/** Custom content slot */
@@ -37,6 +40,8 @@
 		description = '',
 		buttonText = '',
 		buttonHref = '',
+		secondaryButtonText = '',
+		secondaryButtonHref = '',
 		stats = [],
 		children
 	}: Props = $props();
@@ -63,18 +68,18 @@
 	{:else if variant === 'compact'}
 		<!-- Compact: Two column, reduced height -->
 		<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'scale' }}>
-			<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-8 md:px-12 lg:col-span-6 lg:px-16">
+			<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-10 md:px-12 lg:col-span-6 lg:px-16">
 				{#if label}
 					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">{label}</span>
 				{/if}
-				<h2 class="font-display mt-2 text-xl font-bold uppercase md:text-2xl">{title}</h2>
+				<h2 class="font-display mt-3 text-2xl font-bold uppercase md:text-3xl">{title}</h2>
 				{#if description}
-					<p class="font-body mt-2 text-sm text-muted-foreground">{description}</p>
+					<p class="font-body mt-3 text-sm text-muted-foreground">{description}</p>
 				{/if}
 			</div>
-			<div class="col-span-12 flex items-center justify-center bg-card px-6 py-8 md:px-12 lg:col-span-6 lg:px-16">
+			<div class="col-span-12 flex items-center justify-center bg-card px-6 py-10 md:px-12 lg:col-span-6 lg:px-16">
 				{#if buttonText && buttonHref}
-					<Button href={localizeHref(buttonHref)} class="font-ui tracking-wider">
+					<Button href={localizeHref(buttonHref)} size="lg" class="font-ui uppercase tracking-wider">
 						{buttonText}
 						<ArrowRight class="ml-2 h-4 w-4" />
 					</Button>
@@ -88,13 +93,13 @@
 	{:else if variant === 'split'}
 		<!-- Split: Left content, right stats grid -->
 		<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'scale' }}>
-			<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-10 md:px-12 lg:col-span-6 lg:px-16">
+			<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:px-12 lg:col-span-6 lg:px-16">
 				{#if label}
 					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">{label}</span>
 				{/if}
-				<h2 class="font-display mt-3 text-2xl font-bold uppercase md:text-3xl">{title}</h2>
+				<h2 class="font-display mt-4 text-2xl font-bold uppercase md:text-3xl">{title}</h2>
 				{#if description}
-					<p class="font-body mt-3 text-sm text-muted-foreground">{description}</p>
+					<p class="font-body mt-4 text-sm text-muted-foreground">{description}</p>
 				{/if}
 				{#if buttonText && buttonHref}
 					<div class="mt-6">
@@ -108,17 +113,56 @@
 			{#if stats.length > 0}
 				<div class="col-span-12 grid grid-cols-2 gap-px bg-border lg:col-span-6">
 					{#each stats as stat (stat.label)}
-						<div class="flex flex-col justify-center bg-card px-6 py-6 md:px-12 lg:px-16">
-							<span class="font-display text-xl font-bold text-primary">{stat.value}</span>
+						<div class="flex flex-col justify-center bg-card px-6 py-8 md:px-12 lg:px-16">
+							<span class="font-display text-2xl font-bold text-primary">{stat.value}</span>
 							<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">{stat.label}</p>
 						</div>
 					{/each}
 				</div>
 			{:else if children}
-				<div class="col-span-12 flex items-center justify-center bg-card px-6 py-10 md:px-12 lg:col-span-6 lg:px-16">
+				<div class="col-span-12 flex items-center justify-center bg-card px-6 py-12 md:px-12 lg:col-span-6 lg:px-16">
 					{@render children()}
 				</div>
 			{/if}
+		</div>
+
+	{:else if variant === 'large'}
+		<!-- Large: Big text CTA for contact pages -->
+		<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'scale' }}>
+			<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-16 md:px-12 lg:col-span-8 lg:px-16 lg:py-20">
+				{#if label}
+					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">{label}</span>
+				{/if}
+				<h2 class="font-display mt-4 text-3xl font-black uppercase leading-[0.95] md:text-4xl lg:text-5xl xl:text-6xl">{title}</h2>
+				{#if description}
+					<p class="font-body mt-6 max-w-xl text-base text-muted-foreground md:text-lg">{description}</p>
+				{/if}
+				{#if buttonText || secondaryButtonText}
+					<div class="mt-8 flex flex-wrap gap-4">
+						{#if buttonText && buttonHref}
+							<Button href={localizeHref(buttonHref)} size="lg" class="font-ui uppercase tracking-wider">
+								{buttonText}
+								<ArrowRight class="ml-2 h-4 w-4" />
+							</Button>
+						{/if}
+						{#if secondaryButtonText && secondaryButtonHref}
+							<Button href={secondaryButtonHref} variant="outline" size="lg" class="font-ui uppercase tracking-wider">
+								{secondaryButtonText}
+							</Button>
+						{/if}
+					</div>
+				{/if}
+			</div>
+			<div class="col-span-12 flex flex-col items-center justify-center bg-primary/10 px-6 py-12 lg:col-span-4 lg:px-16">
+				{#if children}
+					{@render children()}
+				{:else}
+					<p class="font-mono text-[10px] tracking-widest text-muted-foreground">QUICK CONTACT</p>
+					<a href="mailto:hello@mostlywhat.systems" class="font-ui mt-3 block text-sm uppercase text-primary hover:underline">
+						HELLO@MOSTLYWHAT.SYSTEMS
+					</a>
+				{/if}
+			</div>
 		</div>
 
 	{:else}

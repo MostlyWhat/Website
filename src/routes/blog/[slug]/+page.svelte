@@ -103,10 +103,9 @@
 
 <!-- Next Article CTA -->
 <CTASection
-	variant="compact"
 	label="CONTINUE READING"
-	title="EXPLORE MORE"
-	description="Check out our other articles and insights."
+	title="EXPLORE MORE ARTICLES"
+	description="Check out our other articles and insights on web development, design, and technology."
 	buttonText="VIEW ALL ARTICLES"
 	buttonHref="/blog"
 />

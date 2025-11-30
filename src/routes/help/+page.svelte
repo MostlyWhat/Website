@@ -137,7 +137,7 @@
 {#if currentStep === 0}
 	<section class="border-b border-border">
 		<div class="grid grid-cols-12 gap-px bg-border">
-			<div class="col-span-12 bg-card px-6 py-4 md:px-12 lg:px-16">
+			<div class="col-span-12 bg-card px-6 py-6 md:px-12 lg:px-16">
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">STEP 1</span>
 				<span class="font-mono ml-4 text-[10px] tracking-widest text-primary">WHAT DESCRIBES YOU BEST?</span>
 			</div>
@@ -147,16 +147,16 @@
 				<button
 					type="button"
 					onclick={() => selectPath(path.id)}
-					class="group col-span-12 flex items-center gap-6 bg-background px-6 py-8 text-left transition-colors hover:bg-card md:col-span-6 md:px-12 lg:px-16"
+					class="group col-span-12 flex items-center gap-6 bg-background px-6 py-10 text-left transition-colors hover:bg-card md:col-span-6 md:px-12 lg:px-16"
 				>
-					<div class="flex h-14 w-14 shrink-0 items-center justify-center border border-border bg-card transition-colors group-hover:border-primary">
-						<path.icon class="h-6 w-6 {path.color}" />
+					<div class="flex h-16 w-16 shrink-0 items-center justify-center border border-border bg-card transition-colors group-hover:border-primary">
+						<path.icon class="h-7 w-7 {path.color}" />
 					</div>
 					<div class="flex-1">
-						<h3 class="font-ui text-sm font-semibold tracking-wider group-hover:text-primary">{path.title}</h3>
-						<p class="font-body mt-1 text-xs text-muted-foreground">{path.subtitle}</p>
+						<h3 class="font-ui text-base font-semibold tracking-wider group-hover:text-primary">{path.title}</h3>
+						<p class="font-body mt-2 text-sm text-muted-foreground">{path.subtitle}</p>
 					</div>
-					<ChevronRight class="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary" />
+					<ChevronRight class="h-6 w-6 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary" />
 				</button>
 			{/each}
 		</div>
@@ -165,15 +165,15 @@
 	<!-- Quick Answers -->
 	<section class="border-b border-border">
 		<div class="grid grid-cols-12 gap-px bg-border">
-			<div class="col-span-12 bg-card px-6 py-4 md:px-12 lg:px-16">
+			<div class="col-span-12 bg-card px-6 py-6 md:px-12 lg:px-16">
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">QUICK ANSWERS</span>
 			</div>
 		</div>
 		<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
 			{#each commonQuestions as { q, a } (q)}
-				<div class="col-span-12 bg-background px-6 py-6 md:col-span-6 md:px-12 lg:px-16">
-					<h4 class="font-ui text-xs font-semibold tracking-wider text-primary">{q}</h4>
-					<p class="font-body mt-2 text-sm text-muted-foreground">{a}</p>
+				<div class="col-span-12 bg-background px-6 py-8 md:col-span-6 md:px-12 lg:px-16">
+					<h4 class="font-ui text-sm font-semibold tracking-wider text-primary">{q}</h4>
+					<p class="font-body mt-3 text-sm leading-relaxed text-muted-foreground">{a}</p>
 				</div>
 			{/each}
 		</div>

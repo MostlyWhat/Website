@@ -86,10 +86,9 @@
 
 <!-- More Projects CTA -->
 <CTASection
-	variant="compact"
 	label="MORE WORK"
 	title="EXPLORE MORE PROJECTS"
-	description="Check out our other case studies and work samples."
+	description="Check out our other case studies and see how we help businesses build exceptional digital products."
 	buttonText="VIEW ALL PROJECTS"
 	buttonHref="/projects"
 />
