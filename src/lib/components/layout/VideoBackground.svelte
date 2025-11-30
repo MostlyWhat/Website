@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { getVideoState, setVideoElement, syncVideoTime } from '$lib/stores/video.svelte';
+	import { getVideoState, setVideoElement, syncVideoTime, setVideoState } from '$lib/stores/video.svelte';
 
 	interface Props {
 		src: string;
@@ -21,9 +21,10 @@
 
 		// Set up the video element in the store
 		setVideoElement(videoRef);
+		setVideoState({ src });
 
-		// Restore playback position if we have one stored
-		if (state.currentTime > 0 && state.src === src) {
+		// Restore playback position if we have one stored for the same video
+		if (state.currentTime > 0) {
 			videoRef.currentTime = state.currentTime;
 		}
 
@@ -36,11 +37,10 @@
 
 		const handleCanPlay = () => {
 			isLoaded = true;
-			if (state.isPlaying && videoRef) {
-				videoRef.play().catch(() => {
-					// Autoplay blocked - that's ok
-				});
-			}
+			// Always try to play
+			videoRef?.play().catch(() => {
+				// Autoplay blocked - that's ok
+			});
 		};
 
 		const handleError = () => {
@@ -50,6 +50,9 @@
 		videoRef.addEventListener('timeupdate', handleTimeUpdate);
 		videoRef.addEventListener('canplay', handleCanPlay);
 		videoRef.addEventListener('error', handleError);
+
+		// Start playing immediately
+		videoRef.play().catch(() => {});
 
 		return () => {
 			if (videoRef) {
@@ -61,7 +64,7 @@
 	});
 
 	onDestroy(() => {
-		setVideoElement(null);
+		// Don't clear the element so video continues playing
 	});
 </script>
 

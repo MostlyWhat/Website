@@ -9,6 +9,7 @@
 	import CTASection from '$lib/components/layout/CTASection.svelte';
 	import VideoBackground from '$lib/components/layout/VideoBackground.svelte';
 	import GlitchText from '$lib/components/ui/glitch-text/GlitchText.svelte';
+	import { MARATHON_VIDEO } from '$lib/constants';
 	import { 
 		Send, CheckCircle, MessageSquare, FileText, HelpCircle, Headphones,
 		ArrowRight, Mail, MapPin, Clock
@@ -145,19 +146,19 @@
 <section class="relative flex h-dvh flex-col border-b border-border">
 	<!-- Video Background -->
 	<VideoBackground 
-		src="https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-circuit-board-29766-large.mp4"
+		src={MARATHON_VIDEO}
 		class="brightness-[0.15]"
 	/>
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
 	</div>
 
-	<!-- Hero Content - Right-aligned, Bottom-positioned -->
-	<div class="flex flex-1 flex-col items-end justify-end px-6 pb-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
-		<div class="mb-12 max-w-4xl text-right">
+	<!-- Hero Content - Left-aligned, Bottom-positioned -->
+	<div class="flex flex-1 flex-col items-start justify-end px-6 pb-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
+		<div class="mb-12 max-w-4xl text-left">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTACT</span>
 			<h1 class="font-display mt-4 text-4xl font-black uppercase leading-[0.9] tracking-tight md:text-6xl lg:text-7xl xl:text-8xl">
-				<GlitchText text={m.contact_title()} scrambledStart={true} class="font-display text-4xl font-black uppercase leading-[0.9] tracking-tight md:text-6xl lg:text-7xl xl:text-8xl" />
+				<GlitchText text={m.contact_title()} scrambledStart={true} />
 			</h1>
 		</div>
 	</div>
@@ -166,8 +167,12 @@
 <!-- Description + Contact Options -->
 <section class="border-b border-border bg-background">
 	<div class="grid grid-cols-12 gap-px bg-border">
-		<div class="col-span-12 bg-background px-6 py-12 md:col-span-4 md:px-12 lg:px-16">
-			<p class="font-body max-w-xl text-lg text-muted-foreground md:text-xl">{m.contact_subtitle()}</p>
+		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:col-span-4 md:px-12 lg:px-16">
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">GET IN TOUCH</span>
+			<h2 class="font-display mt-4 text-2xl font-bold uppercase md:text-3xl">SELECT YOUR<br />REASON</h2>
+			<p class="font-body mt-4 text-sm leading-relaxed text-muted-foreground">
+				Choose the option that best describes your needs. This helps us route your message to the right team.
+			</p>
 		</div>
 		{#each contactOptions as { id, icon: Icon, title, desc, action, href } (id)}
 			{#if href}

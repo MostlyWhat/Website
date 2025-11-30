@@ -13,6 +13,7 @@
 	import { Progress } from '$lib/components/ui/progress';
 	import { Separator } from '$lib/components/ui/separator';
 	import { GlitchText } from '$lib/components/ui/glitch-text';
+	import { MARATHON_VIDEO } from '$lib/constants';
 	import { Spinner } from '$lib/components/ui/spinner';
 	import { Kbd } from '$lib/components/ui/kbd';
 	import CTASection from '$lib/components/layout/CTASection.svelte';
@@ -92,19 +93,19 @@
 <section class="relative flex h-dvh flex-col border-b border-border">
 	<!-- Video Background -->
 	<VideoBackground 
-		src="https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-circuit-board-29766-large.mp4"
+		src={MARATHON_VIDEO}
 		class="brightness-[0.15]"
 	/>
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
 	</div>
 
-	<!-- Hero Content - Right-aligned, Bottom-positioned -->
-	<div class="flex flex-1 flex-col items-end justify-end px-6 pb-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
-		<div class="mb-12 max-w-4xl text-right">
+	<!-- Hero Content - Left-aligned, Bottom-positioned -->
+	<div class="flex flex-1 flex-col items-start justify-end px-6 pb-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
+		<div class="mb-12 max-w-4xl text-left">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">REFERENCE</span>
 			<h1 class="font-display mt-4 text-4xl font-black uppercase leading-[0.9] tracking-tight md:text-6xl lg:text-7xl xl:text-8xl">
-				DESIGN<br />SYSTEM
+				<GlitchText text="DESIGN SYSTEM" scrambledStart={true} />
 			</h1>
 		</div>
 	</div>

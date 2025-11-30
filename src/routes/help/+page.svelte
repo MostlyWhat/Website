@@ -5,6 +5,9 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import VideoBackground from '$lib/components/layout/VideoBackground.svelte';
 	import CTASection from '$lib/components/layout/CTASection.svelte';
+	import { GlitchText } from '$lib/components/ui/glitch-text';
+	import * as Accordion from '$lib/components/ui/accordion';
+	import { MARATHON_VIDEO } from '$lib/constants';
 	import { 
 		ArrowRight, ArrowLeft, Rocket, Code,  
 		ChevronRight, Sparkles, Users, Clock
@@ -96,19 +99,19 @@
 <section class="relative flex h-dvh flex-col border-b border-border">
 	<!-- Video Background -->
 	<VideoBackground 
-		src="https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-circuit-board-29766-large.mp4"
+		src={MARATHON_VIDEO}
 		class="brightness-[0.15]"
 	/>
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
 	</div>
 
-	<!-- Hero Content - Right-aligned, Bottom-positioned -->
-	<div class="flex flex-1 flex-col items-end justify-end px-6 pb-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
-		<div class="mb-12 max-w-4xl text-right">
+	<!-- Hero Content - Left-aligned, Bottom-positioned -->
+	<div class="flex flex-1 flex-col items-start justify-end px-6 pb-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
+		<div class="mb-12 max-w-4xl text-left">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">KNOWLEDGE BASE</span>
 			<h1 class="font-display mt-4 text-4xl font-black uppercase leading-[0.9] tracking-tight md:text-6xl lg:text-7xl xl:text-8xl">
-				HOW CAN WE<br />HELP YOU?
+				<GlitchText text="HOW CAN WE HELP YOU?" scrambledStart={true} />
 			</h1>
 		</div>
 	</div>
@@ -202,21 +205,39 @@
 		</div>
 	</section>
 
-	<!-- Quick Answers -->
+	<!-- Quick Answers with Accordion -->
 	<section class="border-b border-border">
 		<div class="grid grid-cols-12 gap-px bg-border">
-			<div class="col-span-12 bg-card px-6 py-6 md:px-12 lg:px-16">
+			<!-- Left Side - Description -->
+			<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:col-span-4 md:px-12 lg:px-16">
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">QUICK ANSWERS</span>
-				<p class="font-body mt-1 text-sm text-muted-foreground">Common questions we get asked frequently.</p>
-			</div>
-		</div>
-		<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
-			{#each commonQuestions as { q, a } (q)}
-				<div class="col-span-12 bg-background px-6 py-6 md:col-span-6 md:px-12 lg:px-16">
-					<h4 class="font-ui text-sm font-semibold tracking-wider text-primary">{q}</h4>
-					<p class="font-body mt-2 text-sm leading-relaxed text-muted-foreground">{a}</p>
+				<h3 class="font-display mt-4 text-2xl font-bold uppercase md:text-3xl">COMMON<br />QUESTIONS</h3>
+				<p class="font-body mt-4 text-sm leading-relaxed text-muted-foreground">
+					Answers to questions we get asked frequently. Can't find what you're looking for? Get in touch.
+				</p>
+				<div class="mt-6">
+					<Button href={localizeHref('/contact')} variant="outline" size="sm" class="font-ui text-xs tracking-wider">
+						ASK A QUESTION
+						<ArrowRight class="ml-2 h-3 w-3" />
+					</Button>
 				</div>
-			{/each}
+			</div>
+			
+			<!-- Right Side - Accordion -->
+			<div class="col-span-12 bg-background px-6 py-8 md:col-span-8 md:px-12 lg:px-16">
+				<Accordion.Root type="single" class="w-full">
+					{#each commonQuestions as { q, a }, i (q)}
+						<Accordion.Item value="item-{i}" class="border-b border-border last:border-b-0">
+							<Accordion.Trigger class="font-ui flex w-full items-center justify-between py-4 text-left text-sm font-semibold tracking-wider transition-colors hover:text-primary [&[data-state=open]]:text-primary">
+								{q}
+							</Accordion.Trigger>
+							<Accordion.Content class="font-body pb-4 text-sm leading-relaxed text-muted-foreground">
+								{a}
+							</Accordion.Content>
+						</Accordion.Item>
+					{/each}
+				</Accordion.Root>
+			</div>
 		</div>
 	</section>
 
