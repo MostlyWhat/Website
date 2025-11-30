@@ -104,24 +104,3 @@
 		</div>
 	</div>
 </section>
-
-<!-- Terminal Section -->
-<section class="border-b border-border">
-	<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'scale' }}>
-		<div class="col-span-12 bg-card px-6 py-8 md:col-span-8 md:px-12 lg:px-16 lg:py-12">
-			<div class="font-mono text-sm">
-				<p class="text-muted-foreground">$ <span class="text-primary">curl</span> {page.url.pathname}</p>
-				<p class="mt-2 text-red-400">Error: {page.status} {page.error?.message || 'Not Found'}</p>
-				<p class="text-muted-foreground">The requested resource could not be located.</p>
-				<p class="mt-2 text-muted-foreground">$ <span class="animate-pulse">_</span></p>
-			</div>
-		</div>
-		<div class="col-span-12 flex items-center justify-center bg-primary/10 px-6 py-8 md:col-span-4 md:px-12 lg:px-16">
-			<div class="text-center">
-				<FileQuestion class="mx-auto mb-2 h-12 w-12 text-primary" />
-				<p class="font-mono text-[10px] tracking-widest text-muted-foreground">STATUS CODE</p>
-				<p class="font-display mt-1 text-4xl font-bold text-primary">{page.status}</p>
-			</div>
-		</div>
-	</div>
-</section>
