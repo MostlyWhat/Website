@@ -651,7 +651,10 @@
 	let currentResult = $state<(typeof steps)[string]['options'][number]['result'] | null>(null);
 
 	const currentStep = $derived(steps[currentStepId]);
-	const progress = $derived(Math.min(((history.length + 1) / 5) * 100, 100));
+	// Progress: add 1 for current step, add 1 more if showing result
+	const progress = $derived(
+		currentResult ? 100 : Math.min(((history.length + 1) / 5) * 100, 95)
+	);
 
 	function selectOption(option: (typeof steps)[string]['options'][number]) {
 		if (option.result) {
@@ -739,20 +742,21 @@
 					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">STEPS</span>
 					<div class="mt-4 space-y-2">
 						{#each ['start', ...history] as stepId, i (i)}
+							{@const isActive = !currentResult && i === history.length}
 							<div class="flex items-center gap-3">
 								<div
-									class="flex h-6 w-6 flex-shrink-0 items-center justify-center border {i === history.length
+									class="flex h-6 w-6 flex-shrink-0 items-center justify-center border {isActive
 										? 'border-primary bg-primary/10'
 										: 'border-border bg-background'}"
 								>
 									<span
-										class="font-mono text-[10px] {i === history.length
+										class="font-mono text-[10px] {isActive
 											? 'text-primary'
 											: 'text-muted-foreground'}">{i + 1}</span
 									>
 								</div>
 								<span
-									class="font-ui text-xs tracking-wider {i === history.length
+									class="font-ui text-xs tracking-wider {isActive
 										? 'text-foreground'
 										: 'text-muted-foreground'}"
 								>

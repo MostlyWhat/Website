@@ -387,9 +387,9 @@
 <!-- CTA Section - Large Variant -->
 <CTASection
 	variant="large"
-	label="READY TO START?"
-	title="LET'S BUILD SOMETHING GREAT TOGETHER"
-	description="Whether you have a detailed brief or just a rough idea, we'd love to hear about it. Get in touch and let's explore how we can help."
-	buttonText="GET A QUOTE"
-	buttonHref="/contact#quote"
+	label="NEED HELP?"
+	title="VISIT OUR SUPPORT CENTER"
+	description="Browse our knowledge base, FAQs, and documentation. Can't find what you need? Submit a support ticket and we'll get back to you within 24 hours."
+	buttonText="VIEW SUPPORT"
+	buttonHref="/support"
 />
