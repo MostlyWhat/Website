@@ -31,7 +31,7 @@
 	<meta name="description" content="Join our team and help build the future of web development." />
 </svelte:head>
 
-<HeroSection label="CAREERS" title="JOIN OUR TEAM" brightness="light" />
+<HeroSection label="// TEAM.JOIN" title="JOIN OUR TEAM" />
 
 <!-- Description Section -->
 <section class="border-b border-border bg-background">

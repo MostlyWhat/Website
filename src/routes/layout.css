@@ -441,6 +441,11 @@
 	color: var(--muted-foreground);
 }
 
+/* First element should have no top margin */
+.prose-custom > :first-child {
+	margin-top: 0 !important;
+}
+
 .prose-custom h2 {
 	font-family: var(--font-ui);
 	font-size: 1.5rem;

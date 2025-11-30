@@ -89,7 +89,8 @@
 			loop
 			playsinline
 			preload="auto"
-			class="h-full w-full object-cover"
+			class="h-full w-full object-cover transition-opacity duration-700 {isLoaded ? 'opacity-100' : 'opacity-0'}"
+			style={isLoaded ? '' : 'filter: blur(10px);'}
 		>
 			<track kind="captions" src="" label="No captions" />
 		</video>
@@ -99,6 +100,11 @@
 			alt=""
 			class="h-full w-full object-cover"
 		/>
+	{/if}
+	
+	<!-- Glitch overlay effect on load -->
+	{#if !isLoaded}
+		<div class="absolute inset-0 animate-pulse bg-gradient-to-b from-primary/5 to-transparent"></div>
 	{/if}
 	
 	<!-- Grid overlay -->

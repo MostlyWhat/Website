@@ -36,7 +36,7 @@
 	<meta name="description" content="Legal documents including Privacy Policy, Terms of Service, and Cookie Policy for MostlyWhat Systems." />
 </svelte:head>
 
-<HeroSection label="DOCUMENTS" title="LEGAL" />
+<HeroSection label="// DOCS.LEGAL" title="LEGAL" />
 
 <DescriptionSection
 	description="Transparency matters. Find all our legal documents and policies here."

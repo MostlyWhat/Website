@@ -33,7 +33,7 @@
 	<meta name="description" content={m.blog_subtitle()} />
 </svelte:head>
 
-<HeroSection label="INSIGHTS & UPDATES" title={m.blog_title()} brightness="light" />
+<HeroSection label="// INSIGHTS.FEED" title={m.blog_title()} />
 
 <!-- Description Section -->
 <DescriptionSection

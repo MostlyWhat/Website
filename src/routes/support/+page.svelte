@@ -103,7 +103,7 @@
 	<meta name="description" content="Get technical support and assistance from the MostlyWhat Systems team." />
 </svelte:head>
 
-<HeroSection label="ASSISTANCE" title="SUPPORT" brightness="light" />
+<HeroSection label="// HELP.CENTER" title="SUPPORT" />
 
 <!-- Description Section -->
 <DescriptionSection

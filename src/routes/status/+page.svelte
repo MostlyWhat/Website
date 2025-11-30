@@ -75,7 +75,7 @@
 	<meta name="description" content="Check the current status of MostlyWhat Systems services." />
 </svelte:head>
 
-<HeroSection label="SYSTEM STATUS" title="SERVICE STATUS" />
+<HeroSection label="// SYSTEM.HEALTH" title="SERVICE STATUS" />
 
 <!-- Overall Status Banner -->
 <section class="border-b border-border">

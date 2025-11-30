@@ -34,7 +34,7 @@
 	<meta name="description" content={m.about_subtitle()} />
 </svelte:head>
 
-<HeroSection label="ABOUT" title={m.about_title()} brightness="light" />
+<HeroSection label="// ABOUT.STORY" title={m.about_title()} />
 
 <DescriptionSection
 	description={m.about_subtitle()}

@@ -28,7 +28,7 @@
 	<meta name="description" content={m.services_subtitle()} />
 </svelte:head>
 
-<HeroSection label="SERVICES" title={m.services_title()} />
+<HeroSection label="// CAPABILITIES.INDEX" title={m.services_title()} />
 
 <DescriptionSection 
 	description={m.services_subtitle()}

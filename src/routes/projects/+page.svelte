@@ -29,7 +29,7 @@
 	<meta name="description" content={m.projects_subtitle()} />
 </svelte:head>
 
-<HeroSection label="SELECTED WORK" title={m.projects_title()} brightness="light" />
+<HeroSection label="// PORTFOLIO.SHOWCASE" title={m.projects_title()} />
 
 <!-- Description Section -->
 <DescriptionSection

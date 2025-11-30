@@ -60,12 +60,14 @@
 	}
 
 	function handleMouseEnter() {
+		// Only allow hover re-animation if hoverOnly is true
 		if (hoverOnly && !scrambledStart) {
 			startGlitch();
-		} else if (scrambledStart && hasRevealed) {
-			// Allow re-animation on hover after initial reveal
+		} else if (hoverOnly && scrambledStart && hasRevealed) {
+			// Allow re-animation on hover after initial reveal, but only if hoverOnly
 			startGlitch();
 		}
+		// If hoverOnly is false, do nothing on hover - only animate once at start
 	}
 
 	onMount(() => {

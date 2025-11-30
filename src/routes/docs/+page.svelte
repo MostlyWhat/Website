@@ -89,7 +89,7 @@
 	<meta name="description" content="Design system documentation for MostlyWhat Systems" />
 </svelte:head>
 
-<HeroSection label="REFERENCE" title="DESIGN SYSTEM" />
+<HeroSection label="// REFERENCE.DESIGN" title="DESIGN SYSTEM" />
 
 <DescriptionSection 
 	description="A comprehensive guide to our design language, grid system, components, and patterns. Everything you need to build consistent, beautiful interfaces."

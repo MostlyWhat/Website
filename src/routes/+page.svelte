@@ -37,7 +37,7 @@
 	<meta name="description" content={m.site_description()} />
 </svelte:head>
 
-<HeroSection label="MOSTLYWHAT SYSTEMS" title={m.hero_title()}>
+<HeroSection label="// MOSTLYWHAT.INIT" title={m.hero_title()}>
 	{#snippet actions()}
 		<Button href={localizeHref('/projects')} variant="outline" size="lg" class="font-ui tracking-wider">
 			VIEW WORK

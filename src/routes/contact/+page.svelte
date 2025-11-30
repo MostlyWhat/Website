@@ -171,7 +171,7 @@
 	<meta name="description" content={m.contact_subtitle()} />
 </svelte:head>
 
-<HeroSection label="CONTACT" title={m.contact_title()} brightness="light" />
+<HeroSection label="// CONNECT.START" title={m.contact_title()} />
 
 <!-- Description + Contact Options -->
 <section class="border-b border-border bg-background">
