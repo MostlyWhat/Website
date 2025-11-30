@@ -126,30 +126,37 @@ export function scrollAnimate(node: HTMLElement, options: ScrollAnimateOptions =
     }
 
     let hasAnimated = false;
-    let userHasScrolled = !onlyOnScrollDown; // If onlyOnScrollDown is false, consider user has scrolled
-    let initialScrollY = window.scrollY;
-
-    // Track if user has scrolled down from initial position
-    const handleScroll = () => {
-        if (window.scrollY > initialScrollY + 50) {
-            userHasScrolled = true;
-            window.removeEventListener('scroll', handleScroll);
-        }
-    };
-
-    // If page loads at top, immediately allow animations
-    if (initialScrollY < 100) {
-        userHasScrolled = true;
-    } else if (onlyOnScrollDown) {
-        window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    // For onlyOnScrollDown: if page loaded scrolled down (e.g. from anchor link),
+    // wait for a small scroll before animating to prevent jarring animations
+    let allowAnimation = !onlyOnScrollDown;
+    const initialScrollY = window.scrollY;
+    
+    // If at top of page or not using scroll-down restriction, allow immediately
+    if (initialScrollY < 100 || !onlyOnScrollDown) {
+        allowAnimation = true;
+    } else {
+        // Page loaded mid-scroll - wait 500ms then allow animations
+        // This gives time for the page to settle after navigation
+        setTimeout(() => {
+            allowAnimation = true;
+            // Re-check if element is in viewport now
+            const rect = node.getBoundingClientRect();
+            const inViewport = rect.top < window.innerHeight && rect.bottom > 0;
+            if (inViewport && !hasAnimated) {
+                requestAnimationFrame(() => {
+                    node.classList.add('visible');
+                });
+                hasAnimated = true;
+            }
+        }, 100);
     }
 
     const observer = new IntersectionObserver(
         (entries) => {
             entries.forEach((entry) => {
-                if (entry.isIntersecting && userHasScrolled) {
+                if (entry.isIntersecting && allowAnimation) {
                     if (!hasAnimated || repeat) {
-                        // Small delay to ensure CSS is applied
                         requestAnimationFrame(() => {
                             node.classList.add('visible');
                         });
@@ -177,7 +184,6 @@ export function scrollAnimate(node: HTMLElement, options: ScrollAnimateOptions =
         },
         destroy() {
             observer.disconnect();
-            window.removeEventListener('scroll', handleScroll);
             if (delay > 0) {
                 node.style.transitionDelay = '';
             }

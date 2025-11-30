@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
-	import { dev } from '$app/environment';
 	import * as m from '$lib/paraglide/messages';
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
@@ -9,63 +8,21 @@
 	import { onMount } from 'svelte';
 	import HeroSection from '$lib/components/layout/HeroSection.svelte';
 	import DescriptionSection from '$lib/components/layout/DescriptionSection.svelte';
-	import { pagefindStub } from '$lib/pagefind-stub';
 
-	// Pagefind types
-	interface PagefindResult {
-		id: string;
-		data: () => Promise<PagefindResultData>;
-	}
-
-	interface PagefindResultData {
-		url: string;
-		content: string;
-		word_count: number;
+	// Search result type
+	interface SearchResult {
+		title: string;
 		excerpt: string;
-		meta: {
-			title?: string;
-			image?: string;
-			[key: string]: string | undefined;
-		};
-	}
-
-	interface PagefindSearchResponse {
-		results: PagefindResult[];
-	}
-
-	interface Pagefind {
-		init: () => Promise<void>;
-		search: (query: string) => Promise<PagefindSearchResponse>;
-	}
-
-	// Helper to load pagefind dynamically - path constructed at runtime to avoid Vite analysis
-	async function loadPagefind(): Promise<Pagefind | null> {
-		try {
-			const path = ['', 'pagefind', 'pagefind.js'].join('/');
-			const res = await fetch(path, { method: 'HEAD' });
-			if (!res.ok) return null;
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			const pf = await (Function('return import("' + path + '")')() as Promise<any>);
-			await pf.init();
-			return pf as Pagefind;
-		} catch {
-			return null;
-		}
+		url: string;
+		type: string;
+		score: number;
 	}
 
 	let searchQuery = $state('');
 	let activeFilter = $state<'all' | 'support' | 'projects' | 'blog'>('all');
-	let searchResults = $state<Array<{
-		title: string;
-		excerpt: string;
-		url: string;
-		type: 'support' | 'project' | 'blog' | 'page';
-	}>>([]);
+	let searchResults = $state<SearchResult[]>([]);
 	let isSearching = $state(false);
 	let hasSearched = $state(false);
-	let pagefindLoaded = $state(false);
-	let isDevMode = $state(false);
-	let pagefind: Pagefind | null = $state(null);
 	let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 	let inputElement: HTMLInputElement | null = $state(null);
 	let isMobileSearchOpen = $state(false);
@@ -77,21 +34,6 @@
 		{ id: 'blog' as const, label: 'CONTENT', icon: BookOpen }
 	];
 
-	function getTypeFromUrl(url: string): 'support' | 'project' | 'blog' | 'page' {
-		if (url.includes('/support/')) return 'support';
-		if (url.includes('/projects/')) return 'project';
-		if (url.includes('/blog/')) return 'blog';
-		return 'page';
-	}
-
-	function matchesFilter(type: string): boolean {
-		if (activeFilter === 'all') return true;
-		if (activeFilter === 'support') return type === 'support';
-		if (activeFilter === 'projects') return type === 'project';
-		if (activeFilter === 'blog') return type === 'blog' || type === 'page';
-		return true;
-	}
-
 	async function performSearch(query: string) {
 		if (!query.trim()) {
 			searchResults = [];
@@ -99,31 +41,21 @@
 			return;
 		}
 
-		if (!pagefind) {
-			hasSearched = true;
-			searchResults = [];
-			return;
-		}
-
 		isSearching = true;
 		
 		try {
-			const response = await pagefind.search(query);
-			const resultData = await Promise.all(
-				response.results.slice(0, 20).map(r => r.data())
-			);
+			const params = new URLSearchParams({
+				q: query,
+				filter: activeFilter,
+				limit: '20'
+			});
 			
-			searchResults = resultData
-				.map(data => ({
-					title: data.meta.title || 'Untitled',
-					excerpt: data.excerpt,
-					url: data.url,
-					type: getTypeFromUrl(data.url)
-				}))
-				.filter(r => matchesFilter(r.type));
+			const response = await fetch(`/api/search?${params}`);
+			const data: { results: SearchResult[] } = await response.json();
 			
+			searchResults = data.results;
 		} catch (error) {
-			console.error('Pagefind search error:', error);
+			console.error('Search error:', error);
 			searchResults = [];
 		}
 		
@@ -158,7 +90,6 @@
 
 	function openMobileSearch() {
 		isMobileSearchOpen = true;
-		// Focus input after DOM update
 		setTimeout(() => inputElement?.focus(), 100);
 	}
 
@@ -174,29 +105,10 @@
 	}
 
 	onMount(async () => {
-		// In development, use the stub; in production, load real Pagefind
-		if (dev) {
-			console.log('[Search] Using Pagefind development stub');
-			await pagefindStub.init();
-			pagefind = pagefindStub;
-			pagefindLoaded = true;
-			isDevMode = true;
-		} else {
-			const pf = await loadPagefind();
-			if (pf) {
-				pagefind = pf;
-				pagefindLoaded = true;
-			}
-		}
-		
 		const urlQuery = page.url.searchParams.get('q');
 		if (urlQuery) {
 			searchQuery = urlQuery;
-			if (pagefindLoaded) {
-				performSearch(urlQuery);
-			} else {
-				hasSearched = true;
-			}
+			performSearch(urlQuery);
 		}
 	});
 
@@ -204,6 +116,9 @@
 		support: { label: 'SUPPORT', icon: HelpCircle },
 		project: { label: 'PROJECT', icon: Briefcase },
 		blog: { label: 'BLOG', icon: BookOpen },
+		service: { label: 'SERVICE', icon: Briefcase },
+		career: { label: 'CAREER', icon: FileText },
+		legal: { label: 'LEGAL', icon: FileText },
 		page: { label: 'PAGE', icon: FileText }
 	};
 </script>
@@ -280,16 +195,6 @@
 					</button>
 				{/each}
 			</div>
-
-			{#if isDevMode}
-				<p class="font-mono mt-4 text-[10px] tracking-wider text-amber-500">
-					[DEV MODE] Using mock search results. Build for production search.
-				</p>
-			{:else if !pagefindLoaded && hasSearched}
-				<p class="font-mono mt-4 text-[10px] tracking-wider text-amber-500">
-					Search index not available. Run `pnpm build` to generate the search index.
-				</p>
-			{/if}
 		</div>
 	</div>
 </section>

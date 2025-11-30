@@ -51,8 +51,8 @@
 	{/if}
 
 	<!-- Hero Content - Left-aligned, Bottom-positioned -->
-	<div class="flex flex-1 flex-col items-start justify-end px-6 pb-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
-		<div class="mb-12 max-w-4xl text-left">
+	<div class="flex flex-1 flex-col items-start justify-end px-6 py-6 md:px-12 md:py-12 lg:px-16 lg:py-16" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
+		<div class="max-w-4xl text-left">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">{label}</span>
 			<h1 class="font-display mt-4 text-4xl font-black uppercase leading-[0.9] tracking-tight md:text-6xl lg:text-7xl xl:text-8xl">
 				{#if staticTitle}
