@@ -62,27 +62,24 @@
 		<div class="col-span-12 border-b border-border bg-background lg:col-span-3 lg:border-b-0 lg:border-r lg:border-border">
 			<div class="lg:sticky lg:top-24">
 				<div class="px-6 py-8 md:px-12 lg:px-16 lg:py-12" use:scrollAnimate={{ animation: 'fade' }}>
-					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">QUICK INFO</span>
-					<div class="mt-4 space-y-4">
-						<div>
-							<span class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">Department</span>
-							<p class="font-ui mt-1 text-sm font-semibold tracking-wider">{position.department}</p>
-						</div>
-						<div>
-							<span class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">Type</span>
-							<p class="font-ui mt-1 text-sm font-semibold tracking-wider">{position.type}</p>
-						</div>
-						<div>
-							<span class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">Location</span>
-							<p class="font-ui mt-1 text-sm font-semibold tracking-wider">{position.location}</p>
-						</div>
-					</div>
+					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">ON THIS PAGE</span>
+					<nav class="mt-4 flex flex-col gap-3">
+						{#each position.sections as section, i (section.id)}
+							<a 
+								href="#{section.id}"
+								class="font-ui group flex items-start gap-3 text-xs tracking-wider text-muted-foreground transition-colors hover:text-primary"
+							>
+								<span class="font-mono text-[10px] text-primary/50 group-hover:text-primary">{String(i + 1).padStart(2, '0')}</span>
+								<span class="border-b border-transparent group-hover:border-primary">{section.title}</span>
+							</a>
+						{/each}
+					</nav>
 				</div>
 				<!-- Back link at bottom -->
 				<div class="border-t border-border">
 					<a href={localizeHref('/careers')} class="font-ui flex items-center gap-2 px-6 py-4 text-xs tracking-wider text-muted-foreground hover:bg-card hover:text-primary md:px-12 lg:px-16">
 						<ArrowLeft class="h-3 w-3" />
-						ALL POSITIONS
+						BACK TO CAREERS
 					</a>
 				</div>
 			</div>
@@ -90,7 +87,7 @@
 
 		<!-- Main Content - Right -->
 		<article class="col-span-12 bg-background px-6 py-12 md:px-12 lg:col-span-9 lg:px-16 lg:py-16" use:scrollAnimate={{ animation: 'fade' }}>
-			<div class="prose prose-invert max-w-3xl prose-headings:font-display prose-headings:font-bold prose-headings:uppercase prose-headings:tracking-wider prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-4 prose-h3:text-base prose-p:font-body prose-p:text-muted-foreground prose-li:font-body prose-li:text-muted-foreground prose-strong:text-foreground">
+			<div class="max-w-3xl">
 				{@html position.content}
 			</div>
 			

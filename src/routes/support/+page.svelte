@@ -60,10 +60,10 @@
 		},
 		{
 			icon: FileQuestion,
-			title: 'HELP CENTER',
+			title: 'FAQ',
 			desc: 'Find answers to common questions',
 			action: 'BROWSE FAQ',
-			href: '/help'
+			href: '#faq'
 		}
 	];
 
@@ -108,7 +108,7 @@
 	<!-- Video Background -->
 	<VideoBackground 
 		src={MARATHON_VIDEO}
-		class="brightness-[0.50]"
+		class="brightness-[0.20]"
 	/>
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
@@ -360,7 +360,7 @@
 				Common questions about our support process. Can't find your answer here?
 			</p>
 			<div class="mt-6">
-				<Button href={localizeHref('/help')} variant="outline" size="sm" class="font-ui text-xs tracking-wider">
+				<Button href="#faq" variant="outline" size="sm" class="font-ui text-xs tracking-wider">
 					VIEW ALL FAQ
 					<ArrowRight class="ml-2 h-3 w-3" />
 				</Button>
@@ -399,8 +399,8 @@
 					CONTACT US
 					<ArrowRight class="ml-2 h-4 w-4" />
 				</Button>
-				<Button href={localizeHref('/help')} variant="outline" class="font-ui tracking-wider">
-					HELP CENTER
+				<Button href={localizeHref('/docs')} variant="outline" class="font-ui tracking-wider">
+					DOCUMENTATION
 				</Button>
 			</div>
 		</div>

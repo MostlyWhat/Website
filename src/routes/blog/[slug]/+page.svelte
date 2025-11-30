@@ -67,9 +67,9 @@
 <section class="border-b border-border">
 	<div class="grid grid-cols-12">
 		<!-- Sticky Sidebar - Left -->
-		<div class="col-span-12 border-b border-border bg-card lg:col-span-3 lg:border-b-0 lg:border-r lg:border-border">
+		<div class="col-span-12 border-b border-border bg-background lg:col-span-3 lg:border-b-0 lg:border-r lg:border-border">
 			<div class="lg:sticky lg:top-24">
-				<div class="px-6 py-8 md:px-12 lg:px-16 lg:py-12">
+				<div class="px-6 py-8 md:px-12 lg:px-16 lg:py-12" use:scrollAnimate={{ animation: 'fade' }}>
 					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">ON THIS PAGE</span>
 					<nav class="mt-4 flex flex-col gap-3">
 						{#each post.sections as section, i (section.id)}
@@ -85,7 +85,7 @@
 				</div>
 				<!-- Back link at bottom -->
 				<div class="border-t border-border">
-					<a href={localizeHref('/blog')} class="font-ui flex items-center gap-2 px-6 py-4 text-xs tracking-wider text-muted-foreground hover:bg-background hover:text-primary md:px-12 lg:px-16">
+					<a href={localizeHref('/blog')} class="font-ui flex items-center gap-2 px-6 py-4 text-xs tracking-wider text-muted-foreground hover:bg-card hover:text-primary md:px-12 lg:px-16">
 						<ArrowLeft class="h-3 w-3" />
 						BACK TO BLOG
 					</a>

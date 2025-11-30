@@ -127,9 +127,9 @@
 		</div>
 
 	{:else if variant === 'large'}
-		<!-- Large: Big text CTA for contact pages -->
+		<!-- Large: Big text CTA for contact pages - 75/25 layout -->
 		<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'scale' }}>
-			<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-16 md:px-12 lg:col-span-8 lg:px-16 lg:py-20">
+			<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-16 md:px-12 lg:col-span-9 lg:px-16 lg:py-20">
 				{#if label}
 					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">{label}</span>
 				{/if}
@@ -153,7 +153,7 @@
 					</div>
 				{/if}
 			</div>
-			<div class="col-span-12 flex flex-col items-center justify-center bg-primary/10 px-6 py-12 lg:col-span-4 lg:px-16">
+			<div class="col-span-12 flex flex-col items-center justify-center bg-primary/10 px-6 py-12 lg:col-span-3 lg:px-8">
 				{#if children}
 					{@render children()}
 				{:else}

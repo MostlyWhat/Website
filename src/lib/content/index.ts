@@ -109,7 +109,7 @@ function renderStyledContent(markdown: string, options?: { stripTitle?: boolean 
     const html = marked.parse(processed) as string;
 
     // Add styling to paragraphs, lists, code blocks, tables, and other elements
-    return html
+    let styled = html
         .replace(/<p>/g, '<p class="font-body text-sm leading-relaxed text-muted-foreground mt-4">')
         .replace(/<ul>/g, '<ul class="font-body list-disc list-inside space-y-2 text-sm text-muted-foreground mt-4 ml-4">')
         .replace(/<ol>/g, '<ol class="font-body list-decimal list-inside space-y-2 text-sm text-muted-foreground mt-4 ml-4">')
@@ -139,6 +139,11 @@ function renderStyledContent(markdown: string, options?: { stripTitle?: boolean 
         .replace(/<code>/g, '<code class="font-mono text-xs text-primary">')
         .replace(/<pre class="font-mono mt-6 mb-4 p-4 bg-card border border-border overflow-x-auto text-xs leading-relaxed"><code class="font-mono text-xs text-primary">/g, '<pre class="font-mono mt-6 mb-4 p-4 bg-card border border-border overflow-x-auto text-xs leading-relaxed"><code class="font-mono text-foreground">')
         .replace(/<p class="font-body text-sm leading-relaxed text-muted-foreground mt-4"><code/g, '<p class="font-body text-sm leading-relaxed text-muted-foreground mt-4"><code class="font-mono text-xs bg-card px-1.5 py-0.5 border border-border text-primary"');
+    
+    // Remove top margin from first element to eliminate extra space
+    styled = styled.replace(/^(<(?:p|ul|ol|h[1-6]|div)[^>]*class="[^"]*)\bmt-\d+\b/, '$1');
+    
+    return styled;
 }
 
 export interface BlogPost {

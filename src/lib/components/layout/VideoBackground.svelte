@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { getVideoState, setVideoElement, syncVideoTime, setVideoState } from '$lib/stores/video.svelte';
+	import { getVideoState, setVideoElement, syncVideoTime, setVideoState, getVideoElement } from '$lib/stores/video.svelte';
 
 	interface Props {
 		src: string;
@@ -18,15 +18,17 @@
 		if (!videoRef) return;
 
 		const state = getVideoState();
+		const existingVideo = getVideoElement();
+
+		// If there's an existing video with the same source, sync immediately
+		if (existingVideo && state.src === src && state.currentTime > 0) {
+			videoRef.currentTime = state.currentTime;
+			isLoaded = true; // Show immediately to reduce stutter
+		}
 
 		// Set up the video element in the store
 		setVideoElement(videoRef);
 		setVideoState({ src });
-
-		// Restore playback position if we have one stored for the same video
-		if (state.currentTime > 0) {
-			videoRef.currentTime = state.currentTime;
-		}
 
 		// Track time updates for persistence
 		const handleTimeUpdate = () => {
@@ -37,10 +39,16 @@
 
 		const handleCanPlay = () => {
 			isLoaded = true;
-			// Always try to play
-			videoRef?.play().catch(() => {
-				// Autoplay blocked - that's ok
-			});
+			videoRef?.play().catch(() => {});
+		};
+
+		const handleLoadedData = () => {
+			// Restore position after loaded
+			const currentState = getVideoState();
+			if (currentState.currentTime > 0 && currentState.src === src) {
+				videoRef!.currentTime = currentState.currentTime;
+			}
+			isLoaded = true;
 		};
 
 		const handleError = () => {
@@ -49,6 +57,7 @@
 
 		videoRef.addEventListener('timeupdate', handleTimeUpdate);
 		videoRef.addEventListener('canplay', handleCanPlay);
+		videoRef.addEventListener('loadeddata', handleLoadedData);
 		videoRef.addEventListener('error', handleError);
 
 		// Start playing immediately
@@ -58,6 +67,7 @@
 			if (videoRef) {
 				videoRef.removeEventListener('timeupdate', handleTimeUpdate);
 				videoRef.removeEventListener('canplay', handleCanPlay);
+				videoRef.removeEventListener('loadeddata', handleLoadedData);
 				videoRef.removeEventListener('error', handleError);
 			}
 		};
@@ -78,7 +88,8 @@
 			muted
 			loop
 			playsinline
-			class="h-full w-full object-cover brightness-[0.50]"
+			preload="auto"
+			class="h-full w-full object-cover"
 		>
 			<track kind="captions" src="" label="No captions" />
 		</video>
@@ -86,7 +97,7 @@
 		<img 
 			src={poster}
 			alt=""
-			class="h-full w-full object-cover brightness-[0.50]"
+			class="h-full w-full object-cover"
 		/>
 	{/if}
 	

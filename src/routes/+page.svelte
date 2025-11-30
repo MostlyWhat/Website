@@ -4,6 +4,7 @@
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import VideoBackground from '$lib/components/layout/VideoBackground.svelte';
+	import CapabilitiesSection from '$lib/components/layout/CapabilitiesSection.svelte';
 	import { GlitchText } from '$lib/components/ui/glitch-text';
 	import { MARATHON_VIDEO } from '$lib/constants';
 	import { ArrowRight, ArrowUpRight, Mail, Zap, Shield, Users, Headphones, Code, Palette, BarChart3, Layers, Globe, type Icon } from '@lucide/svelte';
@@ -42,7 +43,7 @@
 	<!-- Video Background -->
 	<VideoBackground 
 		src={MARATHON_VIDEO}
-		class="brightness-[0.50]"
+		class="brightness-[0.20]"
 	/>
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
@@ -125,34 +126,8 @@
 	</div>
 </section>
 
-<!-- Why Choose Us - Full Viewport Split -->
-<section class="flex min-h-[80vh] flex-col border-b border-border lg:flex-row">
-	<!-- Left - Image -->
-	<div class="relative min-h-[50vh] flex-1 overflow-hidden lg:min-h-0">
-		<img 
-			src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop" 
-			alt="Team collaboration" 
-			class="absolute inset-0 h-full w-full object-cover brightness-[0.4]"
-		/>
-		<div class="absolute inset-0 flex flex-col justify-end px-6 pb-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
-			<span class="font-mono text-[10px] tracking-widest text-white/60">02 — WHY CHOOSE US</span>
-			<h2 class="font-display mt-6 max-w-lg text-4xl font-bold uppercase text-white md:text-5xl lg:text-6xl">BUILD WITH CONFIDENCE</h2>
-		</div>
-	</div>
-
-	<!-- Right - Capabilities -->
-	<div class="grid flex-1 grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
-		{#each capabilities as { icon: Icon, title, desc } (title)}
-			<div class="col-span-12 flex flex-col bg-background px-6 py-10 sm:col-span-6 md:px-12 lg:px-16">
-				<div class="mb-6 flex h-12 w-12 items-center justify-center border border-border bg-card">
-					<Icon class="h-5 w-5 text-primary" />
-				</div>
-				<h3 class="font-ui text-base font-semibold uppercase tracking-wider">{title}</h3>
-				<p class="font-body mt-3 flex-1 text-sm text-muted-foreground">{desc}</p>
-			</div>
-		{/each}
-	</div>
-</section>
+<!-- Why Choose Us - Capabilities Grid -->
+<CapabilitiesSection {capabilities} />
 
 <!-- Process Section - Full Viewport -->
 <section class="flex min-h-[80vh] flex-col border-b border-border">

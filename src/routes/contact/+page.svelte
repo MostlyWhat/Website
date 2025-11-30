@@ -81,12 +81,12 @@
 			action: 'SEND MESSAGE'
 		},
 		{ 
-			id: 'help', 
+			id: 'support', 
 			icon: HelpCircle, 
-			title: 'HELP CENTER', 
+			title: 'SUPPORT CENTER', 
 			desc: 'Browse FAQs and documentation',
 			action: 'VIEW ARTICLES',
-			href: '/help'
+			href: '/support'
 		}
 	];
 
@@ -164,7 +164,7 @@
 	}
 
 	function selectTopic(id: string) {
-		if (id === 'help') return; // Help center has its own page
+		if (id === 'support') return; // Support center has its own page
 		selectedTopic = id;
 	}
 </script>
@@ -179,7 +179,7 @@
 	<!-- Video Background -->
 	<VideoBackground 
 		src={MARATHON_VIDEO}
-		class="brightness-[0.50]"
+		class="brightness-[0.20]"
 	/>
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
@@ -385,9 +385,9 @@
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">02 — FAQ</span>
 			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl lg:text-5xl">COMMON QUESTIONS</h2>
 			<p class="font-body mt-4 text-muted-foreground">Find answers to frequently asked questions about working with us.</p>
-			<a href={localizeHref('/help')} class="font-mono mt-6 flex items-center gap-2 text-xs tracking-wider text-primary hover:underline">
+			<a href={localizeHref('/support')} class="font-mono mt-6 flex items-center gap-2 text-xs tracking-wider text-primary hover:underline">
 				<HelpCircle class="h-4 w-4" />
-				BROWSE HELP CENTER
+				BROWSE SUPPORT CENTER
 				<ArrowRight class="h-3 w-3" />
 			</a>
 		</div>

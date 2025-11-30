@@ -28,7 +28,6 @@
 		],
 		resources: [
 			{ href: '/docs', label: 'DOCS' },
-			{ href: '/help', label: 'HELP CENTER' },
 			{ href: '/support', label: 'SUPPORT' },
 			{ href: '/status', label: 'STATUS' }
 		],

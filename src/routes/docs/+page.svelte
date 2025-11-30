@@ -94,7 +94,7 @@
 	<!-- Video Background -->
 	<VideoBackground 
 		src={MARATHON_VIDEO}
-		class="brightness-[0.50]"
+		class="brightness-[0.20]"
 	/>
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
@@ -147,17 +147,17 @@
 				<div class="border-b border-border">
 					<button 
 						type="button"
-						onclick={() => activeCategory = 'design'}
+						onclick={() => activeCategory = activeCategory === 'design' ? 'components' : 'design'}
 						class="flex w-full items-center justify-between px-6 py-4 transition-colors hover:bg-background md:px-12 lg:px-16 {activeCategory === 'design' ? 'bg-background' : ''}"
 					>
 						<div class="flex items-center gap-3">
 							<Paintbrush class="h-4 w-4 text-primary" />
 							<span class="font-mono text-[10px] tracking-widest">DESIGN</span>
 						</div>
-						<ChevronRight class="h-4 w-4 text-muted-foreground transition-transform {activeCategory === 'design' ? 'rotate-90' : ''}" />
+						<ChevronRight class="h-4 w-4 text-muted-foreground transition-transform duration-200 {activeCategory === 'design' ? 'rotate-90' : ''}" />
 					</button>
-					{#if activeCategory === 'design'}
-						<nav class="flex flex-col border-t border-border">
+					<div class="grid transition-all duration-300 ease-out {activeCategory === 'design' ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}">
+						<nav class="flex flex-col overflow-hidden border-t border-border">
 							{#each navigation.design.sections as section (section.id)}
 								<button
 									type="button"
@@ -169,24 +169,24 @@
 								</button>
 							{/each}
 						</nav>
-					{/if}
+					</div>
 				</div>
 
 				<!-- Category: Components -->
 				<div class="border-b border-border">
 					<button 
 						type="button"
-						onclick={() => activeCategory = 'components'}
+						onclick={() => activeCategory = activeCategory === 'components' ? 'design' : 'components'}
 						class="flex w-full items-center justify-between px-6 py-4 transition-colors hover:bg-background md:px-12 lg:px-16 {activeCategory === 'components' ? 'bg-background' : ''}"
 					>
 						<div class="flex items-center gap-3">
 							<Box class="h-4 w-4 text-primary" />
 							<span class="font-mono text-[10px] tracking-widest">COMPONENTS</span>
 						</div>
-						<ChevronRight class="h-4 w-4 text-muted-foreground transition-transform {activeCategory === 'components' ? 'rotate-90' : ''}" />
+						<ChevronRight class="h-4 w-4 text-muted-foreground transition-transform duration-200 {activeCategory === 'components' ? 'rotate-90' : ''}" />
 					</button>
-					{#if activeCategory === 'components'}
-						<nav class="flex flex-col border-t border-border">
+					<div class="grid transition-all duration-300 ease-out {activeCategory === 'components' ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}">
+						<nav class="flex flex-col overflow-hidden border-t border-border">
 							{#each navigation.components.sections as section (section.id)}
 								<button
 									type="button"
@@ -198,7 +198,7 @@
 								</button>
 							{/each}
 						</nav>
-					{/if}
+					</div>
 				</div>
 			</div>
 		</div>
@@ -584,7 +584,7 @@
 						<div class="mt-8">
 							<p class="font-mono mb-4 text-[10px] tracking-widest text-muted-foreground">ACCORDION</p>
 							<div class="max-w-xl">
-								<Accordion.Root class="divide-y divide-border border border-border">
+								<Accordion.Root type="single" class="divide-y divide-border border border-border">
 									<Accordion.Item value="item-1">
 										<Accordion.Trigger class="font-ui px-4 py-3 text-xs tracking-wider">FIRST ITEM</Accordion.Trigger>
 										<Accordion.Content class="font-body px-4 pb-3 text-sm text-muted-foreground">Content for the first accordion item.</Accordion.Content>

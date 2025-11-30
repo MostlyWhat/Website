@@ -59,6 +59,7 @@
 	}
 
 	const overallStatus = getOverallStatus();
+	const overallConfig = $derived(statusConfig[overallStatus]);
 
 	function formatDate(dateStr: string): string {
 		return new Date(dateStr).toLocaleDateString('en-US', {
@@ -79,7 +80,7 @@
 	<!-- Video Background -->
 	<VideoBackground 
 		src={MARATHON_VIDEO}
-		class="brightness-[0.50]"
+		class="brightness-[0.20]"
 	/>
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
@@ -100,12 +101,11 @@
 <section class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
 		<div class="col-span-12 flex items-center gap-4 bg-background px-6 py-8 md:col-span-8 md:px-12 lg:px-16">
-			{@const config = statusConfig[overallStatus]}
 			<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">
-				<config.icon class="h-6 w-6 {config.color}" />
+				<overallConfig.icon class="h-6 w-6 {overallConfig.color}" />
 			</div>
 			<div>
-				<h2 class="font-display text-xl font-bold uppercase md:text-2xl">ALL SYSTEMS {config.label}</h2>
+				<h2 class="font-display text-xl font-bold uppercase md:text-2xl">ALL SYSTEMS {overallConfig.label}</h2>
 				<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">
 					Last updated: {new Date().toLocaleString()}
 				</p>
