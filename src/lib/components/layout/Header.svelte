@@ -142,10 +142,10 @@
 				<ArrowUpRight class="h-3.5 w-3.5" />
 			</a>
 
-			<!-- Mobile menu button -->
+			<!-- Mobile menu button - far right with square appearance -->
 			<button
 				type="button"
-				class="flex h-full w-14 items-center justify-center border-l border-border lg:hidden"
+				class="ml-auto flex h-16 w-16 flex-shrink-0 items-center justify-center border-l border-border transition-colors hover:bg-card lg:hidden"
 				onclick={() => (mobileMenuOpen = !mobileMenuOpen)}
 				aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
 				aria-expanded={mobileMenuOpen}
@@ -176,10 +176,26 @@
 		</div>
 	{/if}
 
-	<!-- Mobile Navigation - Full Screen -->
+	<!-- Mobile Navigation - Full Screen Overlay -->
 	{#if mobileMenuOpen}
-		<nav class="fixed inset-0 top-16 z-40 flex flex-col bg-background lg:hidden">
-			<div class="flex flex-1 flex-col">
+		<nav class="fixed inset-0 top-0 z-40 flex flex-col bg-background/95 backdrop-blur-md lg:hidden">
+			<!-- Mobile Header Bar -->
+			<div class="flex h-16 items-center border-b border-border">
+				<a href={localizeHref('/')} class="flex items-center gap-3 px-6" onclick={closeMobileMenu}>
+					<span class="font-display text-sm font-black tracking-wider text-primary">MOSTLYWHAT</span>
+					<span class="font-display text-sm font-black tracking-wider text-foreground">SYSTEMS</span>
+				</a>
+				<button
+					type="button"
+					class="ml-auto flex h-16 w-16 flex-shrink-0 items-center justify-center border-l border-border"
+					onclick={() => (mobileMenuOpen = false)}
+					aria-label="Close menu"
+				>
+					<X class="h-5 w-5" />
+				</button>
+			</div>
+
+			<div class="flex flex-1 flex-col overflow-y-auto">
 				<!-- Search Link (Mobile) -->
 				<a
 					href={localizeHref('/search')}

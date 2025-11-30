@@ -695,19 +695,15 @@
 	label="// TROUBLESHOOTER"
 	title="GUIDED DIAGNOSIS"
 	description="Answer a few questions and we'll help identify your issue and provide solutions."
-	stats={[
-		{ value: '5', label: 'MIN AVG' },
-		{ value: '85%', label: 'SELF-SOLVED' }
-	]}
 />
 
 <!-- Description Section -->
 <DescriptionSection
 	description="Our interactive troubleshooter guides you through common issues with step-by-step diagnostics. Most problems can be resolved within minutes without needing to wait for support."
 	stats={[
-		{ value: '24/7', label: 'AVAILABLE' },
-		{ value: 'INSTANT', label: 'RESULTS' },
-		{ value: 'FREE', label: 'SUPPORT' }
+		{ value: '5 MIN', label: 'AVG TIME' },
+		{ value: '85%', label: 'SELF-SOLVED' },
+		{ value: '24/7', label: 'AVAILABLE' }
 	]}
 />
 

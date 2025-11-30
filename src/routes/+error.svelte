@@ -20,10 +20,6 @@
 	description={page.status === 404 
 		? "The page you're looking for doesn't exist or has been moved."
 		: "An unexpected error occurred. Please try again or contact support if the problem persists."}
-	stats={[
-		{ value: String(page.status), label: 'STATUS' },
-		{ value: 'ERROR', label: 'TYPE' }
-	]}
 >
 	{#snippet actions()}
 		<Button href={localizeHref('/')} variant="outline" size="lg" class="font-ui tracking-wider">
@@ -43,8 +39,9 @@
 		? m.error_404_subtitle()
 		: "If this problem persists, please contact our support team with the error details."}
 	stats={[
-		{ value: '24/7', label: 'SUPPORT' },
-		{ value: 'FAST', label: 'RESPONSE' }
+		{ value: String(page.status), label: 'STATUS' },
+		{ value: 'ERROR', label: 'TYPE' },
+		{ value: '24/7', label: 'SUPPORT' }
 	]}
 />
 

@@ -5,11 +5,6 @@
 	import { MARATHON_VIDEO } from '$lib/constants';
 	import type { Snippet } from 'svelte';
 
-	interface Stat {
-		value: string;
-		label: string;
-	}
-
 	interface Props {
 		/** Small label above title (e.g., "// ABOUT", "// CONTACT") */
 		label: string;
@@ -23,8 +18,6 @@
 		showVideo?: boolean;
 		/** Custom video source URL */
 		videoSrc?: string;
-		/** Optional stats to display at bottom */
-		stats?: Stat[];
 		/** Optional action buttons slot */
 		actions?: Snippet;
 	}
@@ -36,7 +29,6 @@
 		staticTitle = false,
 		showVideo = true,
 		videoSrc = MARATHON_VIDEO,
-		stats,
 		actions
 	}: Props = $props();
 </script>
@@ -71,18 +63,4 @@
 			{/if}
 		</div>
 	</div>
-
-	<!-- Stats Bar -->
-	{#if stats && stats.length > 0}
-		<div class="border-t border-border">
-			<div class="grid divide-x divide-border" style="grid-template-columns: repeat({stats.length}, minmax(0, 1fr));">
-				{#each stats as stat (stat.label)}
-					<div class="bg-background/80 px-6 py-4 text-center backdrop-blur-sm">
-						<span class="font-display block text-2xl font-bold text-primary">{stat.value}</span>
-						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">{stat.label}</span>
-					</div>
-				{/each}
-			</div>
-		</div>
-	{/if}
 </section>

@@ -83,17 +83,14 @@
 	label="// HELP.CENTER"
 	title="SUPPORT"
 	description="How can we help you today?"
-	stats={[
-		{ value: '<24H', label: 'RESPONSE' },
-		{ value: '98%', label: 'RESOLVED' }
-	]}
 />
 
 <!-- Description Section -->
 <DescriptionSection
 	description="Get technical support and assistance. Browse our knowledge base, use our guided troubleshooter, or submit a ticket for personalized help."
 	stats={[
-		{ value: 'DOCS', label: 'ARTICLES' },
+		{ value: '<24H', label: 'RESPONSE' },
+		{ value: '98%', label: 'RESOLVED' },
 		{ value: 'LIVE', label: 'STATUS' }
 	]}
 />
