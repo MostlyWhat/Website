@@ -4,14 +4,14 @@ import matter from 'gray-matter';
 
 // Content index - built at startup
 interface ContentItem {
-	title: string;
-	slug: string;
-	url: string;
-	category: string;
-	excerpt: string;
-	content: string;
-	type: 'support' | 'blog' | 'project' | 'service' | 'career' | 'legal';
-	keywords: string[];
+    title: string;
+    slug: string;
+    url: string;
+    category: string;
+    excerpt: string;
+    content: string;
+    type: 'support' | 'blog' | 'project' | 'service' | 'career' | 'legal';
+    keywords: string[];
 }
 
 // Import all markdown files at build time
@@ -23,159 +23,159 @@ const careerFiles = import.meta.glob('/src/content/careers/*.md', { query: '?raw
 const legalFiles = import.meta.glob('/src/lib/content/legal/*.md', { query: '?raw', import: 'default', eager: true });
 
 function parseMarkdownFiles(
-	files: Record<string, unknown>,
-	type: ContentItem['type'],
-	baseUrl: string
+    files: Record<string, unknown>,
+    type: ContentItem['type'],
+    baseUrl: string
 ): ContentItem[] {
-	return Object.entries(files).map(([path, raw]) => {
-		const content = raw as string;
-		const { data: frontmatter, content: body } = matter(content);
-		
-		// Extract slug from path or frontmatter
-		const pathSlug = path.split('/').pop()?.replace('.md', '') || '';
-		const slug = frontmatter.slug || pathSlug;
-		
-		// Generate excerpt from content (first 200 chars without markdown)
-		const plainContent = body
-			.replace(/^#+\s+.*/gm, '') // Remove headings
-			.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Replace links with text
-			.replace(/[*_`#]/g, '') // Remove markdown formatting
-			.replace(/\n+/g, ' ') // Replace newlines with spaces
-			.trim();
-		
-		const excerpt = frontmatter.excerpt || frontmatter.summary || plainContent.slice(0, 200) + '...';
-		
-		// Extract keywords from tags, category, and title
-		const keywords: string[] = [
-			...(frontmatter.tags || []),
-			frontmatter.category || '',
-			...(frontmatter.title || '').toLowerCase().split(/\s+/)
-		].filter(Boolean);
-		
-		return {
-			title: frontmatter.title || slug,
-			slug,
-			url: `${baseUrl}/${slug}`,
-			category: frontmatter.category || type,
-			excerpt,
-			content: plainContent.toLowerCase(),
-			type,
-			keywords: keywords.map(k => k.toLowerCase())
-		};
-	});
+    return Object.entries(files).map(([path, raw]) => {
+        const content = raw as string;
+        const { data: frontmatter, content: body } = matter(content);
+
+        // Extract slug from path or frontmatter
+        const pathSlug = path.split('/').pop()?.replace('.md', '') || '';
+        const slug = frontmatter.slug || pathSlug;
+
+        // Generate excerpt from content (first 200 chars without markdown)
+        const plainContent = body
+            .replace(/^#+\s+.*/gm, '') // Remove headings
+            .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Replace links with text
+            .replace(/[*_`#]/g, '') // Remove markdown formatting
+            .replace(/\n+/g, ' ') // Replace newlines with spaces
+            .trim();
+
+        const excerpt = frontmatter.excerpt || frontmatter.summary || plainContent.slice(0, 200) + '...';
+
+        // Extract keywords from tags, category, and title
+        const keywords: string[] = [
+            ...(frontmatter.tags || []),
+            frontmatter.category || '',
+            ...(frontmatter.title || '').toLowerCase().split(/\s+/)
+        ].filter(Boolean);
+
+        return {
+            title: frontmatter.title || slug,
+            slug,
+            url: `${baseUrl}/${slug}`,
+            category: frontmatter.category || type,
+            excerpt,
+            content: plainContent.toLowerCase(),
+            type,
+            keywords: keywords.map(k => k.toLowerCase())
+        };
+    });
 }
 
 // Build the content index
 function buildIndex(): ContentItem[] {
-	const items: ContentItem[] = [
-		...parseMarkdownFiles(supportFiles, 'support', '/support'),
-		...parseMarkdownFiles(blogFiles, 'blog', '/blog'),
-		...parseMarkdownFiles(projectFiles, 'project', '/projects'),
-		...parseMarkdownFiles(serviceFiles, 'service', '/services'),
-		...parseMarkdownFiles(careerFiles, 'career', '/careers'),
-		...parseMarkdownFiles(legalFiles, 'legal', '/legal'),
-	];
-	
-	return items;
+    const items: ContentItem[] = [
+        ...parseMarkdownFiles(supportFiles, 'support', '/support'),
+        ...parseMarkdownFiles(blogFiles, 'blog', '/blog'),
+        ...parseMarkdownFiles(projectFiles, 'project', '/projects'),
+        ...parseMarkdownFiles(serviceFiles, 'service', '/services'),
+        ...parseMarkdownFiles(careerFiles, 'career', '/careers'),
+        ...parseMarkdownFiles(legalFiles, 'legal', '/legal'),
+    ];
+
+    return items;
 }
 
 const contentIndex = buildIndex();
 
 // Search function
 function search(query: string, filter?: string, limit = 20): Array<{
-	title: string;
-	excerpt: string;
-	url: string;
-	type: string;
-	score: number;
+    title: string;
+    excerpt: string;
+    url: string;
+    type: string;
+    score: number;
 }> {
-	if (!query.trim()) return [];
-	
-	const searchTerms = query.toLowerCase().split(/\s+/).filter(t => t.length > 1);
-	
-	const results = contentIndex
-		.map(item => {
-			let score = 0;
-			
-			// Title match (highest weight)
-			const titleLower = item.title.toLowerCase();
-			for (const term of searchTerms) {
-				if (titleLower.includes(term)) score += 10;
-				if (titleLower === term) score += 20;
-			}
-			
-			// Keyword match
-			for (const term of searchTerms) {
-				if (item.keywords.some(k => k.includes(term))) score += 5;
-			}
-			
-			// Content match
-			for (const term of searchTerms) {
-				const regex = new RegExp(term, 'gi');
-				const matches = item.content.match(regex);
-				if (matches) score += matches.length;
-			}
-			
-			return { ...item, score };
-		})
-		.filter(item => item.score > 0)
-		.filter(item => {
-			if (!filter || filter === 'all') return true;
-			if (filter === 'support') return item.type === 'support';
-			if (filter === 'projects') return item.type === 'project';
-			if (filter === 'blog') return ['blog', 'service', 'legal'].includes(item.type);
-			return true;
-		})
-		.sort((a, b) => b.score - a.score)
-		.slice(0, limit);
-	
-	// Generate excerpt with highlighted search terms
-	return results.map(item => {
-		let excerpt = item.excerpt;
-		
-		// Try to find a snippet around the search term
-		for (const term of searchTerms) {
-			const idx = item.content.indexOf(term);
-			if (idx !== -1) {
-				const start = Math.max(0, idx - 50);
-				const end = Math.min(item.content.length, idx + 100);
-				let snippet = item.content.slice(start, end);
-				
-				// Add ellipsis if not at start/end
-				if (start > 0) snippet = '...' + snippet;
-				if (end < item.content.length) snippet = snippet + '...';
-				
-				// Highlight the term
-				snippet = snippet.replace(
-					new RegExp(`(${term})`, 'gi'),
-					'<mark>$1</mark>'
-				);
-				
-				excerpt = snippet;
-				break;
-			}
-		}
-		
-		return {
-			title: item.title,
-			excerpt,
-			url: item.url,
-			type: item.type,
-			score: item.score
-		};
-	});
+    if (!query.trim()) return [];
+
+    const searchTerms = query.toLowerCase().split(/\s+/).filter(t => t.length > 1);
+
+    const results = contentIndex
+        .map(item => {
+            let score = 0;
+
+            // Title match (highest weight)
+            const titleLower = item.title.toLowerCase();
+            for (const term of searchTerms) {
+                if (titleLower.includes(term)) score += 10;
+                if (titleLower === term) score += 20;
+            }
+
+            // Keyword match
+            for (const term of searchTerms) {
+                if (item.keywords.some(k => k.includes(term))) score += 5;
+            }
+
+            // Content match
+            for (const term of searchTerms) {
+                const regex = new RegExp(term, 'gi');
+                const matches = item.content.match(regex);
+                if (matches) score += matches.length;
+            }
+
+            return { ...item, score };
+        })
+        .filter(item => item.score > 0)
+        .filter(item => {
+            if (!filter || filter === 'all') return true;
+            if (filter === 'support') return item.type === 'support';
+            if (filter === 'projects') return item.type === 'project';
+            if (filter === 'blog') return ['blog', 'service', 'legal'].includes(item.type);
+            return true;
+        })
+        .sort((a, b) => b.score - a.score)
+        .slice(0, limit);
+
+    // Generate excerpt with highlighted search terms
+    return results.map(item => {
+        let excerpt = item.excerpt;
+
+        // Try to find a snippet around the search term
+        for (const term of searchTerms) {
+            const idx = item.content.indexOf(term);
+            if (idx !== -1) {
+                const start = Math.max(0, idx - 50);
+                const end = Math.min(item.content.length, idx + 100);
+                let snippet = item.content.slice(start, end);
+
+                // Add ellipsis if not at start/end
+                if (start > 0) snippet = '...' + snippet;
+                if (end < item.content.length) snippet = snippet + '...';
+
+                // Highlight the term
+                snippet = snippet.replace(
+                    new RegExp(`(${term})`, 'gi'),
+                    '<mark>$1</mark>'
+                );
+
+                excerpt = snippet;
+                break;
+            }
+        }
+
+        return {
+            title: item.title,
+            excerpt,
+            url: item.url,
+            type: item.type,
+            score: item.score
+        };
+    });
 }
 
 export const GET: RequestHandler = async ({ url }) => {
-	const query = url.searchParams.get('q') || '';
-	const filter = url.searchParams.get('filter') || 'all';
-	const limit = parseInt(url.searchParams.get('limit') || '20', 10);
-	
-	const results = search(query, filter, limit);
-	
-	return json({
-		query,
-		results,
-		total: results.length
-	});
+    const query = url.searchParams.get('q') || '';
+    const filter = url.searchParams.get('filter') || 'all';
+    const limit = parseInt(url.searchParams.get('limit') || '20', 10);
+
+    const results = search(query, filter, limit);
+
+    return json({
+        query,
+        results,
+        total: results.length
+    });
 };

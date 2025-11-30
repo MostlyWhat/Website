@@ -126,12 +126,12 @@ export function scrollAnimate(node: HTMLElement, options: ScrollAnimateOptions =
     }
 
     let hasAnimated = false;
-    
+
     // For onlyOnScrollDown: if page loaded scrolled down (e.g. from anchor link),
     // wait for a small scroll before animating to prevent jarring animations
     let allowAnimation = !onlyOnScrollDown;
     const initialScrollY = window.scrollY;
-    
+
     // If at top of page or not using scroll-down restriction, allow immediately
     if (initialScrollY < 100 || !onlyOnScrollDown) {
         allowAnimation = true;
