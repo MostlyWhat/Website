@@ -2,7 +2,7 @@
 	import { page } from '$app/state';
 	import * as m from '$lib/paraglide/messages';
 	import { getLocale, locales, localizeHref, type Locale } from '$lib/paraglide/runtime';
-	import { Menu, X, ArrowUpRight, Globe, ChevronDown, ChevronRight } from '@lucide/svelte';
+	import { Menu, X, ArrowUpRight, Globe, ChevronDown, ChevronRight, Search } from '@lucide/svelte';
 	import { GlitchText } from '$lib/components/ui/glitch-text';
 
 	let mobileMenuOpen = $state(false);
@@ -91,6 +91,15 @@
 
 		<!-- Right Controls -->
 		<div class="col-span-6 flex items-stretch sm:col-span-8 lg:col-span-3">
+			<!-- Search Button -->
+			<a
+				href={localizeHref('/search')}
+				class="hidden items-center justify-center border-l border-border px-4 text-muted-foreground transition-colors hover:bg-card hover:text-foreground sm:flex"
+				aria-label="Search"
+			>
+				<Search class="h-4 w-4" />
+			</a>
+
 			<!-- Language Switcher -->
 			<div class="lang-menu relative hidden flex-1 items-stretch border-l border-border sm:flex">
 				<button
@@ -171,6 +180,17 @@
 	{#if mobileMenuOpen}
 		<nav class="fixed inset-0 top-16 z-40 flex flex-col bg-background lg:hidden">
 			<div class="flex flex-1 flex-col">
+				<!-- Search Link (Mobile) -->
+				<a
+					href={localizeHref('/search')}
+					class="font-display flex items-center border-b border-border px-6 py-6 text-2xl font-bold uppercase tracking-wider transition-colors text-foreground hover:bg-card"
+					onclick={closeMobileMenu}
+				>
+					<Search class="mr-3 h-5 w-5 text-primary" />
+					SEARCH
+					<ChevronRight class="ml-auto h-5 w-5 text-muted-foreground" />
+				</a>
+
 				{#each navigation as { href, key } (href)}
 					<a
 						href={localizeHref(href)}
