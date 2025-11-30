@@ -6,6 +6,7 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import HeroSection from '$lib/components/layout/HeroSection.svelte';
+	import DescriptionSection from '$lib/components/layout/DescriptionSection.svelte';
 	import WideNavSection from '$lib/components/layout/WideNavSection.svelte';
 	import {
 		Send,
@@ -112,6 +113,16 @@
 	stats={[
 		{ value: '<24H', label: 'RESPONSE' },
 		{ value: '98%', label: 'RESOLVED' }
+	]}
+/>
+
+<!-- Description Section -->
+<DescriptionSection
+	description="Fill out the form below with as much detail as possible about your issue. Include screenshots, error messages, and steps to reproduce the problem for the fastest resolution."
+	stats={[
+		{ value: '24/7', label: 'MONITORING' },
+		{ value: 'PRIORITY', label: 'ROUTING' },
+		{ value: 'DIRECT', label: 'SUPPORT' }
 	]}
 />
 

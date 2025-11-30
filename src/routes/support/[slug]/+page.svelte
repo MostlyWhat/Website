@@ -4,8 +4,8 @@
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import WideNavSection from '$lib/components/layout/WideNavSection.svelte';
+	import MarkdownRenderer from '$lib/components/layout/MarkdownRenderer.svelte';
 	import { ArrowLeft, ArrowRight, FileText } from '@lucide/svelte';
-	import { marked } from 'marked';
 
 	let { data }: { data: PageData } = $props();
 
@@ -15,19 +15,6 @@
 		general: 'GENERAL',
 		billing: 'BILLING'
 	};
-
-	// Configure marked to add IDs to headings
-	const renderer = new marked.Renderer();
-	renderer.heading = ({ text, depth }) => {
-		const id = text
-			.toLowerCase()
-			.replace(/[^a-z0-9\s-]/g, '')
-			.replace(/\s+/g, '-');
-		return `<h${depth} id="${id}">${text}</h${depth}>`;
-	};
-	marked.use({ renderer });
-
-	const renderedContent = $derived(marked(data.article.content));
 </script>
 
 <svelte:head>
@@ -139,9 +126,7 @@
 
 		<!-- Article Body - Right -->
 		<article class="col-span-12 bg-background px-6 py-12 md:px-12 lg:col-span-9 lg:px-16 lg:py-16">
-			<div class="prose-custom max-w-3xl">
-				{@html renderedContent}
-			</div>
+			<MarkdownRenderer content={data.article.content} />
 		</article>
 	</div>
 </section>

@@ -2,6 +2,7 @@
 	import * as m from '$lib/paraglide/messages';
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
+	import MarkdownRenderer from '$lib/components/layout/MarkdownRenderer.svelte';
 	import { ArrowLeft } from '@lucide/svelte';
 	import type { PageData } from './$types';
 
@@ -73,9 +74,7 @@
 
 		<!-- Main Content - Right -->
 		<article class="col-span-12 bg-background px-6 py-12 md:px-12 lg:col-span-9 lg:px-16 lg:py-16" use:scrollAnimate={{ animation: 'fade' }}>
-			<div class="max-w-3xl">
-				{@html doc.content}
-			</div>
+			<MarkdownRenderer content={doc.content} />
 		</article>
 	</div>
 </section>

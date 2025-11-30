@@ -3,6 +3,7 @@
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import WideNavSection from '$lib/components/layout/WideNavSection.svelte';
+	import MarkdownRenderer from '$lib/components/layout/MarkdownRenderer.svelte';
 	import { ArrowLeft, ArrowRight, MapPin, Briefcase, Mail } from '@lucide/svelte';
 	import type { PageData } from './$types';
 
@@ -107,9 +108,7 @@
 		<!-- Main Content - Right -->
 		<div class="col-span-12 bg-background lg:col-span-9">
 			<article class="px-6 py-12 md:px-12 lg:px-16 lg:py-16" use:scrollAnimate={{ animation: 'fade' }}>
-				<div class="max-w-3xl">
-					{@html position.content}
-				</div>
+				<MarkdownRenderer content={position.content} />
 			</article>
 
 			<!-- Apply Section - Under Article -->

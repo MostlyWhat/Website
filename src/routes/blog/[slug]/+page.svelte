@@ -3,6 +3,7 @@
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import WideNavSection from '$lib/components/layout/WideNavSection.svelte';
+	import MarkdownRenderer from '$lib/components/layout/MarkdownRenderer.svelte';
 	import { ArrowLeft, Calendar, Clock } from '@lucide/svelte';
 	import type { PageData } from './$types';
 
@@ -96,9 +97,7 @@
 
 		<!-- Article Body - Right -->
 		<article class="col-span-12 bg-background px-6 py-12 md:px-12 lg:col-span-9 lg:px-16 lg:py-16">
-			<div class="max-w-3xl">
-				{@html post.content}
-			</div>
+			<MarkdownRenderer content={post.content} />
 		</article>
 	</div>
 </section>

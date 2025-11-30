@@ -2,11 +2,10 @@
 	import * as m from '$lib/paraglide/messages';
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
-	import VideoBackground from '$lib/components/layout/VideoBackground.svelte';
+	import HeroSection from '$lib/components/layout/HeroSection.svelte';
+	import DescriptionSection from '$lib/components/layout/DescriptionSection.svelte';
 	import CTASection from '$lib/components/layout/CTASection.svelte';
 	import * as Accordion from '$lib/components/ui/accordion';
-	import { GlitchText } from '$lib/components/ui/glitch-text';
-	import { MARATHON_VIDEO } from '$lib/constants';
 	import {
 		Search,
 		MessageCircleQuestion,
@@ -129,34 +128,39 @@
 	<meta name="description" content="Get technical support and assistance from the MostlyWhat Systems team." />
 </svelte:head>
 
-<!-- Hero Section with Search -->
-<section class="relative flex h-[calc(100dvh-4rem)] flex-col border-b border-border">
-	<!-- Video Background -->
-	<VideoBackground src={MARATHON_VIDEO} class="brightness-[0.60]" />
-	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
-	</div>
+<!-- Hero Section - Full Screen with Video -->
+<HeroSection
+	label="// HELP.CENTER"
+	title="SUPPORT"
+	description="How can we help you today?"
+	stats={[
+		{ value: '<24H', label: 'RESPONSE' },
+		{ value: '98%', label: 'RESOLVED' },
+		{ value: '24/7', label: 'MONITORING' }
+	]}
+/>
 
-	<!-- Hero Content -->
-	<div class="flex flex-1 flex-col items-center justify-center px-6 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
-		<div class="w-full max-w-2xl text-center">
-			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// HELP.CENTER</span>
-			<h1 class="font-display mt-4 text-4xl font-black uppercase leading-[0.9] tracking-tight md:text-6xl lg:text-7xl">
-				<GlitchText text="SUPPORT" scrambledStart={true} hoverOnly={false} />
-			</h1>
-			<p class="font-body mt-4 text-sm text-muted-foreground md:text-base">
-				How can we help you today?
-			</p>
+<!-- Description Section -->
+<DescriptionSection
+	description="Get technical support and assistance from the MostlyWhat Systems team. Browse our knowledge base, use our guided troubleshooter, or submit a ticket for personalized help."
+	stats={[
+		{ value: 'DOCS', label: 'ARTICLES' },
+		{ value: 'LIVE', label: 'STATUS' }
+	]}
+/>
 
-			<!-- Search Bar -->
-			<form class="mt-8" onsubmit={handleSearch}>
+<!-- Search Bar Section -->
+<section class="border-b border-border bg-card">
+	<div class="px-6 py-8 md:px-12 lg:px-16">
+		<div class="mx-auto max-w-2xl">
+			<form onsubmit={handleSearch}>
 				<div class="relative">
 					<Search class="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
 					<input
 						type="text"
 						bind:value={searchQuery}
 						placeholder="Search for help articles, guides, and documentation..."
-						class="font-body h-14 w-full border border-border bg-background/90 pl-12 pr-4 text-sm backdrop-blur-sm transition-colors placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 md:text-base"
+						class="font-body h-14 w-full border border-border bg-background pl-12 pr-4 text-sm transition-colors placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 md:text-base"
 					/>
 					<button
 						type="submit"
@@ -170,27 +174,9 @@
 			<!-- Quick Links -->
 			<div class="font-mono mt-4 flex flex-wrap justify-center gap-4 text-[10px] tracking-wider text-muted-foreground">
 				<span>POPULAR:</span>
-				<a href="/support/reporting-bugs" class="text-primary hover:underline">BUG REPORTS</a>
-				<a href="/support/response-times" class="text-primary hover:underline">RESPONSE TIMES</a>
-				<a href="/support/billing-payments" class="text-primary hover:underline">BILLING</a>
-			</div>
-		</div>
-	</div>
-
-	<!-- Stats Bar at Bottom -->
-	<div class="border-t border-border">
-		<div class="grid grid-cols-3 divide-x divide-border">
-			<div class="bg-background/80 px-6 py-4 text-center backdrop-blur-sm">
-				<span class="font-display block text-2xl font-bold text-primary">&lt;24H</span>
-				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">RESPONSE TIME</span>
-			</div>
-			<div class="bg-background/80 px-6 py-4 text-center backdrop-blur-sm">
-				<span class="font-display block text-2xl font-bold text-primary">98%</span>
-				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">RESOLVED</span>
-			</div>
-			<div class="bg-background/80 px-6 py-4 text-center backdrop-blur-sm">
-				<span class="font-display block text-2xl font-bold text-primary">24/7</span>
-				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">MONITORING</span>
+				<a href={localizeHref('/support/reporting-bugs')} class="text-primary hover:underline">BUG REPORTS</a>
+				<a href={localizeHref('/support/response-times')} class="text-primary hover:underline">RESPONSE TIMES</a>
+				<a href={localizeHref('/support/billing-payments')} class="text-primary hover:underline">BILLING</a>
 			</div>
 		</div>
 	</div>
@@ -201,7 +187,7 @@
 	<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
 		{#each mainTiles as { icon: Icon, title, desc, action, href, featured }, i (title)}
 			<a
-				{href}
+				href={localizeHref(href)}
 				class="col-span-12 flex flex-col bg-background px-6 py-8 transition-colors hover:bg-card md:col-span-4 md:px-8 lg:px-12 {featured ? 'border-l-4 border-l-primary' : ''}"
 			>
 				<div class="mb-4 flex items-center gap-3">
@@ -233,7 +219,7 @@
 		<!-- Category Grid -->
 		{#each categories as { icon: Icon, title, desc, href, articles } (title)}
 			<a
-				{href}
+				href={localizeHref(href)}
 				class="col-span-12 flex items-start gap-4 bg-background px-6 py-6 transition-colors hover:bg-card sm:col-span-6 md:px-12 lg:col-span-4 lg:px-16"
 				use:scrollAnimate={{ animation: 'fade' }}
 			>

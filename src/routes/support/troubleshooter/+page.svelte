@@ -4,6 +4,7 @@
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import HeroSection from '$lib/components/layout/HeroSection.svelte';
+	import DescriptionSection from '$lib/components/layout/DescriptionSection.svelte';
 	import WideNavSection from '$lib/components/layout/WideNavSection.svelte';
 	import {
 		ArrowLeft,
@@ -697,6 +698,16 @@
 	stats={[
 		{ value: '5', label: 'MIN AVG' },
 		{ value: '85%', label: 'SELF-SOLVED' }
+	]}
+/>
+
+<!-- Description Section -->
+<DescriptionSection
+	description="Our interactive troubleshooter guides you through common issues with step-by-step diagnostics. Most problems can be resolved within minutes without needing to wait for support."
+	stats={[
+		{ value: '24/7', label: 'AVAILABLE' },
+		{ value: 'INSTANT', label: 'RESULTS' },
+		{ value: 'FREE', label: 'SUPPORT' }
 	]}
 />
 
