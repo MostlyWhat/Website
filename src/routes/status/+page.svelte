@@ -75,11 +75,11 @@
 </svelte:head>
 
 <!-- Hero Section -->
-<section class="relative flex h-dvh flex-col border-b border-border">
+<section class="relative flex h-[calc(100dvh-4rem)] flex-col border-b border-border">
 	<!-- Video Background -->
 	<VideoBackground 
 		src={MARATHON_VIDEO}
-		class="brightness-[0.25]"
+		class="brightness-[0.50]"
 	/>
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>

@@ -7,36 +7,15 @@
 	import { GlitchText } from '$lib/components/ui/glitch-text';
 	import { MARATHON_VIDEO } from '$lib/constants';
 	import { ArrowRight, MapPin, Clock, Briefcase, Users, ArrowUpRight } from '@lucide/svelte';
+	import type { PageData } from './$types';
+
+	let { data }: { data: PageData } = $props();
 
 	const benefits = [
 		{ title: 'REMOTE FIRST', desc: 'Work from anywhere in the world. We believe in async communication and flexible schedules.' },
 		{ title: 'LEARNING BUDGET', desc: 'Annual stipend for courses, conferences, books, and professional development.' },
 		{ title: 'MODERN STACK', desc: 'Work with cutting-edge technologies like SvelteKit, TypeScript, and Cloudflare.' },
 		{ title: 'OWNERSHIP', desc: 'Take ownership of projects from concept to launch. Your ideas matter here.' }
-	];
-
-	const openPositions = [
-		{ 
-			title: 'SENIOR FRONTEND DEVELOPER', 
-			type: 'FULL-TIME', 
-			location: 'REMOTE',
-			department: 'ENGINEERING',
-			desc: 'Build beautiful, performant web applications with modern frameworks.'
-		},
-		{ 
-			title: 'UI/UX DESIGNER', 
-			type: 'FULL-TIME', 
-			location: 'REMOTE',
-			department: 'DESIGN',
-			desc: 'Create intuitive user experiences and maintain our design system.'
-		},
-		{ 
-			title: 'BACKEND DEVELOPER', 
-			type: 'CONTRACT', 
-			location: 'REMOTE',
-			department: 'ENGINEERING',
-			desc: 'Build scalable APIs and serverless infrastructure on Cloudflare.'
-		}
 	];
 
 	const values = [
@@ -53,11 +32,11 @@
 </svelte:head>
 
 <!-- Hero Section -->
-<section class="relative flex h-dvh flex-col border-b border-border">
+<section class="relative flex h-[calc(100dvh-4rem)] flex-col border-b border-border">
 	<!-- Video Background -->
 	<VideoBackground 
 		src={MARATHON_VIDEO}
-		class="brightness-[0.25]"
+		class="brightness-[0.50]"
 	/>
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
@@ -84,7 +63,7 @@
 		</div>
 		<div class="col-span-12 flex items-center justify-center bg-card px-6 py-12 md:col-span-4 md:px-12 lg:px-16">
 			<div class="text-center">
-				<span class="font-display text-4xl font-black text-primary">{openPositions.length}</span>
+				<span class="font-display text-4xl font-black text-primary">{data.positions.length}</span>
 				<p class="font-mono mt-2 text-[10px] uppercase tracking-wider text-muted-foreground">OPEN POSITIONS</p>
 			</div>
 		</div>
@@ -130,9 +109,9 @@
 		<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">OPEN ROLES</h2>
 	</div>
 	<div class="border-t border-border">
-		{#each openPositions as position (position.title)}
+		{#each data.positions as position (position.slug)}
 			<a 
-				href={localizeHref('/contact')}
+				href={localizeHref(`/careers/${position.slug}`)}
 				class="group flex flex-col gap-4 border-b border-border bg-background px-6 py-8 transition-colors hover:bg-card md:flex-row md:items-center md:justify-between md:px-12 lg:px-16"
 			>
 				<div class="flex-1">
@@ -140,7 +119,7 @@
 						<h3 class="font-ui text-base font-semibold tracking-wider">{position.title}</h3>
 						<span class="font-mono border border-primary bg-primary/10 px-2 py-0.5 text-[10px] tracking-wider text-primary">{position.department}</span>
 					</div>
-					<p class="font-body mt-2 text-sm text-muted-foreground">{position.desc}</p>
+					<p class="font-body mt-2 text-sm text-muted-foreground">{position.summary}</p>
 					<div class="mt-3 flex items-center gap-4 text-xs text-muted-foreground">
 						<span class="flex items-center gap-1">
 							<Briefcase class="h-3 w-3" />
@@ -153,7 +132,7 @@
 					</div>
 				</div>
 				<div class="flex items-center gap-2">
-					<span class="font-ui text-xs tracking-wider text-primary">APPLY NOW</span>
+					<span class="font-ui text-xs tracking-wider text-primary">VIEW DETAILS</span>
 					<ArrowRight class="h-4 w-4 text-primary transition-transform group-hover:translate-x-1" />
 				</div>
 			</a>

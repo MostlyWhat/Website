@@ -38,11 +38,11 @@
 </svelte:head>
 
 <!-- Hero Section -->
-<section class="relative flex h-dvh flex-col border-b border-border">
+<section class="relative flex h-[calc(100dvh-4rem)] flex-col border-b border-border">
 	<!-- Video Background -->
 	<VideoBackground 
 		src={MARATHON_VIDEO}
-		class="brightness-[0.25]"
+		class="brightness-[0.50]"
 	/>
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
@@ -90,7 +90,7 @@
 		{#each documents as { icon: Icon, title, description, href, updated } (title)}
 			<a
 				href={localizeHref(href)}
-				class="group col-span-12 flex flex-col bg-background p-6 transition-colors hover:bg-card md:col-span-6 lg:col-span-4 lg:p-8"
+				class="group col-span-12 flex flex-col bg-background px-6 py-8 transition-colors hover:bg-card md:col-span-6 md:px-12 lg:col-span-4 lg:px-16 lg:py-12"
 			>
 				<div class="flex items-start justify-between">
 					<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">
@@ -112,7 +112,7 @@
 <!-- Contact Section -->
 <section class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'fade' }}>
-		<div class="col-span-12 bg-background p-6 md:p-8 lg:col-span-8 lg:p-12">
+		<div class="col-span-12 bg-background px-6 py-8 md:px-12 lg:col-span-8 lg:px-16 lg:py-12">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">QUESTIONS?</span>
 			<h2 class="font-display mt-4 text-2xl font-bold uppercase md:text-3xl">NEED CLARIFICATION?</h2>
 			<p class="font-body mt-4 max-w-2xl text-muted-foreground">
@@ -120,7 +120,7 @@
 				please don't hesitate to reach out. We're here to help.
 			</p>
 		</div>
-		<div class="col-span-12 flex flex-col justify-center bg-card p-6 md:p-8 lg:col-span-4 lg:p-12">
+		<div class="col-span-12 flex flex-col justify-center bg-card px-6 py-8 md:px-12 lg:col-span-4 lg:px-16 lg:py-12">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTACT</span>
 			<a href="mailto:legal@mostlywhat.systems" class="font-display mt-2 text-lg text-primary hover:underline md:text-xl">
 				LEGAL@MOSTLYWHAT.SYSTEMS

@@ -51,7 +51,8 @@
 					<nav class="mt-4 flex flex-col gap-3">
 						{#each doc.sections as section, i (section.id)}
 							<a 
-								href="#{section.id}" 
+								href="#{section.id}"
+								onclick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
 								class="font-ui group flex items-start gap-3 text-xs tracking-wider text-muted-foreground transition-colors hover:text-primary"
 							>
 								<span class="font-mono text-[10px] text-primary/50 group-hover:text-primary">{String(i + 1).padStart(2, '0')}</span>

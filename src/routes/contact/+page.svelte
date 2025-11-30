@@ -175,11 +175,11 @@
 </svelte:head>
 
 <!-- Hero Section -->
-<section class="relative flex h-dvh flex-col border-b border-border">
+<section class="relative flex h-[calc(100dvh-4rem)] flex-col border-b border-border">
 	<!-- Video Background -->
 	<VideoBackground 
 		src={MARATHON_VIDEO}
-		class="brightness-[0.25]"
+		class="brightness-[0.50]"
 	/>
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
@@ -377,36 +377,33 @@
 	</section>
 {/if}
 
-<!-- FAQ Section - Accordion Layout -->
+<!-- FAQ Section - 50/50 Layout -->
 <section class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
-		<div class="col-span-12 bg-card px-6 py-6 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
+		<!-- Left: Title -->
+		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:px-12 lg:col-span-6 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">02 — FAQ</span>
-			<h2 class="font-display mt-2 text-xl font-bold uppercase md:text-2xl">COMMON QUESTIONS</h2>
+			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl lg:text-5xl">COMMON QUESTIONS</h2>
+			<p class="font-body mt-4 text-muted-foreground">Find answers to frequently asked questions about working with us.</p>
+			<a href={localizeHref('/help')} class="font-mono mt-6 flex items-center gap-2 text-xs tracking-wider text-primary hover:underline">
+				<HelpCircle class="h-4 w-4" />
+				BROWSE HELP CENTER
+				<ArrowRight class="h-3 w-3" />
+			</a>
 		</div>
-	</div>
-	<Accordion.Root type="single" class="w-full">
-		{#each faqs as { id, q, a } (id)}
-			<Accordion.Item value={id} class="bg-background">
-				<Accordion.Trigger class="font-ui text-xs">{q}</Accordion.Trigger>
-				<Accordion.Content>
-					<p class="font-body max-w-3xl text-sm leading-relaxed text-muted-foreground">{a}</p>
-				</Accordion.Content>
-			</Accordion.Item>
-		{/each}
-	</Accordion.Root>
-	<!-- Help Center Link -->
-	<div class="grid grid-cols-12 gap-px bg-border">
-		<a href={localizeHref('/help')} class="col-span-12 flex items-center justify-between bg-card px-6 py-6 transition-colors hover:bg-card/80 md:px-12 lg:px-16">
-			<div class="flex items-center gap-4">
-				<HelpCircle class="h-6 w-6 text-primary" />
-				<div>
-					<h3 class="font-ui text-sm font-semibold tracking-wider">NEED MORE HELP?</h3>
-					<p class="font-body mt-1 text-xs text-muted-foreground">Browse our complete help center</p>
-				</div>
-			</div>
-			<ArrowRight class="h-4 w-4 text-muted-foreground" />
-		</a>
+		<!-- Right: Accordion -->
+		<div class="col-span-12 bg-card lg:col-span-6">
+			<Accordion.Root type="single" class="w-full">
+				{#each faqs as { id, q, a } (id)}
+					<Accordion.Item value={id} class="bg-card">
+						<Accordion.Trigger class="font-ui text-xs">{q}</Accordion.Trigger>
+						<Accordion.Content>
+							<p class="font-body max-w-xl text-sm leading-relaxed text-muted-foreground">{a}</p>
+						</Accordion.Content>
+					</Accordion.Item>
+				{/each}
+			</Accordion.Root>
+		</div>
 	</div>
 </section>
 

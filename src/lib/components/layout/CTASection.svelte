@@ -140,13 +140,13 @@
 				{#if buttonText || secondaryButtonText}
 					<div class="mt-8 flex flex-wrap gap-4">
 						{#if buttonText && buttonHref}
-							<Button href={localizeHref(buttonHref)} size="lg" class="font-ui uppercase tracking-wider">
+							<Button href={localizeHref(buttonHref)} variant="ghost" size="lg" class="font-ui uppercase tracking-wider">
 								{buttonText}
 								<ArrowRight class="ml-2 h-4 w-4" />
 							</Button>
 						{/if}
 						{#if secondaryButtonText && secondaryButtonHref}
-							<Button href={secondaryButtonHref} variant="outline" size="lg" class="font-ui uppercase tracking-wider">
+							<Button href={secondaryButtonHref} variant="ghost" size="lg" class="font-ui uppercase tracking-wider">
 								{secondaryButtonText}
 							</Button>
 						{/if}

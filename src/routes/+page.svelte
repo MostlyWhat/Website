@@ -38,11 +38,11 @@
 </svelte:head>
 
 <!-- Hero Section - Full Viewport -->
-<section class="relative flex h-dvh flex-col border-b border-border">
+<section class="relative flex h-[calc(100dvh-4rem)] flex-col border-b border-border">
 	<!-- Video Background -->
 	<VideoBackground 
 		src={MARATHON_VIDEO}
-		class="brightness-[0.25]"
+		class="brightness-[0.50]"
 	/>
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
@@ -167,7 +167,7 @@
 	<div class="grid flex-1 grid-cols-12 gap-px border-t border-border bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
 		{#each process as { step, title, desc } (step)}
 			<div class="col-span-12 relative flex flex-col bg-background px-6 py-10 sm:col-span-6 md:px-12 lg:col-span-3 lg:px-16">
-				<span class="font-display text-6xl font-black text-primary/30">{step}</span>
+				<span class="font-display text-6xl font-black text-primary/50">{step}</span>
 				<h3 class="font-ui mt-4 text-base font-semibold uppercase tracking-wider">{title}</h3>
 				<p class="font-body mt-3 flex-1 text-sm text-muted-foreground">{desc}</p>
 			</div>

@@ -78,8 +78,7 @@
 			muted
 			loop
 			playsinline
-			class="h-full w-full object-cover brightness-[0.25] transition-opacity duration-500"
-			class:opacity-0={!isLoaded}
+			class="h-full w-full object-cover brightness-[0.50]"
 		>
 			<track kind="captions" src="" label="No captions" />
 		</video>
@@ -87,7 +86,7 @@
 		<img 
 			src={poster}
 			alt=""
-			class="h-full w-full object-cover brightness-[0.25]"
+			class="h-full w-full object-cover brightness-[0.50]"
 		/>
 	{/if}
 	
