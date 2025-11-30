@@ -38,6 +38,21 @@
 		search: (query: string) => Promise<PagefindSearchResponse>;
 	}
 
+	// Helper to load pagefind dynamically - path constructed at runtime to avoid Vite analysis
+	async function loadPagefind(): Promise<Pagefind | null> {
+		try {
+			const path = ['', 'pagefind', 'pagefind.js'].join('/');
+			const res = await fetch(path, { method: 'HEAD' });
+			if (!res.ok) return null;
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const pf = await (Function('return import("' + path + '")')() as Promise<any>);
+			await pf.init();
+			return pf as Pagefind;
+		} catch {
+			return null;
+		}
+	}
+
 	let searchQuery = $state('');
 	let activeFilter = $state<'all' | 'support' | 'projects' | 'blog'>('all');
 	let searchResults = $state<Array<{
@@ -137,17 +152,10 @@
 			pagefindLoaded = true;
 			isDevMode = true;
 		} else {
-			try {
-				// Use fetch to check if pagefind exists, then dynamically import
-				const res = await fetch('/pagefind/pagefind.js', { method: 'HEAD' });
-				if (res.ok) {
-					const pf = await import(/* @vite-ignore */ '/pagefind/pagefind.js');
-					await pf.init();
-					pagefind = pf;
-					pagefindLoaded = true;
-				}
-			} catch {
-				pagefindLoaded = false;
+			const pf = await loadPagefind();
+			if (pf) {
+				pagefind = pf;
+				pagefindLoaded = true;
 			}
 		}
 		

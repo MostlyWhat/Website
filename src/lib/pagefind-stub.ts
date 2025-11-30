@@ -28,37 +28,43 @@ interface PagefindSearchResponse {
 }
 
 // Sample mock data for development testing
-const mockResults: Record<string, PagefindResultData[]> = {
-	default: [
-		{
-			url: '/blog/development-mode',
-			content: 'This is a mock blog post for development testing. Pagefind search results will appear here in production.',
-			word_count: 150,
-			excerpt: 'This is a <mark>mock</mark> blog post for <mark>development</mark> testing...',
-			meta: {
-				title: '[DEV] Sample Blog Post'
-			}
-		},
-		{
-			url: '/support/getting-started',
-			content: 'Getting started guide for development testing. This mock article helps test the search UI.',
-			word_count: 200,
-			excerpt: 'Getting started guide for <mark>development</mark> testing...',
-			meta: {
-				title: '[DEV] Getting Started Guide'
-			}
-		},
-		{
-			url: '/projects/sample-project',
-			content: 'Sample project page for testing search functionality in development mode.',
-			word_count: 100,
-			excerpt: 'Sample project page for testing <mark>search</mark> functionality...',
-			meta: {
-				title: '[DEV] Sample Project'
-			}
-		}
-	]
-};
+const mockArticles: PagefindResultData[] = [
+	{
+		url: '/support/getting-started',
+		content: 'Getting started with MostlyWhat. Learn how to set up your project and begin development.',
+		word_count: 200,
+		excerpt: 'Getting started with MostlyWhat. Learn how to set up your project...',
+		meta: { title: '[DEV] Getting Started Guide' }
+	},
+	{
+		url: '/support/troubleshooting',
+		content: 'Common troubleshooting steps for resolving issues. Debug and fix problems quickly.',
+		word_count: 150,
+		excerpt: 'Common troubleshooting steps for resolving issues...',
+		meta: { title: '[DEV] Troubleshooting Guide' }
+	},
+	{
+		url: '/blog/web-development-tips',
+		content: 'Web development tips and best practices. Modern techniques for building fast websites.',
+		word_count: 300,
+		excerpt: 'Web development tips and best practices. Modern techniques...',
+		meta: { title: '[DEV] Web Development Tips' }
+	},
+	{
+		url: '/projects/sample-project',
+		content: 'Sample project showcasing our development capabilities and design expertise.',
+		word_count: 250,
+		excerpt: 'Sample project showcasing our development capabilities...',
+		meta: { title: '[DEV] Sample Project' }
+	},
+	{
+		url: '/services/web-design',
+		content: 'Professional web design services. Custom websites tailored to your business needs.',
+		word_count: 180,
+		excerpt: 'Professional web design services. Custom websites tailored...',
+		meta: { title: '[DEV] Web Design Services' }
+	}
+];
 
 /**
  * Mock Pagefind implementation for development
@@ -70,25 +76,35 @@ export const pagefindStub = {
 
 	async search(query: string): Promise<PagefindSearchResponse> {
 		// Simulate network delay
-		await new Promise((resolve) => setTimeout(resolve, 300));
+		await new Promise((resolve) => setTimeout(resolve, 200));
 
 		if (!query.trim()) {
 			return { results: [] };
 		}
 
-		console.log(`[Pagefind Stub] Searching for: "${query}"`);
+		const searchTerms = query.toLowerCase().split(/\s+/);
+		
+		// Filter articles that match any search term
+		const matchingArticles = mockArticles.filter(article => {
+			const searchableText = `${article.meta.title} ${article.content}`.toLowerCase();
+			return searchTerms.some(term => searchableText.includes(term));
+		});
 
-		// Return mock results with the query highlighted
-		const results = mockResults.default.map((data, index) => ({
-			id: `mock-${index}`,
-			data: async () => ({
-				...data,
-				excerpt: data.excerpt.replace(/development|search|mock/gi, (match) => 
-					query.toLowerCase().includes(match.toLowerCase()) ? `<mark>${match}</mark>` : match
-				)
-			})
+		// Create results with highlighted excerpts
+		const results = matchingArticles.map((article, index) => ({
+			id: `dev-${index}`,
+			data: async () => {
+				// Highlight matching terms in excerpt
+				let excerpt = article.excerpt;
+				searchTerms.forEach(term => {
+					const regex = new RegExp(`(${term})`, 'gi');
+					excerpt = excerpt.replace(regex, '<mark>$1</mark>');
+				});
+				return { ...article, excerpt };
+			}
 		}));
 
+		console.log(`[Pagefind Stub] Search "${query}" → ${results.length} results`);
 		return { results };
 	}
 };
