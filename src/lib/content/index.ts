@@ -17,7 +17,7 @@ export interface ContentSection {
 // Parse markdown and extract sections for TOC
 function extractSections(markdown: string): ContentSection[] {
     const sections: ContentSection[] = [];
-    
+
     // First try to match numbered format: "## 01 — Title" or "## 1 — Title"
     const numberedRegex = /^##\s+0?(\d+)\s*[—–-]\s*(.+)$/gm;
     let match;
@@ -35,7 +35,7 @@ function extractSections(markdown: string): ContentSection[] {
     if (!hasNumberedSections) {
         const regularRegex = /^##\s+(?!#)(.+)$/gm;
         let counter = 1;
-        
+
         while ((match = regularRegex.exec(markdown)) !== null) {
             const title = match[1].trim().toUpperCase();
             const id = title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
