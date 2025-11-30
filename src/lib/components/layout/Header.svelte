@@ -219,6 +219,27 @@
 						<ChevronRight class="ml-auto h-5 w-5 text-muted-foreground" />
 					</a>
 				{/each}
+
+				<!-- Language Selection (Mobile) -->
+				<div class="border-b border-border px-6 py-4">
+					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// LANGUAGE</span>
+					<div class="mt-3 flex gap-2">
+						{#each locales as lang}
+							{@const targetLocale = lang as Locale}
+							<a
+								href={localizeHref(page.url.pathname.replace(/^\/(en|th)/, '') || '/', { locale: targetLocale })}
+								data-sveltekit-reload
+								class="font-mono flex flex-1 items-center justify-center gap-2 border px-4 py-3 text-sm tracking-wider transition-colors {lang === currentLocale
+									? 'border-primary bg-primary text-primary-foreground'
+									: 'border-border text-muted-foreground hover:bg-card hover:text-foreground'}"
+								onclick={closeMobileMenu}
+							>
+								<Globe class="h-4 w-4" />
+								{languageFullNames[targetLocale]}
+							</a>
+						{/each}
+					</div>
+				</div>
 			</div>
 			<a
 				href={localizeHref('/contact')}

@@ -72,6 +72,12 @@ export interface ScrollAnimateOptions {
      * @default false
      */
     startVisible?: boolean;
+
+    /**
+     * Only animate when user has scrolled down from top (prevents animation on page load when navigating mid-page)
+     * @default true
+     */
+    onlyOnScrollDown?: boolean;
 }
 
 const animationClasses: Record<AnimationType, string> = {
@@ -92,7 +98,8 @@ export function scrollAnimate(node: HTMLElement, options: ScrollAnimateOptions =
         threshold = 0.1,
         repeat = false,
         rootMargin = '0px 0px -50px 0px',
-        startVisible = false
+        startVisible = false,
+        onlyOnScrollDown = true
     } = options;
 
     const animationClass = animationClasses[animation];
@@ -119,11 +126,28 @@ export function scrollAnimate(node: HTMLElement, options: ScrollAnimateOptions =
     }
 
     let hasAnimated = false;
+    let userHasScrolled = !onlyOnScrollDown; // If onlyOnScrollDown is false, consider user has scrolled
+    let initialScrollY = window.scrollY;
+
+    // Track if user has scrolled down from initial position
+    const handleScroll = () => {
+        if (window.scrollY > initialScrollY + 50) {
+            userHasScrolled = true;
+            window.removeEventListener('scroll', handleScroll);
+        }
+    };
+
+    // If page loads at top, immediately allow animations
+    if (initialScrollY < 100) {
+        userHasScrolled = true;
+    } else if (onlyOnScrollDown) {
+        window.addEventListener('scroll', handleScroll, { passive: true });
+    }
 
     const observer = new IntersectionObserver(
         (entries) => {
             entries.forEach((entry) => {
-                if (entry.isIntersecting) {
+                if (entry.isIntersecting && userHasScrolled) {
                     if (!hasAnimated || repeat) {
                         // Small delay to ensure CSS is applied
                         requestAnimationFrame(() => {
@@ -153,6 +177,7 @@ export function scrollAnimate(node: HTMLElement, options: ScrollAnimateOptions =
         },
         destroy() {
             observer.disconnect();
+            window.removeEventListener('scroll', handleScroll);
             if (delay > 0) {
                 node.style.transitionDelay = '';
             }

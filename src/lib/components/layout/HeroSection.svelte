@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import VideoBackground from './VideoBackground.svelte';
 	import { GlitchText } from '$lib/components/ui/glitch-text';
@@ -31,9 +32,16 @@
 		videoSrc = MARATHON_VIDEO,
 		actions
 	}: Props = $props();
+
+	// Check if we're on a sub-page (has breadcrumbs = additional 2rem header)
+	const isSubPage = $derived(() => {
+		const pathname = page.url.pathname.replace(/^\/(en|th)/, '') || '/';
+		return pathname !== '/';
+	});
 </script>
 
-<section class="relative flex h-[calc(100dvh-4rem)] flex-col border-b border-border">
+<!-- Hero height: 100dvh minus header (4rem) minus breadcrumb if sub-page (2rem) -->
+<section class="relative flex flex-col border-b border-border {isSubPage() ? 'h-[calc(100dvh-6rem)]' : 'h-[calc(100dvh-4rem)]'}">
 	{#if showVideo}
 		<!-- Video Background -->
 		<VideoBackground src={videoSrc} class="brightness-[0.60]" />
