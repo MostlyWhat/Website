@@ -128,7 +128,7 @@ export function scrollAnimate(node: HTMLElement, options: ScrollAnimateOptions =
     let hasAnimated = false;
 
     // For onlyOnScrollDown: if page loaded scrolled down (e.g. from anchor link),
-    // wait for a small scroll before animating to prevent jarring animations
+    // wait for user to scroll to top OR wait a longer delay before animating
     let allowAnimation = !onlyOnScrollDown;
     const initialScrollY = window.scrollY;
 
@@ -136,10 +136,14 @@ export function scrollAnimate(node: HTMLElement, options: ScrollAnimateOptions =
     if (initialScrollY < 100 || !onlyOnScrollDown) {
         allowAnimation = true;
     } else {
-        // Page loaded mid-scroll - wait 500ms then allow animations
-        // This gives time for the page to settle after navigation
-        setTimeout(() => {
+        // Page loaded mid-scroll (e.g. from clicking a link that scrolls up)
+        // Wait for user to scroll near top, or after a longer timeout
+        let scrollCheckCleanup: (() => void) | null = null;
+        
+        const enableAnimations = () => {
             allowAnimation = true;
+            scrollCheckCleanup?.();
+            
             // Re-check if element is in viewport now
             const rect = node.getBoundingClientRect();
             const inViewport = rect.top < window.innerHeight && rect.bottom > 0;
@@ -149,7 +153,24 @@ export function scrollAnimate(node: HTMLElement, options: ScrollAnimateOptions =
                 });
                 hasAnimated = true;
             }
-        }, 100);
+        };
+        
+        // Check if user scrolls to near the top
+        const handleScroll = () => {
+            if (window.scrollY < 150) {
+                enableAnimations();
+            }
+        };
+        
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        scrollCheckCleanup = () => window.removeEventListener('scroll', handleScroll);
+        
+        // Fallback: enable after 800ms regardless (for users who stay mid-page)
+        setTimeout(() => {
+            if (!allowAnimation) {
+                enableAnimations();
+            }
+        }, 800);
     }
 
     const observer = new IntersectionObserver(
