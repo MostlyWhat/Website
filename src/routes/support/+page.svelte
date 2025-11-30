@@ -4,6 +4,7 @@
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import VideoBackground from '$lib/components/layout/VideoBackground.svelte';
+	import CTASection from '$lib/components/layout/CTASection.svelte';
 	import { GlitchText } from '$lib/components/ui/glitch-text';
 	import { Input } from '$lib/components/ui/input';
 	import { Textarea } from '$lib/components/ui/textarea';
@@ -108,7 +109,7 @@
 	<!-- Video Background -->
 	<VideoBackground 
 		src={MARATHON_VIDEO}
-		class="brightness-[0.20]"
+		class="brightness-[0.80]"
 	/>
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
@@ -150,7 +151,7 @@
 		{#each supportChannels as { icon: Icon, title, desc, action, href } (title)}
 			<a
 				{href}
-				class="col-span-12 flex flex-col bg-background p-6 transition-colors hover:bg-card md:col-span-6 lg:col-span-3"
+				class="col-span-12 flex flex-col bg-background px-6 py-6 transition-colors hover:bg-card md:col-span-6 md:px-12 lg:col-span-3 lg:px-16"
 			>
 				<Icon class="mb-4 h-6 w-6 text-primary" />
 				<h3 class="font-ui text-xs font-semibold tracking-wider">{title}</h3>
@@ -168,7 +169,7 @@
 <section id="ticket-form" class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
 		<!-- Form Side -->
-		<div class="col-span-12 bg-background p-6 md:p-8 lg:col-span-7 lg:p-12" use:scrollAnimate={{ animation: 'fade' }}>
+		<div class="col-span-12 bg-background px-6 py-12 md:px-12 lg:col-span-7 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CREATE TICKET</span>
 			<h2 class="font-display mt-2 text-3xl font-bold uppercase md:text-4xl">SUBMIT A REQUEST</h2>
 			<p class="font-body mt-2 text-sm text-muted-foreground">
@@ -290,7 +291,7 @@
 
 		<!-- Info Side -->
 		<div class="col-span-12 flex flex-col gap-px bg-border lg:col-span-5">
-			<div class="flex-1 bg-card p-6 md:p-8" use:scrollAnimate={{ animation: 'fade' }}>
+			<div class="flex-1 bg-card px-6 py-8 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">WHAT TO EXPECT</span>
 				<h3 class="font-display mt-2 text-xl font-bold uppercase">SUPPORT PROCESS</h3>
 				
@@ -349,34 +350,23 @@
 	</div>
 </section>
 
-<!-- FAQ Section with Accordion -->
-<section class="border-b border-border">
+<!-- FAQ Section - 50/50 Layout -->
+<section id="faq" class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
-		<!-- Left Side - Description -->
-		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:col-span-4 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
+		<!-- Left: Title -->
+		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:px-12 lg:col-span-6 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">QUICK ANSWERS</span>
-			<h2 class="font-display mt-4 text-2xl font-bold uppercase md:text-3xl">FAQ</h2>
-			<p class="font-body mt-4 text-sm leading-relaxed text-muted-foreground">
-				Common questions about our support process. Can't find your answer here?
-			</p>
-			<div class="mt-6">
-				<Button href="#faq" variant="outline" size="sm" class="font-ui text-xs tracking-wider">
-					VIEW ALL FAQ
-					<ArrowRight class="ml-2 h-3 w-3" />
-				</Button>
-			</div>
+			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl lg:text-5xl">COMMON QUESTIONS</h2>
+			<p class="font-body mt-4 text-muted-foreground">Common questions about our support process.</p>
 		</div>
-
-		<!-- Right Side - Accordion -->
-		<div class="col-span-12 bg-background px-6 py-8 md:col-span-8 md:px-12 lg:px-16">
+		<!-- Right: Accordion -->
+		<div class="col-span-12 bg-card lg:col-span-6">
 			<Accordion.Root type="single" class="w-full">
 				{#each faq as { q, a }, i (i)}
-					<Accordion.Item value="item-{i}" class="border-b border-border last:border-b-0">
-						<Accordion.Trigger class="font-ui flex w-full items-center justify-between py-4 text-left text-sm font-semibold tracking-wider transition-colors hover:text-primary [&[data-state=open]]:text-primary">
-							{q}
-						</Accordion.Trigger>
-						<Accordion.Content class="font-body pb-4 text-sm leading-relaxed text-muted-foreground">
-							{a}
+					<Accordion.Item value="item-{i}" class="bg-card">
+						<Accordion.Trigger class="font-ui text-xs">{q}</Accordion.Trigger>
+						<Accordion.Content>
+							<p class="font-body max-w-xl text-sm leading-relaxed text-muted-foreground">{a}</p>
 						</Accordion.Content>
 					</Accordion.Item>
 				{/each}
@@ -386,42 +376,17 @@
 </section>
 
 <!-- CTA Section -->
-<section class="border-b border-border">
-	<div class="grid grid-cols-1 gap-px bg-border lg:grid-cols-2" use:scrollAnimate={{ animation: 'scale' }}>
-		<div class="bg-background p-6 md:p-8 lg:p-12">
-			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">NEED MORE HELP?</span>
-			<h2 class="font-display mt-4 text-3xl font-bold uppercase">START A CONVERSATION</h2>
-			<p class="font-body mt-4 text-muted-foreground">
-				Can't find what you're looking for? Let's talk about your project needs.
-			</p>
-			<div class="mt-6 flex gap-2">
-				<Button href={localizeHref('/contact')} class="font-ui tracking-wider">
-					CONTACT US
-					<ArrowRight class="ml-2 h-4 w-4" />
-				</Button>
-				<Button href={localizeHref('/docs')} variant="outline" class="font-ui tracking-wider">
-					DOCUMENTATION
-				</Button>
-			</div>
-		</div>
-		<div class="grid grid-cols-2 gap-px bg-border">
-			<div class="flex flex-col justify-center bg-card p-6">
-				<Clock class="mb-2 h-5 w-5 text-primary" />
-				<span class="font-display text-2xl font-bold text-primary">&lt;24H</span>
-				<p class="font-mono text-[10px] tracking-widest text-muted-foreground">AVG RESPONSE</p>
-			</div>
-			<div class="flex flex-col justify-center bg-card p-6">
-				<CheckCircle class="mb-2 h-5 w-5 text-primary" />
-				<span class="font-display text-2xl font-bold text-primary">98%</span>
-				<p class="font-mono text-[10px] tracking-widest text-muted-foreground">SATISFACTION</p>
-			</div>
-			<div class="col-span-2 flex items-center justify-center bg-primary/10 p-6">
-				<div class="text-center">
-					<MessageSquare class="mx-auto mb-2 h-6 w-6 text-primary" />
-					<p class="font-ui text-xs font-semibold tracking-wider">RESPONSIVE SUPPORT</p>
-					<p class="font-body mt-1 text-[11px] text-muted-foreground">We're here when you need us</p>
-				</div>
-			</div>
-		</div>
-	</div>
-</section>
+<CTASection
+	variant="split"
+	label="NEED MORE HELP?"
+	title="START A CONVERSATION"
+	description="Can't find what you're looking for? Let's talk about your project needs."
+	buttonText="CONTACT US"
+	buttonHref="/contact"
+	secondaryButtonText="DOCUMENTATION"
+	secondaryButtonHref="/docs"
+	stats={[
+		{ value: '<24H', label: 'AVG RESPONSE' },
+		{ value: '98%', label: 'SATISFACTION' }
+	]}
+/>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { localizeHref } from '$lib/paraglide/runtime';
-	import { ArrowLeft, ArrowRight } from '@lucide/svelte';
+	import { ArrowLeft, ArrowUpRight } from '@lucide/svelte';
 
 	interface Props {
 		/** Small label above title */
@@ -13,8 +13,8 @@
 		buttonText: string;
 		/** Button link (will be localized) */
 		buttonHref: string;
-		/** Arrow direction - 'left' for back links, 'right' for forward links */
-		arrowDirection?: 'left' | 'right';
+		/** Arrow direction - 'left' for back links, 'forward' for forward links with ArrowUpRight */
+		variant?: 'back' | 'forward';
 	}
 
 	let { 
@@ -23,7 +23,7 @@
 		description, 
 		buttonText, 
 		buttonHref,
-		arrowDirection = 'left'
+		variant = 'forward'
 	}: Props = $props();
 </script>
 
@@ -42,12 +42,12 @@
 			href={localizeHref(buttonHref)}
 			class="col-span-12 flex items-center justify-center gap-2 bg-card px-6 py-8 transition-colors hover:bg-background hover:text-primary md:px-12 lg:col-span-3 lg:px-16"
 		>
-			{#if arrowDirection === 'left'}
+			{#if variant === 'back'}
 				<ArrowLeft class="h-3 w-3" />
 			{/if}
 			<span class="font-ui text-xs tracking-wider">{buttonText}</span>
-			{#if arrowDirection === 'right'}
-				<ArrowRight class="h-3 w-3" />
+			{#if variant === 'forward'}
+				<ArrowUpRight class="h-3 w-3" />
 			{/if}
 		</a>
 	</div>

@@ -81,7 +81,7 @@
 			action: 'SEND MESSAGE'
 		},
 		{ 
-			id: 'support', 
+			id: 'support-center', 
 			icon: HelpCircle, 
 			title: 'SUPPORT CENTER', 
 			desc: 'Browse FAQs and documentation',
@@ -164,7 +164,6 @@
 	}
 
 	function selectTopic(id: string) {
-		if (id === 'support') return; // Support center has its own page
 		selectedTopic = id;
 	}
 </script>

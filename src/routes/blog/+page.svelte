@@ -4,6 +4,7 @@
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import VideoBackground from '$lib/components/layout/VideoBackground.svelte';
+	import CTASection from '$lib/components/layout/CTASection.svelte';
 	import { GlitchText } from '$lib/components/ui/glitch-text';
 	import { MARATHON_VIDEO } from '$lib/constants';
 	import { ArrowRight, ChevronRight } from '@lucide/svelte';
@@ -38,7 +39,7 @@
 	<!-- Video Background -->
 	<VideoBackground 
 		src={MARATHON_VIDEO}
-		class="brightness-[0.20]"
+		class="brightness-[0.80]"
 	/>
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
@@ -142,25 +143,23 @@
 </section>
 
 <!-- Newsletter CTA -->
-<section class="min-h-dvh border-b border-border">
-	<div class="grid h-full min-h-dvh grid-cols-12 gap-px bg-border">
-		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-16 md:px-12 lg:col-span-6 lg:px-16">
-			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">STAY INFORMED</span>
-			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl lg:text-5xl">NEWSLETTER</h2>
-			<p class="font-body mt-4 max-w-md text-muted-foreground">Get notified when we publish new articles and insights.</p>
+<CTASection
+	variant="split"
+	label="STAY INFORMED"
+	title="NEWSLETTER"
+	description="Get notified when we publish new articles and insights."
+>
+	{#snippet children()}
+		<div class="flex w-full flex-col gap-4 sm:flex-row">
+			<input 
+				type="email" 
+				placeholder="YOUR@EMAIL.COM"
+				class="font-mono h-12 flex-1 border border-border bg-background px-4 text-xs uppercase tracking-wider placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+			/>
+			<Button class="font-ui h-12 shrink-0 px-8 uppercase tracking-wider">
+				SUBSCRIBE
+				<ArrowRight class="ml-2 h-4 w-4" />
+			</Button>
 		</div>
-		<div class="col-span-12 flex flex-col justify-center bg-card px-6 py-16 md:px-12 lg:col-span-6 lg:px-16">
-			<div class="flex flex-col gap-4 sm:flex-row">
-				<input 
-					type="email" 
-					placeholder="YOUR@EMAIL.COM"
-					class="font-mono h-12 flex-1 border border-border bg-background px-4 text-xs uppercase tracking-wider placeholder:text-muted-foreground focus:border-primary focus:outline-none"
-				/>
-				<Button class="font-ui h-12 shrink-0 px-8 uppercase tracking-wider">
-					SUBSCRIBE
-					<ArrowRight class="ml-2 h-4 w-4" />
-				</Button>
-			</div>
-		</div>
-	</div>
-</section>
+	{/snippet}
+</CTASection>

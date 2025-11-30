@@ -4,9 +4,10 @@
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import VideoBackground from '$lib/components/layout/VideoBackground.svelte';
+	import CTASection from '$lib/components/layout/CTASection.svelte';
 	import { GlitchText } from '$lib/components/ui/glitch-text';
 	import { MARATHON_VIDEO } from '$lib/constants';
-	import { ArrowRight, ArrowUpRight } from '@lucide/svelte';
+	import { ArrowUpRight } from '@lucide/svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -34,7 +35,7 @@
 	<!-- Video Background -->
 	<VideoBackground 
 		src={MARATHON_VIDEO}
-		class="brightness-[0.20]"
+		class="brightness-[0.80]"
 	/>
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
@@ -131,22 +132,20 @@
 </section>
 
 <!-- CTA Section -->
-<section class="min-h-dvh border-b border-border">
-	<div class="grid h-full min-h-dvh grid-cols-12 gap-px bg-border">
-		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-16 md:px-12 lg:col-span-6 lg:px-16">
-			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">START BUILDING</span>
-			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl lg:text-5xl">HAVE A PROJECT?</h2>
-			<p class="font-body mt-4 max-w-md text-muted-foreground">Let's discuss how we can bring your vision to life.</p>
-			<Button href={localizeHref('/contact')} class="font-ui mt-6 w-fit uppercase tracking-wider">
-				GET IN TOUCH
-				<ArrowRight class="ml-2 h-4 w-4" />
-			</Button>
-		</div>
-		<div class="col-span-12 flex flex-col justify-center bg-card px-6 py-16 md:px-12 lg:col-span-6 lg:px-16">
+<CTASection
+	variant="split"
+	label="START BUILDING"
+	title="HAVE A PROJECT?"
+	description="Let's discuss how we can bring your vision to life."
+	buttonText="GET IN TOUCH"
+	buttonHref="/contact"
+>
+	{#snippet children()}
+		<div class="text-left">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTACT</span>
-			<a href="mailto:hello@mostlywhat.systems" class="font-display mt-4 block text-xl text-primary transition-colors hover:text-primary/80 md:text-2xl">
+			<a href="mailto:hello@mostlywhat.systems" class="font-display mt-2 block text-xl text-primary transition-colors hover:text-primary/80 md:text-2xl">
 				HELLO@MOSTLYWHAT.SYSTEMS
 			</a>
 		</div>
-	</div>
-</section>
+	{/snippet}
+</CTASection>
