@@ -12,7 +12,6 @@
 		BookOpen,
 		Ticket,
 		ArrowRight,
-		Send,
 		Zap,
 		Bug,
 		Clock,
@@ -22,78 +21,36 @@
 		FileText
 	} from '@lucide/svelte';
 
-	let searchQuery = $state('');
-
 	// Main action tiles
 	const mainTiles = [
 		{
 			icon: MessageCircleQuestion,
-			title: 'GUIDED TROUBLESHOOTER',
-			desc: 'Answer a few questions and we\'ll help diagnose your issue step by step.',
-			action: 'START DIAGNOSIS',
-			href: '/support/troubleshooter',
-			featured: true
+			title: 'TROUBLESHOOTER',
+			desc: 'Diagnose your issue step by step.',
+			href: '/support/troubleshooter'
 		},
 		{
 			icon: BookOpen,
-			title: 'BROWSE DOCUMENTATION',
-			desc: 'Search through our complete help center and support articles.',
-			action: 'BROWSE ARTICLES',
+			title: 'DOCUMENTATION',
+			desc: 'Browse help articles.',
 			href: '/support/articles'
 		},
 		{
 			icon: Ticket,
-			title: 'SUBMIT A TICKET',
-			desc: 'Can\'t find what you need? Create a support ticket for personalized help.',
-			action: 'CREATE TICKET',
+			title: 'SUBMIT TICKET',
+			desc: 'Get personalized support.',
 			href: '/support/submit-ticket'
 		}
 	];
 
 	// Category tiles
 	const categories = [
-		{
-			icon: Rocket,
-			title: 'GETTING STARTED',
-			desc: 'Onboarding, project kickoff, and initial setup guides.',
-			href: '/support/getting-started',
-			articles: 2
-		},
-		{
-			icon: Bug,
-			title: 'TROUBLESHOOTING',
-			desc: 'Bug reports, browser issues, and common problems.',
-			href: '/support/reporting-bugs',
-			articles: 3
-		},
-		{
-			icon: Clock,
-			title: 'RESPONSE TIMES',
-			desc: 'SLAs, priority levels, and what to expect.',
-			href: '/support/response-times',
-			articles: 1
-		},
-		{
-			icon: CreditCard,
-			title: 'BILLING & PAYMENTS',
-			desc: 'Invoices, payment methods, and refund policy.',
-			href: '/support/billing-payments',
-			articles: 1
-		},
-		{
-			icon: Settings,
-			title: 'PROJECT UPDATES',
-			desc: 'Request changes, content updates, and maintenance.',
-			href: '/support/project-updates',
-			articles: 1
-		},
-		{
-			icon: FileText,
-			title: 'PROJECT HANDOFF',
-			desc: 'Completion, deliverables, and post-launch support.',
-			href: '/support/project-handoff',
-			articles: 1
-		}
+		{ icon: Rocket, title: 'GETTING STARTED', href: '/support/getting-started' },
+		{ icon: Bug, title: 'TROUBLESHOOTING', href: '/support/reporting-bugs' },
+		{ icon: Clock, title: 'RESPONSE TIMES', href: '/support/response-times' },
+		{ icon: CreditCard, title: 'BILLING', href: '/support/billing-payments' },
+		{ icon: Settings, title: 'PROJECT UPDATES', href: '/support/project-updates' },
+		{ icon: FileText, title: 'PROJECT HANDOFF', href: '/support/project-handoff' }
 	];
 
 	const faq = [
@@ -114,13 +71,6 @@
 			a: 'Include your project name, affected URL, browser/device info, steps to reproduce, and any error messages. The more detail, the faster we can help.'
 		}
 	];
-
-	function handleSearch(e: Event) {
-		e.preventDefault();
-		if (searchQuery.trim()) {
-			window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
-		}
-	}
 </script>
 
 <svelte:head>
@@ -128,178 +78,125 @@
 	<meta name="description" content="Get technical support and assistance from the MostlyWhat Systems team." />
 </svelte:head>
 
-<!-- Hero Section - Full Screen with Video -->
+<!-- Hero Section -->
 <HeroSection
 	label="// HELP.CENTER"
 	title="SUPPORT"
 	description="How can we help you today?"
 	stats={[
 		{ value: '<24H', label: 'RESPONSE' },
-		{ value: '98%', label: 'RESOLVED' },
-		{ value: '24/7', label: 'MONITORING' }
+		{ value: '98%', label: 'RESOLVED' }
 	]}
 />
 
 <!-- Description Section -->
 <DescriptionSection
-	description="Get technical support and assistance from the MostlyWhat Systems team. Browse our knowledge base, use our guided troubleshooter, or submit a ticket for personalized help."
+	description="Get technical support and assistance. Browse our knowledge base, use our guided troubleshooter, or submit a ticket for personalized help."
 	stats={[
 		{ value: 'DOCS', label: 'ARTICLES' },
 		{ value: 'LIVE', label: 'STATUS' }
 	]}
 />
 
-<!-- Search Bar Section -->
+<!-- Search Bar -->
 <section class="border-b border-border bg-card">
-	<div class="px-6 py-8 md:px-12 lg:px-16">
-		<div class="mx-auto max-w-2xl">
-			<form onsubmit={handleSearch}>
-				<div class="relative">
-					<Search class="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-					<input
-						type="text"
-						bind:value={searchQuery}
-						placeholder="Search for help articles, guides, and documentation..."
-						class="font-body h-14 w-full border border-border bg-background pl-12 pr-4 text-sm transition-colors placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 md:text-base"
-					/>
-					<button
-						type="submit"
-						class="absolute right-2 top-1/2 -translate-y-1/2 bg-primary px-4 py-2 text-xs font-semibold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-primary/90"
-					>
-						SEARCH
-					</button>
-				</div>
-			</form>
-
-			<!-- Quick Links -->
-			<div class="font-mono mt-4 flex flex-wrap justify-center gap-4 text-[10px] tracking-wider text-muted-foreground">
-				<span>POPULAR:</span>
-				<a href={localizeHref('/support/reporting-bugs')} class="text-primary hover:underline">BUG REPORTS</a>
-				<a href={localizeHref('/support/response-times')} class="text-primary hover:underline">RESPONSE TIMES</a>
-				<a href={localizeHref('/support/billing-payments')} class="text-primary hover:underline">BILLING</a>
-			</div>
-		</div>
+	<div class="px-6 py-6 md:px-12 lg:px-16">
+		<a 
+			href={localizeHref('/search')} 
+			class="mx-auto flex h-12 max-w-2xl items-center gap-3 border border-border bg-background px-4 text-muted-foreground transition-colors hover:border-primary"
+		>
+			<Search class="h-5 w-5" />
+			<span class="font-body text-sm">Search for help articles...</span>
+		</a>
 	</div>
 </section>
 
-<!-- Main Action Tiles - 3 Big Tiles -->
+<!-- Main Actions - 3 Tiles -->
 <section class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
-		{#each mainTiles as { icon: Icon, title, desc, action, href, featured }, i (title)}
+		{#each mainTiles as { icon: Icon, title, desc, href } (title)}
 			<a
 				href={localizeHref(href)}
-				class="col-span-12 flex flex-col bg-background px-6 py-8 transition-colors hover:bg-card md:col-span-4 md:px-8 lg:px-12 {featured ? 'border-l-4 border-l-primary' : ''}"
+				class="col-span-12 flex items-center gap-4 bg-background px-6 py-6 transition-colors hover:bg-card sm:col-span-4 md:px-12 lg:px-16"
 			>
-				<div class="mb-4 flex items-center gap-3">
-					<div class="flex h-10 w-10 items-center justify-center border {featured ? 'border-primary bg-primary/10' : 'border-border bg-card'}">
-						<Icon class="h-5 w-5 {featured ? 'text-primary' : 'text-muted-foreground'}" />
-					</div>
-					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">0{i + 1}</span>
-				</div>
-				<h3 class="font-ui text-sm font-semibold tracking-wider">{title}</h3>
-				<p class="font-body mt-2 flex-1 text-sm text-muted-foreground">{desc}</p>
-				<span class="font-mono mt-6 flex items-center gap-2 text-[10px] tracking-wider text-primary">
-					{action}
-					<ArrowRight class="h-3 w-3" />
-				</span>
-			</a>
-		{/each}
-	</div>
-</section>
-
-<!-- Category Tiles -->
-<section class="border-b border-border">
-	<div class="grid grid-cols-12 gap-px bg-border">
-		<!-- Section Header -->
-		<div class="col-span-12 bg-background px-6 py-8 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
-			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// BROWSE.TOPICS</span>
-			<h2 class="font-display mt-2 text-2xl font-bold uppercase md:text-3xl">HELP CATEGORIES</h2>
-		</div>
-		
-		<!-- Category Grid -->
-		{#each categories as { icon: Icon, title, desc, href, articles } (title)}
-			<a
-				href={localizeHref(href)}
-				class="col-span-12 flex items-start gap-4 bg-background px-6 py-6 transition-colors hover:bg-card sm:col-span-6 md:px-12 lg:col-span-4 lg:px-16"
-				use:scrollAnimate={{ animation: 'fade' }}
-			>
-				<div class="flex h-10 w-10 flex-shrink-0 items-center justify-center border border-border bg-card">
-					<Icon class="h-5 w-5 text-primary" />
+				<div class="flex h-12 w-12 flex-shrink-0 items-center justify-center border border-border bg-card">
+					<Icon class="h-6 w-6 text-primary" />
 				</div>
 				<div class="flex-1">
-					<h3 class="font-ui text-xs font-semibold tracking-wider">{title}</h3>
-					<p class="font-body mt-1 text-[11px] text-muted-foreground">{desc}</p>
-					<span class="font-mono mt-2 inline-flex items-center gap-1 text-[10px] tracking-wider text-primary">
-						{articles} {articles === 1 ? 'ARTICLE' : 'ARTICLES'}
-						<ArrowRight class="h-2.5 w-2.5" />
-					</span>
+					<h3 class="font-ui text-sm font-semibold tracking-wider">{title}</h3>
+					<p class="font-body mt-1 text-xs text-muted-foreground">{desc}</p>
 				</div>
+				<ArrowRight class="h-4 w-4 text-muted-foreground" />
 			</a>
 		{/each}
 	</div>
 </section>
 
-<!-- Quick Help CTA Section -->
+<!-- Category Grid -->
 <section class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
-		<!-- Submit Ticket Card -->
+		<div class="col-span-12 bg-background px-6 py-6 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// BROWSE.TOPICS</span>
+		</div>
+		
+		{#each categories as { icon: Icon, title, href } (title)}
+			<a
+				href={localizeHref(href)}
+				class="col-span-6 flex items-center gap-3 bg-background px-6 py-4 transition-colors hover:bg-card sm:col-span-4 lg:col-span-2 md:px-8"
+				use:scrollAnimate={{ animation: 'fade' }}
+			>
+				<Icon class="h-4 w-4 text-primary" />
+				<span class="font-ui text-[10px] font-semibold tracking-wider">{title}</span>
+			</a>
+		{/each}
+	</div>
+</section>
+
+<!-- Urgent Contact -->
+<section class="border-b border-border">
+	<div class="grid grid-cols-12 gap-px bg-border">
+		<div class="col-span-12 flex items-center justify-between bg-card px-6 py-6 md:col-span-6 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
+			<div class="flex items-center gap-4">
+				<div class="flex h-10 w-10 items-center justify-center border border-destructive/50 bg-destructive/10">
+					<Zap class="h-5 w-5 text-destructive" />
+				</div>
+				<div>
+					<h3 class="font-ui text-xs font-semibold tracking-wider">URGENT ISSUES</h3>
+					<p class="font-body mt-0.5 text-[11px] text-muted-foreground">Critical issues, site outages</p>
+				</div>
+			</div>
+			<a href="mailto:urgent@mostlywhat.com" class="font-mono text-[10px] tracking-wider text-primary hover:underline">
+				CONTACT
+			</a>
+		</div>
 		<a 
-			href={localizeHref('/support/submit-ticket')} 
-			class="col-span-12 flex flex-col justify-between bg-background px-6 py-12 transition-colors hover:bg-card md:col-span-6 md:px-12 lg:px-16"
+			href={localizeHref('/support/submit-ticket')}
+			class="col-span-12 flex items-center justify-between bg-background px-6 py-6 transition-colors hover:bg-card md:col-span-6 md:px-12 lg:px-16"
 			use:scrollAnimate={{ animation: 'fade' }}
 		>
-			<div>
-				<div class="flex h-12 w-12 items-center justify-center border border-primary bg-primary/10">
-					<Send class="h-6 w-6 text-primary" />
+			<div class="flex items-center gap-4">
+				<div class="flex h-10 w-10 items-center justify-center border border-primary bg-primary/10">
+					<Ticket class="h-5 w-5 text-primary" />
 				</div>
-				<h3 class="font-display mt-6 text-2xl font-bold uppercase">SUBMIT A TICKET</h3>
-				<p class="font-body mt-2 text-sm text-muted-foreground">
-					Can't find what you're looking for? Submit a support ticket and our team will get back to you within 24 hours.
-				</p>
+				<div>
+					<h3 class="font-ui text-xs font-semibold tracking-wider">SUBMIT A TICKET</h3>
+					<p class="font-body mt-0.5 text-[11px] text-muted-foreground">Get help within 24 hours</p>
+				</div>
 			</div>
-			<span class="font-mono mt-6 flex items-center gap-2 text-[10px] tracking-wider text-primary">
-				CREATE TICKET
-				<ArrowRight class="h-3 w-3" />
-			</span>
+			<ArrowRight class="h-4 w-4 text-primary" />
 		</a>
-
-		<!-- Urgent Contact Card -->
-		<div class="col-span-12 flex flex-col justify-between bg-card px-6 py-12 md:col-span-6 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
-			<div>
-				<div class="flex h-12 w-12 items-center justify-center border border-destructive bg-destructive/10">
-					<Zap class="h-6 w-6 text-destructive" />
-				</div>
-				<h3 class="font-display mt-6 text-2xl font-bold uppercase">URGENT ISSUES</h3>
-				<p class="font-body mt-2 text-sm text-muted-foreground">
-					For critical issues like site outages or security concerns, contact our emergency support line directly.
-				</p>
-			</div>
-			<div class="mt-6">
-				<a
-					href="mailto:urgent@mostlywhat.com"
-					class="font-mono flex items-center gap-2 text-[10px] tracking-wider text-primary hover:underline"
-				>
-					urgent@mostlywhat.com
-					<ArrowRight class="h-3 w-3" />
-				</a>
-				<p class="font-body mt-2 text-[11px] text-muted-foreground">Response within 2 hours</p>
-			</div>
-		</div>
 	</div>
 </section>
 
 <!-- FAQ Section -->
 <section id="faq" class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
-		<!-- Left: Title -->
-		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:px-12 lg:col-span-6 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
-			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// FAQ.SUPPORT</span>
-			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">COMMON QUESTIONS</h2>
-			<p class="font-body mt-4 text-sm text-muted-foreground">Quick answers to frequently asked questions about our support.</p>
+		<div class="col-span-12 bg-background px-6 py-8 md:px-12 lg:col-span-4 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// FAQ</span>
+			<h2 class="font-display mt-2 text-2xl font-bold uppercase">COMMON QUESTIONS</h2>
 		</div>
-		<!-- Right: Accordion -->
-		<div class="col-span-12 bg-background lg:col-span-6">
-			<Accordion.Root type="single" class="w-full divide-y divide-border border-t border-border lg:border-t-0">
+		<div class="col-span-12 bg-background lg:col-span-8">
+			<Accordion.Root type="single" class="w-full divide-y divide-border">
 				{#each faq as { q, a }, i (i)}
 					<Accordion.Item value="item-{i}">
 						<Accordion.Trigger>{q}</Accordion.Trigger>
