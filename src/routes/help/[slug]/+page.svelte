@@ -71,7 +71,7 @@
 </svelte:head>
 
 <!-- Article Header -->
-<section class="min-h-[50dvh] border-b border-border">
+<section class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
 		<div class="col-span-12 bg-background px-6 py-12 md:px-12 lg:col-span-8 lg:px-16 lg:py-16" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
 			<div class="flex items-center gap-4 text-xs">
@@ -81,11 +81,11 @@
 					{data.readTime}
 				</span>
 			</div>
-			<h1 class="font-display mt-6 text-3xl font-black uppercase leading-[0.95] tracking-tight md:text-4xl lg:text-5xl">
+			<h1 class="font-display mt-4 text-3xl font-black uppercase leading-[0.95] tracking-tight md:text-4xl lg:text-5xl">
 				{data.title}
 			</h1>
 		</div>
-		<div class="col-span-12 flex flex-col justify-center bg-card px-6 py-8 md:px-12 lg:col-span-4 lg:px-16">
+		<div class="col-span-12 flex flex-col justify-center bg-card px-6 py-12 md:px-12 lg:col-span-4 lg:px-16 lg:py-16">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">HELP CENTER</span>
 			<p class="font-body mt-2 text-sm text-muted-foreground">Browse our knowledge base for answers to common questions.</p>
 		</div>
@@ -95,19 +95,26 @@
 <!-- Article Content -->
 <section class="border-b border-border">
 	<div class="grid grid-cols-12">
-		<!-- Sticky Sidebar -->
-		<div class="col-span-12 border-b border-border bg-background lg:col-span-3 lg:border-r lg:border-b-0">
-			<div class="sticky top-24 px-6 py-8 md:px-12 lg:px-16">
-				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">ON THIS PAGE</span>
-				<nav class="mt-4 space-y-3">
-					{#each sections as section (section.id)}
-						<a href="#{section.id}" class="font-ui block text-xs tracking-wider text-muted-foreground transition-colors hover:text-primary">
-							<span class="text-primary">{section.number}</span> — {section.title}
-						</a>
-					{/each}
-				</nav>
-				<div class="mt-8 border-t border-border pt-6">
-					<a href={localizeHref('/help')} class="font-ui flex items-center gap-2 text-xs tracking-wider text-muted-foreground transition-colors hover:text-primary">
+		<!-- Sticky Sidebar - Left -->
+		<div class="col-span-12 border-b border-border bg-card lg:col-span-3 lg:border-b-0 lg:border-r lg:border-border">
+			<div class="lg:sticky lg:top-24">
+				<div class="px-6 py-8 md:px-12 lg:px-16 lg:py-12">
+					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">ON THIS PAGE</span>
+					<nav class="mt-4 flex flex-col gap-3">
+						{#each sections as section, i (section.id)}
+							<a 
+								href="#{section.id}" 
+								class="font-ui group flex items-start gap-3 text-xs tracking-wider text-muted-foreground transition-colors hover:text-primary"
+							>
+								<span class="font-mono text-[10px] text-primary/50 group-hover:text-primary">{section.number}</span>
+								<span class="border-b border-transparent group-hover:border-primary">{section.title}</span>
+							</a>
+						{/each}
+					</nav>
+				</div>
+				<!-- Back link at bottom -->
+				<div class="border-t border-border">
+					<a href={localizeHref('/help')} class="font-ui flex items-center gap-2 px-6 py-4 text-xs tracking-wider text-muted-foreground hover:bg-background hover:text-primary md:px-12 lg:px-16">
 						<ArrowLeft class="h-3 w-3" />
 						BACK TO HELP CENTER
 					</a>
@@ -115,7 +122,7 @@
 			</div>
 		</div>
 		
-		<!-- Article Body -->
+		<!-- Article Body - Right -->
 		<article class="col-span-12 bg-background px-6 py-12 md:px-12 lg:col-span-9 lg:px-16 lg:py-16">
 			<div class="max-w-3xl">
 				{@html renderedContent}

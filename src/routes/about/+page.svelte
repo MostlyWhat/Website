@@ -16,7 +16,10 @@
 	];
 
 	const team = [
-		{ name: 'PREM (MOSTLYWHAT)', role: 'FOUNDER & LEAD ENGINEER', desc: 'Full-stack engineer with a passion for design systems.' }
+		{ name: 'PREM (MOSTLYWHAT)', role: 'FOUNDER & LEAD ENGINEER', desc: 'Full-stack engineer with a passion for design systems.' },
+		{ name: 'ALEX CHEN', role: 'SENIOR DEVELOPER', desc: 'Backend specialist focused on performance and scalability.' },
+		{ name: 'MAYA PATEL', role: 'UI/UX DESIGNER', desc: 'Creating intuitive experiences through thoughtful design.' },
+		{ name: 'JORDAN PARK', role: 'FRONTEND DEVELOPER', desc: 'Crafting pixel-perfect interfaces with modern frameworks.' }
 	];
 
 	const tech = [
@@ -37,7 +40,7 @@
 	<!-- Video Background -->
 	<VideoBackground 
 		src={MARATHON_VIDEO}
-		class="brightness-[0.15]"
+		class="brightness-[0.25]"
 	/>
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
@@ -82,7 +85,7 @@
 </section>
 
 <!-- Story Section -->
-<section class="grid min-h-[80vh] grid-cols-12 border-b border-border">
+<section class="grid grid-cols-12 border-b border-border">
 	<!-- Left Content -->
 	<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:px-12 lg:col-span-6 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
 		<span class="font-mono text-[10px] tracking-widest text-muted-foreground">01 — STORY</span>
@@ -108,14 +111,14 @@
 </section>
 
 <!-- Values Section -->
-<section class="flex min-h-[80vh] flex-col border-b border-border">
+<section class="flex flex-col border-b border-border">
 	<div class="px-6 py-12 md:px-12 md:py-16 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
 		<div class="max-w-2xl">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">02 — VALUES</span>
 			<h2 class="font-display mt-6 text-4xl font-bold uppercase md:text-5xl lg:text-6xl">WHAT WE STAND FOR</h2>
 		</div>
 	</div>
-	<div class="flex-1 grid grid-cols-12 gap-px border-t border-border bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
+	<div class="grid grid-cols-12 gap-px border-t border-border bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
 		{#each values as { icon: Icon, title, desc } (title)}
 			<div class="col-span-12 flex flex-col bg-background px-6 py-10 sm:col-span-6 md:px-12 lg:col-span-3 lg:px-16">
 				<div class="mb-6 flex h-12 w-12 items-center justify-center border border-border">
@@ -129,7 +132,7 @@
 </section>
 
 <!-- Tech Stack Section -->
-<section class="flex min-h-[80vh] flex-col border-b border-border">
+<section class="flex flex-col border-b border-border">
 	<div class="px-6 py-12 md:px-12 md:py-16 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
 		<div class="max-w-2xl">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">03 — TECHNOLOGY</span>
@@ -137,7 +140,7 @@
 			<p class="font-body mt-6 text-lg text-muted-foreground">Modern tools for modern products. We use the best technologies to build fast, reliable applications.</p>
 		</div>
 	</div>
-	<div class="flex-1 grid grid-cols-12 gap-px border-t border-border bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
+	<div class="grid grid-cols-12 gap-px border-t border-border bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
 		{#each tech as { category, items } (category)}
 			<div class="col-span-12 flex flex-col bg-card px-6 py-10 sm:col-span-6 md:px-12 lg:col-span-3 lg:px-16">
 				<h3 class="font-mono text-sm tracking-widest text-primary">{category}</h3>
@@ -155,19 +158,19 @@
 </section>
 
 <!-- Team Section -->
-<section class="grid min-h-[50vh] grid-cols-12 border-b border-border">
-	<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:px-12 lg:col-span-6 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
+<section class="border-b border-border">
+	<div class="px-6 py-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
 		<span class="font-mono text-[10px] tracking-widest text-muted-foreground">04 — TEAM</span>
 		<h2 class="font-display mt-6 text-4xl font-bold uppercase md:text-5xl lg:text-6xl">THE PEOPLE</h2>
 	</div>
-	<div class="col-span-12 flex items-center bg-background px-6 py-12 md:px-12 lg:col-span-6 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
+	<div class="grid grid-cols-12 gap-px border-t border-border bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
 		{#each team as { name, role, desc } (name)}
-			<div class="flex items-start gap-6">
+			<div class="col-span-12 flex items-start gap-6 bg-background px-6 py-8 sm:col-span-6 md:px-12 lg:col-span-3 lg:px-16">
 				<div class="h-16 w-16 shrink-0 border border-border bg-primary/10"></div>
 				<div>
-					<h3 class="font-ui text-lg font-semibold tracking-wider">{name}</h3>
-					<p class="font-mono mt-1 text-sm tracking-widest text-primary">{role}</p>
-					<p class="font-body mt-3 text-muted-foreground">{desc}</p>
+					<h3 class="font-ui text-sm font-semibold tracking-wider">{name}</h3>
+					<p class="font-mono mt-1 text-[10px] tracking-widest text-primary">{role}</p>
+					<p class="font-body mt-3 text-sm text-muted-foreground">{desc}</p>
 				</div>
 			</div>
 		{/each}

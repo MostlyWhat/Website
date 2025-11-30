@@ -6,6 +6,7 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { Label } from '$lib/components/ui/label';
+	import * as Accordion from '$lib/components/ui/accordion';
 	import CTASection from '$lib/components/layout/CTASection.svelte';
 	import VideoBackground from '$lib/components/layout/VideoBackground.svelte';
 	import GlitchText from '$lib/components/ui/glitch-text/GlitchText.svelte';
@@ -20,10 +21,41 @@
 	let email = $state('');
 	let company = $state('');
 	let message = $state('');
+	let projectType = $state('');
+	let budget = $state('');
+	let timeline = $state('');
+	let orderId = $state('');
+	let urgency = $state('');
 	let selectedTopic = $state<string | null>(null);
 	let isSubmitting = $state(false);
 	let isSubmitted = $state(false);
 	let error = $state<string | null>(null);
+
+	// Form configs per topic
+	const formConfigs: Record<string, { title: string; description: string; fields: { id: string; label: string; placeholder: string; type?: string; required?: boolean }[] }> = {
+		quote: {
+			title: 'REQUEST A QUOTE',
+			description: 'Tell us about your project and we\'ll provide a detailed estimate.',
+			fields: [
+				{ id: 'projectType', label: 'PROJECT TYPE', placeholder: 'Website, Web App, Landing Page...', required: true },
+				{ id: 'budget', label: 'BUDGET RANGE', placeholder: '$5k-10k, $10k-25k, $25k+...' },
+				{ id: 'timeline', label: 'TIMELINE', placeholder: '2 weeks, 1 month, 3 months...' }
+			]
+		},
+		support: {
+			title: 'GET SUPPORT',
+			description: 'Need help with an existing project? Describe your issue below.',
+			fields: [
+				{ id: 'orderId', label: 'PROJECT/ORDER ID', placeholder: 'PRJ-XXXX or contract reference' },
+				{ id: 'urgency', label: 'URGENCY', placeholder: 'Low, Medium, High, Critical' }
+			]
+		},
+		general: {
+			title: 'SEND A MESSAGE',
+			description: 'Questions, partnerships, or just want to say hi? We\'d love to hear from you.',
+			fields: []
+		}
+	};
 
 	// Contact options - first section
 	const contactOptions = [
@@ -147,7 +179,7 @@
 	<!-- Video Background -->
 	<VideoBackground 
 		src={MARATHON_VIDEO}
-		class="brightness-[0.15]"
+		class="brightness-[0.25]"
 	/>
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
@@ -212,13 +244,15 @@
 </section>
 
 <!-- Contact Form Section -->
-{#if selectedTopic}
+{#if selectedTopic && formConfigs[selectedTopic]}
+	{@const config = formConfigs[selectedTopic]}
 	<section id="form" class="border-b border-border" use:scrollAnimate={{ animation: 'fade' }}>
 		<div class="grid grid-cols-12 gap-px bg-border">
 			<!-- Form Header -->
 			<div class="col-span-12 bg-card px-6 py-6 md:px-12 lg:px-16">
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">01 — {selectedTopic?.toUpperCase()} FORM</span>
-				<h2 class="font-display mt-2 text-xl font-bold uppercase md:text-2xl">TELL US ABOUT YOUR PROJECT</h2>
+				<h2 class="font-display mt-2 text-xl font-bold uppercase md:text-2xl">{config.title}</h2>
+				<p class="font-body mt-2 text-sm text-muted-foreground">{config.description}</p>
 			</div>
 		</div>
 		<div class="grid grid-cols-12 gap-px bg-border">
@@ -251,9 +285,39 @@
 							<Label for="company" class="font-mono text-[10px] tracking-widest text-muted-foreground">COMPANY</Label>
 							<Input id="company" bind:value={company} placeholder="Company Inc. (optional)" class="font-body mt-2 border-0 bg-transparent p-0 text-sm focus-visible:ring-0" />
 						</div>
+						
+						<!-- Topic-specific fields -->
+						{#if selectedTopic === 'quote'}
+							<div class="grid grid-cols-3 gap-px border border-border bg-border">
+								<div class="bg-background p-4">
+									<Label for="projectType" class="font-mono text-[10px] tracking-widest text-muted-foreground">PROJECT TYPE *</Label>
+									<Input id="projectType" bind:value={projectType} required placeholder="Website, Web App, etc." class="font-body mt-2 border-0 bg-transparent p-0 text-sm focus-visible:ring-0" />
+								</div>
+								<div class="bg-background p-4">
+									<Label for="budget" class="font-mono text-[10px] tracking-widest text-muted-foreground">BUDGET RANGE</Label>
+									<Input id="budget" bind:value={budget} placeholder="$5k-10k, $10k-25k..." class="font-body mt-2 border-0 bg-transparent p-0 text-sm focus-visible:ring-0" />
+								</div>
+								<div class="bg-background p-4">
+									<Label for="timeline" class="font-mono text-[10px] tracking-widest text-muted-foreground">TIMELINE</Label>
+									<Input id="timeline" bind:value={timeline} placeholder="2 weeks, 1 month..." class="font-body mt-2 border-0 bg-transparent p-0 text-sm focus-visible:ring-0" />
+								</div>
+							</div>
+						{:else if selectedTopic === 'support'}
+							<div class="grid grid-cols-2 gap-px border border-border bg-border">
+								<div class="bg-background p-4">
+									<Label for="orderId" class="font-mono text-[10px] tracking-widest text-muted-foreground">PROJECT/ORDER ID</Label>
+									<Input id="orderId" bind:value={orderId} placeholder="PRJ-XXXX" class="font-body mt-2 border-0 bg-transparent p-0 text-sm focus-visible:ring-0" />
+								</div>
+								<div class="bg-background p-4">
+									<Label for="urgency" class="font-mono text-[10px] tracking-widest text-muted-foreground">URGENCY</Label>
+									<Input id="urgency" bind:value={urgency} placeholder="Low, Medium, High, Critical" class="font-body mt-2 border-0 bg-transparent p-0 text-sm focus-visible:ring-0" />
+								</div>
+							</div>
+						{/if}
+						
 						<div class="border border-border bg-background p-4">
 							<Label for="message" class="font-mono text-[10px] tracking-widest text-muted-foreground">MESSAGE *</Label>
-							<Textarea id="message" bind:value={message} required rows={6} placeholder="Tell us about your project, timeline, and budget..." class="font-body mt-2 resize-none border-0 bg-transparent p-0 text-sm focus-visible:ring-0" />
+							<Textarea id="message" bind:value={message} required rows={6} placeholder={selectedTopic === 'quote' ? 'Describe your project, goals, and requirements...' : selectedTopic === 'support' ? 'Describe your issue in detail...' : 'What can we help you with?'} class="font-body mt-2 resize-none border-0 bg-transparent p-0 text-sm focus-visible:ring-0" />
 						</div>
 						{#if error}
 							<div class="font-mono border border-red-500 bg-red-500/10 p-3 text-xs text-red-400">{error}</div>
@@ -313,7 +377,7 @@
 	</section>
 {/if}
 
-<!-- FAQ Section - Grid Layout -->
+<!-- FAQ Section - Accordion Layout -->
 <section class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
 		<div class="col-span-12 bg-card px-6 py-6 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
@@ -321,14 +385,16 @@
 			<h2 class="font-display mt-2 text-xl font-bold uppercase md:text-2xl">COMMON QUESTIONS</h2>
 		</div>
 	</div>
-	<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
+	<Accordion.Root type="single" class="w-full">
 		{#each faqs as { id, q, a } (id)}
-			<div class="col-span-12 bg-background px-6 py-6 md:col-span-6 md:px-12 lg:col-span-4 lg:px-16">
-				<h4 class="font-ui text-xs font-semibold tracking-wider text-primary">{q}</h4>
-				<p class="font-body mt-2 text-sm leading-relaxed text-muted-foreground">{a}</p>
-			</div>
+			<Accordion.Item value={id} class="bg-background">
+				<Accordion.Trigger class="font-ui text-xs">{q}</Accordion.Trigger>
+				<Accordion.Content>
+					<p class="font-body max-w-3xl text-sm leading-relaxed text-muted-foreground">{a}</p>
+				</Accordion.Content>
+			</Accordion.Item>
 		{/each}
-	</div>
+	</Accordion.Root>
 	<!-- Help Center Link -->
 	<div class="grid grid-cols-12 gap-px bg-border">
 		<a href={localizeHref('/help')} class="col-span-12 flex items-center justify-between bg-card px-6 py-6 transition-colors hover:bg-card/80 md:px-12 lg:px-16">

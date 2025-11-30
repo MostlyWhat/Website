@@ -18,7 +18,7 @@
 		<img 
 			src="https://images.unsplash.com/photo-1594322436404-5a0526db4d13?q=80&w=2029&auto=format&fit=crop" 
 			alt="" 
-			class="h-full w-full object-cover brightness-[0.15]"
+			class="h-full w-full object-cover brightness-[0.25]"
 		/>
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
 	</div>

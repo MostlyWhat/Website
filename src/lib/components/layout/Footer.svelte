@@ -23,12 +23,14 @@
 			{ href: '/services', label: 'SERVICES' },
 			{ href: '/projects', label: 'PROJECTS' },
 			{ href: '/blog', label: 'BLOG' },
+			{ href: '/careers', label: 'CAREERS' },
 			{ href: '/contact', label: 'CONTACT' }
 		],
 		resources: [
 			{ href: '/docs', label: 'DOCS' },
 			{ href: '/help', label: 'HELP CENTER' },
-			{ href: '/support', label: 'SUPPORT' }
+			{ href: '/support', label: 'SUPPORT' },
+			{ href: '/status', label: 'STATUS' }
 		],
 		legal: [
 			{ href: '/legal', label: 'ALL DOCUMENTS' },

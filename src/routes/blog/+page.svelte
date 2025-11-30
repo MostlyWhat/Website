@@ -38,7 +38,7 @@
 	<!-- Video Background -->
 	<VideoBackground 
 		src={MARATHON_VIDEO}
-		class="brightness-[0.15]"
+		class="brightness-[0.25]"
 	/>
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
@@ -82,7 +82,7 @@
 <section class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
 		<!-- Sort By Label - Fixed 2/12 width -->
-		<div class="col-span-2 flex items-center bg-card px-6 py-3 lg:px-8">
+		<div class="col-span-2 flex items-center bg-card px-6 py-3 md:px-12 lg:px-16">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">SORT BY</span>
 		</div>
 		<!-- Filter Options - 10/12 width -->

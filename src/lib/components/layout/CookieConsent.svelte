@@ -40,27 +40,27 @@
 
 {#if isVisible}
 	<div
-		class="fixed bottom-6 left-6 z-50 max-w-sm border border-border bg-background shadow-lg"
+		class="fixed bottom-6 left-6 z-50 max-w-md border border-border bg-background shadow-lg"
 		role="dialog"
 		aria-labelledby="cookie-title"
 		aria-describedby="cookie-description"
 	>
-		<div class="flex items-start gap-3 px-4 py-4">
-			<div class="flex h-8 w-8 shrink-0 items-center justify-center border border-border bg-card">
-				<Cookie class="h-4 w-4 text-primary" />
+		<div class="flex items-start gap-4 px-6 py-5">
+			<div class="flex h-10 w-10 shrink-0 items-center justify-center border border-border bg-card">
+				<Cookie class="h-5 w-5 text-primary" />
 			</div>
 			<div class="flex-1">
-				<h3 id="cookie-title" class="font-ui text-xs font-semibold tracking-wider">COOKIES & PRIVACY</h3>
-				<p id="cookie-description" class="font-body mt-1 text-[11px] leading-relaxed text-muted-foreground">
+				<h3 id="cookie-title" class="font-ui text-sm font-semibold tracking-wider">COOKIES & PRIVACY</h3>
+				<p id="cookie-description" class="font-body mt-2 text-xs leading-relaxed text-muted-foreground">
 					We use cookies to enhance your experience. By continuing to use this site, you agree to our 
 					<a href={localizeHref('/legal/privacy')} class="text-primary underline-offset-2 hover:underline">Privacy Policy</a> and 
 					<a href={localizeHref('/legal/cookies')} class="text-primary underline-offset-2 hover:underline">Cookie Policy</a>.
 				</p>
-				<div class="mt-3 flex items-center gap-2">
-					<Button size="sm" class="h-7 px-3 text-[10px]" onclick={dismiss}>
+				<div class="mt-4 flex items-center gap-2">
+					<Button size="sm" class="h-8 px-4 text-xs" onclick={dismiss}>
 						ACCEPT
 					</Button>
-					<Button variant="ghost" size="sm" class="h-7 px-3 text-[10px]" onclick={dismiss}>
+					<Button variant="ghost" size="sm" class="h-8 px-4 text-xs" onclick={dismiss}>
 						DISMISS
 					</Button>
 				</div>
@@ -71,7 +71,7 @@
 				class="flex h-6 w-6 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
 				aria-label="Close"
 			>
-				<X class="h-3.5 w-3.5" />
+				<X class="h-4 w-4" />
 			</button>
 		</div>
 	</div>
