@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
+	import { dev } from '$app/environment';
 	import * as m from '$lib/paraglide/messages';
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
@@ -8,6 +9,7 @@
 	import { onMount } from 'svelte';
 	import HeroSection from '$lib/components/layout/HeroSection.svelte';
 	import DescriptionSection from '$lib/components/layout/DescriptionSection.svelte';
+	import { pagefindStub } from '$lib/pagefind-stub';
 
 	// Pagefind types
 	interface PagefindResult {
@@ -47,6 +49,7 @@
 	let isSearching = $state(false);
 	let hasSearched = $state(false);
 	let pagefindLoaded = $state(false);
+	let isDevMode = $state(false);
 	let pagefind: Pagefind | null = $state(null);
 
 	const filters = [
@@ -126,17 +129,26 @@
 	}
 
 	onMount(async () => {
-		try {
-			// Use fetch to check if pagefind exists, then dynamically import
-			const res = await fetch('/pagefind/pagefind.js', { method: 'HEAD' });
-			if (res.ok) {
-				const pf = await import(/* @vite-ignore */ '/pagefind/pagefind.js');
-				await pf.init();
-				pagefind = pf;
-				pagefindLoaded = true;
+		// In development, use the stub; in production, load real Pagefind
+		if (dev) {
+			console.log('[Search] Using Pagefind development stub');
+			await pagefindStub.init();
+			pagefind = pagefindStub;
+			pagefindLoaded = true;
+			isDevMode = true;
+		} else {
+			try {
+				// Use fetch to check if pagefind exists, then dynamically import
+				const res = await fetch('/pagefind/pagefind.js', { method: 'HEAD' });
+				if (res.ok) {
+					const pf = await import(/* @vite-ignore */ '/pagefind/pagefind.js');
+					await pf.init();
+					pagefind = pf;
+					pagefindLoaded = true;
+				}
+			} catch {
+				pagefindLoaded = false;
 			}
-		} catch {
-			pagefindLoaded = false;
 		}
 		
 		const urlQuery = page.url.searchParams.get('q');
@@ -221,7 +233,11 @@
 				{/each}
 			</div>
 
-			{#if !pagefindLoaded && hasSearched}
+			{#if isDevMode}
+				<p class="font-mono mt-4 text-[10px] tracking-wider text-amber-500">
+					[DEV MODE] Using mock search results. Build for production search.
+				</p>
+			{:else if !pagefindLoaded && hasSearched}
 				<p class="font-mono mt-4 text-[10px] tracking-wider text-amber-500">
 					Search index not available. Run `pnpm build` to generate the search index.
 				</p>

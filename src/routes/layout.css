@@ -457,7 +457,7 @@
 /* === HEADINGS === */
 .prose-custom h1 {
 	font-family: var(--font-display);
-	font-size: 2.25rem;
+	font-size: 2rem;
 	font-weight: 900;
 	text-transform: uppercase;
 	letter-spacing: 0.02em;
@@ -465,45 +465,71 @@
 	margin-top: 3rem;
 	margin-bottom: 1.5rem;
 	line-height: 1.1;
+	position: relative;
+	padding-left: 1rem;
+	border-left: 3px solid var(--primary);
 }
 
 .prose-custom h2 {
 	font-family: var(--font-ui);
-	font-size: 1.375rem;
+	font-size: 1.25rem;
 	font-weight: 700;
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 	color: var(--foreground);
 	margin-top: 2.5rem;
 	margin-bottom: 1rem;
-	padding-bottom: 0.5rem;
+	padding-bottom: 0.75rem;
 	border-bottom: 1px solid var(--border);
+	position: relative;
+}
+
+.prose-custom h2::before {
+	content: "//";
+	font-family: var(--font-mono);
+	font-size: 0.75rem;
+	color: var(--primary);
+	margin-right: 0.5rem;
+	opacity: 0.8;
 }
 
 .prose-custom h3 {
 	font-family: var(--font-ui);
-	font-size: 1.125rem;
+	font-size: 1rem;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: 0.03em;
 	color: var(--foreground);
 	margin-top: 2rem;
 	margin-bottom: 0.75rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.prose-custom h3::before {
+	content: "";
+	width: 8px;
+	height: 8px;
+	background: var(--primary);
+	flex-shrink: 0;
 }
 
 .prose-custom h4 {
 	font-family: var(--font-ui);
-	font-size: 1rem;
+	font-size: 0.9375rem;
 	font-weight: 600;
 	color: var(--foreground);
 	margin-top: 1.5rem;
 	margin-bottom: 0.5rem;
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
 }
 
 .prose-custom h5,
 .prose-custom h6 {
-	font-family: var(--font-ui);
-	font-size: 0.875rem;
+	font-family: var(--font-mono);
+	font-size: 0.8125rem;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
