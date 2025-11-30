@@ -2,8 +2,8 @@
 	import * as m from '$lib/paraglide/messages';
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
-	import Button from '$lib/components/ui/button/button.svelte';
-	import { ArrowLeft, MapPin, Briefcase, ArrowRight, Mail } from '@lucide/svelte';
+	import BackLinkSection from '$lib/components/layout/BackLinkSection.svelte';
+	import { ArrowLeft, ArrowRight, MapPin, Briefcase, Mail } from '@lucide/svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -90,38 +90,28 @@
 			<div class="max-w-3xl">
 				{@html position.content}
 			</div>
-			
-			<!-- Apply CTA -->
-			<div class="mt-12 border-t border-border pt-8">
-				<h3 class="font-display text-xl font-bold uppercase">READY TO APPLY?</h3>
-				<p class="font-body mt-3 text-muted-foreground">
-					Send your resume, portfolio, and a brief note about why you'd be a great fit to careers@mostlywhat.systems
-				</p>
-				<div class="mt-6">
-					<Button 
-						href="mailto:careers@mostlywhat.systems?subject=Application%3A%20{encodeURIComponent(position.title)}" 
-						size="lg" 
-						class="font-ui tracking-wider"
-					>
-						<Mail class="mr-2 h-4 w-4" />
-						APPLY NOW
-						<ArrowRight class="ml-2 h-4 w-4" />
-					</Button>
-				</div>
-			</div>
 		</article>
 	</div>
 </section>
 
-<!-- Other Positions -->
+<!-- Apply CTA Section - Full width grid -->
 <section class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
-		<a href={localizeHref('/careers')} class="col-span-12 flex items-center justify-between bg-card px-6 py-8 transition-colors hover:bg-background md:px-12 lg:px-16">
-			<div>
-				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">EXPLORE MORE</span>
-				<h3 class="font-ui mt-2 text-sm font-semibold tracking-wider">VIEW ALL OPEN POSITIONS</h3>
-			</div>
-			<ArrowRight class="h-5 w-5 text-muted-foreground" />
+		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:col-span-8 md:px-12 lg:px-16">
+			<h2 class="font-display text-2xl font-bold uppercase md:text-3xl">READY TO APPLY?</h2>
+			<p class="font-body mt-4 text-muted-foreground">
+				Send your resume, portfolio, and a brief note about why you'd be a great fit.
+			</p>
+		</div>
+		<a 
+			href="mailto:careers@mostlywhat.systems?subject=Application%3A%20{encodeURIComponent(position.title)}"
+			class="col-span-12 flex items-center justify-center gap-3 bg-card px-6 py-12 transition-colors hover:bg-background hover:text-primary md:col-span-4 md:px-12 lg:px-16"
+		>
+			<span class="font-ui text-sm tracking-widest">APPLY NOW</span>
+			<ArrowRight class="h-4 w-4" />
 		</a>
 	</div>
 </section>
+
+<!-- Other Positions -->
+<BackLinkSection text="VIEW ALL POSITIONS" href="/careers" />

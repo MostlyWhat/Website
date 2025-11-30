@@ -3,7 +3,7 @@ import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request }) => {
     try {
-        const body = await request.json();
+        const body = await request.json() as { name?: string; email?: string; company?: string; message?: string; topic?: string };
         const { name, email, company, message } = body;
 
         // Validate required fields

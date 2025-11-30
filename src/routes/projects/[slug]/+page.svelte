@@ -2,7 +2,8 @@
 	import * as m from '$lib/paraglide/messages';
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
-	import { ArrowLeft, ArrowRight } from '@lucide/svelte';
+	import WideNavSection from '$lib/components/layout/WideNavSection.svelte';
+	import { ArrowLeft } from '@lucide/svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -85,20 +86,11 @@
 	</div>
 </section>
 
-<!-- More Projects CTA - 75/25 ratio -->
-<section class="border-b border-border">
-	<div class="grid grid-cols-12 gap-px bg-border">
-		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-8 md:px-12 lg:col-span-9 lg:px-16">
-			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">MORE WORK</span>
-			<h2 class="font-display mt-2 text-xl font-bold uppercase md:text-2xl">EXPLORE MORE PROJECTS</h2>
-			<p class="font-body mt-2 text-sm text-muted-foreground">Check out our other case studies and work samples.</p>
-		</div>
-		<a 
-			href={localizeHref('/projects')}
-			class="col-span-12 flex items-center justify-center gap-2 bg-card px-6 py-8 transition-colors hover:bg-primary hover:text-primary-foreground md:px-12 lg:col-span-3 lg:px-16"
-		>
-			<span class="font-ui text-xs tracking-wider">VIEW ALL</span>
-			<ArrowRight class="h-4 w-4" />
-		</a>
-	</div>
-</section>
+<!-- More Projects CTA -->
+<WideNavSection
+	label="MORE WORK"
+	title="EXPLORE MORE PROJECTS"
+	description="Check out our other case studies and work samples."
+	buttonText="VIEW ALL PROJECTS"
+	buttonHref="/projects"
+/>

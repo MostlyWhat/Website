@@ -4,8 +4,10 @@
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import VideoBackground from '$lib/components/layout/VideoBackground.svelte';
 	import { GlitchText } from '$lib/components/ui/glitch-text';
+	import SectionHeader from '$lib/components/layout/SectionHeader.svelte';
+	import LinkCTASection from '$lib/components/layout/LinkCTASection.svelte';
 	import { MARATHON_VIDEO } from '$lib/constants';
-	import { CheckCircle, AlertTriangle, XCircle, Clock, ArrowUpRight } from '@lucide/svelte';
+	import { CheckCircle, AlertTriangle, XCircle, Clock } from '@lucide/svelte';
 
 	// Service status types
 	type ServiceStatus = 'operational' | 'degraded' | 'outage' | 'maintenance';
@@ -181,20 +183,9 @@
 </section>
 
 <!-- Subscribe Section -->
-<section class="border-b border-border">
-	<div class="grid grid-cols-12 gap-px bg-border">
-		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:col-span-8 md:px-12 lg:px-16">
-			<h2 class="font-display text-2xl font-bold uppercase md:text-3xl">STAY INFORMED</h2>
-			<p class="font-body mt-4 text-muted-foreground">
-				Subscribe to receive notifications about system status updates and scheduled maintenance.
-			</p>
-		</div>
-		<a 
-			href="mailto:status@mostlywhat.systems?subject=Status%20Updates%20Subscription"
-			class="col-span-12 flex items-center justify-center gap-3 bg-card px-6 py-12 transition-colors hover:bg-primary hover:text-primary-foreground md:col-span-4 md:px-12 lg:px-16"
-		>
-			<span class="font-ui text-sm tracking-widest">SUBSCRIBE</span>
-			<ArrowUpRight class="h-4 w-4" />
-		</a>
-	</div>
-</section>
+<LinkCTASection
+	title="STAY INFORMED"
+	description="Subscribe to receive notifications about system status updates and scheduled maintenance."
+	buttonText="SUBSCRIBE"
+	buttonHref="mailto:status@mostlywhat.systems?subject=Status%20Updates%20Subscription"
+/>

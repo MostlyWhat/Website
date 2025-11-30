@@ -5,8 +5,10 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import VideoBackground from '$lib/components/layout/VideoBackground.svelte';
 	import { GlitchText } from '$lib/components/ui/glitch-text';
+	import SectionHeader from '$lib/components/layout/SectionHeader.svelte';
+	import LinkCTASection from '$lib/components/layout/LinkCTASection.svelte';
 	import { MARATHON_VIDEO } from '$lib/constants';
-	import { ArrowRight, MapPin, Clock, Briefcase, Users, ArrowUpRight } from '@lucide/svelte';
+	import { ArrowRight, MapPin, Clock, Briefcase, Users } from '@lucide/svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -36,7 +38,7 @@
 	<!-- Video Background -->
 	<VideoBackground 
 		src={MARATHON_VIDEO}
-		class="brightness-[0.20]"
+		class="brightness-[0.80]"
 	/>
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
@@ -141,20 +143,9 @@
 </section>
 
 <!-- No Position CTA -->
-<section class="border-b border-border">
-	<div class="grid grid-cols-12 gap-px bg-border">
-		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:col-span-8 md:px-12 lg:px-16">
-			<h2 class="font-display text-2xl font-bold uppercase md:text-3xl">DON'T SEE YOUR ROLE?</h2>
-			<p class="font-body mt-4 text-muted-foreground">
-				We're always looking for talented people. Send us your resume and we'll keep you in mind for future opportunities.
-			</p>
-		</div>
-		<a 
-			href="mailto:careers@mostlywhat.systems"
-			class="col-span-12 flex items-center justify-center gap-3 bg-card px-6 py-12 transition-colors hover:bg-primary hover:text-primary-foreground md:col-span-4 md:px-12 lg:px-16"
-		>
-			<span class="font-ui text-sm tracking-widest">GET IN TOUCH</span>
-			<ArrowUpRight class="h-4 w-4" />
-		</a>
-	</div>
-</section>
+<LinkCTASection
+	title="DON'T SEE YOUR ROLE?"
+	description="We're always looking for talented people. Send us your resume and we'll keep you in mind for future opportunities."
+	buttonText="GET IN TOUCH"
+	buttonHref="mailto:careers@mostlywhat.systems"
+/>
