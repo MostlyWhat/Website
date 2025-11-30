@@ -321,16 +321,16 @@
 	<div class="grid grid-cols-12 gap-px bg-border">
 		<!-- Left: Title -->
 		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:px-12 lg:col-span-6 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
-			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">QUICK ANSWERS</span>
-			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl lg:text-5xl">COMMON QUESTIONS</h2>
-			<p class="font-body mt-4 text-muted-foreground">Common questions about our support process.</p>
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// FAQ.SUPPORT</span>
+			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">COMMON QUESTIONS</h2>
+			<p class="font-body mt-4 text-sm text-muted-foreground">Common questions about our support process.</p>
 		</div>
 		<!-- Right: Accordion -->
-		<div class="col-span-12 bg-card lg:col-span-6">
-			<Accordion.Root type="single" class="w-full">
+		<div class="col-span-12 bg-background lg:col-span-6">
+			<Accordion.Root type="single" class="w-full divide-y divide-border border-t border-border lg:border-t-0">
 				{#each faq as { q, a }, i (i)}
-					<Accordion.Item value="item-{i}" class="bg-card">
-						<Accordion.Trigger class="font-ui text-xs">{q}</Accordion.Trigger>
+					<Accordion.Item value="item-{i}">
+						<Accordion.Trigger>{q}</Accordion.Trigger>
 						<Accordion.Content>
 							<p class="font-body max-w-xl text-sm leading-relaxed text-muted-foreground">{a}</p>
 						</Accordion.Content>

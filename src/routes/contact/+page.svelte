@@ -359,21 +359,21 @@
 	<div class="grid grid-cols-12 gap-px bg-border">
 		<!-- Left: Title -->
 		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:px-12 lg:col-span-6 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
-			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">02 — FAQ</span>
-			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl lg:text-5xl">COMMON QUESTIONS</h2>
-			<p class="font-body mt-4 text-muted-foreground">Find answers to frequently asked questions about working with us.</p>
-			<a href={localizeHref('/support')} class="font-mono mt-6 flex items-center gap-2 text-xs tracking-wider text-primary hover:underline">
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// 02 — FAQ</span>
+			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">COMMON QUESTIONS</h2>
+			<p class="font-body mt-4 text-sm text-muted-foreground">Find answers to frequently asked questions about working with us.</p>
+			<a href={localizeHref('/support')} class="font-ui mt-6 flex items-center gap-2 text-xs tracking-wider text-primary hover:underline">
 				<HelpCircle class="h-4 w-4" />
 				BROWSE SUPPORT CENTER
 				<ArrowRight class="h-3 w-3" />
 			</a>
 		</div>
 		<!-- Right: Accordion -->
-		<div class="col-span-12 bg-card lg:col-span-6">
-			<Accordion.Root type="single" class="w-full">
+		<div class="col-span-12 bg-background lg:col-span-6">
+			<Accordion.Root type="single" class="w-full divide-y divide-border border-t border-border lg:border-t-0">
 				{#each faqs as { id, q, a } (id)}
-					<Accordion.Item value={id} class="bg-card">
-						<Accordion.Trigger class="font-ui text-xs">{q}</Accordion.Trigger>
+					<Accordion.Item value={id}>
+						<Accordion.Trigger>{q}</Accordion.Trigger>
 						<Accordion.Content>
 							<p class="font-body max-w-xl text-sm leading-relaxed text-muted-foreground">{a}</p>
 						</Accordion.Content>

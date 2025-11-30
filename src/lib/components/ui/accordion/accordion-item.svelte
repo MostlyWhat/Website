@@ -12,6 +12,6 @@
 <AccordionPrimitive.Item
 	bind:ref
 	data-slot="accordion-item"
-	class={cn("border-b border-border", className)}
+	class={cn("", className)}
 	{...restProps}
 />

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Accordion as AccordionPrimitive } from "bits-ui";
-	import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
+	import { Plus, Minus } from "@lucide/svelte";
 	import { cn, type WithoutChild } from "$lib/utils.js";
 
 	let {
@@ -19,14 +19,17 @@
 		data-slot="accordion-trigger"
 		bind:ref
 		class={cn(
-			"focus-visible:border-ring focus-visible:ring-ring/50 flex flex-1 items-center justify-between gap-4 px-6 py-5 text-start text-sm font-semibold uppercase tracking-wider outline-none transition-all hover:bg-card focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 md:px-12 lg:px-16 [&[data-state=open]>svg]:rotate-180",
+			"group focus-visible:ring-ring/50 flex w-full items-center justify-between gap-4 px-6 py-5 text-left outline-none transition-all hover:bg-card focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 md:px-12 lg:px-16 [&[data-state=open]]:border-primary [&[data-state=open]]:bg-card",
 			className
 		)}
 		{...restProps}
 	>
-		{@render children?.()}
-		<ChevronDownIcon
-			class="text-muted-foreground pointer-events-none size-4 shrink-0 transition-transform duration-200"
-		/>
+		<span class="font-ui text-sm font-semibold uppercase tracking-wider">
+			{@render children?.()}
+		</span>
+		<div class="flex h-8 w-8 shrink-0 items-center justify-center border border-border bg-card transition-all group-hover:border-primary group-[[data-state=open]]:border-primary group-[[data-state=open]]:bg-primary">
+			<Plus class="h-4 w-4 text-muted-foreground transition-transform group-[[data-state=open]]:hidden group-hover:text-primary" />
+			<Minus class="hidden h-4 w-4 text-primary-foreground group-[[data-state=open]]:block" />
+		</div>
 	</AccordionPrimitive.Trigger>
 </AccordionPrimitive.Header>
