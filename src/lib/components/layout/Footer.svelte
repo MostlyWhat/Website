@@ -132,14 +132,12 @@
 				© 2018—{currentYear} MOSTLYWHAT SYSTEMS. {m.footer_rights().toUpperCase()}
 			</p>
 		</div>
-		<div class="col-span-12 flex items-center justify-center bg-card px-6 py-4 lg:col-span-3">
-			<a
-				href={localizeHref('/contact')}
-				class="font-ui flex items-center gap-2 text-xs tracking-widest text-primary transition-colors hover:text-primary/80"
-			>
-				START A PROJECT
-				<ArrowUpRight class="h-3.5 w-3.5" />
-			</a>
-		</div>
+		<a
+			href={localizeHref('/contact')}
+			class="col-span-12 flex items-center justify-center gap-3 bg-primary px-6 py-4 transition-colors hover:bg-primary/90 lg:col-span-3"
+		>
+			<span class="font-ui text-xs tracking-widest text-primary-foreground">START A PROJECT</span>
+			<ArrowUpRight class="h-4 w-4 text-primary-foreground" />
+		</a>
 	</div>
 </footer>

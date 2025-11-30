@@ -2,8 +2,6 @@
 	import * as m from '$lib/paraglide/messages';
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
-	import Button from '$lib/components/ui/button/button.svelte';
-	import CTASection from '$lib/components/layout/CTASection.svelte';
 	import { ArrowLeft, ArrowRight } from '@lucide/svelte';
 	import type { PageData } from './$types';
 
@@ -53,26 +51,28 @@
 	<div class="grid grid-cols-12">
 		<!-- Sticky Sidebar - Left -->
 		<div class="col-span-12 border-b border-border bg-card lg:col-span-3 lg:border-b-0 lg:border-r lg:border-border">
-			<div class="sticky top-24 px-6 py-8 md:px-12 lg:px-16 lg:py-12">
-				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTENTS</span>
-				<nav class="mt-4 flex flex-col gap-3">
-					{#each project.sections as section, i (section.id)}
-						<a 
-							href="#{section.id}" 
-							class="font-ui group flex items-start gap-3 text-xs tracking-wider text-muted-foreground transition-colors hover:text-primary"
-						>
-							<span class="font-mono text-[10px] text-primary/50 group-hover:text-primary">{String(i + 1).padStart(2, '0')}</span>
-							<span class="border-b border-transparent group-hover:border-primary">{section.title}</span>
-						</a>
-					{/each}
-				</nav>
-			</div>
-			<!-- Back link as full-width grid row -->
-			<div class="border-t border-border">
-				<a href={localizeHref('/projects')} class="font-ui flex items-center gap-2 px-6 py-4 text-xs tracking-wider text-muted-foreground hover:bg-card hover:text-primary md:px-12 lg:px-16">
-					<ArrowLeft class="h-3 w-3" />
-					BACK TO PROJECTS
-				</a>
+			<div class="flex h-full flex-col">
+				<div class="flex-1 px-6 py-8 md:px-12 lg:px-16 lg:py-12">
+					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTENTS</span>
+					<nav class="mt-4 flex flex-col gap-3">
+						{#each project.sections as section, i (section.id)}
+							<a 
+								href="#{section.id}" 
+								class="font-ui group flex items-start gap-3 text-xs tracking-wider text-muted-foreground transition-colors hover:text-primary"
+							>
+								<span class="font-mono text-[10px] text-primary/50 group-hover:text-primary">{String(i + 1).padStart(2, '0')}</span>
+								<span class="border-b border-transparent group-hover:border-primary">{section.title}</span>
+							</a>
+						{/each}
+					</nav>
+				</div>
+				<!-- Back link sticky at bottom of column -->
+				<div class="sticky bottom-0 border-t border-border bg-card">
+					<a href={localizeHref('/projects')} class="font-ui flex items-center gap-2 px-6 py-4 text-xs tracking-wider text-muted-foreground hover:bg-background hover:text-primary md:px-12 lg:px-16">
+						<ArrowLeft class="h-3 w-3" />
+						BACK TO PROJECTS
+					</a>
+				</div>
 			</div>
 		</div>
 
@@ -85,12 +85,20 @@
 	</div>
 </section>
 
-<!-- More Projects CTA -->
-<CTASection
-	variant="compact"
-	label="MORE WORK"
-	title="EXPLORE MORE PROJECTS"
-	description="Check out our other case studies and work samples."
-	buttonText="VIEW ALL PROJECTS"
-	buttonHref="/projects"
-/>
+<!-- More Projects CTA - 75/25 ratio -->
+<section class="border-b border-border">
+	<div class="grid grid-cols-12 gap-px bg-border">
+		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-8 md:px-12 lg:col-span-9 lg:px-16">
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">MORE WORK</span>
+			<h2 class="font-display mt-2 text-xl font-bold uppercase md:text-2xl">EXPLORE MORE PROJECTS</h2>
+			<p class="font-body mt-2 text-sm text-muted-foreground">Check out our other case studies and work samples.</p>
+		</div>
+		<a 
+			href={localizeHref('/projects')}
+			class="col-span-12 flex items-center justify-center gap-2 bg-card px-6 py-8 transition-colors hover:bg-primary hover:text-primary-foreground md:px-12 lg:col-span-3 lg:px-16"
+		>
+			<span class="font-ui text-xs tracking-wider">VIEW ALL</span>
+			<ArrowRight class="h-4 w-4" />
+		</a>
+	</div>
+</section>

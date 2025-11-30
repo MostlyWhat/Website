@@ -7,6 +7,7 @@
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { Label } from '$lib/components/ui/label';
 	import CTASection from '$lib/components/layout/CTASection.svelte';
+	import VideoBackground from '$lib/components/layout/VideoBackground.svelte';
 	import GlitchText from '$lib/components/ui/glitch-text/GlitchText.svelte';
 	import { 
 		Send, CheckCircle, MessageSquare, FileText, HelpCircle, Headphones,
@@ -142,34 +143,37 @@
 
 <!-- Hero Section -->
 <section class="relative flex h-dvh flex-col border-b border-border">
-	<!-- Image Background -->
+	<!-- Video Background -->
+	<VideoBackground 
+		src="https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-circuit-board-29766-large.mp4"
+		class="brightness-[0.15]"
+	/>
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-		<img 
-			src="https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=2074&auto=format&fit=crop" 
-			alt="" 
-			class="h-full w-full object-cover brightness-[0.15]"
-		/>
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
 	</div>
 
-	<!-- Hero Content -->
-	<div class="flex flex-1 flex-col justify-end px-6 pb-8 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
-		<div class="mb-8 max-w-3xl">
+	<!-- Hero Content - Right-aligned, Bottom-positioned -->
+	<div class="flex flex-1 flex-col items-end justify-end px-6 pb-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
+		<div class="mb-12 max-w-4xl text-right">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTACT</span>
-			<h1 class="font-display mt-4 text-4xl font-black uppercase leading-[0.9] tracking-tight md:text-6xl lg:text-7xl">
-				<GlitchText text={m.contact_title()} scrambledStart={true} class="font-display text-4xl font-black uppercase leading-[0.9] tracking-tight md:text-6xl lg:text-7xl" />
+			<h1 class="font-display mt-4 text-4xl font-black uppercase leading-[0.9] tracking-tight md:text-6xl lg:text-7xl xl:text-8xl">
+				<GlitchText text={m.contact_title()} scrambledStart={true} class="font-display text-4xl font-black uppercase leading-[0.9] tracking-tight md:text-6xl lg:text-7xl xl:text-8xl" />
 			</h1>
-			<p class="font-body mt-4 max-w-xl text-base text-muted-foreground">{m.contact_subtitle()}</p>
 		</div>
 	</div>
+</section>
 
-	<!-- Contact Options Grid -->
-	<div class="grid grid-cols-12 gap-px border-t border-border bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
+<!-- Description + Contact Options -->
+<section class="border-b border-border bg-background">
+	<div class="grid grid-cols-12 gap-px bg-border">
+		<div class="col-span-12 bg-background px-6 py-12 md:col-span-4 md:px-12 lg:px-16">
+			<p class="font-body max-w-xl text-lg text-muted-foreground md:text-xl">{m.contact_subtitle()}</p>
+		</div>
 		{#each contactOptions as { id, icon: Icon, title, desc, action, href } (id)}
 			{#if href}
 				<a
 					href={localizeHref(href)}
-					class="group col-span-6 flex flex-col bg-background px-6 py-6 transition-colors hover:bg-card md:px-12 lg:col-span-3 lg:px-16"
+					class="group col-span-6 flex flex-col bg-background px-6 py-6 transition-colors hover:bg-card md:col-span-2 md:px-6"
 				>
 					<div class="flex h-10 w-10 items-center justify-center border border-border bg-card">
 						<Icon class="h-4 w-4 text-primary" />
@@ -185,7 +189,7 @@
 				<button
 					type="button"
 					onclick={() => selectTopic(id)}
-					class="group col-span-6 flex flex-col bg-background px-6 py-6 text-left transition-colors hover:bg-card md:px-12 lg:col-span-3 lg:px-16 {selectedTopic === id ? 'bg-primary/10 ring-1 ring-inset ring-primary' : ''}"
+					class="group col-span-6 flex flex-col bg-background px-6 py-6 text-left transition-colors hover:bg-card md:col-span-2 md:px-6 {selectedTopic === id ? 'bg-primary/10 ring-1 ring-inset ring-primary' : ''}"
 				>
 					<div class="flex h-10 w-10 items-center justify-center border border-border bg-card">
 						<Icon class="h-4 w-4 text-primary" />

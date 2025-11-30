@@ -3,6 +3,7 @@
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import VideoBackground from '$lib/components/layout/VideoBackground.svelte';
 	import CTASection from '$lib/components/layout/CTASection.svelte';
 	import { 
 		ArrowRight, ArrowLeft, Rocket, Code,  
@@ -93,42 +94,47 @@
 
 <!-- Hero Section -->
 <section class="relative flex h-dvh flex-col border-b border-border">
-	<!-- Image Background -->
+	<!-- Video Background -->
+	<VideoBackground 
+		src="https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-circuit-board-29766-large.mp4"
+		class="brightness-[0.15]"
+	/>
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-		<img 
-			src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=2070&auto=format&fit=crop" 
-			alt="" 
-			class="h-full w-full object-cover brightness-[0.15]"
-		/>
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
 	</div>
 
-	<!-- Hero Content -->
-	<div class="flex flex-1 flex-col justify-end px-6 pb-8 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
-		<div class="mb-8 max-w-3xl">
+	<!-- Hero Content - Right-aligned, Bottom-positioned -->
+	<div class="flex flex-1 flex-col items-end justify-end px-6 pb-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
+		<div class="mb-12 max-w-4xl text-right">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">KNOWLEDGE BASE</span>
-			<h1 class="font-display mt-4 text-4xl font-black uppercase leading-[0.9] tracking-tight md:text-6xl lg:text-7xl">
+			<h1 class="font-display mt-4 text-4xl font-black uppercase leading-[0.9] tracking-tight md:text-6xl lg:text-7xl xl:text-8xl">
 				HOW CAN WE<br />HELP YOU?
 			</h1>
-			<p class="font-body mt-4 max-w-xl text-base text-muted-foreground">
+		</div>
+	</div>
+</section>
+
+<!-- Description Section -->
+<section class="border-b border-border bg-background">
+	<div class="grid grid-cols-12 gap-px bg-border">
+		<div class="col-span-12 bg-background px-6 py-12 md:col-span-6 md:px-12 lg:px-16">
+			<p class="font-body max-w-xl text-lg text-muted-foreground md:text-xl">
 				Select your situation below to find the most relevant information.
 			</p>
 		</div>
-	</div>
-
-	<!-- Stats Bar -->
-	<div class="grid grid-cols-12 gap-px border-t border-border bg-border">
-		<div class="col-span-4 bg-card/80 px-6 py-3 backdrop-blur-sm md:px-12 lg:px-16">
-			<span class="font-display text-lg font-bold text-primary">QUICK</span>
-			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">ANSWERS</p>
-		</div>
-		<div class="col-span-4 bg-card/80 px-6 py-3 backdrop-blur-sm md:px-12 lg:px-16">
-			<span class="font-display text-lg font-bold text-primary">4</span>
-			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">PATHS</p>
-		</div>
-		<div class="col-span-4 bg-card/80 px-6 py-3 backdrop-blur-sm md:px-12 lg:px-16">
-			<span class="font-display text-lg font-bold text-primary">24H</span>
-			<p class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">RESPONSE</p>
+		<div class="col-span-12 grid grid-cols-3 gap-px bg-border md:col-span-6">
+			<div class="bg-background px-6 py-6 md:px-8 lg:px-12">
+				<span class="font-display text-lg font-bold text-primary md:text-xl">QUICK</span>
+				<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">ANSWERS</p>
+			</div>
+			<div class="bg-background px-6 py-6 md:px-8 lg:px-12">
+				<span class="font-display text-lg font-bold text-primary md:text-xl">4</span>
+				<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">PATHS</p>
+			</div>
+			<div class="bg-background px-6 py-6 md:px-8 lg:px-12">
+				<span class="font-display text-lg font-bold text-primary md:text-xl">24H</span>
+				<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">RESPONSE</p>
+			</div>
 		</div>
 	</div>
 </section>
@@ -165,6 +171,37 @@
 		</div>
 	</section>
 
+	<!-- All Articles Section -->
+	<section class="border-b border-border">
+		<div class="grid grid-cols-12 gap-px bg-border">
+			<div class="col-span-12 flex items-center justify-between bg-card px-6 py-6 md:px-12 lg:px-16">
+				<div>
+					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">ALL DOCUMENTATION</span>
+					<p class="font-body mt-1 text-sm text-muted-foreground">Browse all available articles.</p>
+				</div>
+			</div>
+		</div>
+		<div class="grid grid-cols-12 gap-px bg-border">
+			{#each quickPaths as path (path.id)}
+				<div class="col-span-12 md:col-span-6 lg:col-span-3">
+					<div class="flex items-center gap-3 bg-background px-6 py-4 md:px-8">
+						<path.icon class="h-4 w-4 {path.color}" />
+						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">{path.title}</span>
+					</div>
+					{#each path.articles as article (article.href)}
+						<a
+							href={localizeHref(article.href)}
+							class="group flex items-center justify-between bg-card px-6 py-3 transition-colors hover:bg-background md:px-8"
+						>
+							<span class="font-ui text-xs tracking-wider text-muted-foreground group-hover:text-primary">{article.title}</span>
+							<span class="font-mono text-[10px] text-muted-foreground/50">{article.time}</span>
+						</a>
+					{/each}
+				</div>
+			{/each}
+		</div>
+	</section>
+
 	<!-- Quick Answers -->
 	<section class="border-b border-border">
 		<div class="grid grid-cols-12 gap-px bg-border">
@@ -197,7 +234,7 @@
 			</button>
 		</div>
 		<div class="grid grid-cols-12 gap-px bg-border">
-			<div class="col-span-12 bg-background px-6 py-8 md:px-12 lg:px-16">
+			<div class="col-span-12 bg-background px-6 py-6 md:px-12 lg:px-16">
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">STEP 2 OF 2</span>
 				<div class="mt-4 flex items-center gap-4">
 					<div class="flex h-14 w-14 items-center justify-center border border-primary bg-primary/10">
@@ -214,7 +251,7 @@
 			{#each selectedPathData.articles as article, i (article.href)}
 				<a
 					href={localizeHref(article.href)}
-					class="group col-span-12 flex items-center justify-between bg-background px-6 py-6 transition-colors hover:bg-card md:px-12 lg:px-16"
+					class="group col-span-12 flex items-center justify-between bg-background px-6 py-5 transition-colors hover:bg-card md:px-12 lg:px-16"
 				>
 					<div class="flex items-start gap-4">
 						<span class="font-mono text-lg font-bold text-primary/50 group-hover:text-primary">{String(i + 1).padStart(2, '0')}</span>

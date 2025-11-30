@@ -3,6 +3,7 @@
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import VideoBackground from '$lib/components/layout/VideoBackground.svelte';
 	import { ArrowRight, ArrowUpRight, Target, Lightbulb, Users, Rocket } from '@lucide/svelte';
 
 	const values = [
@@ -31,44 +32,49 @@
 
 <!-- Hero Section -->
 <section class="relative flex h-dvh flex-col border-b border-border">
-	<!-- Image Background -->
+	<!-- Video Background -->
+	<VideoBackground 
+		src="https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-circuit-board-29766-large.mp4"
+		class="brightness-[0.15]"
+	/>
 	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-		<img 
-			src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop" 
-			alt="" 
-			class="h-full w-full object-cover brightness-[0.15]"
-		/>
 		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
 	</div>
 
-	<!-- Hero Content -->
-	<div class="flex flex-1 flex-col justify-end px-6 pb-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
-		<div class="mb-12 max-w-4xl">
+	<!-- Hero Content - Right-aligned, Bottom-positioned -->
+	<div class="flex flex-1 flex-col items-end justify-end px-6 pb-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
+		<div class="mb-12 max-w-4xl text-right">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">ABOUT</span>
 			<h1 class="font-display mt-4 text-4xl font-black uppercase leading-[0.9] tracking-tight md:text-6xl lg:text-7xl xl:text-8xl">
 				{m.about_title()}
 			</h1>
-			<p class="font-body mt-6 max-w-xl text-base text-muted-foreground md:text-lg">{m.about_subtitle()}</p>
 		</div>
 	</div>
+</section>
 
-	<!-- Stats Bar -->
-	<div class="grid grid-cols-12 gap-px border-t border-border bg-border">
-		<div class="col-span-6 bg-background/80 px-6 py-4 backdrop-blur-sm md:col-span-3 md:px-12 lg:px-16">
-			<span class="font-display text-lg font-bold text-primary md:text-xl">2022</span>
-			<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">FOUNDED</p>
+<!-- Description Section -->
+<section class="border-b border-border bg-background">
+	<div class="grid grid-cols-12 gap-px bg-border">
+		<div class="col-span-12 bg-background px-6 py-12 md:col-span-6 md:px-12 lg:px-16">
+			<p class="font-body max-w-xl text-lg text-muted-foreground md:text-xl">{m.about_subtitle()}</p>
 		</div>
-		<div class="col-span-6 bg-background/80 px-6 py-4 backdrop-blur-sm md:col-span-3 md:px-12 lg:px-16">
-			<span class="font-display text-lg font-bold text-primary md:text-xl">WEB</span>
-			<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">FOCUS</p>
-		</div>
-		<div class="col-span-6 bg-background/80 px-6 py-4 backdrop-blur-sm md:col-span-3 md:px-12 lg:px-16">
-			<span class="font-display text-lg font-bold text-primary md:text-xl">50+</span>
-			<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">PROJECTS</p>
-		</div>
-		<div class="col-span-6 bg-background/80 px-6 py-4 backdrop-blur-sm md:col-span-3 md:px-12 lg:px-16">
-			<span class="font-display text-lg font-bold text-primary md:text-xl">SHIP</span>
-			<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">FAST</p>
+		<div class="col-span-12 grid grid-cols-2 gap-px bg-border md:col-span-6">
+			<div class="bg-background px-6 py-6 md:px-12 lg:px-16">
+				<span class="font-display text-lg font-bold text-primary md:text-xl">2022</span>
+				<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">FOUNDED</p>
+			</div>
+			<div class="bg-background px-6 py-6 md:px-12 lg:px-16">
+				<span class="font-display text-lg font-bold text-primary md:text-xl">WEB</span>
+				<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">FOCUS</p>
+			</div>
+			<div class="bg-background px-6 py-6 md:px-12 lg:px-16">
+				<span class="font-display text-lg font-bold text-primary md:text-xl">50+</span>
+				<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">PROJECTS</p>
+			</div>
+			<div class="bg-background px-6 py-6 md:px-12 lg:px-16">
+				<span class="font-display text-lg font-bold text-primary md:text-xl">SHIP</span>
+				<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">FAST</p>
+			</div>
 		</div>
 	</div>
 </section>
