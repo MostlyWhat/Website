@@ -259,8 +259,8 @@
 			<div class="mb-6">
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// START.EXPLORING</span>
 			</div>
-			<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
-				<a href={localizeHref('/support')} class="col-span-12 flex flex-col gap-2 bg-background p-6 transition-colors hover:bg-card sm:col-span-6 lg:col-span-4">
+			<div class="grid grid-cols-12 gap-4" use:scrollAnimate={{ animation: 'stagger' }}>
+				<a href={localizeHref('/support')} class="col-span-12 flex flex-col gap-2 border border-border bg-background p-6 transition-colors hover:border-primary hover:bg-card sm:col-span-6 lg:col-span-4">
 					<div class="flex h-10 w-10 items-center justify-center border border-border bg-card">
 						<HelpCircle class="h-5 w-5 text-primary" />
 					</div>
@@ -270,7 +270,7 @@
 						BROWSE <ArrowRight class="h-2.5 w-2.5" />
 					</span>
 				</a>
-				<a href={localizeHref('/projects')} class="col-span-12 flex flex-col gap-2 bg-background p-6 transition-colors hover:bg-card sm:col-span-6 lg:col-span-4">
+				<a href={localizeHref('/projects')} class="col-span-12 flex flex-col gap-2 border border-border bg-background p-6 transition-colors hover:border-primary hover:bg-card sm:col-span-6 lg:col-span-4">
 					<div class="flex h-10 w-10 items-center justify-center border border-border bg-card">
 						<Briefcase class="h-5 w-5 text-primary" />
 					</div>
@@ -280,7 +280,7 @@
 						VIEW <ArrowRight class="h-2.5 w-2.5" />
 					</span>
 				</a>
-				<a href={localizeHref('/blog')} class="col-span-12 flex flex-col gap-2 bg-background p-6 transition-colors hover:bg-card sm:col-span-6 lg:col-span-4">
+				<a href={localizeHref('/blog')} class="col-span-12 flex flex-col gap-2 border border-border bg-background p-6 transition-colors hover:border-primary hover:bg-card sm:col-span-6 lg:col-span-4">
 					<div class="flex h-10 w-10 items-center justify-center border border-border bg-card">
 						<BookOpen class="h-5 w-5 text-primary" />
 					</div>
@@ -296,28 +296,30 @@
 </section>
 
 <!-- Quick Links -->
-<section class="border-b border-border bg-card">
-	<div class="grid grid-cols-12 gap-px bg-border">
-		<div class="col-span-12 bg-card px-6 py-6 md:col-span-4 md:px-12 lg:px-16">
-			<a href={localizeHref('/support')} class="group flex items-center justify-between">
+<section class="border-b border-border">
+	<div class="grid grid-cols-12">
+		<div class="col-span-12 flex items-center px-6 py-8 md:col-span-3 md:border-r md:border-border md:px-12 lg:px-16">
+			<div>
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// QUICK.ACCESS</span>
+				<p class="font-body mt-2 text-xs text-muted-foreground">Use these shortcuts to quickly navigate to the most common destinations.</p>
+			</div>
+		</div>
+		<div class="col-span-12 grid grid-cols-3 gap-px bg-border md:col-span-9">
+			<a href={localizeHref('/support')} class="group flex items-center justify-between bg-background px-6 py-6 transition-colors hover:bg-card">
 				<div>
 					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">SUPPORT</span>
-					<p class="font-ui mt-1 text-xs tracking-wider group-hover:text-primary">Help Center & Documentation</p>
+					<p class="font-ui mt-1 text-xs tracking-wider group-hover:text-primary">Help Center & Docs</p>
 				</div>
 				<ArrowRight class="h-4 w-4 text-muted-foreground group-hover:text-primary" />
 			</a>
-		</div>
-		<div class="col-span-12 bg-card px-6 py-6 md:col-span-4 md:px-12 lg:px-16">
-			<a href={localizeHref('/projects')} class="group flex items-center justify-between">
+			<a href={localizeHref('/projects')} class="group flex items-center justify-between bg-background px-6 py-6 transition-colors hover:bg-card">
 				<div>
 					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">PROJECTS</span>
-					<p class="font-ui mt-1 text-xs tracking-wider group-hover:text-primary">Browse Our Portfolio</p>
+					<p class="font-ui mt-1 text-xs tracking-wider group-hover:text-primary">Browse Portfolio</p>
 				</div>
 				<ArrowRight class="h-4 w-4 text-muted-foreground group-hover:text-primary" />
 			</a>
-		</div>
-		<div class="col-span-12 bg-card px-6 py-6 md:col-span-4 md:px-12 lg:px-16">
-			<a href={localizeHref('/contact')} class="group flex items-center justify-between">
+			<a href={localizeHref('/contact')} class="group flex items-center justify-between bg-background px-6 py-6 transition-colors hover:bg-card">
 				<div>
 					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTACT</span>
 					<p class="font-ui mt-1 text-xs tracking-wider group-hover:text-primary">Get In Touch</p>

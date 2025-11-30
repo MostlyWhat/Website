@@ -178,7 +178,7 @@
 
 	<!-- Mobile Navigation - Full Screen Overlay -->
 	{#if mobileMenuOpen}
-		<nav class="fixed inset-0 top-0 z-40 flex flex-col bg-background/95 backdrop-blur-md lg:hidden">
+		<nav class="fixed inset-0 z-[60] flex flex-col bg-background/95 backdrop-blur-md lg:hidden">
 			<!-- Mobile Header Bar -->
 			<div class="flex h-16 items-center border-b border-border">
 				<a href={localizeHref('/')} class="flex items-center gap-3 px-6" onclick={closeMobileMenu}>
@@ -202,7 +202,6 @@
 					class="font-display flex items-center border-b border-border px-6 py-6 text-2xl font-bold uppercase tracking-wider transition-colors text-foreground hover:bg-card"
 					onclick={closeMobileMenu}
 				>
-					<Search class="mr-3 h-5 w-5 text-primary" />
 					SEARCH
 					<ChevronRight class="ml-auto h-5 w-5 text-muted-foreground" />
 				</a>
