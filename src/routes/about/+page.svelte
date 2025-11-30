@@ -3,9 +3,8 @@
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import VideoBackground from '$lib/components/layout/VideoBackground.svelte';
-	import { GlitchText } from '$lib/components/ui/glitch-text';
-	import { MARATHON_VIDEO } from '$lib/constants';
+	import HeroSection from '$lib/components/layout/HeroSection.svelte';
+	import DescriptionSection from '$lib/components/layout/DescriptionSection.svelte';
 	import { ArrowRight, ArrowUpRight, Target, Lightbulb, Users, Rocket } from '@lucide/svelte';
 
 	const values = [
@@ -35,54 +34,17 @@
 	<meta name="description" content={m.about_subtitle()} />
 </svelte:head>
 
-<!-- Hero Section -->
-<section class="relative flex h-[calc(100dvh-4rem)] flex-col border-b border-border">
-	<!-- Video Background -->
-	<VideoBackground 
-		src={MARATHON_VIDEO}
-		class="brightness-[0.80]"
-	/>
-	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
-	</div>
+<HeroSection label="ABOUT" title={m.about_title()} brightness="light" />
 
-	<!-- Hero Content - Left-aligned, Bottom-positioned -->
-	<div class="flex flex-1 flex-col items-start justify-end px-6 pb-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
-		<div class="mb-12 max-w-4xl text-left">
-			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">ABOUT</span>
-			<h1 class="font-display mt-4 text-4xl font-black uppercase leading-[0.9] tracking-tight md:text-6xl lg:text-7xl xl:text-8xl">
-				<GlitchText text={m.about_title()} scrambledStart={true} />
-			</h1>
-		</div>
-	</div>
-</section>
-
-<!-- Description Section -->
-<section class="border-b border-border bg-background">
-	<div class="grid grid-cols-12 gap-px bg-border">
-		<div class="col-span-12 bg-background px-6 py-12 md:col-span-6 md:px-12 lg:px-16">
-			<p class="font-body max-w-xl text-lg text-muted-foreground md:text-xl">{m.about_subtitle()}</p>
-		</div>
-		<div class="col-span-12 grid grid-cols-2 gap-px bg-border md:col-span-6">
-			<div class="bg-background px-6 py-6 md:px-12 lg:px-16">
-				<span class="font-display text-lg font-bold text-primary md:text-xl">2022</span>
-				<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">FOUNDED</p>
-			</div>
-			<div class="bg-background px-6 py-6 md:px-12 lg:px-16">
-				<span class="font-display text-lg font-bold text-primary md:text-xl">WEB</span>
-				<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">FOCUS</p>
-			</div>
-			<div class="bg-background px-6 py-6 md:px-12 lg:px-16">
-				<span class="font-display text-lg font-bold text-primary md:text-xl">50+</span>
-				<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">PROJECTS</p>
-			</div>
-			<div class="bg-background px-6 py-6 md:px-12 lg:px-16">
-				<span class="font-display text-lg font-bold text-primary md:text-xl">SHIP</span>
-				<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">FAST</p>
-			</div>
-		</div>
-	</div>
-</section>
+<DescriptionSection
+	description={m.about_subtitle()}
+	stats={[
+		{ value: '2022', label: 'FOUNDED' },
+		{ value: 'WEB', label: 'FOCUS' },
+		{ value: '50+', label: 'PROJECTS' },
+		{ value: 'SHIP', label: 'FAST' }
+	]}
+/>
 
 <!-- Story Section -->
 <section class="grid grid-cols-12 border-b border-border">

@@ -3,11 +3,9 @@
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import VideoBackground from '$lib/components/layout/VideoBackground.svelte';
-	import { GlitchText } from '$lib/components/ui/glitch-text';
+	import HeroSection from '$lib/components/layout/HeroSection.svelte';
 	import SectionHeader from '$lib/components/layout/SectionHeader.svelte';
 	import LinkCTASection from '$lib/components/layout/LinkCTASection.svelte';
-	import { MARATHON_VIDEO } from '$lib/constants';
 	import { ArrowRight, MapPin, Clock, Briefcase, Users } from '@lucide/svelte';
 	import type { PageData } from './$types';
 
@@ -33,27 +31,7 @@
 	<meta name="description" content="Join our team and help build the future of web development." />
 </svelte:head>
 
-<!-- Hero Section -->
-<section class="relative flex h-[calc(100dvh-4rem)] flex-col border-b border-border">
-	<!-- Video Background -->
-	<VideoBackground 
-		src={MARATHON_VIDEO}
-		class="brightness-[0.80]"
-	/>
-	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
-	</div>
-
-	<!-- Hero Content - Left-aligned, Bottom-positioned -->
-	<div class="flex flex-1 flex-col items-start justify-end px-6 pb-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
-		<div class="mb-12 max-w-4xl text-left">
-			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CAREERS</span>
-			<h1 class="font-display mt-4 text-4xl font-black uppercase leading-[0.9] tracking-tight md:text-6xl lg:text-7xl xl:text-8xl">
-				<GlitchText text="JOIN OUR TEAM" scrambledStart={true} />
-			</h1>
-		</div>
-	</div>
-</section>
+<HeroSection label="CAREERS" title="JOIN OUR TEAM" brightness="light" />
 
 <!-- Description Section -->
 <section class="border-b border-border bg-background">

@@ -3,10 +3,9 @@
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import VideoBackground from '$lib/components/layout/VideoBackground.svelte';
+	import HeroSection from '$lib/components/layout/HeroSection.svelte';
+	import DescriptionSection from '$lib/components/layout/DescriptionSection.svelte';
 	import CapabilitiesSection from '$lib/components/layout/CapabilitiesSection.svelte';
-	import { GlitchText } from '$lib/components/ui/glitch-text';
-	import { MARATHON_VIDEO } from '$lib/constants';
 	import { ArrowRight, ArrowUpRight, Mail, Zap, Shield, Users, Headphones, Code, Palette, BarChart3, Layers, Globe, type Icon } from '@lucide/svelte';
 
 	const services: { icon: typeof Icon; number: string; title: string; desc: string }[] = [
@@ -38,63 +37,27 @@
 	<meta name="description" content={m.site_description()} />
 </svelte:head>
 
-<!-- Hero Section - Full Viewport -->
-<section class="relative flex h-[calc(100dvh-4rem)] flex-col border-b border-border">
-	<!-- Video Background -->
-	<VideoBackground 
-		src={MARATHON_VIDEO}
-		class="brightness-[0.20]"
-	/>
-	<div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-		<div class="absolute inset-0 opacity-[0.08]" style="background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px;"></div>
-	</div>
+<HeroSection label="MOSTLYWHAT SYSTEMS" title={m.hero_title()}>
+	{#snippet actions()}
+		<Button href={localizeHref('/projects')} variant="outline" size="lg" class="font-ui tracking-wider">
+			VIEW WORK
+		</Button>
+		<Button href={localizeHref('/contact')} size="lg" class="font-ui tracking-wider">
+			START PROJECT
+			<ArrowRight class="ml-2 h-4 w-4" />
+		</Button>
+	{/snippet}
+</HeroSection>
 
-	<!-- Hero Content - Left-aligned, Bottom-positioned -->
-	<div class="flex flex-1 flex-col items-start justify-end px-6 pb-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade', startVisible: true }}>
-		<div class="mb-12 max-w-4xl text-left">
-			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">MOSTLYWHAT SYSTEMS</span>
-			<h1 class="font-display mt-4 text-4xl font-black uppercase leading-[0.9] tracking-tight md:text-6xl lg:text-7xl xl:text-8xl">
-				<GlitchText text={m.hero_title()} scrambledStart={true} />
-			</h1>
-			<div class="mt-8 flex flex-wrap justify-start gap-3">
-				<Button href={localizeHref('/projects')} variant="outline" size="lg" class="font-ui tracking-wider">
-					VIEW WORK
-				</Button>
-				<Button href={localizeHref('/contact')} size="lg" class="font-ui tracking-wider">
-					START PROJECT
-					<ArrowRight class="ml-2 h-4 w-4" />
-				</Button>
-			</div>
-		</div>
-	</div>
-</section>
-
-<!-- Description Section -->
-<section class="border-b border-border bg-background">
-	<div class="grid grid-cols-12 gap-px bg-border">
-		<div class="col-span-12 bg-background px-6 py-12 md:col-span-6 md:px-12 lg:px-16">
-			<p class="font-body max-w-xl text-lg text-muted-foreground md:text-xl">{m.hero_subtitle()}</p>
-		</div>
-		<div class="col-span-12 grid grid-cols-2 gap-px bg-border md:col-span-6">
-			<div class="bg-background px-6 py-6 md:px-12 lg:px-16">
-				<span class="font-display text-lg font-bold text-primary md:text-xl">~24H</span>
-				<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">RESPONSE TIME</p>
-			</div>
-			<div class="bg-background px-6 py-6 md:px-12 lg:px-16">
-				<span class="font-display text-lg font-bold text-primary md:text-xl">100%</span>
-				<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">SATISFACTION</p>
-			</div>
-			<div class="bg-background px-6 py-6 md:px-12 lg:px-16">
-				<span class="font-display text-lg font-bold text-primary md:text-xl">5+</span>
-				<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">YEARS EXP</p>
-			</div>
-			<div class="bg-background px-6 py-6 md:px-12 lg:px-16">
-				<span class="font-display text-lg font-bold text-primary md:text-xl">50+</span>
-				<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">PROJECTS</p>
-			</div>
-		</div>
-	</div>
-</section>
+<DescriptionSection
+	description={m.hero_subtitle()}
+	stats={[
+		{ value: '~24H', label: 'RESPONSE TIME' },
+		{ value: '100%', label: 'SATISFACTION' },
+		{ value: '5+', label: 'YEARS EXP' },
+		{ value: '50+', label: 'PROJECTS' }
+	]}
+/>
 
 <!-- Services Section - Full Viewport -->
 <section class="flex min-h-[80vh] flex-col border-b border-border">
