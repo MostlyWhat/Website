@@ -7,6 +7,7 @@
 	import { GlitchText } from '$lib/components/ui/glitch-text';
 	import { MARATHON_VIDEO } from '$lib/constants';
 	import { ArrowRight, ArrowUpRight, Compass, Palette, Layout, Code, Database, TrendingUp, Check } from '@lucide/svelte';
+	import DescriptionSection from '$lib/components/layout/DescriptionSection.svelte';
 
 	const services = [
 		{ icon: Compass, number: '01', title: 'PRODUCT STRATEGY', desc: 'Discovery, roadmapping, and measurable outcomes.', features: ['Product discovery', 'Competitive analysis', 'Roadmapping', 'KPIs'] },
@@ -51,28 +52,14 @@
 	</div>
 </section>
 
-<!-- Description Section -->
-<section class="border-b border-border bg-background">
-	<div class="grid grid-cols-12 gap-px bg-border">
-		<div class="col-span-12 bg-background px-6 py-12 md:col-span-6 md:px-12 lg:px-16">
-			<p class="font-body max-w-xl text-lg text-muted-foreground md:text-xl">{m.services_subtitle()}</p>
-		</div>
-		<div class="col-span-12 grid grid-cols-3 gap-px bg-border md:col-span-6">
-			<div class="bg-background px-6 py-6 md:px-8 lg:px-12">
-				<span class="font-display text-lg font-bold text-primary md:text-xl">6</span>
-				<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">SERVICES</p>
-			</div>
-			<div class="bg-background px-6 py-6 md:px-8 lg:px-12">
-				<span class="font-display text-lg font-bold text-primary md:text-xl">3</span>
-				<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">PACKAGES</p>
-			</div>
-			<div class="bg-background px-6 py-6 md:px-8 lg:px-12">
-				<span class="font-display text-lg font-bold text-primary md:text-xl">2-12W</span>
-				<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">DELIVERY</p>
-			</div>
-		</div>
-	</div>
-</section>
+<DescriptionSection 
+	description={m.services_subtitle()}
+	stats={[
+		{ value: '6', label: 'SERVICES' },
+		{ value: '3', label: 'PACKAGES' },
+		{ value: '2-12W', label: 'DELIVERY' }
+	]}
+/>
 
 <!-- Services Section -->
 <section class="flex min-h-[80vh] flex-col border-b border-border">
@@ -180,38 +167,31 @@
 </section>
 
 <!-- Why Choose Us -->
-<section class="grid min-h-[80vh] grid-cols-12 border-b border-border">
-	<!-- Left - Image -->
-	<div class="relative col-span-12 min-h-[50vh] overflow-hidden lg:col-span-6 lg:min-h-[80vh]">
-		<img 
-			src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop" 
-			alt="Team collaboration" 
-			class="absolute inset-0 h-full w-full object-cover brightness-[0.4]"
-		/>
-		<div class="absolute inset-0 flex flex-col justify-end px-6 pb-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
-			<span class="font-mono text-[10px] tracking-widest text-white/60">04 — WHY CHOOSE US</span>
-			<h2 class="font-display mt-6 max-w-lg text-4xl font-bold uppercase text-white md:text-5xl lg:text-6xl">BUILD WITH CONFIDENCE</h2>
+<section class="flex min-h-[60vh] flex-col border-b border-border">
+	<div class="px-6 py-12 md:px-12 md:py-16 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
+		<div class="max-w-2xl">
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">04 — WHY CHOOSE US</span>
+			<h2 class="font-display mt-6 text-4xl font-bold uppercase md:text-5xl lg:text-6xl">BUILD WITH CONFIDENCE</h2>
+			<p class="font-body mt-6 text-lg text-muted-foreground">We're committed to delivering exceptional results with transparency and reliability.</p>
 		</div>
 	</div>
-
-	<!-- Right - Benefits -->
-	<div class="col-span-12 grid grid-cols-2 gap-px bg-border lg:col-span-6" use:scrollAnimate={{ animation: 'stagger' }}>
-		<div class="flex flex-col bg-background px-6 py-10 md:px-12 lg:px-16">
+	<div class="flex-1 grid grid-cols-12 gap-px border-t border-border bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
+		<div class="col-span-6 flex flex-col bg-background px-6 py-10 md:col-span-3 md:px-12 lg:px-16">
 			<span class="font-display text-4xl font-black text-primary">~24H</span>
 			<h3 class="font-ui mt-4 text-base font-semibold uppercase tracking-wider">RESPONSE TIME</h3>
 			<p class="font-body mt-3 flex-1 text-sm text-muted-foreground">Fast communication and quick turnaround.</p>
 		</div>
-		<div class="flex flex-col bg-background px-6 py-10 md:px-12 lg:px-16">
+		<div class="col-span-6 flex flex-col bg-background px-6 py-10 md:col-span-3 md:px-12 lg:px-16">
 			<span class="font-display text-4xl font-black text-primary">100%</span>
 			<h3 class="font-ui mt-4 text-base font-semibold uppercase tracking-wider">SATISFACTION</h3>
 			<p class="font-body mt-3 flex-1 text-sm text-muted-foreground">We work until you're happy.</p>
 		</div>
-		<div class="flex flex-col bg-background px-6 py-10 md:px-12 lg:px-16">
+		<div class="col-span-6 flex flex-col bg-background px-6 py-10 md:col-span-3 md:px-12 lg:px-16">
 			<span class="font-display text-4xl font-black text-primary">5+</span>
 			<h3 class="font-ui mt-4 text-base font-semibold uppercase tracking-wider">YEARS</h3>
 			<p class="font-body mt-3 flex-1 text-sm text-muted-foreground">Modern web expertise.</p>
 		</div>
-		<div class="flex flex-col bg-background px-6 py-10 md:px-12 lg:px-16">
+		<div class="col-span-6 flex flex-col bg-background px-6 py-10 md:col-span-3 md:px-12 lg:px-16">
 			<span class="font-display text-4xl font-black text-primary">50+</span>
 			<h3 class="font-ui mt-4 text-base font-semibold uppercase tracking-wider">PROJECTS</h3>
 			<p class="font-body mt-3 flex-1 text-sm text-muted-foreground">Successful deliveries.</p>

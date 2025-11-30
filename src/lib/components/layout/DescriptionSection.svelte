@@ -34,7 +34,7 @@
 
 <section class="border-b border-border bg-background">
 	<div class="grid grid-cols-12 gap-px bg-border">
-		<div class="col-span-12 bg-background px-6 py-12 {leftCols} md:px-12 lg:px-16">
+		<div class="col-span-12 flex items-center bg-background px-6 py-12 {leftCols} md:px-12 lg:px-16">
 			<p class="font-body max-w-xl text-lg text-muted-foreground md:text-xl">{description}</p>
 		</div>
 		{#if children}
@@ -42,9 +42,9 @@
 				{@render children()}
 			</div>
 		{:else if stats.length > 0}
-			<div class="col-span-12 grid {statsCols} gap-px bg-border {rightCols}">
+			<div class="col-span-12 grid {statsCols} items-center gap-px bg-border {rightCols}">
 				{#each stats as { value, label } (label)}
-					<div class="flex flex-col justify-center bg-background px-6 py-6 md:px-8 lg:px-12">
+					<div class="flex h-full flex-col justify-center bg-background px-6 py-6 md:px-8 lg:px-12">
 						<span class="font-display text-lg font-bold text-primary md:text-xl">{value}</span>
 						<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
 					</div>

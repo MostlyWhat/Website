@@ -17,6 +17,7 @@
 	import { Spinner } from '$lib/components/ui/spinner';
 	import { Kbd } from '$lib/components/ui/kbd';
 	import CTASection from '$lib/components/layout/CTASection.svelte';
+	import DescriptionSection from '$lib/components/layout/DescriptionSection.svelte';
 	import { 
 		ArrowRight, Copy, Check, Palette, Type, Layout, Layers, Zap, Box, Grid3x3, 
 		Component, ChevronRight, Book, Paintbrush, Code2, MousePointer
@@ -111,31 +112,14 @@
 	</div>
 </section>
 
-<!-- Description Section -->
-<section class="border-b border-border bg-background">
-	<div class="grid grid-cols-12 gap-px bg-border">
-		<div class="col-span-12 bg-background px-6 py-12 md:col-span-6 md:px-12 lg:px-16">
-			<p class="font-body max-w-xl text-lg text-muted-foreground md:text-xl">
-				A comprehensive guide to our design language, grid system, components, and patterns. 
-				Everything you need to build consistent, beautiful interfaces.
-			</p>
-		</div>
-		<div class="col-span-12 grid grid-cols-3 gap-px bg-border md:col-span-6">
-			<div class="bg-background px-6 py-6 md:px-8 lg:px-12">
-				<span class="font-display text-lg font-bold text-primary md:text-xl">12</span>
-				<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">COLUMNS</p>
-			</div>
-			<div class="bg-background px-6 py-6 md:px-8 lg:px-12">
-				<span class="font-display text-lg font-bold text-primary md:text-xl">64PX</span>
-				<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">GRID SIZE</p>
-			</div>
-			<div class="bg-background px-6 py-6 md:px-8 lg:px-12">
-				<span class="font-display text-lg font-bold text-primary md:text-xl">4</span>
-				<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">FONTS</p>
-			</div>
-		</div>
-	</div>
-</section>
+<DescriptionSection 
+	description="A comprehensive guide to our design language, grid system, components, and patterns. Everything you need to build consistent, beautiful interfaces."
+	stats={[
+		{ value: '12', label: 'COLUMNS' },
+		{ value: '64PX', label: 'GRID SIZE' },
+		{ value: '4', label: 'FONTS' }
+	]}
+/>
 
 <!-- Main Documentation Content -->
 <section id="docs-content" class="border-b border-border">

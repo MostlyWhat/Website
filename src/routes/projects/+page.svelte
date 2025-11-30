@@ -4,6 +4,7 @@
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import VideoBackground from '$lib/components/layout/VideoBackground.svelte';
+	import DescriptionSection from '$lib/components/layout/DescriptionSection.svelte';
 	import CTASection from '$lib/components/layout/CTASection.svelte';
 	import { GlitchText } from '$lib/components/ui/glitch-text';
 	import { MARATHON_VIDEO } from '$lib/constants';
@@ -53,21 +54,10 @@
 </section>
 
 <!-- Description Section -->
-<section class="border-b border-border bg-background">
-	<div class="grid grid-cols-12 gap-px bg-border">
-		<div class="col-span-12 bg-background px-6 py-12 md:col-span-6 md:px-12 lg:px-16">
-			<p class="font-body max-w-xl text-lg text-muted-foreground md:text-xl">{m.projects_subtitle()}</p>
-		</div>
-		<div class="col-span-12 grid grid-cols-3 gap-px bg-border md:col-span-6">
-			{#each stats as { value, label } (label)}
-				<div class="bg-background px-6 py-6 md:px-8 lg:px-12">
-					<span class="font-display text-lg font-bold text-primary md:text-xl">{value}</span>
-					<p class="font-mono mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
-				</div>
-			{/each}
-		</div>
-	</div>
-</section>
+<DescriptionSection
+	description={m.projects_subtitle()}
+	{stats}
+/>
 
 <!-- Filter Bar -->
 <section class="border-b border-border">

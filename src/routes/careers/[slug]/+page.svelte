@@ -2,7 +2,7 @@
 	import * as m from '$lib/paraglide/messages';
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
-	import BackLinkSection from '$lib/components/layout/BackLinkSection.svelte';
+	import WideNavSection from '$lib/components/layout/WideNavSection.svelte';
 	import { ArrowLeft, ArrowRight, MapPin, Briefcase, Mail } from '@lucide/svelte';
 	import type { PageData } from './$types';
 
@@ -61,6 +61,25 @@
 		<!-- Sticky Sidebar - Left -->
 		<div class="col-span-12 border-b border-border bg-background lg:col-span-3 lg:border-b-0 lg:border-r lg:border-border">
 			<div class="lg:sticky lg:top-24">
+				<!-- Quick Info -->
+				<div class="border-b border-border px-6 py-8 md:px-12 lg:px-16 lg:py-12">
+					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">QUICK INFO</span>
+					<div class="mt-4 space-y-4">
+						<div>
+							<span class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">Department</span>
+							<p class="font-ui mt-1 text-sm font-semibold tracking-wider">{position.department}</p>
+						</div>
+						<div>
+							<span class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">Type</span>
+							<p class="font-ui mt-1 text-sm font-semibold tracking-wider">{position.type}</p>
+						</div>
+						<div>
+							<span class="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">Location</span>
+							<p class="font-ui mt-1 text-sm font-semibold tracking-wider">{position.location}</p>
+						</div>
+					</div>
+				</div>
+				<!-- On This Page -->
 				<div class="px-6 py-8 md:px-12 lg:px-16 lg:py-12" use:scrollAnimate={{ animation: 'fade' }}>
 					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">ON THIS PAGE</span>
 					<nav class="mt-4 flex flex-col gap-3">
@@ -86,32 +105,41 @@
 		</div>
 
 		<!-- Main Content - Right -->
-		<article class="col-span-12 bg-background px-6 py-12 md:px-12 lg:col-span-9 lg:px-16 lg:py-16" use:scrollAnimate={{ animation: 'fade' }}>
-			<div class="max-w-3xl">
-				{@html position.content}
-			</div>
-		</article>
-	</div>
-</section>
+		<div class="col-span-12 bg-background lg:col-span-9">
+			<article class="px-6 py-12 md:px-12 lg:px-16 lg:py-16" use:scrollAnimate={{ animation: 'fade' }}>
+				<div class="max-w-3xl">
+					{@html position.content}
+				</div>
+			</article>
 
-<!-- Apply CTA Section - Full width grid -->
-<section class="border-b border-border">
-	<div class="grid grid-cols-12 gap-px bg-border">
-		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:col-span-8 md:px-12 lg:px-16">
-			<h2 class="font-display text-2xl font-bold uppercase md:text-3xl">READY TO APPLY?</h2>
-			<p class="font-body mt-4 text-muted-foreground">
-				Send your resume, portfolio, and a brief note about why you'd be a great fit.
-			</p>
+			<!-- Apply Section - Under Article -->
+			<div class="border-t border-border bg-card px-6 py-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
+				<div class="max-w-3xl">
+					<h2 class="font-display text-2xl font-bold uppercase">HOW TO APPLY</h2>
+					<div class="font-body mt-4 space-y-3 text-sm text-muted-foreground">
+						<p><strong class="text-foreground">1.</strong> Send your resume and portfolio to <a href="mailto:careers@mostlywhat.systems" class="text-primary hover:underline">careers@mostlywhat.systems</a></p>
+						<p><strong class="text-foreground">2.</strong> Include a brief note about why you're interested in this role</p>
+						<p><strong class="text-foreground">3.</strong> We'll review your application and get back to you within 5 business days</p>
+					</div>
+					<a 
+						href="mailto:careers@mostlywhat.systems?subject=Application%3A%20{encodeURIComponent(position.title)}"
+						class="group mt-6 inline-flex items-center gap-2 border border-primary bg-primary px-6 py-3 text-primary-foreground transition-colors hover:bg-primary/90"
+					>
+						<Mail class="h-4 w-4" />
+						<span class="font-ui text-sm tracking-widest">APPLY NOW</span>
+						<ArrowRight class="h-4 w-4 transition-transform group-hover:translate-x-1" />
+					</a>
+				</div>
+			</div>
 		</div>
-		<a 
-			href="mailto:careers@mostlywhat.systems?subject=Application%3A%20{encodeURIComponent(position.title)}"
-			class="col-span-12 flex items-center justify-center gap-3 bg-card px-6 py-12 transition-colors hover:bg-background hover:text-primary md:col-span-4 md:px-12 lg:px-16"
-		>
-			<span class="font-ui text-sm tracking-widest">APPLY NOW</span>
-			<ArrowRight class="h-4 w-4" />
-		</a>
 	</div>
 </section>
 
 <!-- Other Positions -->
-<BackLinkSection text="VIEW ALL POSITIONS" href="/careers" />
+<WideNavSection
+	label="EXPLORE MORE"
+	title="VIEW ALL OPEN POSITIONS"
+	description="Check out other opportunities on our team."
+	buttonText="VIEW CAREERS"
+	buttonHref="/careers"
+/>

@@ -102,7 +102,7 @@
 <!-- Overall Status Banner -->
 <section class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
-		<div class="col-span-12 flex items-center gap-4 bg-background px-6 py-8 md:col-span-8 md:px-12 lg:px-16">
+		<div class="col-span-12 flex items-center gap-4 bg-background px-6 py-8 md:col-span-9 md:px-12 lg:px-16">
 			<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">
 				<overallConfig.icon class="h-6 w-6 {overallConfig.color}" />
 			</div>
@@ -113,7 +113,7 @@
 				</p>
 			</div>
 		</div>
-		<div class="col-span-12 flex items-center justify-center bg-card px-6 py-8 md:col-span-4 md:px-12 lg:px-16">
+		<div class="col-span-12 flex items-center justify-center bg-card px-6 py-8 md:col-span-3 md:px-12 lg:px-16">
 			<div class="text-center">
 				<span class="font-display text-4xl font-black text-primary">99.9%</span>
 				<p class="font-mono mt-2 text-[10px] uppercase tracking-wider text-muted-foreground">UPTIME (30 DAYS)</p>

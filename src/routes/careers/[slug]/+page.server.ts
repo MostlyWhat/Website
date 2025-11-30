@@ -23,11 +23,13 @@ interface Position {
 const positionFiles = import.meta.glob('/src/content/careers/*.md', { eager: true, query: '?raw', import: 'default' });
 
 function parseFrontmatter(content: string): { metadata: Record<string, string>; content: string } {
+    // Normalize line endings to LF
+    const normalizedContent = content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
     const frontmatterRegex = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/;
-    const match = content.match(frontmatterRegex);
+    const match = normalizedContent.match(frontmatterRegex);
 
     if (!match) {
-        return { metadata: {}, content };
+        return { metadata: {}, content: normalizedContent };
     }
 
     const frontmatter = match[1];
@@ -35,9 +37,13 @@ function parseFrontmatter(content: string): { metadata: Record<string, string>; 
 
     const metadata: Record<string, string> = {};
     frontmatter.split('\n').forEach(line => {
-        const [key, ...valueParts] = line.split(':');
-        if (key && valueParts.length) {
-            metadata[key.trim()] = valueParts.join(':').trim();
+        const colonIndex = line.indexOf(':');
+        if (colonIndex > 0) {
+            const key = line.slice(0, colonIndex).trim();
+            const value = line.slice(colonIndex + 1).trim();
+            if (key && value) {
+                metadata[key] = value;
+            }
         }
     });
 
