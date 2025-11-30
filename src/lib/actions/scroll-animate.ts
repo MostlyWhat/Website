@@ -139,11 +139,11 @@ export function scrollAnimate(node: HTMLElement, options: ScrollAnimateOptions =
         // Page loaded mid-scroll (e.g. from clicking a link that scrolls up)
         // Wait for user to scroll near top, or after a longer timeout
         let scrollCheckCleanup: (() => void) | null = null;
-        
+
         const enableAnimations = () => {
             allowAnimation = true;
             scrollCheckCleanup?.();
-            
+
             // Re-check if element is in viewport now
             const rect = node.getBoundingClientRect();
             const inViewport = rect.top < window.innerHeight && rect.bottom > 0;
@@ -154,17 +154,17 @@ export function scrollAnimate(node: HTMLElement, options: ScrollAnimateOptions =
                 hasAnimated = true;
             }
         };
-        
+
         // Check if user scrolls to near the top
         const handleScroll = () => {
             if (window.scrollY < 150) {
                 enableAnimations();
             }
         };
-        
+
         window.addEventListener('scroll', handleScroll, { passive: true });
         scrollCheckCleanup = () => window.removeEventListener('scroll', handleScroll);
-        
+
         // Fallback: enable after 800ms regardless (for users who stay mid-page)
         setTimeout(() => {
             if (!allowAnimation) {
