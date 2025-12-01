@@ -66,17 +66,23 @@
 	:global(.prose-custom .heading-anchor) {
 		color: inherit;
 		text-decoration: none;
-		position: relative;
 	}
 
-	:global(.prose-custom .heading-anchor:hover::before) {
-		content: "#";
-		position: absolute;
-		left: -1.25em;
-		color: var(--primary);
+	/* H2 prefix that transforms from // to # on hover */
+	:global(.prose-custom .h2-prefix) {
 		font-family: var(--font-mono);
-		font-weight: normal;
-		opacity: 0.6;
+	}
+
+	:global(.prose-custom .h2-prefix::before) {
+		content: '//';
+	}
+
+	:global(.prose-custom .heading-anchor:hover .h2-prefix::before) {
+		content: '#';
+	}
+
+	:global(.prose-custom .h2-prefix) {
+		font-size: 0;
 	}
 
 	/* Callout styles */

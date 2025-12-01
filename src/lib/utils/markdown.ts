@@ -68,9 +68,6 @@ export function renderStyledMarkdown(markdown: string, options: RenderOptions = 
     // Parse markdown with marked FIRST, before any transformations
     const html = marked.parse(processed) as string;
 
-    // Determine h2 prefix
-    const h2Prefix = options.prefixH2 ? '//' : '';
-
     // Now transform the HTML output
     let styled = html
         // Style ## headings (h2)
@@ -78,7 +75,8 @@ export function renderStyledMarkdown(markdown: string, options: RenderOptions = 
             /<h2>(.+?)<\/h2>/gi,
             (_, title) => {
                 const id = title.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-                return `<h2 id="${id}" class="font-ui mt-12 mb-4 text-base font-bold tracking-wider text-primary scroll-mt-24">${h2Prefix}${title.trim().toUpperCase()}</h2>`;
+                const prefix = options.prefixH2 ? '<span class="h2-prefix">//</span>' : '';
+                return `<h2 id="${id}" class="font-ui mt-12 mb-4 text-base font-bold tracking-wider text-primary scroll-mt-24"><a href="#${id}" class="heading-anchor">${prefix}${title.trim().toUpperCase()}</a></h2>`;
             }
         )
         // Style ### headings (h3)
