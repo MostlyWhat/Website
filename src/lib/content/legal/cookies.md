@@ -8,7 +8,7 @@ lastUpdated: "January 2024"
 
 **Last Updated: January 2024**
 
-## 01 — What Are Cookies
+## What Are Cookies
 
 Cookies are small text files stored on your device when you visit websites. They help websites remember your preferences and improve your browsing experience.
 
@@ -17,7 +17,7 @@ We use cookies and similar technologies including:
 - **Local Storage:** Browser-based storage for site preferences
 - **Session Storage:** Temporary storage cleared when you close your browser
 
-## 02 — Types of Cookies We Use
+## Types of Cookies We Use
 
 ### Essential Cookies
 These cookies are necessary for the website to function properly. They enable core features like:
@@ -60,7 +60,7 @@ We may use marketing cookies to:
 
 We do not currently run advertising on our site, but may implement marketing cookies in the future with proper notice.
 
-## 03 — Third-Party Cookies
+## Third-Party Cookies
 
 Some cookies on our site are placed by third-party services we use:
 
@@ -69,7 +69,7 @@ Some cookies on our site are placed by third-party services we use:
 | Cloudflare | Performance & Security | [Link](https://cloudflare.com/privacy) |
 | Google Fonts | Typography | [Link](https://policies.google.com/privacy) |
 
-## 04 — Managing Cookies
+## Managing Cookies
 
 ### Browser Settings
 You can control cookies through your browser settings:
@@ -89,7 +89,7 @@ You can manage your cookie preferences using our cookie settings panel. Click th
 - Google Analytics: [tools.google.com/dlpage/gaoptout](https://tools.google.com/dlpage/gaoptout)
 - Network Advertising Initiative: [optout.networkadvertising.org](https://optout.networkadvertising.org)
 
-## 05 — Impact of Disabling Cookies
+## Impact of Disabling Cookies
 
 Disabling cookies may affect your experience:
 
@@ -100,11 +100,11 @@ Disabling cookies may affect your experience:
 | Preference | Settings won't be remembered |
 | Marketing | Less relevant content and ads |
 
-## 06 — Do Not Track
+## Do Not Track
 
 Our website respects the "Do Not Track" (DNT) browser setting. When DNT is enabled, we will not set non-essential cookies.
 
-## 07 — Updates to This Policy
+## Updates to This Policy
 
 We may update this Cookie Policy to reflect:
 - Changes in our practices
@@ -116,7 +116,7 @@ We will notify you of significant changes by:
 - Displaying a notice on our website
 - Requesting renewed consent if required
 
-## 08 — Contact Us
+## Contact Us
 
 For questions about our use of cookies, contact us at:
 

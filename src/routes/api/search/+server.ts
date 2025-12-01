@@ -10,9 +10,113 @@ interface ContentItem {
     category: string;
     excerpt: string;
     content: string;
-    type: 'support' | 'blog' | 'project' | 'service' | 'career' | 'legal';
+    type: 'support' | 'blog' | 'project' | 'service' | 'career' | 'legal' | 'page';
     keywords: string[];
 }
+
+// Static pages that should be searchable
+const staticPages: ContentItem[] = [
+    {
+        title: 'Home',
+        slug: 'home',
+        url: '/',
+        category: 'Page',
+        excerpt: 'MostlyWhat Systems - Digital products that work. We build software solutions that scale.',
+        content: 'mostlywhat systems home digital products software solutions development engineering design',
+        type: 'page',
+        keywords: ['home', 'mostlywhat', 'systems', 'digital', 'products']
+    },
+    {
+        title: 'About',
+        slug: 'about',
+        url: '/about',
+        category: 'Page',
+        excerpt: 'Learn about MostlyWhat Systems - our team, mission, and values.',
+        content: 'about us team mission values company culture who we are mostlywhat systems engineering design development',
+        type: 'page',
+        keywords: ['about', 'team', 'mission', 'values', 'company']
+    },
+    {
+        title: 'Contact',
+        slug: 'contact',
+        url: '/contact',
+        category: 'Page',
+        excerpt: 'Get in touch with MostlyWhat Systems. Start a project or ask us anything.',
+        content: 'contact us get in touch start a project email hello@mostlywhat.systems reach out inquiry',
+        type: 'page',
+        keywords: ['contact', 'email', 'reach', 'project', 'inquiry']
+    },
+    {
+        title: 'Services',
+        slug: 'services',
+        url: '/services',
+        category: 'Page',
+        excerpt: 'Our services - web development, mobile apps, UI/UX design, and more.',
+        content: 'services web development mobile apps ui ux design consulting engineering software development',
+        type: 'page',
+        keywords: ['services', 'development', 'design', 'consulting', 'engineering']
+    },
+    {
+        title: 'Projects',
+        slug: 'projects',
+        url: '/projects',
+        category: 'Page',
+        excerpt: 'Our portfolio of work - case studies and projects we\'ve built.',
+        content: 'projects portfolio case studies work samples clients showcase',
+        type: 'page',
+        keywords: ['projects', 'portfolio', 'case studies', 'work']
+    },
+    {
+        title: 'Blog',
+        slug: 'blog',
+        url: '/blog',
+        category: 'Page',
+        excerpt: 'Insights, tutorials, and updates from the MostlyWhat Systems team.',
+        content: 'blog articles posts insights tutorials engineering design updates news',
+        type: 'page',
+        keywords: ['blog', 'articles', 'insights', 'tutorials']
+    },
+    {
+        title: 'Careers',
+        slug: 'careers',
+        url: '/careers',
+        category: 'Page',
+        excerpt: 'Join our team - open positions and career opportunities at MostlyWhat Systems.',
+        content: 'careers jobs positions hiring work with us join team opportunities employment',
+        type: 'page',
+        keywords: ['careers', 'jobs', 'hiring', 'positions', 'opportunities']
+    },
+    {
+        title: 'Support',
+        slug: 'support',
+        url: '/support',
+        category: 'Page',
+        excerpt: 'Help center and support resources for MostlyWhat Systems products.',
+        content: 'support help center faq troubleshooting documentation guides articles',
+        type: 'page',
+        keywords: ['support', 'help', 'faq', 'documentation']
+    },
+    {
+        title: 'Legal',
+        slug: 'legal',
+        url: '/legal',
+        category: 'Page',
+        excerpt: 'Legal documents - Privacy Policy, Terms of Service, Cookie Policy, and EULA.',
+        content: 'legal privacy policy terms of service cookies eula agreement documents policies',
+        type: 'page',
+        keywords: ['legal', 'privacy', 'terms', 'cookies', 'eula', 'policy']
+    },
+    {
+        title: 'Status',
+        slug: 'status',
+        url: '/status',
+        category: 'Page',
+        excerpt: 'System status and uptime monitoring for MostlyWhat Systems services.',
+        content: 'status uptime monitoring systems services operational incidents',
+        type: 'page',
+        keywords: ['status', 'uptime', 'monitoring', 'operational']
+    }
+];
 
 // Import all markdown files at build time
 const supportFiles = import.meta.glob('/src/lib/content/support/*.md', { query: '?raw', import: 'default', eager: true });
@@ -66,6 +170,7 @@ function parseMarkdownFiles(
 // Build the content index
 function buildIndex(): ContentItem[] {
     const items: ContentItem[] = [
+        ...staticPages,
         ...parseMarkdownFiles(supportFiles, 'support', '/support'),
         ...parseMarkdownFiles(blogFiles, 'blog', '/blog'),
         ...parseMarkdownFiles(projectFiles, 'project', '/projects'),

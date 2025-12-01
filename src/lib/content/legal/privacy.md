@@ -8,7 +8,7 @@ lastUpdated: "January 2024"
 
 **Last Updated: January 2024**
 
-## 01 — Information We Collect
+## Information We Collect
 
 We collect information you provide directly to us, such as when you fill out a contact form, request a consultation, or communicate with us via email.
 
@@ -24,7 +24,7 @@ We also automatically collect certain technical information when you visit our w
 - Pages visited and time spent on site
 - Referral sources
 
-## 02 — How We Use Your Information
+## How We Use Your Information
 
 We use the information we collect to:
 - Respond to your inquiries and provide requested services
@@ -34,7 +34,7 @@ We use the information we collect to:
 - Analyze website traffic and usage patterns
 - Protect against fraudulent or unauthorized activity
 
-## 03 — Information Sharing
+## Information Sharing
 
 We do not sell, trade, or otherwise transfer your personal information to third parties. We may share information with trusted service providers who assist us in operating our website and conducting our business, so long as they agree to keep this information confidential.
 
@@ -43,7 +43,7 @@ We may disclose your information when:
 - Necessary to protect our rights or safety
 - You have given us consent to share
 
-## 04 — Data Security
+## Data Security
 
 We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.
 
@@ -53,7 +53,7 @@ Security measures include:
 - Regular security assessments
 - Employee training on data protection
 
-## 05 — Cookies and Tracking
+## Cookies and Tracking
 
 We use cookies and similar technologies to enhance your browsing experience. These include:
 
@@ -63,7 +63,7 @@ We use cookies and similar technologies to enhance your browsing experience. The
 
 You can control cookies through your browser settings. Disabling certain cookies may limit site functionality.
 
-## 06 — Your Rights
+## Your Rights
 
 You have the right to:
 - Access your personal information
@@ -75,23 +75,23 @@ You have the right to:
 
 To exercise these rights, contact us using the information below.
 
-## 07 — Data Retention
+## Data Retention
 
 We retain your personal information only for as long as necessary to fulfill the purposes for which it was collected, including legal, accounting, or reporting requirements.
 
-## 08 — International Transfers
+## International Transfers
 
 Your information may be transferred to and processed in countries other than your own. We ensure appropriate safeguards are in place for such transfers.
 
-## 09 — Children's Privacy
+## Children's Privacy
 
 Our services are not directed to individuals under 16. We do not knowingly collect personal information from children.
 
-## 10 — Changes to This Policy
+## Changes to This Policy
 
 We may update this privacy policy from time to time. We will notify you of any changes by posting the new policy on this page and updating the "Last Updated" date.
 
-## 11 — Contact Us
+## Contact Us
 
 If you have questions about this Privacy Policy, please contact us at:
 

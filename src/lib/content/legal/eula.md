@@ -12,7 +12,7 @@ This End User License Agreement ("Agreement") is a legal agreement between you (
 
 By installing, copying, or otherwise using the Software, you agree to be bound by the terms of this Agreement. If you do not agree to these terms, do not install or use the Software.
 
-## 01 — License Grant
+## License Grant
 
 Subject to your compliance with this Agreement, MostlyWhat Systems grants you a limited, non-exclusive, non-transferable, revocable license to:
 
@@ -25,7 +25,7 @@ This license does not include the right to:
 - Modify, reverse engineer, or create derivative works
 - Use the Software for any unlawful purpose
 
-## 02 — Ownership and Intellectual Property
+## Ownership and Intellectual Property
 
 The Software is licensed, not sold. MostlyWhat Systems and its licensors retain all right, title, and interest in and to the Software, including all intellectual property rights therein.
 
@@ -33,7 +33,7 @@ The Software is licensed, not sold. MostlyWhat Systems and its licensors retain 
 - **Trademarks**: All trademarks, logos, and service marks displayed in the Software are our property
 - **Proprietary Rights**: You acknowledge that the Software contains proprietary information and trade secrets
 
-## 03 — Restrictions
+## Restrictions
 
 You agree NOT to:
 
@@ -45,7 +45,7 @@ You agree NOT to:
 - **Commercial Exploitation**: Use the Software for commercial purposes without explicit written permission
 - **Compete**: Use the Software to develop a competing product or service
 
-## 04 — User Accounts
+## User Accounts
 
 If the Software requires account registration:
 
@@ -54,7 +54,7 @@ If the Software requires account registration:
 - **Unauthorized Use**: You must notify us immediately of any unauthorized use of your account
 - **Account Termination**: We reserve the right to suspend or terminate accounts that violate this Agreement
 
-## 05 — Data Collection and Privacy
+## Data Collection and Privacy
 
 Our use of your data is governed by our Privacy Policy. By using the Software, you consent to:
 
@@ -64,7 +64,7 @@ Our use of your data is governed by our Privacy Policy. By using the Software, y
 
 We implement appropriate security measures to protect your data, but no method of transmission or storage is 100% secure.
 
-## 06 — Updates and Modifications
+## Updates and Modifications
 
 MostlyWhat Systems may:
 
@@ -75,7 +75,7 @@ MostlyWhat Systems may:
 
 We will make reasonable efforts to notify you of significant changes to the Software.
 
-## 07 — Third-Party Components
+## Third-Party Components
 
 The Software may include third-party software, libraries, or services:
 
@@ -83,7 +83,7 @@ The Software may include third-party software, libraries, or services:
 - **Third-Party Services**: We are not responsible for third-party services integrated with the Software
 - **No Warranty**: Third-party components are provided "as is" without warranty
 
-## 08 — Disclaimer of Warranties
+## Disclaimer of Warranties
 
 THE SOFTWARE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO:
 
@@ -94,7 +94,7 @@ THE SOFTWARE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KI
 
 We do not warrant that the Software will be uninterrupted, error-free, or free of harmful components.
 
-## 09 — Limitation of Liability
+## Limitation of Liability
 
 TO THE MAXIMUM EXTENT PERMITTED BY LAW:
 
@@ -104,7 +104,7 @@ TO THE MAXIMUM EXTENT PERMITTED BY LAW:
 
 Some jurisdictions do not allow limitation of liability, so these limitations may not apply to you.
 
-## 10 — Indemnification
+## Indemnification
 
 You agree to indemnify, defend, and hold harmless MostlyWhat Systems and its officers, directors, employees, and agents from any claims, damages, losses, or expenses arising from:
 
@@ -113,7 +113,7 @@ You agree to indemnify, defend, and hold harmless MostlyWhat Systems and its off
 - Your violation of any third-party rights
 - Any content you submit or transmit through the Software
 
-## 11 — Termination
+## Termination
 
 This Agreement is effective until terminated:
 
@@ -123,7 +123,7 @@ This Agreement is effective until terminated:
 
 Sections relating to ownership, disclaimers, limitations, and indemnification survive termination.
 
-## 12 — Export Compliance
+## Export Compliance
 
 You agree to comply with all applicable export and import laws and regulations. You may not export or re-export the Software to:
 
@@ -131,21 +131,21 @@ You agree to comply with all applicable export and import laws and regulations. 
 - Persons or entities on restricted party lists
 - End-uses prohibited by applicable laws
 
-## 13 — Governing Law
+## Governing Law
 
 This Agreement shall be governed by and construed in accordance with the laws of Thailand, without regard to its conflict of law provisions.
 
 Any disputes arising from this Agreement shall be resolved in the courts of Thailand, and you consent to the exclusive jurisdiction of such courts.
 
-## 14 — Severability
+## Severability
 
 If any provision of this Agreement is found to be unenforceable or invalid, that provision shall be limited or eliminated to the minimum extent necessary, and the remaining provisions shall remain in full force and effect.
 
-## 15 — Entire Agreement
+## Entire Agreement
 
 This Agreement constitutes the entire agreement between you and MostlyWhat Systems regarding the Software and supersedes all prior agreements, representations, and understandings.
 
-## 16 — Contact Information
+## Contact Information
 
 For questions about this Agreement, please contact:
 

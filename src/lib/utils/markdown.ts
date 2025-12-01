@@ -25,33 +25,16 @@ export interface RenderOptions {
  */
 export function extractSections(markdown: string): ContentSection[] {
     const sections: ContentSection[] = [];
-
-    // First try to match numbered format: "## 01 — Title" or "## 1 — Title"
-    const numberedRegex = /^##\s+0?(\d+)\s*[—–-]\s*(.+)$/gm;
+    const regex = /^##\s+(?!#)(.+)$/gm;
     let match;
-    let hasNumberedSections = false;
+    let counter = 1;
 
-    while ((match = numberedRegex.exec(markdown)) !== null) {
-        hasNumberedSections = true;
-        const number = match[1].padStart(2, '0');
-        const title = match[2].trim().toUpperCase();
-        // ID includes the number to match what the heading renderer generates
-        const id = `${number}--${title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`;
+    while ((match = regex.exec(markdown)) !== null) {
+        const title = match[1].trim().toUpperCase();
+        const id = title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+        const number = String(counter).padStart(2, '0');
         sections.push({ id, number, title });
-    }
-
-    // If no numbered sections found, extract regular ## headings
-    if (!hasNumberedSections) {
-        const regularRegex = /^##\s+(?!#)(.+)$/gm;
-        let counter = 1;
-
-        while ((match = regularRegex.exec(markdown)) !== null) {
-            const title = match[1].trim().toUpperCase();
-            const id = title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-            const number = String(counter).padStart(2, '0');
-            sections.push({ id, number, title });
-            counter++;
-        }
+        counter++;
     }
 
     return sections;
@@ -90,17 +73,7 @@ export function renderStyledMarkdown(markdown: string, options: RenderOptions = 
 
     // Now transform the HTML output
     let styled = html
-        // Style ## headings (h2) - numbered format like "01 — Title"
-        .replace(
-            /<h2>(\d+)\s*[—–-]\s*(.+?)<\/h2>/gi,
-            (_, num, title) => {
-                const number = num.padStart(2, '0');
-                const titleId = title.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-                const id = `${number}--${titleId}`;
-                return `<h2 id="${id}" class="font-ui mt-12 mb-4 text-base font-bold tracking-wider text-primary scroll-mt-24">${h2Prefix}${number} — ${title.trim().toUpperCase()}</h2>`;
-            }
-        )
-        // Style regular ## headings (h2) without numbers
+        // Style ## headings (h2)
         .replace(
             /<h2>(.+?)<\/h2>/gi,
             (_, title) => {

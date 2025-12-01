@@ -86,5 +86,4 @@
 	description="Read our other legal documents and policies."
 	buttonText="VIEW ALL"
 	buttonHref="/legal"
-	variant="back"
 />

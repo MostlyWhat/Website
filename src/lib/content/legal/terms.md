@@ -8,13 +8,13 @@ lastUpdated: "January 2024"
 
 **Last Updated: January 2024**
 
-## 01 — Acceptance of Terms
+## Acceptance of Terms
 
 By accessing or using MostlyWhat Systems' services, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.
 
 These terms apply to all visitors, users, and others who access our website or engage our services.
 
-## 02 — Description of Services
+## Description of Services
 
 MostlyWhat Systems provides web development, design, and consulting services, including but not limited to:
 - Website design and development
@@ -24,7 +24,7 @@ MostlyWhat Systems provides web development, design, and consulting services, in
 - Design systems and component libraries
 - Maintenance and support services
 
-## 03 — Client Obligations
+## Client Obligations
 
 As a client, you agree to:
 - Provide accurate and complete information
@@ -34,7 +34,7 @@ As a client, you agree to:
 - Review and approve deliverables within agreed timeframes
 - Maintain confidentiality of project information
 
-## 04 — Project Scope and Changes
+## Project Scope and Changes
 
 ### Scope Definition
 Project scope will be defined in a separate Statement of Work (SOW) or project agreement. Any work outside the defined scope may require additional fees and timeline adjustments.
@@ -42,7 +42,7 @@ Project scope will be defined in a separate Statement of Work (SOW) or project a
 ### Change Requests
 Changes to project scope must be submitted in writing. We will provide estimates for additional work required. Changes will be implemented upon written approval and may affect project timelines.
 
-## 05 — Intellectual Property
+## Intellectual Property
 
 ### Work Product
 Upon full payment, clients receive ownership of the final deliverables as specified in the project agreement. We retain the right to:
@@ -53,7 +53,7 @@ Upon full payment, clients receive ownership of the final deliverables as specif
 ### Third-Party Components
 Some projects may include third-party libraries, fonts, or assets. Usage rights for these components are governed by their respective licenses.
 
-## 06 — Payment Terms
+## Payment Terms
 
 ### Invoicing
 We typically require:
@@ -67,7 +67,7 @@ Invoices are due within 14 days unless otherwise agreed. Late payments may incur
 - Suspension of services
 - Collection actions for severely delinquent accounts
 
-## 07 — Warranties and Disclaimers
+## Warranties and Disclaimers
 
 ### Our Warranty
 We warrant that our services will be performed in a professional manner consistent with industry standards.
@@ -75,13 +75,13 @@ We warrant that our services will be performed in a professional manner consiste
 ### Disclaimer
 EXCEPT AS EXPRESSLY PROVIDED, OUR SERVICES ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND. WE DISCLAIM ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
-## 08 — Limitation of Liability
+## Limitation of Liability
 
 TO THE MAXIMUM EXTENT PERMITTED BY LAW, MOSTLYWHAT SYSTEMS SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING LOSS OF PROFITS, DATA, OR OTHER INTANGIBLE LOSSES.
 
 Our total liability shall not exceed the fees paid for the specific services giving rise to the claim.
 
-## 09 — Confidentiality
+## Confidentiality
 
 Both parties agree to maintain the confidentiality of proprietary information shared during the project. This includes:
 - Business strategies and plans
@@ -91,7 +91,7 @@ Both parties agree to maintain the confidentiality of proprietary information sh
 
 Confidentiality obligations survive termination of our relationship.
 
-## 10 — Termination
+## Termination
 
 ### By Client
 You may terminate services with 30 days written notice. You remain responsible for fees incurred up to the termination date.
@@ -105,7 +105,7 @@ We may terminate or suspend services if:
 ### Effect of Termination
 Upon termination, we will deliver all completed work and you will pay all outstanding fees.
 
-## 11 — Dispute Resolution
+## Dispute Resolution
 
 Any disputes arising from these terms shall be resolved through:
 1. Good faith negotiation
@@ -114,7 +114,7 @@ Any disputes arising from these terms shall be resolved through:
 
 This agreement shall be governed by the laws of Thailand.
 
-## 12 — General Provisions
+## General Provisions
 
 ### Entire Agreement
 These terms, together with any project agreements, constitute the entire agreement between parties.
@@ -128,7 +128,7 @@ Failure to enforce any right does not constitute a waiver of that right.
 ### Assignment
 You may not assign your rights under these terms without our written consent.
 
-## 13 — Contact Information
+## Contact Information
 
 For questions about these Terms of Service, contact us at:
 
