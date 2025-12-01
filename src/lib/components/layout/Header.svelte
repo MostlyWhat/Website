@@ -4,6 +4,7 @@
 	import { getLocale, locales, localizeHref, type Locale } from '$lib/paraglide/runtime';
 	import { Menu, X, ArrowUpRight, Globe, ChevronDown, ChevronRight, Search } from '@lucide/svelte';
 	import { GlitchText } from '$lib/components/ui/glitch-text';
+	import * as Sheet from '$lib/components/ui/sheet';
 
 	let mobileMenuOpen = $state(false);
 	let langMenuOpen = $state(false);
@@ -29,10 +30,6 @@
 		const pathname = page.url.pathname.replace(/^\/(en|th)/, '') || '/';
 		if (href === '/') return pathname === '/';
 		return pathname.startsWith(href);
-	}
-
-	function closeMobileMenu() {
-		mobileMenuOpen = false;
 	}
 
 	function handleClickOutside(event: MouseEvent) {
@@ -68,10 +65,10 @@
 	<!-- Main header row - edge to edge grid -->
 	<div class="grid h-16 grid-cols-12 border-b border-border">
 		<!-- Logo Section -->
-		<div class="col-span-6 flex items-center border-r border-border px-6 sm:col-span-4 md:px-12 lg:col-span-3 lg:px-16">
-			<a href={localizeHref('/')} class="group flex items-center gap-3" onclick={closeMobileMenu}>
+		<div class="col-span-6 flex items-center px-6 sm:col-span-4 sm:border-r sm:border-border md:px-12 lg:col-span-3 lg:px-16">
+			<a href={localizeHref('/')} class="group flex items-center gap-3" onclick={() => (mobileMenuOpen = false)}>
 				<span class="font-display text-sm font-black tracking-wider text-primary transition-colors group-hover:text-foreground lg:text-base">MOSTLYWHAT</span>
-				<span class="font-display hidden text-sm font-black tracking-wider text-foreground sm:inline lg:text-base">SYSTEMS</span>
+				<span class="font-display text-sm font-black tracking-wider text-foreground lg:text-base">SYSTEMS</span>
 			</a>
 		</div>
 
@@ -94,27 +91,26 @@
 			<!-- Search Button -->
 			<a
 				href={localizeHref('/search')}
-				class="hidden items-center justify-center border-l border-border px-4 text-muted-foreground transition-colors hover:bg-card hover:text-foreground sm:flex"
+				class="hidden aspect-square h-16 items-center justify-center border-l border-border text-muted-foreground transition-colors hover:bg-card hover:text-foreground lg:flex"
 				aria-label="Search"
 			>
 				<Search class="h-4 w-4" />
 			</a>
 
 			<!-- Language Switcher -->
-			<div class="lang-menu relative hidden flex-1 items-stretch border-l border-border sm:flex">
+			<div class="lang-menu relative hidden items-stretch border-l border-border lg:flex">
 				<button
 					type="button"
-					class="font-mono flex w-full items-center justify-center gap-1.5 text-xs tracking-wider text-muted-foreground transition-colors hover:text-foreground"
+					class="flex aspect-square h-16 items-center justify-center text-muted-foreground transition-colors hover:bg-card hover:text-foreground"
 					onclick={() => (langMenuOpen = !langMenuOpen)}
 					aria-expanded={langMenuOpen}
+					aria-label="Change language"
 				>
-					<Globe class="h-3.5 w-3.5" />
-					<span>{languageNames[currentLocale]}</span>
-					<ChevronDown class="h-3 w-3 transition-transform {langMenuOpen ? 'rotate-180' : ''}" />
+					<Globe class="h-4 w-4" />
 				</button>
 
 				{#if langMenuOpen}
-					<div class="absolute right-0 top-full z-50 w-full min-w-[140px] border border-t-0 border-border bg-background shadow-lg">
+					<div class="absolute right-0 top-full z-50 min-w-[140px] border border-t-0 border-border bg-background shadow-lg">
 						{#each locales as lang}
 							{@const targetLocale = lang as Locale}
 							<a
@@ -136,26 +132,92 @@
 			<!-- Contact CTA -->
 			<a
 				href={localizeHref('/contact')}
-				class="font-ui hidden flex-1 items-center justify-center gap-2 border-l border-border bg-primary text-xs tracking-widest text-primary-foreground transition-colors hover:bg-primary/90 sm:flex"
+				class="font-ui hidden flex-1 items-center justify-center gap-2 border-l border-border bg-primary text-xs tracking-widest text-primary-foreground transition-colors hover:bg-primary/90 lg:flex"
 			>
 				CONTACT
 				<ArrowUpRight class="h-3.5 w-3.5" />
 			</a>
 
-			<!-- Mobile menu button - far right with square appearance -->
-			<button
-				type="button"
-				class="ml-auto flex h-16 w-16 flex-shrink-0 items-center justify-center border-l border-border transition-colors hover:bg-card lg:hidden"
-				onclick={() => (mobileMenuOpen = !mobileMenuOpen)}
-				aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
-				aria-expanded={mobileMenuOpen}
-			>
-				{#if mobileMenuOpen}
-					<X class="h-5 w-5" />
-				{:else}
+			<!-- Mobile menu button - Sheet Trigger -->
+			<Sheet.Root bind:open={mobileMenuOpen}>
+				<Sheet.Trigger
+					class="ml-auto flex h-16 w-16 flex-shrink-0 items-center justify-center border-l border-border transition-colors hover:bg-card lg:hidden"
+					aria-label="Open menu"
+				>
 					<Menu class="h-5 w-5" />
-				{/if}
-			</button>
+				</Sheet.Trigger>
+				<Sheet.Content side="top" class="flex h-dvh flex-col gap-0 border-b-0 p-0 [&>button[data-dialog-close]]:hidden">
+					<!-- Header with Label and Close -->
+					<div class="flex items-center justify-between border-b border-border px-6 py-6">
+						<div>
+							<span class="font-display text-lg font-bold uppercase tracking-wider">NAVIGATION</span>
+							<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">// PLEASE SELECT YOUR DESTINATION</p>
+						</div>
+						<Sheet.Close class="flex h-12 w-12 items-center justify-center border border-border text-muted-foreground transition-colors hover:bg-card hover:text-foreground">
+							<X class="h-5 w-5" />
+							<span class="sr-only">Close</span>
+						</Sheet.Close>
+					</div>
+
+					<!-- Navigation Links -->
+					<nav class="flex flex-1 flex-col overflow-y-auto">
+						{#each navigation as { href, key } (href)}
+							<a
+								href={localizeHref(href)}
+								class="font-display flex items-center border-b border-border px-6 py-8 text-3xl font-bold uppercase tracking-wider transition-colors {isActive(href)
+									? 'bg-primary/10 text-primary'
+									: 'text-foreground hover:bg-card'}"
+								onclick={() => (mobileMenuOpen = false)}
+							>
+								{key}
+								<ChevronRight class="ml-auto h-6 w-6 text-muted-foreground" />
+							</a>
+						{/each}
+						<a
+							href={localizeHref('/search')}
+							class="font-display flex items-center border-b border-border px-6 py-8 text-3xl font-bold uppercase tracking-wider transition-colors text-foreground hover:bg-card"
+							onclick={() => (mobileMenuOpen = false)}
+						>
+							SEARCH
+							<ChevronRight class="ml-auto h-6 w-6 text-muted-foreground" />
+						</a>
+					</nav>
+
+					<!-- Bottom Section: Language + Contact -->
+					<div class="mt-auto border-t border-border">
+						<!-- Language Selection -->
+						<div class="border-b border-border px-6 py-4">
+							<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// LANGUAGE</span>
+							<div class="mt-3 flex gap-2">
+								{#each locales as lang}
+									{@const targetLocale = lang as Locale}
+									<a
+										href={localizeHref(page.url.pathname.replace(/^\/(en|th)/, '') || '/', { locale: targetLocale })}
+										data-sveltekit-reload
+										class="font-mono flex flex-1 items-center justify-center gap-2 border px-4 py-3 text-sm tracking-wider transition-colors {lang === currentLocale
+											? 'border-primary bg-primary text-primary-foreground'
+											: 'border-border text-muted-foreground hover:bg-card hover:text-foreground'}"
+										onclick={() => (mobileMenuOpen = false)}
+									>
+										<Globe class="h-4 w-4" />
+										{languageFullNames[targetLocale]}
+									</a>
+								{/each}
+							</div>
+						</div>
+
+						<!-- Contact Button -->
+						<a
+							href={localizeHref('/contact')}
+							class="font-display flex items-center justify-center gap-3 bg-primary py-6 text-xl font-bold uppercase tracking-widest text-primary-foreground"
+							onclick={() => (mobileMenuOpen = false)}
+						>
+							CONTACT
+							<ArrowUpRight class="h-5 w-5" />
+						</a>
+					</div>
+				</Sheet.Content>
+			</Sheet.Root>
 		</div>
 	</div>
 
@@ -174,81 +236,6 @@
 				{/each}
 			</nav>
 		</div>
-	{/if}
-
-	<!-- Mobile Navigation - Full Screen Overlay -->
-	{#if mobileMenuOpen}
-		<nav class="fixed inset-0 z-[60] flex flex-col bg-background/95 backdrop-blur-md lg:hidden">
-			<!-- Mobile Header Bar -->
-			<div class="flex h-16 items-center border-b border-border">
-				<a href={localizeHref('/')} class="flex items-center gap-3 px-6" onclick={closeMobileMenu}>
-					<span class="font-display text-sm font-black tracking-wider text-primary">MOSTLYWHAT</span>
-					<span class="font-display text-sm font-black tracking-wider text-foreground">SYSTEMS</span>
-				</a>
-				<button
-					type="button"
-					class="ml-auto flex h-16 w-16 flex-shrink-0 items-center justify-center border-l border-border"
-					onclick={() => (mobileMenuOpen = false)}
-					aria-label="Close menu"
-				>
-					<X class="h-5 w-5" />
-				</button>
-			</div>
-
-			<div class="flex flex-1 flex-col overflow-y-auto">
-				<!-- Search Link (Mobile) -->
-				<a
-					href={localizeHref('/search')}
-					class="font-display flex items-center border-b border-border px-6 py-6 text-2xl font-bold uppercase tracking-wider transition-colors text-foreground hover:bg-card"
-					onclick={closeMobileMenu}
-				>
-					SEARCH
-					<ChevronRight class="ml-auto h-5 w-5 text-muted-foreground" />
-				</a>
-
-				{#each navigation as { href, key } (href)}
-					<a
-						href={localizeHref(href)}
-						class="font-display flex items-center border-b border-border px-6 py-6 text-2xl font-bold uppercase tracking-wider transition-colors {isActive(href)
-							? 'bg-primary/10 text-primary'
-							: 'text-foreground hover:bg-card'}"
-						onclick={closeMobileMenu}
-					>
-						{key}
-						<ChevronRight class="ml-auto h-5 w-5 text-muted-foreground" />
-					</a>
-				{/each}
-
-				<!-- Language Selection (Mobile) -->
-				<div class="border-b border-border px-6 py-4">
-					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// LANGUAGE</span>
-					<div class="mt-3 flex gap-2">
-						{#each locales as lang}
-							{@const targetLocale = lang as Locale}
-							<a
-								href={localizeHref(page.url.pathname.replace(/^\/(en|th)/, '') || '/', { locale: targetLocale })}
-								data-sveltekit-reload
-								class="font-mono flex flex-1 items-center justify-center gap-2 border px-4 py-3 text-sm tracking-wider transition-colors {lang === currentLocale
-									? 'border-primary bg-primary text-primary-foreground'
-									: 'border-border text-muted-foreground hover:bg-card hover:text-foreground'}"
-								onclick={closeMobileMenu}
-							>
-								<Globe class="h-4 w-4" />
-								{languageFullNames[targetLocale]}
-							</a>
-						{/each}
-					</div>
-				</div>
-			</div>
-			<a
-				href={localizeHref('/contact')}
-				class="font-display flex items-center justify-center gap-3 bg-primary py-6 text-xl font-bold uppercase tracking-widest text-primary-foreground"
-				onclick={closeMobileMenu}
-			>
-				CONTACT
-				<ArrowUpRight class="h-5 w-5" />
-			</a>
-		</nav>
 	{/if}
 </header>
 
