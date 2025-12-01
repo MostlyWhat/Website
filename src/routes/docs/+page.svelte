@@ -4,89 +4,149 @@
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import HeroSection from '$lib/components/layout/HeroSection.svelte';
-	import { Badge } from '$lib/components/ui/badge';
-	import { Input } from '$lib/components/ui/input';
-	import { Textarea } from '$lib/components/ui/textarea';
-	import { Switch } from '$lib/components/ui/switch';
-	import { Label } from '$lib/components/ui/label';
-	import * as Accordion from '$lib/components/ui/accordion';
-	import { Progress } from '$lib/components/ui/progress';
-	import { Separator } from '$lib/components/ui/separator';
-	import { GlitchText } from '$lib/components/ui/glitch-text';
-	import { Spinner } from '$lib/components/ui/spinner';
-	import { Kbd } from '$lib/components/ui/kbd';
-	import CTASection from '$lib/components/layout/CTASection.svelte';
 	import DescriptionSection from '$lib/components/layout/DescriptionSection.svelte';
+	import CTASection from '$lib/components/layout/CTASection.svelte';
 	import { 
-		ArrowRight, Copy, Check, Palette, Type, Layout, Layers, Zap, Box, Grid3x3, 
-		Component, ChevronRight, Book, Paintbrush, Code2, MousePointer
+		ArrowRight, 
+		Palette, 
+		Type, 
+		Layout, 
+		Layers, 
+		Zap, 
+		Box, 
+		Grid3x3, 
+		Component,
+		Paintbrush,
+		Code2,
+		MousePointer,
+		BookOpen,
+		FileCode,
+		Sparkles,
+		Target,
+		Eye,
+		Maximize2,
+		Square,
+		ExternalLink
 	} from '@lucide/svelte';
 
-	// Active section state
-	let activeCategory = $state<'design' | 'components'>('design');
-	let activeSection = $state<string>('grid');
+	// Design principles
+	const principles = [
+		{
+			number: '01',
+			title: 'INDUSTRIAL PRECISION',
+			desc: 'No rounded corners. Sharp edges. Grid-based layouts. Every element is intentional and aligned.',
+			icon: Square
+		},
+		{
+			number: '02',
+			title: 'HIGH CONTRAST',
+			desc: 'Dark backgrounds with vibrant cobalt blue accents create visual impact and hierarchy.',
+			icon: Eye
+		},
+		{
+			number: '03',
+			title: 'TYPOGRAPHY FIRST',
+			desc: 'Clear hierarchy through type scale and weight. Four distinct typefaces for different purposes.',
+			icon: Type
+		},
+		{
+			number: '04',
+			title: 'MOTION WITH PURPOSE',
+			desc: 'Scroll-based animations that enhance rather than distract. Subtle, meaningful transitions.',
+			icon: Sparkles
+		}
+	];
 
-	let copiedItem = $state<string | null>(null);
-	let switchValue = $state(true);
-	let progressValue = $state(75);
+	// Core values
+	const values = [
+		{ title: 'CONSISTENCY', desc: 'Unified patterns across all pages' },
+		{ title: 'ACCESSIBILITY', desc: 'WCAG 2.1 compliant interfaces' },
+		{ title: 'PERFORMANCE', desc: 'Optimized for Core Web Vitals' },
+		{ title: 'SCALABILITY', desc: 'Built to grow with your project' }
+	];
 
-	function copyToClipboard(text: string, id: string) {
-		navigator.clipboard.writeText(text);
-		copiedItem = id;
-		setTimeout(() => copiedItem = null, 2000);
-	}
-
-	// Navigation structure
-	const navigation = {
-		design: {
-			title: 'DESIGN',
-			icon: Paintbrush,
-			sections: [
-				{ id: 'grid', title: 'GRID SYSTEM', icon: Grid3x3 },
-				{ id: 'colors', title: 'COLORS', icon: Palette },
-				{ id: 'typography', title: 'TYPOGRAPHY', icon: Type },
-				{ id: 'animations', title: 'ANIMATIONS', icon: Zap },
-				{ id: 'patterns', title: 'PATTERNS', icon: Layers }
+	// Documentation sections - tiles
+	const docSections = [
+		{
+			category: 'FOUNDATION',
+			items: [
+				{
+					icon: Grid3x3,
+					title: 'GRID SYSTEM',
+					desc: '12-column grid with 1px gap borders. Responsive breakpoints and spacing.',
+					href: '/docs/grid',
+					stats: '12 COLS'
+				},
+				{
+					icon: Palette,
+					title: 'COLORS',
+					desc: 'Cobalt blue primary with yellow and red accents on dark backgrounds.',
+					href: '/docs/colors',
+					stats: '6 COLORS'
+				},
+				{
+					icon: Type,
+					title: 'TYPOGRAPHY',
+					desc: 'Four distinct typefaces for display, body, UI, and code elements.',
+					href: '/docs/typography',
+					stats: '4 FONTS'
+				},
+				{
+					icon: Zap,
+					title: 'ANIMATIONS',
+					desc: 'Scroll-based animations using Intersection Observer.',
+					href: '/docs/animations',
+					stats: '4 TYPES'
+				}
 			]
 		},
-		components: {
-			title: 'COMPONENTS',
-			icon: Box,
-			sections: [
-				{ id: 'buttons', title: 'BUTTONS', icon: MousePointer },
-				{ id: 'forms', title: 'FORM ELEMENTS', icon: Code2 },
-				{ id: 'feedback', title: 'FEEDBACK', icon: Zap },
-				{ id: 'layout', title: 'LAYOUT', icon: Layout },
-				{ id: 'interactive', title: 'INTERACTIVE', icon: Component }
+		{
+			category: 'COMPONENTS',
+			items: [
+				{
+					icon: MousePointer,
+					title: 'BUTTONS',
+					desc: 'Button variants for different actions and contexts.',
+					href: '/docs/buttons',
+					stats: '5 VARIANTS'
+				},
+				{
+					icon: Code2,
+					title: 'FORM ELEMENTS',
+					desc: 'Input fields, toggles, selects, and form controls.',
+					href: '/docs/forms',
+					stats: '8 ELEMENTS'
+				},
+				{
+					icon: Layout,
+					title: 'LAYOUT',
+					desc: 'Section components, tiles, cards, and layout utilities.',
+					href: '/docs/layout',
+					stats: '12 PARTS'
+				},
+				{
+					icon: Component,
+					title: 'INTERACTIVE',
+					desc: 'Accordion, modals, tabs, and interactive elements.',
+					href: '/docs/interactive',
+					stats: '6 ELEMENTS'
+				}
 			]
 		}
-	};
-
-	const colors = [
-		{ name: 'Cobalt 500', var: '--cobalt-500', hex: '#00A3FF', class: 'bg-primary' },
-		{ name: 'Yellow 500', var: '--yellow-500', hex: '#FFD500', class: 'bg-yellow-500' },
-		{ name: 'Red 500', var: '--red-500', hex: '#EF4444', class: 'bg-red-500' },
-		{ name: 'Black 950', var: '--black-950', hex: '#000814', class: 'bg-background' },
-		{ name: 'Black 900', var: '--black-900', hex: '#001122', class: 'bg-card' },
-		{ name: 'Border', var: '--border', hex: '#1a2744', class: 'bg-border' }
 	];
 
-	const fonts = [
-		{ name: 'Tourney', var: 'font-display', usage: 'Headlines', class: 'font-display', sample: 'BUILDING WORLDS' },
-		{ name: 'Hubot Sans', var: 'font-body', usage: 'Body Text', class: 'font-body', sample: 'The quick brown fox jumps over the lazy dog.' },
-		{ name: 'Chakra Petch', var: 'font-ui', usage: 'UI/Buttons', class: 'font-ui', sample: 'START A PROJECT' },
-		{ name: 'JetBrains Mono', var: 'font-mono', usage: 'Code/Labels', class: 'font-mono', sample: 'const hello = "world";' }
+	// Quick reference stats
+	const quickStats = [
+		{ label: 'PADDING MOBILE', value: '24px', code: 'px-6' },
+		{ label: 'PADDING TABLET', value: '48px', code: 'md:px-12' },
+		{ label: 'PADDING DESKTOP', value: '64px', code: 'lg:px-16' },
+		{ label: 'GRID GAP', value: '1px', code: 'gap-px' }
 	];
-
-	function selectSection(category: 'design' | 'components', sectionId: string) {
-		activeCategory = category;
-		activeSection = sectionId;
-	}
 </script>
 
 <svelte:head>
 	<title>Documentation — {m.site_name()}</title>
-	<meta name="description" content="Design system documentation for MostlyWhat Systems" />
+	<meta name="description" content="Design system documentation for MostlyWhat Systems. Grid system, colors, typography, components, and patterns." />
 </svelte:head>
 
 <HeroSection label="// REFERENCE.DESIGN" title="DESIGN SYSTEM" />
@@ -100,525 +160,274 @@
 	]}
 />
 
-<!-- Main Documentation Content -->
-<section id="docs-content" class="border-b border-border">
-	<div class="grid grid-cols-12">
-		<!-- Sidebar Navigation -->
-		<div class="col-span-12 border-b border-border bg-card lg:col-span-3 lg:border-b-0 lg:border-r">
-			<div class="sticky top-24">
-				<!-- Category: Design -->
-				<div class="border-b border-border">
-					<button 
-						type="button"
-						onclick={() => activeCategory = activeCategory === 'design' ? 'components' : 'design'}
-						class="flex w-full items-center justify-between px-6 py-4 transition-colors hover:bg-background md:px-12 lg:px-16 {activeCategory === 'design' ? 'bg-background' : ''}"
-					>
-						<div class="flex items-center gap-3">
-							<Paintbrush class="h-4 w-4 text-primary" />
-							<span class="font-mono text-[10px] tracking-widest">DESIGN</span>
-						</div>
-						<ChevronRight class="h-4 w-4 text-muted-foreground transition-transform duration-200 {activeCategory === 'design' ? 'rotate-90' : ''}" />
-					</button>
-					<div class="grid transition-all duration-300 ease-out {activeCategory === 'design' ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}">
-						<nav class="flex flex-col overflow-hidden border-t border-border">
-							{#each navigation.design.sections as section (section.id)}
-								<button
-									type="button"
-									onclick={() => selectSection('design', section.id)}
-									class="flex items-center gap-3 px-6 py-3 text-left transition-colors hover:bg-background md:px-12 lg:px-16 {activeSection === section.id ? 'border-l-2 border-l-primary bg-background text-primary' : 'text-muted-foreground'}"
-								>
-									<section.icon class="h-3.5 w-3.5" />
-									<span class="font-ui text-xs tracking-wider">{section.title}</span>
-								</button>
-							{/each}
-						</nav>
+<!-- Design Principles Section -->
+<section class="border-b border-border">
+	<div class="px-6 py-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
+		<span class="font-mono text-[10px] tracking-widest text-muted-foreground">01 — PHILOSOPHY</span>
+		<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl lg:text-5xl">DESIGN PRINCIPLES</h2>
+		<p class="font-body mt-4 max-w-2xl text-lg text-muted-foreground">
+			Our design system is built on four core principles that guide every decision we make.
+		</p>
+	</div>
+	<div class="grid grid-cols-12 gap-px border-t border-border bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
+		{#each principles as { number, title, desc, icon: Icon } (number)}
+			<div class="col-span-12 flex flex-col bg-background px-6 py-10 sm:col-span-6 md:px-12 lg:col-span-3 lg:px-16">
+				<div class="flex items-start justify-between">
+					<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">
+						<Icon class="h-5 w-5 text-primary" />
 					</div>
+					<span class="font-display text-3xl font-black text-primary/30">{number}</span>
 				</div>
-
-				<!-- Category: Components -->
-				<div class="border-b border-border">
-					<button 
-						type="button"
-						onclick={() => activeCategory = activeCategory === 'components' ? 'design' : 'components'}
-						class="flex w-full items-center justify-between px-6 py-4 transition-colors hover:bg-background md:px-12 lg:px-16 {activeCategory === 'components' ? 'bg-background' : ''}"
-					>
-						<div class="flex items-center gap-3">
-							<Box class="h-4 w-4 text-primary" />
-							<span class="font-mono text-[10px] tracking-widest">COMPONENTS</span>
-						</div>
-						<ChevronRight class="h-4 w-4 text-muted-foreground transition-transform duration-200 {activeCategory === 'components' ? 'rotate-90' : ''}" />
-					</button>
-					<div class="grid transition-all duration-300 ease-out {activeCategory === 'components' ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}">
-						<nav class="flex flex-col overflow-hidden border-t border-border">
-							{#each navigation.components.sections as section (section.id)}
-								<button
-									type="button"
-									onclick={() => selectSection('components', section.id)}
-									class="flex items-center gap-3 px-6 py-3 text-left transition-colors hover:bg-background md:px-12 lg:px-16 {activeSection === section.id ? 'border-l-2 border-l-primary bg-background text-primary' : 'text-muted-foreground'}"
-								>
-									<section.icon class="h-3.5 w-3.5" />
-									<span class="font-ui text-xs tracking-wider">{section.title}</span>
-								</button>
-							{/each}
-						</nav>
-					</div>
-				</div>
+				<h3 class="font-ui mt-6 text-base font-semibold tracking-wider">{title}</h3>
+				<p class="font-body mt-3 flex-1 text-sm text-muted-foreground">{desc}</p>
 			</div>
+		{/each}
+	</div>
+</section>
+
+<!-- Core Values Bar -->
+<section class="border-b border-border bg-card">
+	<div class="grid grid-cols-12 gap-px bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
+		{#each values as { title, desc } (title)}
+			<div class="col-span-6 bg-card px-6 py-6 md:col-span-3 md:px-12 lg:px-16">
+				<h3 class="font-ui text-sm font-semibold tracking-wider text-primary">{title}</h3>
+				<p class="font-body mt-1 text-xs text-muted-foreground">{desc}</p>
+			</div>
+		{/each}
+	</div>
+</section>
+
+<!-- Quick Reference - Spacing -->
+<section class="border-b border-border">
+	<div class="grid grid-cols-12">
+		<div class="col-span-12 bg-background px-6 py-12 md:px-12 lg:col-span-4 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">02 — QUICK REFERENCE</span>
+			<h2 class="font-display mt-4 text-2xl font-bold uppercase md:text-3xl">SPACING SYSTEM</h2>
+			<p class="font-body mt-4 text-sm text-muted-foreground">
+				Consistent spacing creates visual rhythm. Use these values throughout your layouts.
+			</p>
 		</div>
-
-		<!-- Content Area -->
-		<div class="col-span-12 bg-background lg:col-span-9">
-			<!-- DESIGN SECTIONS -->
-			{#if activeCategory === 'design'}
-				{#if activeSection === 'grid'}
-					<!-- Grid System -->
-					<div class="px-6 py-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
-						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">FOUNDATION</span>
-						<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">GRID SYSTEM</h2>
-						<p class="font-body mt-4 max-w-2xl text-muted-foreground">
-							12-column grid with 1px gap borders. All elements align to the grid for visual consistency.
-						</p>
-
-						<div class="mt-8">
-							<p class="font-mono mb-4 text-[10px] tracking-widest text-muted-foreground">12-COLUMN GRID</p>
-							<div class="grid grid-cols-12 gap-px bg-border">
-								{#each Array(12) as _, i (i)}
-									<div class="flex items-center justify-center bg-card py-4">
-										<span class="font-mono text-xs text-muted-foreground">{i + 1}</span>
-									</div>
-								{/each}
-							</div>
-						</div>
-
-						<div class="mt-12">
-							<p class="font-mono mb-4 text-[10px] tracking-widest text-muted-foreground">COMMON PATTERNS</p>
-							<div class="space-y-2">
-								<div class="grid grid-cols-12 gap-px bg-border">
-									<div class="col-span-3 flex items-center justify-center bg-primary/20 py-3"><span class="font-mono text-xs">3</span></div>
-									<div class="col-span-9 flex items-center justify-center bg-card py-3"><span class="font-mono text-xs">9</span></div>
-								</div>
-								<div class="grid grid-cols-12 gap-px bg-border">
-									<div class="col-span-4 flex items-center justify-center bg-primary/20 py-3"><span class="font-mono text-xs">4</span></div>
-									<div class="col-span-4 flex items-center justify-center bg-card py-3"><span class="font-mono text-xs">4</span></div>
-									<div class="col-span-4 flex items-center justify-center bg-card py-3"><span class="font-mono text-xs">4</span></div>
-								</div>
-								<div class="grid grid-cols-12 gap-px bg-border">
-									<div class="col-span-6 flex items-center justify-center bg-primary/20 py-3"><span class="font-mono text-xs">6</span></div>
-									<div class="col-span-6 flex items-center justify-center bg-card py-3"><span class="font-mono text-xs">6</span></div>
-								</div>
-								<div class="grid grid-cols-12 gap-px bg-border">
-									<div class="col-span-8 flex items-center justify-center bg-primary/20 py-3"><span class="font-mono text-xs">8</span></div>
-									<div class="col-span-4 flex items-center justify-center bg-card py-3"><span class="font-mono text-xs">4</span></div>
-								</div>
-							</div>
-						</div>
-
-						<div class="mt-12">
-							<p class="font-mono mb-4 text-[10px] tracking-widest text-muted-foreground">SPACING</p>
-							<div class="grid grid-cols-2 gap-4 md:grid-cols-4">
-								<div class="border border-border p-4">
-									<code class="font-mono text-xs text-primary">px-6</code>
-									<p class="font-mono mt-1 text-[10px] text-muted-foreground">Mobile</p>
-								</div>
-								<div class="border border-border p-4">
-									<code class="font-mono text-xs text-primary">md:px-12</code>
-									<p class="font-mono mt-1 text-[10px] text-muted-foreground">Tablet</p>
-								</div>
-								<div class="border border-border p-4">
-									<code class="font-mono text-xs text-primary">lg:px-16</code>
-									<p class="font-mono mt-1 text-[10px] text-muted-foreground">Desktop</p>
-								</div>
-								<div class="border border-border p-4">
-									<code class="font-mono text-xs text-primary">gap-px</code>
-									<p class="font-mono mt-1 text-[10px] text-muted-foreground">Grid Gap</p>
-								</div>
-							</div>
-						</div>
-					</div>
-
-				{:else if activeSection === 'colors'}
-					<!-- Colors -->
-					<div class="px-6 py-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
-						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">FOUNDATION</span>
-						<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">COLORS</h2>
-						<p class="font-body mt-4 max-w-2xl text-muted-foreground">
-							Cobalt blue primary, with yellow and red accents on dark backgrounds.
-						</p>
-
-						<div class="mt-8 grid grid-cols-2 gap-px bg-border md:grid-cols-3">
-							{#each colors as color (color.name)}
-								<div class="flex flex-col bg-background">
-									<div class="h-24 {color.class}"></div>
-									<div class="flex items-center justify-between p-4">
-										<div>
-											<p class="font-ui text-sm font-semibold">{color.name}</p>
-											<p class="font-mono text-xs text-muted-foreground">{color.hex}</p>
-										</div>
-										<button
-											type="button"
-											onclick={() => copyToClipboard(color.var, color.name)}
-											class="flex h-8 w-8 items-center justify-center border border-border transition-colors hover:bg-card"
-										>
-											{#if copiedItem === color.name}
-												<Check class="h-4 w-4 text-primary" />
-											{:else}
-												<Copy class="h-4 w-4" />
-											{/if}
-										</button>
-									</div>
-								</div>
-							{/each}
-						</div>
-					</div>
-
-				{:else if activeSection === 'typography'}
-					<!-- Typography -->
-					<div class="px-6 py-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
-						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">FOUNDATION</span>
-						<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">TYPOGRAPHY</h2>
-						<p class="font-body mt-4 max-w-2xl text-muted-foreground">
-							Four distinct typefaces for display, body, UI, and code.
-						</p>
-
-						<div class="mt-8 grid grid-cols-1 gap-px bg-border md:grid-cols-2">
-							{#each fonts as font (font.name)}
-								<div class="flex flex-col bg-background p-6">
-									<span class="font-mono text-[10px] tracking-widest text-primary">{font.usage.toUpperCase()}</span>
-									<p class="{font.class} mt-2 text-2xl">{font.name}</p>
-									<p class="{font.class} mt-4 text-lg text-muted-foreground">{font.sample}</p>
-									<p class="font-mono mt-4 text-xs text-muted-foreground">.{font.var}</p>
-								</div>
-							{/each}
-						</div>
-					</div>
-
-				{:else if activeSection === 'animations'}
-					<!-- Animations -->
-					<div class="px-6 py-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
-						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">MOTION</span>
-						<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">ANIMATIONS</h2>
-						<p class="font-body mt-4 max-w-2xl text-muted-foreground">
-							Scroll-based animations using Intersection Observer.
-						</p>
-
-						<div class="mt-8 grid grid-cols-2 gap-px bg-border md:grid-cols-4">
-							{#each ['fade', 'slide-left', 'slide-right', 'scale'] as anim (anim)}
-								<div class="flex flex-col bg-card p-6">
-									<span class="font-mono text-[10px] tracking-widest text-primary">{anim.toUpperCase()}</span>
-									<p class="font-body mt-2 text-sm text-muted-foreground">
-										{anim === 'fade' ? 'Opacity 0 to 1' : anim === 'scale' ? 'Scale 95% to 100%' : `Slide from ${anim.split('-')[1]}`}
-									</p>
-									<code class="font-mono mt-4 text-xs text-muted-foreground">animation: '{anim}'</code>
-								</div>
-							{/each}
-						</div>
-					</div>
-
-				{:else if activeSection === 'patterns'}
-					<!-- Patterns -->
-					<div class="px-6 py-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
-						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">RECIPES</span>
-						<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">PATTERNS</h2>
-						<p class="font-body mt-4 max-w-2xl text-muted-foreground">
-							Common UI patterns and compositions.
-						</p>
-
-						<div class="mt-8 grid grid-cols-1 gap-px bg-border md:grid-cols-2">
-							<div class="bg-card p-6">
-								<span class="font-mono text-[10px] tracking-widest text-muted-foreground">SECTION HEADER</span>
-								<div class="mt-4">
-									<span class="font-mono text-[10px] tracking-widest text-muted-foreground">LABEL</span>
-									<h3 class="font-display mt-2 text-2xl font-bold uppercase">SECTION TITLE</h3>
-									<p class="font-body mt-2 text-sm text-muted-foreground">Optional description text goes here.</p>
-								</div>
-							</div>
-							
-							<div class="bg-background p-6">
-								<span class="font-mono text-[10px] tracking-widest text-muted-foreground">STAT BLOCK</span>
-								<div class="mt-4">
-									<span class="font-display text-4xl font-bold text-primary">100%</span>
-									<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">METRIC LABEL</p>
-								</div>
-							</div>
-							
-							<div class="bg-background p-6">
-								<span class="font-mono text-[10px] tracking-widest text-muted-foreground">NUMBERED ITEM</span>
-								<div class="mt-4 flex gap-4">
-									<span class="font-display text-4xl text-primary/30">01</span>
-									<div>
-										<p class="font-ui font-semibold">Item Title</p>
-										<p class="font-body text-sm text-muted-foreground">Description text</p>
-									</div>
-								</div>
-							</div>
-							
-							<div class="bg-card p-6">
-								<span class="font-mono text-[10px] tracking-widest text-muted-foreground">FILTER BAR</span>
-								<div class="mt-4 grid grid-cols-4 gap-px bg-border">
-									<div class="flex items-center justify-center bg-background p-2"><span class="font-mono text-[10px]">FILTER</span></div>
-									<div class="flex items-center justify-center bg-primary p-2"><span class="font-mono text-[10px] text-primary-foreground">ALL</span></div>
-									<div class="flex items-center justify-center bg-background p-2"><span class="font-mono text-[10px]">A</span></div>
-									<div class="flex items-center justify-center bg-background p-2"><span class="font-mono text-[10px]">B</span></div>
-								</div>
-							</div>
-						</div>
-					</div>
-				{/if}
-
-			<!-- COMPONENT SECTIONS -->
-			{:else if activeCategory === 'components'}
-				{#if activeSection === 'buttons'}
-					<!-- Buttons -->
-					<div class="px-6 py-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
-						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">UI KIT</span>
-						<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">BUTTONS</h2>
-						<p class="font-body mt-4 max-w-2xl text-muted-foreground">
-							Button variants for different actions and contexts.
-						</p>
-
-						<div class="mt-8">
-							<p class="font-mono mb-4 text-[10px] tracking-widest text-muted-foreground">VARIANTS</p>
-							<div class="flex flex-wrap gap-4">
-								<Button class="font-ui">DEFAULT</Button>
-								<Button variant="outline" class="font-ui">OUTLINE</Button>
-								<Button variant="secondary" class="font-ui">SECONDARY</Button>
-								<Button variant="ghost" class="font-ui">GHOST</Button>
-								<Button variant="destructive" class="font-ui">DESTRUCTIVE</Button>
-							</div>
-						</div>
-
-						<div class="mt-8">
-							<p class="font-mono mb-4 text-[10px] tracking-widest text-muted-foreground">SIZES</p>
-							<div class="flex flex-wrap items-center gap-4">
-								<Button size="sm" class="font-ui">SMALL</Button>
-								<Button size="default" class="font-ui">DEFAULT</Button>
-								<Button size="lg" class="font-ui">LARGE</Button>
-							</div>
-						</div>
-
-						<div class="mt-8">
-							<p class="font-mono mb-4 text-[10px] tracking-widest text-muted-foreground">WITH ICONS</p>
-							<div class="flex flex-wrap gap-4">
-								<Button class="font-ui">
-									CONTINUE
-									<ArrowRight class="ml-2 h-4 w-4" />
-								</Button>
-								<Button variant="outline" class="font-ui">
-									<Copy class="mr-2 h-4 w-4" />
-									COPY
-								</Button>
-							</div>
-						</div>
-
-						<div class="mt-8">
-							<p class="font-mono mb-4 text-[10px] tracking-widest text-muted-foreground">GLITCH TEXT IN BUTTON</p>
-							<div class="flex flex-wrap gap-4">
-								<Button class="font-ui"><GlitchText text="HOVER ME" /></Button>
-								<Button variant="outline" class="font-ui"><GlitchText text="GLITCH EFFECT" /></Button>
-							</div>
-						</div>
-					</div>
-
-				{:else if activeSection === 'forms'}
-					<!-- Form Elements -->
-					<div class="px-6 py-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
-						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">UI KIT</span>
-						<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">FORM ELEMENTS</h2>
-						<p class="font-body mt-4 max-w-2xl text-muted-foreground">
-							Input fields, toggles, and form controls.
-						</p>
-
-						<div class="mt-8 grid max-w-2xl grid-cols-1 gap-6 md:grid-cols-2">
-							<div>
-								<Label class="font-mono text-[10px]">TEXT INPUT</Label>
-								<Input placeholder="ENTER TEXT..." class="font-mono mt-2 text-xs uppercase tracking-wider" />
-							</div>
-							<div>
-								<Label class="font-mono text-[10px]">EMAIL INPUT</Label>
-								<Input type="email" placeholder="EMAIL@EXAMPLE.COM" class="font-mono mt-2 text-xs uppercase tracking-wider" />
-							</div>
-						</div>
-
-						<div class="mt-8 max-w-2xl">
-							<Label class="font-mono text-[10px]">TEXTAREA</Label>
-							<Textarea placeholder="LONGER TEXT CONTENT..." class="font-mono mt-2 text-xs tracking-wider" rows={4} />
-						</div>
-
-						<div class="mt-8">
-							<p class="font-mono mb-4 text-[10px] tracking-widest text-muted-foreground">TOGGLE</p>
-							<div class="flex items-center gap-4">
-								<Switch bind:checked={switchValue} />
-								<Label class="font-mono text-[10px]">SWITCH IS {switchValue ? 'ON' : 'OFF'}</Label>
-							</div>
-						</div>
-					</div>
-
-				{:else if activeSection === 'feedback'}
-					<!-- Feedback -->
-					<div class="px-6 py-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
-						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">UI KIT</span>
-						<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">FEEDBACK</h2>
-						<p class="font-body mt-4 max-w-2xl text-muted-foreground">
-							Progress indicators, spinners, and status components.
-						</p>
-
-						<div class="mt-8">
-							<p class="font-mono mb-4 text-[10px] tracking-widest text-muted-foreground">PROGRESS</p>
-							<div class="max-w-xl">
-								<Label class="font-mono text-[10px]">PROGRESS {progressValue}%</Label>
-								<Progress value={progressValue} class="mt-2" />
-							</div>
-						</div>
-
-						<div class="mt-8">
-							<p class="font-mono mb-4 text-[10px] tracking-widest text-muted-foreground">SPINNERS</p>
-							<div class="flex items-center gap-6">
-								<div class="flex flex-col items-center gap-2">
-									<Spinner size="sm" />
-									<span class="font-mono text-[10px] text-muted-foreground">SM</span>
-								</div>
-								<div class="flex flex-col items-center gap-2">
-									<Spinner size="default" />
-									<span class="font-mono text-[10px] text-muted-foreground">DEFAULT</span>
-								</div>
-								<div class="flex flex-col items-center gap-2">
-									<Spinner size="lg" />
-									<span class="font-mono text-[10px] text-muted-foreground">LG</span>
-								</div>
-							</div>
-						</div>
-
-						<div class="mt-8">
-							<p class="font-mono mb-4 text-[10px] tracking-widest text-muted-foreground">BADGES</p>
-							<div class="flex flex-wrap gap-4">
-								<Badge>DEFAULT</Badge>
-								<Badge variant="secondary">SECONDARY</Badge>
-								<Badge variant="outline">OUTLINE</Badge>
-								<Badge variant="destructive">DESTRUCTIVE</Badge>
-							</div>
-						</div>
-					</div>
-
-				{:else if activeSection === 'layout'}
-					<!-- Layout -->
-					<div class="px-6 py-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
-						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">UI KIT</span>
-						<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">LAYOUT</h2>
-						<p class="font-body mt-4 max-w-2xl text-muted-foreground">
-							Separators, cards, and layout utilities.
-						</p>
-
-						<div class="mt-8">
-							<p class="font-mono mb-4 text-[10px] tracking-widest text-muted-foreground">SEPARATOR</p>
-							<div class="max-w-xl space-y-4">
-								<p class="font-body text-sm text-muted-foreground">Horizontal separator</p>
-								<Separator />
-								<div class="flex h-8 items-center gap-4">
-									<span class="font-mono text-xs">ITEM 1</span>
-									<Separator orientation="vertical" />
-									<span class="font-mono text-xs">ITEM 2</span>
-									<Separator orientation="vertical" />
-									<span class="font-mono text-xs">ITEM 3</span>
-								</div>
-							</div>
-						</div>
-
-						<div class="mt-8">
-							<p class="font-mono mb-4 text-[10px] tracking-widest text-muted-foreground">CTA SECTION VARIANTS</p>
-							<div class="space-y-2">
-								<code class="font-mono block text-xs text-primary">&lt;CTASection variant="default" title="..." /&gt;</code>
-								<code class="font-mono block text-xs text-primary">&lt;CTASection variant="compact" title="..." /&gt;</code>
-								<code class="font-mono block text-xs text-primary">&lt;CTASection variant="minimal" title="..." /&gt;</code>
-								<code class="font-mono block text-xs text-primary">&lt;CTASection variant="split" title="..." stats=&#123;[...]&#125; /&gt;</code>
-								<code class="font-mono block text-xs text-primary">&lt;CTASection variant="large" title="..." /&gt;</code>
-							</div>
-						</div>
-					</div>
-
-				{:else if activeSection === 'interactive'}
-					<!-- Interactive -->
-					<div class="px-6 py-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
-						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">UI KIT</span>
-						<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">INTERACTIVE</h2>
-						<p class="font-body mt-4 max-w-2xl text-muted-foreground">
-							Accordion, keyboard shortcuts, and other interactive elements.
-						</p>
-
-						<div class="mt-8">
-							<p class="font-mono mb-4 text-[10px] tracking-widest text-muted-foreground">ACCORDION</p>
-							<div class="max-w-xl">
-								<Accordion.Root type="single" class="divide-y divide-border border border-border">
-									<Accordion.Item value="item-1">
-										<Accordion.Trigger class="font-ui px-4 py-3 text-xs tracking-wider">FIRST ITEM</Accordion.Trigger>
-										<Accordion.Content class="font-body px-4 pb-3 text-sm text-muted-foreground">Content for the first accordion item.</Accordion.Content>
-									</Accordion.Item>
-									<Accordion.Item value="item-2">
-										<Accordion.Trigger class="font-ui px-4 py-3 text-xs tracking-wider">SECOND ITEM</Accordion.Trigger>
-										<Accordion.Content class="font-body px-4 pb-3 text-sm text-muted-foreground">Content for the second accordion item.</Accordion.Content>
-									</Accordion.Item>
-									<Accordion.Item value="item-3">
-										<Accordion.Trigger class="font-ui px-4 py-3 text-xs tracking-wider">THIRD ITEM</Accordion.Trigger>
-										<Accordion.Content class="font-body px-4 pb-3 text-sm text-muted-foreground">Content for the third accordion item.</Accordion.Content>
-									</Accordion.Item>
-								</Accordion.Root>
-							</div>
-						</div>
-
-						<div class="mt-8">
-							<p class="font-mono mb-4 text-[10px] tracking-widest text-muted-foreground">KEYBOARD SHORTCUTS</p>
-							<div class="flex flex-wrap items-center gap-6">
-								<div class="flex items-center gap-1">
-									<Kbd>⌘</Kbd><Kbd>K</Kbd>
-									<span class="font-mono ml-2 text-[10px] text-muted-foreground">Command menu</span>
-								</div>
-								<div class="flex items-center gap-1">
-									<Kbd>⌘</Kbd><Kbd>S</Kbd>
-									<span class="font-mono ml-2 text-[10px] text-muted-foreground">Save</span>
-								</div>
-								<div class="flex items-center gap-1">
-									<Kbd>Esc</Kbd>
-									<span class="font-mono ml-2 text-[10px] text-muted-foreground">Close</span>
-								</div>
-							</div>
-						</div>
-
-						<div class="mt-8">
-							<p class="font-mono mb-4 text-[10px] tracking-widest text-muted-foreground">GLITCH TEXT</p>
-							<div class="flex flex-wrap items-center gap-6">
-								<GlitchText text="HOVER TO GLITCH" class="font-display text-2xl font-bold uppercase" />
-								<GlitchText text="STARTS SCRAMBLED" scrambledStart={true} class="font-display text-2xl font-bold uppercase" />
-							</div>
-						</div>
-					</div>
-				{/if}
-			{/if}
+		<div class="col-span-12 grid grid-cols-2 gap-px border-t border-border bg-border lg:col-span-8 lg:grid-cols-4 lg:border-l lg:border-t-0" use:scrollAnimate={{ animation: 'stagger' }}>
+			{#each quickStats as { label, value, code } (label)}
+				<div class="flex flex-col justify-center bg-background px-6 py-8 md:px-8">
+					<span class="font-display text-2xl font-bold text-primary md:text-3xl">{value}</span>
+					<span class="font-mono mt-2 text-[10px] tracking-widest text-muted-foreground">{label}</span>
+					<code class="font-mono mt-3 text-xs text-primary/70">{code}</code>
+				</div>
+			{/each}
 		</div>
 	</div>
 </section>
 
-<!-- Design Principles -->
+<!-- Documentation Sections - Foundation -->
+{#each docSections as { category, items } (category)}
+	<section class="border-b border-border">
+		<div class="px-6 py-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// {category}</span>
+			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">{category}</h2>
+		</div>
+		<div class="grid grid-cols-12 gap-px border-t border-border bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
+			{#each items as { icon: Icon, title, desc, href, stats } (title)}
+				<a
+					href={localizeHref(href)}
+					class="col-span-12 flex flex-col bg-background px-6 py-10 transition-colors hover:bg-card sm:col-span-6 md:px-12 lg:col-span-3 lg:px-16"
+				>
+					<div class="flex items-start justify-between">
+						<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">
+							<Icon class="h-5 w-5 text-primary" />
+						</div>
+						<span class="font-mono text-[10px] tracking-wider text-primary">{stats}</span>
+					</div>
+					<h3 class="font-ui mt-6 text-base font-semibold tracking-wider">{title}</h3>
+					<p class="font-body mt-3 flex-1 text-sm text-muted-foreground">{desc}</p>
+					<span class="font-mono mt-6 flex items-center gap-2 text-xs tracking-wider text-primary">
+						VIEW DOCS
+						<ArrowRight class="h-3.5 w-3.5" />
+					</span>
+				</a>
+			{/each}
+		</div>
+	</section>
+{/each}
+
+<!-- Preview Section - Grid Demo -->
+<section class="border-b border-border">
+	<div class="grid grid-cols-12">
+		<div class="col-span-12 bg-background px-6 py-12 md:px-12 lg:col-span-5 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// PREVIEW</span>
+			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">12-COLUMN GRID</h2>
+			<p class="font-body mt-4 text-muted-foreground">
+				The foundation of our layout system. All elements align to this grid for visual consistency across every page.
+			</p>
+			<div class="mt-8 space-y-4">
+				<div class="flex items-center gap-4">
+					<span class="font-mono text-xs text-primary">gap-px</span>
+					<span class="font-body text-sm text-muted-foreground">1px grid gaps create subtle borders</span>
+				</div>
+				<div class="flex items-center gap-4">
+					<span class="font-mono text-xs text-primary">col-span-*</span>
+					<span class="font-body text-sm text-muted-foreground">Flexible column spanning</span>
+				</div>
+				<div class="flex items-center gap-4">
+					<span class="font-mono text-xs text-primary">bg-border</span>
+					<span class="font-body text-sm text-muted-foreground">Border color as grid background</span>
+				</div>
+			</div>
+		</div>
+		<div class="col-span-12 flex flex-col justify-center border-t border-border bg-card px-6 py-12 md:px-12 lg:col-span-7 lg:border-l lg:border-t-0 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
+			<!-- Grid Demo -->
+			<p class="font-mono mb-4 text-[10px] tracking-widest text-muted-foreground">12-COLUMN GRID</p>
+			<div class="grid grid-cols-12 gap-px bg-border">
+				{#each Array(12) as _, i (i)}
+					<div class="flex items-center justify-center bg-background py-4">
+						<span class="font-mono text-xs text-muted-foreground">{i + 1}</span>
+					</div>
+				{/each}
+			</div>
+			
+			<p class="font-mono mb-4 mt-8 text-[10px] tracking-widest text-muted-foreground">COMMON PATTERNS</p>
+			<div class="space-y-2">
+				<div class="grid grid-cols-12 gap-px bg-border">
+					<div class="col-span-4 flex items-center justify-center bg-primary/20 py-3"><span class="font-mono text-xs">4</span></div>
+					<div class="col-span-4 flex items-center justify-center bg-background py-3"><span class="font-mono text-xs">4</span></div>
+					<div class="col-span-4 flex items-center justify-center bg-background py-3"><span class="font-mono text-xs">4</span></div>
+				</div>
+				<div class="grid grid-cols-12 gap-px bg-border">
+					<div class="col-span-6 flex items-center justify-center bg-primary/20 py-3"><span class="font-mono text-xs">6</span></div>
+					<div class="col-span-6 flex items-center justify-center bg-background py-3"><span class="font-mono text-xs">6</span></div>
+				</div>
+				<div class="grid grid-cols-12 gap-px bg-border">
+					<div class="col-span-3 flex items-center justify-center bg-primary/20 py-3"><span class="font-mono text-xs">3</span></div>
+					<div class="col-span-9 flex items-center justify-center bg-background py-3"><span class="font-mono text-xs">9</span></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Typography Preview -->
+<section class="border-b border-border">
+	<div class="px-6 py-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
+		<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// TYPOGRAPHY</span>
+		<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">FOUR TYPEFACES</h2>
+	</div>
+	<div class="grid grid-cols-12 gap-px border-t border-border bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
+		<div class="col-span-12 flex flex-col bg-background px-6 py-8 sm:col-span-6 md:px-12 lg:col-span-3 lg:px-16">
+			<span class="font-mono text-[10px] tracking-widest text-primary">DISPLAY</span>
+			<p class="font-display mt-3 text-3xl font-bold uppercase">Tourney</p>
+			<p class="font-body mt-3 text-sm text-muted-foreground">Headlines & titles</p>
+		</div>
+		<div class="col-span-12 flex flex-col bg-card px-6 py-8 sm:col-span-6 md:px-12 lg:col-span-3 lg:px-16">
+			<span class="font-mono text-[10px] tracking-widest text-primary">BODY</span>
+			<p class="font-body mt-3 text-2xl">Hubot Sans</p>
+			<p class="font-body mt-3 text-sm text-muted-foreground">Body text & paragraphs</p>
+		</div>
+		<div class="col-span-12 flex flex-col bg-card px-6 py-8 sm:col-span-6 md:px-12 lg:col-span-3 lg:px-16">
+			<span class="font-mono text-[10px] tracking-widest text-primary">UI</span>
+			<p class="font-ui mt-3 text-2xl font-semibold tracking-wider">Chakra Petch</p>
+			<p class="font-body mt-3 text-sm text-muted-foreground">Buttons & labels</p>
+		</div>
+		<div class="col-span-12 flex flex-col bg-background px-6 py-8 sm:col-span-6 md:px-12 lg:col-span-3 lg:px-16">
+			<span class="font-mono text-[10px] tracking-widest text-primary">CODE</span>
+			<p class="font-mono mt-3 text-xl">JetBrains Mono</p>
+			<p class="font-body mt-3 text-sm text-muted-foreground">Code & technical text</p>
+		</div>
+	</div>
+</section>
+
+<!-- Color Palette Preview -->
+<section class="border-b border-border">
+	<div class="px-6 py-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
+		<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// COLORS</span>
+		<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">COLOR PALETTE</h2>
+	</div>
+	<div class="grid grid-cols-12 gap-px border-t border-border bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
+		<div class="col-span-4 sm:col-span-2">
+			<div class="h-24 bg-primary"></div>
+			<div class="bg-background px-4 py-3">
+				<p class="font-ui text-xs font-semibold">Cobalt</p>
+				<p class="font-mono text-[10px] text-muted-foreground">#00A3FF</p>
+			</div>
+		</div>
+		<div class="col-span-4 sm:col-span-2">
+			<div class="h-24 bg-yellow-500"></div>
+			<div class="bg-background px-4 py-3">
+				<p class="font-ui text-xs font-semibold">Yellow</p>
+				<p class="font-mono text-[10px] text-muted-foreground">#FFD500</p>
+			</div>
+		</div>
+		<div class="col-span-4 sm:col-span-2">
+			<div class="h-24 bg-red-500"></div>
+			<div class="bg-background px-4 py-3">
+				<p class="font-ui text-xs font-semibold">Red</p>
+				<p class="font-mono text-[10px] text-muted-foreground">#EF4444</p>
+			</div>
+		</div>
+		<div class="col-span-4 sm:col-span-2">
+			<div class="h-24 bg-background border-y border-border"></div>
+			<div class="bg-background px-4 py-3">
+				<p class="font-ui text-xs font-semibold">Black 950</p>
+				<p class="font-mono text-[10px] text-muted-foreground">#000814</p>
+			</div>
+		</div>
+		<div class="col-span-4 sm:col-span-2">
+			<div class="h-24 bg-card"></div>
+			<div class="bg-background px-4 py-3">
+				<p class="font-ui text-xs font-semibold">Black 900</p>
+				<p class="font-mono text-[10px] text-muted-foreground">#001122</p>
+			</div>
+		</div>
+		<div class="col-span-4 sm:col-span-2">
+			<div class="h-24 bg-border"></div>
+			<div class="bg-background px-4 py-3">
+				<p class="font-ui text-xs font-semibold">Border</p>
+				<p class="font-mono text-[10px] text-muted-foreground">#1a2744</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- External Resources -->
 <section class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
-		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:px-12 lg:col-span-6 lg:px-16">
-			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">PHILOSOPHY</span>
-			<h2 class="font-display mt-4 text-3xl font-bold uppercase md:text-4xl">DESIGN PRINCIPLES</h2>
+		<div class="col-span-12 bg-background px-6 py-12 md:col-span-6 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// RESOURCES</span>
+			<h2 class="font-display mt-4 text-2xl font-bold uppercase md:text-3xl">EXTERNAL DOCS</h2>
+			<p class="font-body mt-4 text-sm text-muted-foreground">Additional resources and documentation for the technologies we use.</p>
 		</div>
-		<div class="col-span-12 grid grid-cols-1 gap-px bg-border lg:col-span-6">
-			<div class="bg-card px-6 py-6 md:px-12 lg:px-16">
-				<span class="font-display text-xl font-bold text-primary">01</span>
-				<h3 class="font-ui mt-2 font-semibold">INDUSTRIAL PRECISION</h3>
-				<p class="font-body mt-1 text-sm text-muted-foreground">No rounded corners. Sharp edges. Grid-based layouts.</p>
-			</div>
-			<div class="bg-background px-6 py-6 md:px-12 lg:px-16">
-				<span class="font-display text-xl font-bold text-primary">02</span>
-				<h3 class="font-ui mt-2 font-semibold">HIGH CONTRAST</h3>
-				<p class="font-body mt-1 text-sm text-muted-foreground">Dark backgrounds with vibrant accents for visual impact.</p>
-			</div>
-			<div class="bg-card px-6 py-6 md:px-12 lg:px-16">
-				<span class="font-display text-xl font-bold text-primary">03</span>
-				<h3 class="font-ui mt-2 font-semibold">TYPOGRAPHY FIRST</h3>
-				<p class="font-body mt-1 text-sm text-muted-foreground">Clear hierarchy through type scale and weight.</p>
-			</div>
+		<div class="col-span-12 grid grid-cols-2 gap-px bg-border md:col-span-6" use:scrollAnimate={{ animation: 'stagger' }}>
+			<a href="https://svelte.dev/docs" target="_blank" rel="noopener" class="flex items-center justify-between bg-card px-6 py-6 transition-colors hover:bg-background md:px-8">
+				<span class="font-ui text-sm font-semibold tracking-wider">SVELTE</span>
+				<ExternalLink class="h-4 w-4 text-primary" />
+			</a>
+			<a href="https://tailwindcss.com/docs" target="_blank" rel="noopener" class="flex items-center justify-between bg-background px-6 py-6 transition-colors hover:bg-card md:px-8">
+				<span class="font-ui text-sm font-semibold tracking-wider">TAILWIND</span>
+				<ExternalLink class="h-4 w-4 text-primary" />
+			</a>
+			<a href="https://lucide.dev/icons" target="_blank" rel="noopener" class="flex items-center justify-between bg-background px-6 py-6 transition-colors hover:bg-card md:px-8">
+				<span class="font-ui text-sm font-semibold tracking-wider">LUCIDE ICONS</span>
+				<ExternalLink class="h-4 w-4 text-primary" />
+			</a>
+			<a href="https://www.shadcn-svelte.com" target="_blank" rel="noopener" class="flex items-center justify-between bg-card px-6 py-6 transition-colors hover:bg-background md:px-8">
+				<span class="font-ui text-sm font-semibold tracking-wider">SHADCN-SVELTE</span>
+				<ExternalLink class="h-4 w-4 text-primary" />
+			</a>
 		</div>
 	</div>
 </section>
+
+<!-- CTA Section -->
+<CTASection
+	variant="split"
+	label="NEED HELP?"
+	title="GET SUPPORT"
+	description="Having trouble with implementation? Our team is here to help you build something great."
+	buttonText="CONTACT US"
+	buttonHref="/contact"
+	secondaryButtonText="VIEW SUPPORT"
+	secondaryButtonHref="/support"
+	stats={[
+		{ value: '<24H', label: 'RESPONSE' },
+		{ value: '100%', label: 'HELPFUL' }
+	]}
+/>
