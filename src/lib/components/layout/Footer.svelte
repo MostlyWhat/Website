@@ -36,6 +36,7 @@
 			{ href: '/legal/privacy', label: 'PRIVACY' },
 			{ href: '/legal/terms', label: 'TERMS' },
 			{ href: '/legal/eula', label: 'EULA' },
+			{ href: '/legal/software-license', label: 'SOFTWARE' },
 			{ href: '/legal/cookies', label: 'COOKIES' }
 		]
 	};
