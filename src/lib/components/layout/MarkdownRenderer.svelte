@@ -23,10 +23,19 @@
 	// Configure marked to add IDs to headings for anchor links
 	const renderer = new marked.Renderer();
 	renderer.heading = ({ text, depth }) => {
-		const id = text
-			.toLowerCase()
-			.replace(/[^a-z0-9\s-]/g, '')
-			.replace(/\s+/g, '-');
+		// Check for numbered heading format: "01 — Title"
+		const numberedMatch = text.match(/^(\d+)\s*[—–-]\s*(.+)$/);
+		let id: string;
+		if (numberedMatch) {
+			const number = numberedMatch[1].padStart(2, '0');
+			const title = numberedMatch[2].trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+			id = `${number}--${title}`;
+		} else {
+			id = text
+				.toLowerCase()
+				.replace(/[^a-z0-9\s-]/g, '')
+				.replace(/\s+/g, '-');
+		}
 		return `<h${depth} id="${id}"><a href="#${id}" class="heading-anchor">${text}</a></h${depth}>`;
 	};
 	

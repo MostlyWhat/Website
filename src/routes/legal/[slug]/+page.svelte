@@ -3,6 +3,7 @@
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import MarkdownRenderer from '$lib/components/layout/MarkdownRenderer.svelte';
+	import WideNavSection from '$lib/components/layout/WideNavSection.svelte';
 	import { ArrowLeft } from '@lucide/svelte';
 	import type { PageData } from './$types';
 
@@ -53,7 +54,6 @@
 						{#each doc.sections as section, i (section.id)}
 							<a 
 								href="#{section.id}"
-								onclick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
 								class="font-ui group flex items-start gap-3 text-xs tracking-wider text-muted-foreground transition-colors hover:text-primary"
 							>
 								<span class="font-mono text-[10px] text-primary/50 group-hover:text-primary">{String(i + 1).padStart(2, '0')}</span>
@@ -79,37 +79,12 @@
 	</div>
 </section>
 
-<!-- Related Documents -->
-<section class="border-b border-border">
-	<div class="grid grid-cols-12 gap-px bg-border">
-		<div class="col-span-12 flex items-center justify-between bg-card p-6">
-			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">LEGAL DOCUMENTS</span>
-		</div>
-	</div>
-	<div class="grid grid-cols-12 gap-px bg-border">
-		<a 
-			href={localizeHref('/legal/privacy')} 
-			data-sveltekit-replacestate
-			class="col-span-12 bg-background p-6 transition-colors hover:bg-card md:col-span-4 {doc.slug === 'privacy' ? 'border-l-2 border-l-primary' : ''}"
-		>
-			<h3 class="font-ui text-xs font-semibold tracking-wider">PRIVACY POLICY</h3>
-			<p class="font-body mt-1 text-[11px] text-muted-foreground">How we handle your data</p>
-		</a>
-		<a 
-			href={localizeHref('/legal/terms')} 
-			data-sveltekit-replacestate
-			class="col-span-12 bg-background p-6 transition-colors hover:bg-card md:col-span-4 {doc.slug === 'terms' ? 'border-l-2 border-l-primary' : ''}"
-		>
-			<h3 class="font-ui text-xs font-semibold tracking-wider">TERMS OF SERVICE</h3>
-			<p class="font-body mt-1 text-[11px] text-muted-foreground">Service agreement terms</p>
-		</a>
-		<a 
-			href={localizeHref('/legal/cookies')} 
-			data-sveltekit-replacestate
-			class="col-span-12 bg-background p-6 transition-colors hover:bg-card md:col-span-4 {doc.slug === 'cookies' ? 'border-l-2 border-l-primary' : ''}"
-		>
-			<h3 class="font-ui text-xs font-semibold tracking-wider">COOKIE POLICY</h3>
-			<p class="font-body mt-1 text-[11px] text-muted-foreground">How we use cookies</p>
-		</a>
-	</div>
-</section>
+<!-- More Legal Documents CTA -->
+<WideNavSection
+	label="LEGAL"
+	title="VIEW ALL DOCUMENTS"
+	description="Read our other legal documents and policies."
+	buttonText="VIEW ALL"
+	buttonHref="/legal"
+	variant="back"
+/>

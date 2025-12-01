@@ -35,7 +35,8 @@ export function extractSections(markdown: string): ContentSection[] {
         hasNumberedSections = true;
         const number = match[1].padStart(2, '0');
         const title = match[2].trim().toUpperCase();
-        const id = title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+        // ID includes the number to match what the heading renderer generates
+        const id = `${number}--${title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`;
         sections.push({ id, number, title });
     }
 
@@ -94,7 +95,8 @@ export function renderStyledMarkdown(markdown: string, options: RenderOptions = 
             /<h2>(\d+)\s*[—–-]\s*(.+?)<\/h2>/gi,
             (_, num, title) => {
                 const number = num.padStart(2, '0');
-                const id = title.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+                const titleId = title.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+                const id = `${number}--${titleId}`;
                 return `<h2 id="${id}" class="font-ui mt-12 mb-4 text-base font-bold tracking-wider text-primary scroll-mt-24">${h2Prefix}${number} — ${title.trim().toUpperCase()}</h2>`;
             }
         )
