@@ -1,5 +1,6 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
+import { parseFrontmatter, extractSlugFromPath } from '$lib/utils/markdown';
 
 interface Position {
     slug: string;
@@ -11,49 +12,21 @@ interface Position {
 }
 
 // Import all markdown files from the careers folder
-const positionFiles = import.meta.glob('/src/content/careers/*.md', { eager: true, query: '?raw', import: 'default' });
-
-function parseFrontmatter(content: string): { metadata: Record<string, string>; content: string } {
-    // Normalize line endings to LF
-    const normalizedContent = content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-    const frontmatterRegex = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/;
-    const match = normalizedContent.match(frontmatterRegex);
-
-    if (!match) {
-        return { metadata: {}, content: normalizedContent };
-    }
-
-    const frontmatter = match[1];
-    const body = match[2];
-
-    const metadata: Record<string, string> = {};
-    frontmatter.split('\n').forEach(line => {
-        const colonIndex = line.indexOf(':');
-        if (colonIndex > 0) {
-            const key = line.slice(0, colonIndex).trim();
-            const value = line.slice(colonIndex + 1).trim();
-            if (key && value) {
-                metadata[key] = value;
-            }
-        }
-    });
-
-    return { metadata, content: body };
-}
+const positionFiles = import.meta.glob('/src/lib/content/careers/*.md', { eager: true, query: '?raw', import: 'default' });
 
 export const load: PageServerLoad = async () => {
     const positions: Position[] = [];
 
     for (const [path, content] of Object.entries(positionFiles)) {
-        const { metadata } = parseFrontmatter(content as string);
+        const { frontmatter } = parseFrontmatter(content as string);
 
         positions.push({
-            slug: metadata.slug || path.split('/').pop()?.replace('.md', '') || '',
-            title: metadata.title || '',
-            type: metadata.type || 'FULL-TIME',
-            location: metadata.location || 'REMOTE',
-            department: metadata.department || 'GENERAL',
-            summary: metadata.summary || ''
+            slug: (frontmatter.slug as string) || extractSlugFromPath(path),
+            title: (frontmatter.title as string) || '',
+            type: (frontmatter.type as string) || 'FULL-TIME',
+            location: (frontmatter.location as string) || 'REMOTE',
+            department: (frontmatter.department as string) || 'GENERAL',
+            summary: (frontmatter.summary as string) || ''
         });
     }
 

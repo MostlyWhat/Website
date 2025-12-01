@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import matter from 'gray-matter';
+import { parseFrontmatter, extractSlugFromPath, generateExcerpt } from '$lib/utils/markdown';
 
 // Content index - built at startup
 interface ContentItem {
@@ -15,11 +15,11 @@ interface ContentItem {
 }
 
 // Import all markdown files at build time
-const supportFiles = import.meta.glob('/src/content/support/*.md', { query: '?raw', import: 'default', eager: true });
+const supportFiles = import.meta.glob('/src/lib/content/support/*.md', { query: '?raw', import: 'default', eager: true });
 const blogFiles = import.meta.glob('/src/lib/content/blog/*.md', { query: '?raw', import: 'default', eager: true });
 const projectFiles = import.meta.glob('/src/lib/content/projects/*.md', { query: '?raw', import: 'default', eager: true });
 const serviceFiles = import.meta.glob('/src/lib/content/services/*.md', { query: '?raw', import: 'default', eager: true });
-const careerFiles = import.meta.glob('/src/content/careers/*.md', { query: '?raw', import: 'default', eager: true });
+const careerFiles = import.meta.glob('/src/lib/content/careers/*.md', { query: '?raw', import: 'default', eager: true });
 const legalFiles = import.meta.glob('/src/lib/content/legal/*.md', { query: '?raw', import: 'default', eager: true });
 
 function parseMarkdownFiles(
@@ -29,34 +29,32 @@ function parseMarkdownFiles(
 ): ContentItem[] {
     return Object.entries(files).map(([path, raw]) => {
         const content = raw as string;
-        const { data: frontmatter, content: body } = matter(content);
+        const { frontmatter, body } = parseFrontmatter(content);
 
         // Extract slug from path or frontmatter
-        const pathSlug = path.split('/').pop()?.replace('.md', '') || '';
-        const slug = frontmatter.slug || pathSlug;
+        const pathSlug = extractSlugFromPath(path);
+        const slug = (frontmatter.slug as string) || pathSlug;
 
-        // Generate excerpt from content (first 200 chars without markdown)
-        const plainContent = body
-            .replace(/^#+\s+.*/gm, '') // Remove headings
-            .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Replace links with text
-            .replace(/[*_`#]/g, '') // Remove markdown formatting
-            .replace(/\n+/g, ' ') // Replace newlines with spaces
-            .trim();
-
-        const excerpt = frontmatter.excerpt || frontmatter.summary || plainContent.slice(0, 200) + '...';
+        // Generate excerpt from content using shared utility
+        const plainContent = generateExcerpt(body, 10000); // Get full plain text for searching
+        const excerpt = (frontmatter.excerpt as string) || (frontmatter.summary as string) || generateExcerpt(body, 200);
 
         // Extract keywords from tags, category, and title
+        const tags = (frontmatter.tags as string[]) || [];
+        const title = (frontmatter.title as string) || '';
+        const category = (frontmatter.category as string) || '';
+        
         const keywords: string[] = [
-            ...(frontmatter.tags || []),
-            frontmatter.category || '',
-            ...(frontmatter.title || '').toLowerCase().split(/\s+/)
+            ...tags,
+            category,
+            ...title.toLowerCase().split(/\s+/)
         ].filter(Boolean);
 
         return {
-            title: frontmatter.title || slug,
+            title: title || slug,
             slug,
             url: `${baseUrl}/${slug}`,
-            category: frontmatter.category || type,
+            category: category || type,
             excerpt,
             content: plainContent.toLowerCase(),
             type,

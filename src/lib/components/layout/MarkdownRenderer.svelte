@@ -9,9 +9,16 @@
 		class?: string;
 		/** Enable scroll animations */
 		animated?: boolean;
+		/** Strip the first H1 heading (useful when title is shown separately) */
+		stripTitle?: boolean;
 	}
 
-	let { content, class: className = '', animated = true }: Props = $props();
+	let { content, class: className = '', animated = true, stripTitle = true }: Props = $props();
+
+	// Strip the first H1 heading if requested (handles leading whitespace/newlines)
+	const processedContent = $derived(
+		stripTitle ? content.replace(/^\s*#\s+.+\n*/, '') : content
+	);
 
 	// Configure marked to add IDs to headings for anchor links
 	const renderer = new marked.Renderer();
@@ -38,7 +45,7 @@
 	marked.use({ renderer });
 
 	// Render markdown to HTML
-	const renderedContent = $derived(marked(content) as string);
+	const renderedContent = $derived(marked(processedContent) as string);
 </script>
 
 {#if animated}

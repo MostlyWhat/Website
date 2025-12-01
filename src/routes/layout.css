@@ -571,6 +571,12 @@
 	color: var(--muted-foreground);
 }
 
+.prose-custom ul li strong,
+.prose-custom ol li strong {
+	font-weight: 600;
+	color: var(--foreground);
+}
+
 .prose-custom ul li::before {
 	content: "";
 	position: absolute;

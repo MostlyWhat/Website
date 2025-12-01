@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { error } from '@sveltejs/kit';
-import matter from 'gray-matter';
+import { parseFrontmatter, extractSections, extractSlugFromPath } from '$lib/utils/markdown';
 
 interface Section {
     id: string;
@@ -17,35 +17,21 @@ interface SupportArticle {
     sections: Section[];
 }
 
-const articleFiles = import.meta.glob('/src/content/support/*.md', { eager: true, query: '?raw', import: 'default' });
-
-function extractSections(content: string): Section[] {
-    const headingRegex = /^##\s+(.+)$/gm;
-    const sections: Section[] = [];
-    let match;
-
-    while ((match = headingRegex.exec(content)) !== null) {
-        const title = match[1].trim();
-        const id = title
-            .toLowerCase()
-            .replace(/[^a-z0-9\s-]/g, '')
-            .replace(/\s+/g, '-');
-        sections.push({ id, title });
-    }
-
-    return sections;
-}
+const articleFiles = import.meta.glob('/src/lib/content/support/*.md', { eager: true, query: '?raw', import: 'default' });
 
 function parseArticle(raw: string, slug: string): SupportArticle {
-    const { data, content } = matter(raw);
+    const { frontmatter, body } = parseFrontmatter(raw);
+    // Extract sections using shared utility (returns ContentSection with id, number, title)
+    const sections = extractSections(body).map(s => ({ id: s.id, title: s.title }));
+    
     return {
-        slug: data.slug || slug,
-        title: data.title || 'Untitled',
-        category: data.category || 'general',
-        summary: data.summary || '',
-        order: data.order || 99,
-        content: content.trim(),
-        sections: extractSections(content)
+        slug: (frontmatter.slug as string) || slug,
+        title: (frontmatter.title as string) || 'Untitled',
+        category: (frontmatter.category as string) || 'general',
+        summary: (frontmatter.summary as string) || '',
+        order: (frontmatter.order as number) || 99,
+        content: body.trim(),
+        sections
     };
 }
 
@@ -53,7 +39,7 @@ export const load: PageServerLoad = async ({ params }) => {
     const { slug } = params;
 
     // Find the matching article
-    const filePath = `/src/content/support/${slug}.md`;
+    const filePath = `/src/lib/content/support/${slug}.md`;
     const rawContent = articleFiles[filePath] as string | undefined;
 
     if (!rawContent) {
@@ -65,7 +51,7 @@ export const load: PageServerLoad = async ({ params }) => {
     // Get all articles for navigation
     const allArticles = Object.entries(articleFiles)
         .map(([path, raw]) => {
-            const fileSlug = path.split('/').pop()?.replace('.md', '') || '';
+            const fileSlug = extractSlugFromPath(path);
             return parseArticle(raw as string, fileSlug);
         })
         .sort((a, b) => a.order - b.order);

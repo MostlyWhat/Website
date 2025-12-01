@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import matter from 'gray-matter';
+import { parseFrontmatter, extractSlugFromPath } from '$lib/utils/markdown';
 
 interface SupportArticle {
     slug: string;
@@ -9,23 +9,23 @@ interface SupportArticle {
     order: number;
 }
 
-const articleFiles = import.meta.glob('/src/content/support/*.md', { eager: true, query: '?raw', import: 'default' });
+const articleFiles = import.meta.glob('/src/lib/content/support/*.md', { eager: true, query: '?raw', import: 'default' });
 
 function parseArticle(raw: string, slug: string): SupportArticle {
-    const { data } = matter(raw);
+    const { frontmatter } = parseFrontmatter(raw);
     return {
-        slug: data.slug || slug,
-        title: data.title || 'Untitled',
-        category: data.category || 'general',
-        summary: data.summary || '',
-        order: data.order || 99
+        slug: (frontmatter.slug as string) || slug,
+        title: (frontmatter.title as string) || 'Untitled',
+        category: (frontmatter.category as string) || 'general',
+        summary: (frontmatter.summary as string) || '',
+        order: (frontmatter.order as number) || 99
     };
 }
 
 export const load: PageServerLoad = async () => {
     const articles = Object.entries(articleFiles)
         .map(([path, raw]) => {
-            const slug = path.split('/').pop()?.replace('.md', '') || '';
+            const slug = extractSlugFromPath(path);
             return parseArticle(raw as string, slug);
         })
         .sort((a, b) => a.order - b.order);

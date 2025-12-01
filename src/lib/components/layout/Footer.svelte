@@ -135,10 +135,13 @@
 		</div>
 		<a
 			href={localizeHref('/contact')}
-			class="col-span-12 flex items-center justify-center gap-3 border border-border bg-background px-6 py-4 transition-colors hover:border-primary hover:bg-primary/5 lg:col-span-3"
+			class="group col-span-12 flex items-center justify-between bg-background px-6 py-4 transition-colors hover:bg-card lg:col-span-3"
 		>
-			<span class="font-ui text-xs tracking-widest text-foreground">START A PROJECT</span>
-			<ArrowUpRight class="h-4 w-4 text-foreground" />
+			<div>
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTACT</span>
+				<p class="font-ui mt-1 text-xs tracking-wider group-hover:text-primary">Start A Project</p>
+			</div>
+			<ArrowUpRight class="h-4 w-4 text-muted-foreground group-hover:text-primary" />
 		</a>
 	</div>
 </footer>
