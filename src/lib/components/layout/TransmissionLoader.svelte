@@ -8,7 +8,7 @@
 	let { visible }: Props = $props();
 	
 	const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*<>[]{}/_';
-	const targetText = 'LOADING TRANSMISSION';
+	const targetText = 'STANDBY FOR TRANSMISSION';
 	
 	let displayText = $state(generateScrambled());
 	let timestamp = $state(getTimestamp());
