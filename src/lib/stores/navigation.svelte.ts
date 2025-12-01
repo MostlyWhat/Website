@@ -6,16 +6,16 @@
 let isNavigating = $state(false);
 
 export function getIsNavigating() {
-	return isNavigating;
+    return isNavigating;
 }
 
 export function setNavigating(value: boolean) {
-	isNavigating = value;
+    isNavigating = value;
 }
 
 /**
  * Get a random delay between min and max milliseconds
  */
 export function getRandomDelay(min: number = 400, max: number = 800): number {
-	return Math.floor(Math.random() * (max - min + 1)) + min;
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
