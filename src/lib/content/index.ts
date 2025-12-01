@@ -1,11 +1,11 @@
 // Content loader utilities for blog posts, services, legal docs, and projects
 import { marked } from 'marked';
-import { 
-    extractSections as extractSectionsUtil, 
+import {
+    extractSections as extractSectionsUtil,
     renderStyledMarkdown,
     parseFrontmatter as parseFrontmatterUtil,
     extractSlugFromPath,
-    type ContentSection 
+    type ContentSection
 } from '$lib/utils/markdown';
 
 // Re-export ContentSection for backward compatibility
@@ -22,9 +22,9 @@ const extractSections = extractSectionsUtil;
 
 // Wrapper for renderStyledContent with prefixH2 enabled by default
 function renderStyledContent(markdown: string, options?: { stripTitle?: boolean }): string {
-    return renderStyledMarkdown(markdown, { 
-        stripTitle: options?.stripTitle, 
-        prefixH2: true 
+    return renderStyledMarkdown(markdown, {
+        stripTitle: options?.stripTitle,
+        prefixH2: true
     });
 }
 
@@ -32,12 +32,12 @@ function renderStyledContent(markdown: string, options?: { stripTitle?: boolean 
 function parseFrontmatter(content: string, options?: { styled?: boolean; stripTitle?: boolean }): { frontmatter: Record<string, unknown>; body: string; rawBody: string; sections: ContentSection[] } {
     const { frontmatter, body } = parseFrontmatterUtil(content);
     const sections = extractSections(body);
-    
+
     // rawBody is raw markdown - MarkdownRenderer will strip title if needed
     const rawBody = body;
-    
-    const renderedBody = options?.styled 
-        ? renderStyledContent(body, { stripTitle: options?.stripTitle }) 
+
+    const renderedBody = options?.styled
+        ? renderStyledContent(body, { stripTitle: options?.stripTitle })
         : marked.parse(body) as string;
 
     return { frontmatter, body: renderedBody, rawBody, sections };

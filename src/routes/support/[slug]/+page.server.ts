@@ -23,7 +23,7 @@ function parseArticle(raw: string, slug: string): SupportArticle {
     const { frontmatter, body } = parseFrontmatter(raw);
     // Extract sections using shared utility (returns ContentSection with id, number, title)
     const sections = extractSections(body).map(s => ({ id: s.id, title: s.title }));
-    
+
     return {
         slug: (frontmatter.slug as string) || slug,
         title: (frontmatter.title as string) || 'Untitled',

@@ -43,7 +43,7 @@ function parseMarkdownFiles(
         const tags = (frontmatter.tags as string[]) || [];
         const title = (frontmatter.title as string) || '';
         const category = (frontmatter.category as string) || '';
-        
+
         const keywords: string[] = [
             ...tags,
             category,

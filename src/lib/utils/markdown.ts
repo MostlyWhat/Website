@@ -221,20 +221,20 @@ export function extractSlugFromPath(path: string): string {
  * Returns frontmatter, rendered body, and sections
  */
 export function parseMarkdownContent(
-    content: string, 
+    content: string,
     options: RenderOptions & { styled?: boolean } = {}
-): { 
-    frontmatter: Record<string, unknown>; 
-    body: string; 
-    sections: ContentSection[] 
+): {
+    frontmatter: Record<string, unknown>;
+    body: string;
+    sections: ContentSection[]
 } {
     const { frontmatter, body } = parseFrontmatter(content);
     const sections = extractSections(body);
-    
-    const renderedBody = options.styled 
+
+    const renderedBody = options.styled
         ? renderStyledMarkdown(body, options)
         : marked.parse(body) as string;
-    
+
     return { frontmatter, body: renderedBody, sections };
 }
 
@@ -248,7 +248,7 @@ export function generateExcerpt(markdown: string, maxLength = 200): string {
         .replace(/[*_`#]/g, '') // Remove markdown formatting
         .replace(/\n+/g, ' ') // Replace newlines with spaces
         .trim();
-    
+
     if (plainContent.length <= maxLength) return plainContent;
     return plainContent.slice(0, maxLength) + '...';
 }
