@@ -68,23 +68,6 @@
 		text-decoration: none;
 	}
 
-	/* H2 prefix that transforms from // to # on hover */
-	:global(.prose-custom .h2-prefix) {
-		font-family: var(--font-mono);
-	}
-
-	:global(.prose-custom .h2-prefix::before) {
-		content: '//';
-	}
-
-	:global(.prose-custom .heading-anchor:hover .h2-prefix::before) {
-		content: '#';
-	}
-
-	:global(.prose-custom .h2-prefix) {
-		font-size: 0;
-	}
-
 	/* Callout styles */
 	:global(.prose-custom .callout) {
 		border-left-width: 4px;
