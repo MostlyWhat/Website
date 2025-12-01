@@ -1,13 +1,32 @@
 <script lang="ts">
 	import './layout.css';
-	import { onNavigate } from '$app/navigation';
+	import { beforeNavigate, afterNavigate, onNavigate } from '$app/navigation';
 	import { page } from '$app/state';
 	import favicon from '$lib/assets/favicon.svg';
 	import Header from '$lib/components/layout/Header.svelte';
 	import Footer from '$lib/components/layout/Footer.svelte';
 	import CookieConsent from '$lib/components/layout/CookieConsent.svelte';
+	import { setNavigating, getRandomDelay } from '$lib/stores/navigation.svelte';
 	
 	let { children } = $props();
+
+	// Track navigation state globally for TransmissionLoader
+	beforeNavigate((navigation) => {
+		// Only show loader for actual page changes, not hash links
+		const currentPath = page.url.pathname;
+		const targetPath = navigation.to?.url.pathname;
+		if (currentPath !== targetPath) {
+			setNavigating(true);
+		}
+	});
+
+	afterNavigate(() => {
+		// Random delay (400-800ms) for more realistic transition effect
+		const delay = getRandomDelay(400, 800);
+		setTimeout(() => {
+			setNavigating(false);
+		}, delay);
+	});
 
 	// View Transitions API - skip for same-page navigation (hash links)
 	onNavigate((navigation) => {

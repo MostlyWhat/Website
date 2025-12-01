@@ -9,6 +9,7 @@ export { default as BackLinkSection } from './BackLinkSection.svelte';
 export { default as SectionHeader } from './SectionHeader.svelte';
 export { default as SlugPageLayout } from './SlugPageLayout.svelte';
 export { default as VideoBackground } from './VideoBackground.svelte';
+export { default as TransmissionLoader } from './TransmissionLoader.svelte';
 export { default as MarkdownRenderer } from './MarkdownRenderer.svelte';
 export { default as Header } from './Header.svelte';
 export { default as Footer } from './Footer.svelte';

@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { getVideoState, setVideoElement, syncVideoTime, setVideoState, getVideoElement } from '$lib/stores/video.svelte';
+	import { getIsNavigating } from '$lib/stores/navigation.svelte';
+	import TransmissionLoader from './TransmissionLoader.svelte';
 
 	interface Props {
 		src: string;
@@ -13,6 +15,9 @@
 	let videoRef = $state<HTMLVideoElement | null>(null);
 	let hasError = $state(false);
 	let isLoaded = $state(false);
+
+	// Get navigation state from global store
+	let isNavigating = $derived(getIsNavigating());
 
 	onMount(() => {
 		if (!videoRef) return;
@@ -106,6 +111,9 @@
 	{#if !isLoaded}
 		<div class="absolute inset-0 animate-pulse bg-gradient-to-b from-primary/5 to-transparent"></div>
 	{/if}
+	
+	<!-- Transmission loader during navigation -->
+	<TransmissionLoader visible={isNavigating} />
 	
 	<!-- Grid overlay -->
 	<div 
