@@ -1,13 +1,13 @@
 ---
 title: "Separator"
-description: "Visually or semantically separates content."
+description: "Visually separates content."
 category: "components"
 order: 15
 ---
 
 # Separator
 
-Visually or semantically separates content.
+Visually separates content.
 
 ## Installation
 
@@ -15,41 +15,30 @@ Visually or semantically separates content.
 import { Separator } from '$lib/components/ui/separator';
 ```
 
-## Default (Horizontal)
+## Horizontal
 
-```svelte
+A horizontal separator (default).
+
+```svelte live
 <div>
-  <h4 class="text-sm font-medium">MostlyWhat Systems</h4>
-  <p class="text-sm text-muted-foreground">An open-source design system.</p>
-</div>
-<Separator class="my-4" />
-<div>
-  <p>Content below the separator.</p>
+  <div>Section One</div>
+  <Separator class="my-4" />
+  <div>Section Two</div>
 </div>
 ```
 
 ## Vertical
 
-```svelte
+A vertical separator for inline content.
+
+```svelte live
 <div class="flex h-5 items-center space-x-4 text-sm">
-  <div>Blog</div>
+  <span>Home</span>
   <Separator orientation="vertical" />
-  <div>Docs</div>
+  <span>Docs</span>
   <Separator orientation="vertical" />
-  <div>Source</div>
+  <span>Components</span>
 </div>
-```
-
-## In Navigation
-
-```svelte
-<nav class="flex items-center space-x-4">
-  <a href="/">Home</a>
-  <Separator orientation="vertical" class="h-4" />
-  <a href="/about">About</a>
-  <Separator orientation="vertical" class="h-4" />
-  <a href="/contact">Contact</a>
-</nav>
 ```
 
 ## Props
@@ -57,8 +46,4 @@ import { Separator } from '$lib/components/ui/separator';
 | Prop | Type | Default |
 |------|------|---------|
 | `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` |
-| `decorative` | `boolean` | `true` |
-| `class` | `string` | `undefined` |
-
-> [!NOTE]
-> When `decorative` is false, the separator will be announced to screen readers. Use this when the separator conveys meaningful structure.
+| `class` | `string` | `""` |

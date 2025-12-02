@@ -1,13 +1,13 @@
 ---
 title: "Input"
-description: "Displays a form input field or a component that looks like an input field."
+description: "Displays a form input field."
 category: "components"
 order: 3
 ---
 
 # Input
 
-Displays a form input field or a component that looks like an input field.
+Displays a form input field.
 
 ## Installation
 
@@ -17,37 +17,41 @@ import { Input } from '$lib/components/ui/input';
 
 ## Default
 
-```svelte
-<Input type="email" placeholder="Email" />
+A standard text input field.
+
+```svelte live
+<Input placeholder="Enter text..." />
 ```
 
 ## With Label
 
-```svelte
-<Label for="email">Email</Label>
-<Input id="email" type="email" placeholder="Enter your email" />
+Input with an associated label for accessibility.
+
+```svelte live
+<div class="grid w-full max-w-sm items-center gap-1.5">
+  <Label for="email">Email</Label>
+  <Input type="email" id="email" placeholder="Email" />
+</div>
+```
+
+## Input Types
+
+Different input types for various data.
+
+```svelte live
+<Input type="email" placeholder="Email" />
+```
+
+```svelte live
+<Input type="password" placeholder="Password" />
 ```
 
 ## Disabled
 
-```svelte
+A disabled input field.
+
+```svelte live
 <Input disabled placeholder="Disabled input" />
-```
-
-## File Input
-
-```svelte
-<Label for="picture">Picture</Label>
-<Input id="picture" type="file" />
-```
-
-## With Button
-
-```svelte
-<div class="flex gap-2">
-  <Input type="email" placeholder="Email" />
-  <Button>Subscribe</Button>
-</div>
 ```
 
 ## Props
@@ -55,10 +59,6 @@ import { Input } from '$lib/components/ui/input';
 | Prop | Type | Default |
 |------|------|---------|
 | `type` | `string` | `"text"` |
-| `placeholder` | `string` | `undefined` |
+| `placeholder` | `string` | `""` |
 | `disabled` | `boolean` | `false` |
 | `value` | `string` | `""` |
-| `id` | `string` | `undefined` |
-
-> [!NOTE]
-> The Input component supports all standard HTML input attributes through rest props.

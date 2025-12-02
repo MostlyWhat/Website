@@ -1,13 +1,13 @@
 ---
 title: "Textarea"
-description: "Displays a form textarea or a component that looks like a textarea."
+description: "Displays a multi-line text input field."
 category: "components"
-order: 7
+order: 4
 ---
 
 # Textarea
 
-Displays a form textarea or a component that looks like a textarea.
+Displays a multi-line text input field.
 
 ## Installation
 
@@ -17,40 +17,36 @@ import { Textarea } from '$lib/components/ui/textarea';
 
 ## Default
 
-```svelte
-<Textarea placeholder="Type your message here..." />
+A standard textarea field.
+
+```svelte live
+<Textarea placeholder="Enter text..." />
 ```
 
 ## With Label
 
-```svelte
-<div class="space-y-2">
+Textarea with an associated label for accessibility.
+
+```svelte live
+<div class="grid w-full max-w-sm gap-1.5">
   <Label for="message">Message</Label>
-  <Textarea id="message" placeholder="Type your message here..." />
+  <Textarea id="message" placeholder="Type your message here." />
 </div>
 ```
 
 ## Disabled
 
-```svelte
+A disabled textarea field.
+
+```svelte live
 <Textarea disabled placeholder="Disabled textarea" />
-```
-
-## With Default Value
-
-```svelte
-<Textarea value="This is the default content of the textarea." />
 ```
 
 ## Props
 
 | Prop | Type | Default |
 |------|------|---------|
-| `placeholder` | `string` | `undefined` |
+| `placeholder` | `string` | `""` |
 | `disabled` | `boolean` | `false` |
 | `value` | `string` | `""` |
-| `id` | `string` | `undefined` |
-| `rows` | `number` | `undefined` |
-
-> [!NOTE]
-> The Textarea component supports all standard HTML textarea attributes through rest props.
+| `rows` | `number` | `3` |

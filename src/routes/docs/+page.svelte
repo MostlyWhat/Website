@@ -2,6 +2,9 @@
 	import * as m from '$lib/paraglide/messages';
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
+	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
+	import { browser } from '$app/environment';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Select from '$lib/components/ui/select';
 	import { Badge } from '$lib/components/ui/badge';
@@ -20,6 +23,7 @@
 	import * as Alert from '$lib/components/ui/alert';
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import MarkdownRenderer from '$lib/components/layout/MarkdownRenderer.svelte';
+	import ComponentDocRenderer from '$lib/components/layout/ComponentDocRenderer.svelte';
 	import { loadDocsByCategory, loadDocPage, type DocPage } from '$lib/content';
 	import { 
 		ArrowRight, 
@@ -69,9 +73,58 @@
 	// Documentation categories for the selector
 	type DocCategory = 'design-system' | 'products' | 'api';
 	
-	let selectedCategory = $state<DocCategory>('design-system');
-	let activeSection = $state<string>('overview');
+	// Initialize from URL params
+	const validCategories: DocCategory[] = ['design-system', 'products', 'api'];
+	
+	function getInitialCategory(): DocCategory {
+		if (!browser) return 'design-system';
+		const param = new URLSearchParams(window.location.search).get('category');
+		return validCategories.includes(param as DocCategory) ? (param as DocCategory) : 'design-system';
+	}
+	
+	function getInitialSection(): string {
+		if (!browser) return 'overview';
+		return new URLSearchParams(window.location.search).get('section') || 'overview';
+	}
+	
+	let selectedCategory = $state<DocCategory>(getInitialCategory());
+	let activeSection = $state<string>(getInitialSection());
 	let sidebarOpen = $state(false);
+	
+	// Update URL when section or category changes
+	function updateURL(category: DocCategory, section: string) {
+		if (!browser) return;
+		const url = new URL(window.location.href);
+		url.searchParams.set('category', category);
+		url.searchParams.set('section', section);
+		goto(url.pathname + url.search, { replaceState: true, noScroll: true });
+	}
+	
+	// Watch for changes and update URL
+	$effect(() => {
+		updateURL(selectedCategory, activeSection);
+	});
+	
+	// Handle browser back/forward navigation
+	$effect(() => {
+		if (!browser) return;
+		
+		const handlePopState = () => {
+			const params = new URLSearchParams(window.location.search);
+			const category = params.get('category');
+			const section = params.get('section');
+			
+			if (validCategories.includes(category as DocCategory)) {
+				selectedCategory = category as DocCategory;
+			}
+			if (section) {
+				activeSection = section;
+			}
+		};
+		
+		window.addEventListener('popstate', handlePopState);
+		return () => window.removeEventListener('popstate', handlePopState);
+	});
 
 	// Load component docs from markdown
 	const componentDocs = loadDocsByCategory('components');
@@ -723,7 +776,7 @@
 						</p>
 					</div>
 					<div class="border-t border-border px-6 py-8 md:px-12 lg:px-16">
-						<MarkdownRenderer content={currentComponentDoc.content} class="max-w-4xl" />
+						<ComponentDocRenderer content={currentComponentDoc.content} slug={currentComponentDoc.slug} class="max-w-4xl" />
 					</div>
 				</section>
 

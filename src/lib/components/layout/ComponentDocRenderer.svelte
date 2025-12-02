@@ -355,7 +355,7 @@
 
 						<!-- Accordion Examples -->
 						{:else if slug === 'accordion'}
-							<Accordion.Root type="single" collapsible class="w-full max-w-md">
+							<Accordion.Root type="single" class="w-full max-w-md">
 								<Accordion.Item value="item-1">
 									<Accordion.Trigger class="font-ui">IS IT ACCESSIBLE?</Accordion.Trigger>
 									<Accordion.Content>

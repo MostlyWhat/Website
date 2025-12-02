@@ -19,7 +19,7 @@ import Button from '$lib/components/ui/button/button.svelte';
 
 Button variants for different actions and contexts.
 
-```svelte
+```svelte live
 <Button>Default</Button>
 <Button variant="secondary">Secondary</Button>
 <Button variant="destructive">Destructive</Button>
@@ -28,33 +28,11 @@ Button variants for different actions and contexts.
 <Button variant="link">Link</Button>
 ```
 
-### Default
-
-The primary button style for main actions.
-
-### Secondary
-
-Use for secondary actions that are less prominent.
-
-### Destructive
-
-For dangerous or irreversible actions like delete.
-
-### Outline
-
-A bordered button without background fill.
-
-### Ghost
-
-Minimal button that only shows on hover.
-
-### Link
-
-Styled as an inline link.
-
 ## Sizes
 
-```svelte
+Available button sizes for different use cases.
+
+```svelte live
 <Button size="sm">Small</Button>
 <Button size="default">Default</Button>
 <Button size="lg">Large</Button>
@@ -64,7 +42,9 @@ Styled as an inline link.
 
 ## With Icons
 
-```svelte
+Buttons can include icons for additional visual context.
+
+```svelte live
 <Button>
   <Mail class="mr-2 h-4 w-4" />
   Login with Email
@@ -85,7 +65,7 @@ Styled as an inline link.
 
 Buttons can be rendered as links by providing an `href` prop.
 
-```svelte
+```svelte live
 <Button href="/page">As Link</Button>
 ```
 
