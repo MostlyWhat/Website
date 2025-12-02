@@ -47,7 +47,8 @@
 		LayoutGrid,
 		MessageSquare,
 		Loader2,
-		CreditCard
+		CreditCard,
+		Plus
 	} from '@lucide/svelte';
 
 	// Documentation categories for the selector
@@ -178,7 +179,9 @@
 				sections: [
 					{ id: 'overview', title: 'Introduction', icon: BookOpen },
 					{ id: 'principles', title: 'Design Principles', icon: Eye },
-					{ id: 'getting-started', title: 'Getting Started', icon: Zap }
+					{ id: 'getting-started', title: 'Getting Started', icon: Zap },
+					{ id: 'documentation', title: 'Documentation', icon: FileText },
+					{ id: 'adding-pages', title: 'Adding Pages', icon: Plus }
 				]
 			},
 			{

@@ -629,6 +629,7 @@
 		border-collapse: collapse;
 		margin: 1.5rem 0;
 		font-size: 0.875rem;
+		border: 1px solid var(--border);
 	}
 
 	:global(.component-doc .prose-custom th) {
@@ -640,12 +641,23 @@
 		text-align: left;
 		padding: 0.75rem 1rem;
 		border-bottom: 1px solid var(--border);
+		border-right: 1px solid var(--border);
 		color: var(--muted-foreground);
+		background: var(--card);
+	}
+
+	:global(.component-doc .prose-custom th:last-child) {
+		border-right: none;
 	}
 
 	:global(.component-doc .prose-custom td) {
 		padding: 0.75rem 1rem;
 		border-bottom: 1px solid var(--border);
+		border-right: 1px solid var(--border);
+	}
+
+	:global(.component-doc .prose-custom td:last-child) {
+		border-right: none;
 	}
 
 	:global(.component-doc .prose-custom td code) {

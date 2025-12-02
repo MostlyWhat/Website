@@ -297,8 +297,9 @@ export function loadDocPages(): DocPage[] {
 
     for (const [path, content] of Object.entries(docsModules)) {
         const { frontmatter, rawBody, sections } = parseFrontmatter(content, { styled: true, stripTitle: true });
-        // Extract slug from path like /src/lib/content/docs/components/button.md -> button
-        const slug = path.split('/').pop()?.replace('.md', '') || '';
+        // Use slug from frontmatter if available, otherwise extract from filename
+        const fileSlug = path.split('/').pop()?.replace('.md', '') || '';
+        const slug = (frontmatter.slug as string) || fileSlug;
         // Extract category from path like /src/lib/content/docs/components/button.md -> components
         const pathParts = path.split('/');
         const category = pathParts[pathParts.length - 2] || '';

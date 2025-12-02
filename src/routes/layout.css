@@ -698,6 +698,7 @@
 	margin: 1.5rem 0;
 	border-collapse: collapse;
 	font-size: 0.875rem;
+	border: 1px solid var(--border);
 }
 
 .prose-custom thead {
@@ -714,12 +715,22 @@
 	text-align: left;
 	padding: 0.75rem 1rem;
 	color: var(--muted-foreground);
+	border-right: 1px solid var(--border);
+}
+
+.prose-custom th:last-child {
+	border-right: none;
 }
 
 .prose-custom td {
 	padding: 0.75rem 1rem;
 	border-bottom: 1px solid var(--border);
+	border-right: 1px solid var(--border);
 	color: var(--muted-foreground);
+}
+
+.prose-custom td:last-child {
+	border-right: none;
 }
 
 .prose-custom tbody tr:hover {

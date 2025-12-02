@@ -23,7 +23,7 @@
 	{...restProps}
 >
 	{#if withHandle}
-		<div class="bg-border rounded-xs z-10 flex h-4 w-3 items-center justify-center border">
+		<div class="bg-border z-10 flex h-4 w-3 items-center justify-center border">
 			<GripVerticalIcon class="size-2.5" />
 		</div>
 	{/if}
