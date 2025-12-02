@@ -94,6 +94,7 @@ const blogModules = import.meta.glob('/src/lib/content/blog/*.md', { query: '?ra
 const legalModules = import.meta.glob('/src/lib/content/legal/*.md', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
 const projectModules = import.meta.glob('/src/lib/content/projects/*.md', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
 const serviceModules = import.meta.glob('/src/lib/content/services/*.md', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
+const docsModules = import.meta.glob('/src/lib/content/docs/**/*.md', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
 
 // Load all blog posts
 export function loadBlogPosts(): BlogPost[] {
@@ -274,6 +275,72 @@ export function loadService(slug: string): Service | null {
         description: (frontmatter.description as string) || '',
         features: (frontmatter.features as string[]) || [],
         content: body,
+        sections
+    };
+}
+
+// Documentation types and loaders
+export interface DocPage {
+    slug: string;
+    title: string;
+    description: string;
+    category: string;
+    order: number;
+    content: string;
+    rawContent: string;
+    sections: ContentSection[];
+}
+
+// Load all docs pages
+export function loadDocPages(): DocPage[] {
+    const docs: DocPage[] = [];
+
+    for (const [path, content] of Object.entries(docsModules)) {
+        const { frontmatter, rawBody, sections } = parseFrontmatter(content, { styled: true, stripTitle: true });
+        // Extract slug from path like /src/lib/content/docs/components/button.md -> button
+        const slug = path.split('/').pop()?.replace('.md', '') || '';
+        // Extract category from path like /src/lib/content/docs/components/button.md -> components
+        const pathParts = path.split('/');
+        const category = pathParts[pathParts.length - 2] || '';
+
+        docs.push({
+            slug,
+            title: (frontmatter.title as string) || '',
+            description: (frontmatter.description as string) || '',
+            category,
+            order: (frontmatter.order as number) || 999,
+            content: rawBody,
+            rawContent: content,
+            sections
+        });
+    }
+
+    // Sort by order
+    return docs.sort((a, b) => a.order - b.order);
+}
+
+// Load docs by category
+export function loadDocsByCategory(category: string): DocPage[] {
+    return loadDocPages().filter(doc => doc.category === category);
+}
+
+// Load a single doc page
+export function loadDocPage(category: string, slug: string): DocPage | null {
+    const path = `/src/lib/content/docs/${category}/${slug}.md`;
+    const content = docsModules[path];
+
+    if (!content) return null;
+
+    const { frontmatter, rawBody, sections } = parseFrontmatter(content, { styled: true, stripTitle: true });
+
+    return {
+        slug,
+        title: (frontmatter.title as string) || '',
+        description: (frontmatter.description as string) || '',
+        category,
+        order: (frontmatter.order as number) || 999,
+        content: rawBody,
+        rawContent: content,
         sections
     };
 }

@@ -4,6 +4,23 @@
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Select from '$lib/components/ui/select';
+	import { Badge } from '$lib/components/ui/badge';
+	import { Input } from '$lib/components/ui/input';
+	import { Textarea } from '$lib/components/ui/textarea';
+	import { Switch } from '$lib/components/ui/switch';
+	import { Checkbox } from '$lib/components/ui/checkbox';
+	import { Label } from '$lib/components/ui/label';
+	import { Progress } from '$lib/components/ui/progress';
+	import { Separator } from '$lib/components/ui/separator';
+	import { Skeleton } from '$lib/components/ui/skeleton';
+	import * as Card from '$lib/components/ui/card';
+	import * as Tabs from '$lib/components/ui/tabs';
+	import * as Accordion from '$lib/components/ui/accordion';
+	import * as Dialog from '$lib/components/ui/dialog';
+	import * as Alert from '$lib/components/ui/alert';
+	import * as Tooltip from '$lib/components/ui/tooltip';
+	import MarkdownRenderer from '$lib/components/layout/MarkdownRenderer.svelte';
+	import { loadDocsByCategory, loadDocPage, type DocPage } from '$lib/content';
 	import { 
 		ArrowRight, 
 		Palette, 
@@ -24,6 +41,7 @@
 		Square,
 		ExternalLink,
 		ChevronRight,
+		ChevronDown,
 		Package,
 		Blocks,
 		Server,
@@ -33,7 +51,19 @@
 		Search,
 		PanelLeft,
 		Menu,
-		X
+		X,
+		Copy,
+		Check,
+		AlertCircle,
+		Info,
+		Bell,
+		ToggleLeft,
+		FormInput,
+		LayoutGrid,
+		MessageSquare,
+		Loader2,
+		CreditCard,
+		Mail
 	} from '@lucide/svelte';
 
 	// Documentation categories for the selector
@@ -43,6 +73,19 @@
 	let activeSection = $state<string>('overview');
 	let sidebarOpen = $state(false);
 
+	// Load component docs from markdown
+	const componentDocs = loadDocsByCategory('components');
+	
+	// Get current component doc if viewing a component
+	const currentComponentDoc = $derived(componentDocs.find(d => d.slug === activeSection) || null);
+
+	// Demo states for live examples
+	let switchChecked = $state(false);
+	let checkboxChecked = $state(false);
+	let inputValue = $state('');
+	let progressValue = $state(60);
+	let copied = $state(false);
+
 	// Category options for the select
 	const categoryOptions = [
 		{ value: 'design-system', label: 'DESIGN SYSTEM', icon: Paintbrush },
@@ -51,6 +94,41 @@
 	];
 
 	// Sidebar navigation structure per category
+	// Map doc slugs to icons
+	const componentIcons: Record<string, typeof Grid3x3> = {
+		'button': MousePointer,
+		'badge': Bell,
+		'input': FormInput,
+		'select': ChevronDown,
+		'switch': ToggleLeft,
+		'checkbox': Check,
+		'textarea': FileText,
+		'label': Type,
+		'card': CreditCard,
+		'dialog': MessageSquare,
+		'tabs': LayoutGrid,
+		'accordion': Layers,
+		'progress': Loader2,
+		'skeleton': Box,
+		'separator': Layout,
+		'alert': AlertCircle,
+		'tooltip': Info,
+		'alert-dialog': AlertCircle,
+		'aspect-ratio': Square,
+		'avatar': Component,
+		'popover': MessageSquare,
+		'dropdown-menu': ChevronDown,
+		'sheet': PanelLeft,
+		'scroll-area': Layers
+	};
+
+	// Generate component sections from loaded docs
+	const componentSections = componentDocs.map(doc => ({
+		id: doc.slug,
+		title: doc.title,
+		icon: componentIcons[doc.slug] || Component
+	}));
+
 	const sidebarNav: Record<DocCategory, { title: string; sections: { id: string; title: string; icon: typeof Grid3x3; status?: 'coming-soon' | 'new' }[] }[]> = {
 		'design-system': [
 			{
@@ -73,20 +151,14 @@
 			},
 			{
 				title: 'COMPONENTS',
-				sections: [
-					{ id: 'buttons', title: 'Buttons', icon: MousePointer },
-					{ id: 'forms', title: 'Form Elements', icon: Code2 },
-					{ id: 'layout', title: 'Layout', icon: Blocks },
-					{ id: 'feedback', title: 'Feedback', icon: Zap },
-					{ id: 'interactive', title: 'Interactive', icon: Component }
-				]
+				sections: componentSections
 			},
 			{
 				title: 'PATTERNS',
 				sections: [
-					{ id: 'page-layouts', title: 'Page Layouts', icon: Layout },
-					{ id: 'sections', title: 'Section Types', icon: Layers },
-					{ id: 'navigation', title: 'Navigation', icon: Workflow }
+					{ id: 'page-layouts', title: 'Page Layouts', icon: Layout, status: 'coming-soon' },
+					{ id: 'sections', title: 'Section Types', icon: Layers, status: 'coming-soon' },
+					{ id: 'navigation', title: 'Navigation', icon: Workflow, status: 'coming-soon' }
 				]
 			}
 		],
@@ -163,24 +235,44 @@
 			description: 'Scroll-based animations using Intersection Observer for subtle, meaningful transitions.'
 		},
 		'buttons': {
-			title: 'BUTTONS',
-			description: 'Button variants for different actions and contexts.'
+			title: 'BUTTON',
+			description: 'Displays a button or a component that looks like a button.'
+		},
+		'badges': {
+			title: 'BADGE',
+			description: 'Displays a badge or a component that looks like a badge.'
+		},
+		'inputs': {
+			title: 'INPUT',
+			description: 'Displays a form input field or a component that looks like an input field.'
 		},
 		'forms': {
-			title: 'FORM ELEMENTS',
-			description: 'Input fields, toggles, selects, and form controls.'
+			title: 'FORM CONTROLS',
+			description: 'Interactive form controls including switches, checkboxes, and textareas.'
 		},
-		'layout': {
-			title: 'LAYOUT COMPONENTS',
-			description: 'Section components, tiles, cards, and layout utilities.'
+		'cards': {
+			title: 'CARD',
+			description: 'Displays a card with header, content, and footer.'
+		},
+		'dialogs': {
+			title: 'DIALOG',
+			description: 'A window overlaid on either the primary window or another dialog window.'
+		},
+		'tabs': {
+			title: 'TABS',
+			description: 'A set of layered sections of content that display one panel at a time.'
+		},
+		'accordion': {
+			title: 'ACCORDION',
+			description: 'A vertically stacked set of interactive headings that reveal content.'
 		},
 		'feedback': {
-			title: 'FEEDBACK COMPONENTS',
-			description: 'Progress indicators, spinners, badges, and status components.'
+			title: 'FEEDBACK',
+			description: 'Progress indicators, spinners, skeletons, and status components.'
 		},
-		'interactive': {
-			title: 'INTERACTIVE ELEMENTS',
-			description: 'Accordion, modals, tabs, and other interactive components.'
+		'alerts': {
+			title: 'ALERT',
+			description: 'Displays a callout for user attention.'
 		}
 	};
 
@@ -205,6 +297,12 @@
 			selectedCategory = value as DocCategory;
 			activeSection = 'overview';
 		}
+	}
+
+	function copyCode(code: string) {
+		navigator.clipboard.writeText(code);
+		copied = true;
+		setTimeout(() => copied = false, 2000);
 	}
 </script>
 
@@ -614,40 +712,18 @@
 					</div>
 				</section>
 
-			{:else if activeSection === 'buttons'}
-				<!-- Buttons -->
+			{:else if currentComponentDoc}
+				<!-- Dynamic Component Documentation from Markdown -->
 				<section class="border-b border-border">
 					<div class="px-6 py-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
 						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// COMPONENTS</span>
-						<h1 class="font-display mt-4 text-4xl font-bold uppercase md:text-5xl">BUTTONS</h1>
+						<h1 class="font-display mt-4 text-4xl font-bold uppercase md:text-5xl">{currentComponentDoc.title.toUpperCase()}</h1>
 						<p class="font-body mt-6 max-w-2xl text-muted-foreground">
-							Button variants for different actions and contexts.
+							{currentComponentDoc.description}
 						</p>
 					</div>
-					<div class="border-t border-border px-6 py-12 md:px-12 lg:px-16">
-						<p class="font-mono mb-4 text-[10px] tracking-widest text-muted-foreground">VARIANTS</p>
-						<div class="flex flex-wrap gap-4">
-							<Button class="font-ui">DEFAULT</Button>
-							<Button variant="outline" class="font-ui">OUTLINE</Button>
-							<Button variant="secondary" class="font-ui">SECONDARY</Button>
-							<Button variant="ghost" class="font-ui">GHOST</Button>
-							<Button variant="destructive" class="font-ui">DESTRUCTIVE</Button>
-						</div>
-
-						<p class="font-mono mb-4 mt-12 text-[10px] tracking-widest text-muted-foreground">SIZES</p>
-						<div class="flex flex-wrap items-center gap-4">
-							<Button size="sm" class="font-ui">SMALL</Button>
-							<Button size="default" class="font-ui">DEFAULT</Button>
-							<Button size="lg" class="font-ui">LARGE</Button>
-						</div>
-
-						<p class="font-mono mb-4 mt-12 text-[10px] tracking-widest text-muted-foreground">WITH ICONS</p>
-						<div class="flex flex-wrap gap-4">
-							<Button class="font-ui">
-								CONTINUE
-								<ArrowRight class="ml-2 h-4 w-4" />
-							</Button>
-						</div>
+					<div class="border-t border-border px-6 py-8 md:px-12 lg:px-16">
+						<MarkdownRenderer content={currentComponentDoc.content} class="max-w-4xl" />
 					</div>
 				</section>
 
