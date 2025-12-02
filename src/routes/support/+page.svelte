@@ -7,12 +7,10 @@
 	import CTASection from '$lib/components/layout/CTASection.svelte';
 	import * as Accordion from '$lib/components/ui/accordion';
 	import {
-		Search,
 		MessageCircleQuestion,
 		BookOpen,
 		Ticket,
 		ArrowRight,
-		Zap,
 		Bug,
 		Clock,
 		CreditCard,
@@ -117,20 +115,6 @@
 	description="Get technical support and assistance from our team. Browse our knowledge base, use our guided troubleshooter, or submit a ticket for personalized help."
 	stats={supportStats}
 />
-
-<!-- Search Bar Section -->
-<section class="border-b border-border bg-card">
-	<div class="px-6 py-8 md:px-12 lg:px-16">
-		<a 
-			href={localizeHref('/search')} 
-			class="mx-auto flex h-14 max-w-2xl items-center gap-4 border border-border bg-background px-6 text-muted-foreground transition-all hover:border-primary hover:bg-primary/5"
-		>
-			<Search class="h-5 w-5 text-primary" />
-			<span class="font-body text-sm">Search for help articles, guides, and more...</span>
-			<span class="font-mono ml-auto hidden text-[10px] tracking-wider text-muted-foreground sm:block">PRESS / TO SEARCH</span>
-		</a>
-	</div>
-</section>
 
 <!-- Main Support Options - Large Tiles -->
 <section class="border-b border-border">
