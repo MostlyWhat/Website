@@ -1,32 +1,15 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages';
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
-	import { localizeHref } from '$lib/paraglide/runtime';
-	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Select from '$lib/components/ui/select';
 	import { Badge } from '$lib/components/ui/badge';
-	import { Input } from '$lib/components/ui/input';
-	import { Textarea } from '$lib/components/ui/textarea';
-	import { Switch } from '$lib/components/ui/switch';
-	import { Checkbox } from '$lib/components/ui/checkbox';
-	import { Label } from '$lib/components/ui/label';
-	import { Progress } from '$lib/components/ui/progress';
-	import { Separator } from '$lib/components/ui/separator';
-	import { Skeleton } from '$lib/components/ui/skeleton';
-	import * as Card from '$lib/components/ui/card';
-	import * as Tabs from '$lib/components/ui/tabs';
-	import * as Accordion from '$lib/components/ui/accordion';
-	import * as Dialog from '$lib/components/ui/dialog';
-	import * as Alert from '$lib/components/ui/alert';
-	import * as Tooltip from '$lib/components/ui/tooltip';
 	import MarkdownRenderer from '$lib/components/layout/MarkdownRenderer.svelte';
 	import ComponentDocRenderer from '$lib/components/layout/ComponentDocRenderer.svelte';
-	import { loadDocsByCategory, loadDocPage, type DocPage } from '$lib/content';
+	import { loadDocsByCategory } from '$lib/content';
 	import { 
-		ArrowRight, 
 		Palette, 
 		Type, 
 		Layout, 
@@ -39,7 +22,6 @@
 		Code2,
 		MousePointer,
 		BookOpen,
-		FileCode,
 		Sparkles,
 		Eye,
 		Square,
@@ -56,7 +38,6 @@
 		PanelLeft,
 		Menu,
 		X,
-		Copy,
 		Check,
 		AlertCircle,
 		Info,
@@ -66,8 +47,7 @@
 		LayoutGrid,
 		MessageSquare,
 		Loader2,
-		CreditCard,
-		Mail
+		CreditCard
 	} from '@lucide/svelte';
 
 	// Documentation categories for the selector
@@ -126,18 +106,27 @@
 		return () => window.removeEventListener('popstate', handlePopState);
 	});
 
-	// Load component docs from markdown
+	// Load all docs from markdown
 	const componentDocs = loadDocsByCategory('components');
+	const overviewDocs = loadDocsByCategory('overview');
+	const foundationDocs = loadDocsByCategory('foundation');
 	
-	// Get current component doc if viewing a component
-	const currentComponentDoc = $derived(componentDocs.find(d => d.slug === activeSection) || null);
-
-	// Demo states for live examples
-	let switchChecked = $state(false);
-	let checkboxChecked = $state(false);
-	let inputValue = $state('');
-	let progressValue = $state(60);
-	let copied = $state(false);
+	// Get current doc based on active section
+	const currentDoc = $derived(() => {
+		// Check components first
+		const componentDoc = componentDocs.find(d => d.slug === activeSection);
+		if (componentDoc) return componentDoc;
+		
+		// Check overview
+		const overviewDoc = overviewDocs.find(d => d.slug === activeSection);
+		if (overviewDoc) return overviewDoc;
+		
+		// Check foundation
+		const foundationDoc = foundationDocs.find(d => d.slug === activeSection);
+		if (foundationDoc) return foundationDoc;
+		
+		return null;
+	});
 
 	// Category options for the select
 	const categoryOptions = [
@@ -257,105 +246,11 @@
 		]
 	};
 
-	// Content for each section (Design System)
-	const designSystemContent: Record<string, { title: string; description: string }> = {
-		'overview': {
-			title: 'DESIGN SYSTEM',
-			description: 'A comprehensive guide to our design language, grid system, components, and patterns. Everything you need to build consistent, beautiful interfaces.'
-		},
-		'principles': {
-			title: 'DESIGN PRINCIPLES',
-			description: 'Our design system is built on four core principles that guide every decision we make.'
-		},
-		'grid': {
-			title: 'GRID SYSTEM',
-			description: '12-column grid with 1px gap borders. All elements align to the grid for visual consistency.'
-		},
-		'colors': {
-			title: 'COLORS',
-			description: 'Cobalt blue primary with yellow and red accents on dark backgrounds.'
-		},
-		'typography': {
-			title: 'TYPOGRAPHY',
-			description: 'Four distinct typefaces for display, body, UI, and code elements.'
-		},
-		'spacing': {
-			title: 'SPACING',
-			description: 'Consistent spacing creates visual rhythm. Use these values throughout your layouts.'
-		},
-		'animations': {
-			title: 'ANIMATIONS',
-			description: 'Scroll-based animations using Intersection Observer for subtle, meaningful transitions.'
-		},
-		'buttons': {
-			title: 'BUTTON',
-			description: 'Displays a button or a component that looks like a button.'
-		},
-		'badges': {
-			title: 'BADGE',
-			description: 'Displays a badge or a component that looks like a badge.'
-		},
-		'inputs': {
-			title: 'INPUT',
-			description: 'Displays a form input field or a component that looks like an input field.'
-		},
-		'forms': {
-			title: 'FORM CONTROLS',
-			description: 'Interactive form controls including switches, checkboxes, and textareas.'
-		},
-		'cards': {
-			title: 'CARD',
-			description: 'Displays a card with header, content, and footer.'
-		},
-		'dialogs': {
-			title: 'DIALOG',
-			description: 'A window overlaid on either the primary window or another dialog window.'
-		},
-		'tabs': {
-			title: 'TABS',
-			description: 'A set of layered sections of content that display one panel at a time.'
-		},
-		'accordion': {
-			title: 'ACCORDION',
-			description: 'A vertically stacked set of interactive headings that reveal content.'
-		},
-		'feedback': {
-			title: 'FEEDBACK',
-			description: 'Progress indicators, spinners, skeletons, and status components.'
-		},
-		'alerts': {
-			title: 'ALERT',
-			description: 'Displays a callout for user attention.'
-		}
-	};
-
-	// Design principles data
-	const principles = [
-		{ number: '01', title: 'INDUSTRIAL PRECISION', desc: 'No rounded corners. Sharp edges. Grid-based layouts. Every element is intentional and aligned.', icon: Square },
-		{ number: '02', title: 'HIGH CONTRAST', desc: 'Dark backgrounds with vibrant cobalt blue accents create visual impact and hierarchy.', icon: Eye },
-		{ number: '03', title: 'TYPOGRAPHY FIRST', desc: 'Clear hierarchy through type scale and weight. Four distinct typefaces for different purposes.', icon: Type },
-		{ number: '04', title: 'MOTION WITH PURPOSE', desc: 'Scroll-based animations that enhance rather than distract. Subtle, meaningful transitions.', icon: Sparkles }
-	];
-
-	// Quick stats
-	const quickStats = [
-		{ label: 'PADDING MOBILE', value: '24px', code: 'px-6' },
-		{ label: 'PADDING TABLET', value: '48px', code: 'md:px-12' },
-		{ label: 'PADDING DESKTOP', value: '64px', code: 'lg:px-16' },
-		{ label: 'GRID GAP', value: '1px', code: 'gap-px' }
-	];
-
 	function handleCategoryChange(value: string | undefined) {
 		if (value) {
 			selectedCategory = value as DocCategory;
 			activeSection = 'overview';
 		}
-	}
-
-	function copyCode(code: string) {
-		navigator.clipboard.writeText(code);
-		copied = true;
-		setTimeout(() => copied = false, 2000);
 	}
 </script>
 
@@ -493,300 +388,81 @@
 	<main class="flex-1">
 		{#if selectedCategory === 'design-system'}
 			<!-- Design System Content -->
-			{#if activeSection === 'overview' || activeSection === 'getting-started'}
-				<!-- Overview / Introduction -->
+			{@const doc = currentDoc()}
+			{#if doc}
+				<!-- Dynamic Documentation from Markdown -->
 				<section class="border-b border-border">
 					<div class="px-6 py-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
-						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// DESIGN.SYSTEM</span>
-						<h1 class="font-display mt-4 text-4xl font-bold uppercase md:text-5xl lg:text-6xl">DESIGN SYSTEM</h1>
-						<p class="font-body mt-6 max-w-2xl text-lg text-muted-foreground">
-							A comprehensive guide to our design language, grid system, components, and patterns. Everything you need to build consistent, beautiful interfaces.
-						</p>
-					</div>
-					<div class="grid grid-cols-12 gap-px border-t border-border bg-border">
-						<div class="col-span-4 bg-background px-6 py-6 md:px-12 lg:px-16">
-							<span class="font-display text-3xl font-bold text-primary">12</span>
-							<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">COLUMNS</p>
-						</div>
-						<div class="col-span-4 bg-background px-6 py-6 md:px-12 lg:px-16">
-							<span class="font-display text-3xl font-bold text-primary">64PX</span>
-							<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">GRID SIZE</p>
-						</div>
-						<div class="col-span-4 bg-background px-6 py-6 md:px-12 lg:px-16">
-							<span class="font-display text-3xl font-bold text-primary">4</span>
-							<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">FONTS</p>
-						</div>
-					</div>
-				</section>
-
-				<!-- Quick Links -->
-				<section class="border-b border-border">
-					<div class="px-6 py-8 md:px-12 lg:px-16">
-						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// QUICK.START</span>
-						<h2 class="font-display mt-4 text-2xl font-bold uppercase">GET STARTED</h2>
-					</div>
-					<div class="grid grid-cols-12 gap-px border-t border-border bg-border">
-						{#each [
-							{ icon: Grid3x3, title: 'Grid System', desc: '12-column responsive grid', section: 'grid' },
-							{ icon: Palette, title: 'Colors', desc: 'Color palette & usage', section: 'colors' },
-							{ icon: Type, title: 'Typography', desc: 'Fonts & text styles', section: 'typography' },
-							{ icon: MousePointer, title: 'Components', desc: 'UI component library', section: 'buttons' }
-						] as item (item.title)}
-							<button
-								type="button"
-								onclick={() => activeSection = item.section}
-								class="col-span-12 flex items-center gap-4 bg-background px-6 py-6 text-left transition-colors hover:bg-card sm:col-span-6 md:px-12 lg:col-span-3 lg:px-16"
-							>
-								<div class="flex h-10 w-10 items-center justify-center border border-border bg-card">
-									<item.icon class="h-5 w-5 text-primary" />
-								</div>
-								<div>
-									<h3 class="font-ui text-sm font-semibold tracking-wider">{item.title}</h3>
-									<p class="font-body mt-1 text-xs text-muted-foreground">{item.desc}</p>
-								</div>
-							</button>
-						{/each}
-					</div>
-				</section>
-
-			{:else if activeSection === 'principles'}
-				<!-- Design Principles -->
-				<section class="border-b border-border">
-					<div class="px-6 py-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
-						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// PHILOSOPHY</span>
-						<h1 class="font-display mt-4 text-4xl font-bold uppercase md:text-5xl">DESIGN PRINCIPLES</h1>
-						<p class="font-body mt-6 max-w-2xl text-lg text-muted-foreground">
-							Our design system is built on four core principles that guide every decision we make.
-						</p>
-					</div>
-					<div class="grid grid-cols-12 gap-px border-t border-border bg-border" use:scrollAnimate={{ animation: 'stagger' }}>
-						{#each principles as { number, title, desc, icon: Icon } (number)}
-							<div class="col-span-12 flex flex-col bg-background px-6 py-10 sm:col-span-6 md:px-12 lg:px-16">
-								<div class="flex items-start justify-between">
-									<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">
-										<Icon class="h-5 w-5 text-primary" />
-									</div>
-									<span class="font-display text-3xl font-black text-primary/30">{number}</span>
-								</div>
-								<h3 class="font-ui mt-6 text-base font-semibold tracking-wider">{title}</h3>
-								<p class="font-body mt-3 flex-1 text-sm text-muted-foreground">{desc}</p>
-							</div>
-						{/each}
-					</div>
-				</section>
-
-			{:else if activeSection === 'grid'}
-				<!-- Grid System -->
-				<section class="border-b border-border">
-					<div class="px-6 py-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
-						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// FOUNDATION</span>
-						<h1 class="font-display mt-4 text-4xl font-bold uppercase md:text-5xl">GRID SYSTEM</h1>
+						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// {doc.category.toUpperCase()}</span>
+						<h1 class="font-display mt-4 text-4xl font-bold uppercase md:text-5xl">{doc.title.toUpperCase()}</h1>
 						<p class="font-body mt-6 max-w-2xl text-muted-foreground">
-							12-column grid with 1px gap borders. All elements align to the grid for visual consistency.
+							{doc.description}
 						</p>
 					</div>
-
-					<div class="border-t border-border px-6 py-12 md:px-12 lg:px-16">
-						<p class="font-mono mb-4 text-[10px] tracking-widest text-muted-foreground">12-COLUMN GRID</p>
-						<div class="grid grid-cols-12 gap-px bg-border">
-							{#each Array(12) as _, i (i)}
-								<div class="flex items-center justify-center bg-card py-4">
-									<span class="font-mono text-xs text-muted-foreground">{i + 1}</span>
-								</div>
-							{/each}
+					
+					{#if doc.category === 'overview' && doc.slug === 'overview'}
+						<!-- Quick Stats for Overview Page -->
+						<div class="grid grid-cols-12 gap-px border-t border-border bg-border">
+							<div class="col-span-4 bg-background px-6 py-6 md:px-12 lg:px-16">
+								<span class="font-display text-3xl font-bold text-primary">12</span>
+								<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">COLUMNS</p>
+							</div>
+							<div class="col-span-4 bg-background px-6 py-6 md:px-12 lg:px-16">
+								<span class="font-display text-3xl font-bold text-primary">64PX</span>
+								<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">GRID SIZE</p>
+							</div>
+							<div class="col-span-4 bg-background px-6 py-6 md:px-12 lg:px-16">
+								<span class="font-display text-3xl font-bold text-primary">4</span>
+								<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">FONTS</p>
+							</div>
 						</div>
 						
-						<p class="font-mono mb-4 mt-12 text-[10px] tracking-widest text-muted-foreground">COMMON PATTERNS</p>
-						<div class="space-y-2">
-							<div class="grid grid-cols-12 gap-px bg-border">
-								<div class="col-span-4 flex items-center justify-center bg-primary/20 py-3"><span class="font-mono text-xs">4</span></div>
-								<div class="col-span-4 flex items-center justify-center bg-card py-3"><span class="font-mono text-xs">4</span></div>
-								<div class="col-span-4 flex items-center justify-center bg-card py-3"><span class="font-mono text-xs">4</span></div>
-							</div>
-							<div class="grid grid-cols-12 gap-px bg-border">
-								<div class="col-span-6 flex items-center justify-center bg-primary/20 py-3"><span class="font-mono text-xs">6</span></div>
-								<div class="col-span-6 flex items-center justify-center bg-card py-3"><span class="font-mono text-xs">6</span></div>
-							</div>
-							<div class="grid grid-cols-12 gap-px bg-border">
-								<div class="col-span-3 flex items-center justify-center bg-primary/20 py-3"><span class="font-mono text-xs">3</span></div>
-								<div class="col-span-9 flex items-center justify-center bg-card py-3"><span class="font-mono text-xs">9</span></div>
-							</div>
+						<!-- Quick Links -->
+						<div class="border-t border-border px-6 py-8 md:px-12 lg:px-16">
+							<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// QUICK.START</span>
+							<h2 class="font-display mt-4 text-2xl font-bold uppercase">GET STARTED</h2>
 						</div>
-					</div>
+						<div class="grid grid-cols-12 gap-px border-t border-border bg-border">
+							{#each [
+								{ icon: Grid3x3, title: 'Grid System', desc: '12-column responsive grid', section: 'grid' },
+								{ icon: Palette, title: 'Colors', desc: 'Color palette & usage', section: 'colors' },
+								{ icon: Type, title: 'Typography', desc: 'Fonts & text styles', section: 'typography' },
+								{ icon: MousePointer, title: 'Components', desc: 'UI component library', section: 'button' }
+							] as item (item.title)}
+								<button
+									type="button"
+									onclick={() => activeSection = item.section}
+									class="col-span-12 flex items-center gap-4 bg-background px-6 py-6 text-left transition-colors hover:bg-card sm:col-span-6 md:px-12 lg:col-span-3 lg:px-16"
+								>
+									<div class="flex h-10 w-10 items-center justify-center border border-border bg-card">
+										<item.icon class="h-5 w-5 text-primary" />
+									</div>
+									<div>
+										<h3 class="font-ui text-sm font-semibold tracking-wider">{item.title}</h3>
+										<p class="font-body mt-1 text-xs text-muted-foreground">{item.desc}</p>
+									</div>
+								</button>
+							{/each}
+						</div>
+					{:else if doc.category === 'components'}
+						<!-- Component Documentation with Live Examples -->
+						<div class="border-t border-border px-6 py-8 md:px-12 lg:px-16">
+							<ComponentDocRenderer content={doc.content} slug={doc.slug} class="max-w-4xl" />
+						</div>
+					{:else}
+						<!-- Standard Markdown Content -->
+						<div class="border-t border-border px-6 py-8 md:px-12 lg:px-16">
+							<MarkdownRenderer content={doc.content} class="max-w-4xl" />
+						</div>
+					{/if}
 				</section>
-
-				<!-- Spacing Reference -->
-				<section class="border-b border-border">
-					<div class="px-6 py-8 md:px-12 lg:px-16">
-						<p class="font-mono text-[10px] tracking-widest text-muted-foreground">// SPACING</p>
-					</div>
-					<div class="grid grid-cols-2 gap-px border-t border-border bg-border md:grid-cols-4">
-						{#each quickStats as { label, value, code } (label)}
-							<div class="flex flex-col justify-center bg-background px-6 py-8">
-								<span class="font-display text-2xl font-bold text-primary">{value}</span>
-								<span class="font-mono mt-2 text-[10px] tracking-widest text-muted-foreground">{label}</span>
-								<code class="font-mono mt-3 text-xs text-primary/70">{code}</code>
-							</div>
-						{/each}
-					</div>
-				</section>
-
-			{:else if activeSection === 'colors'}
-				<!-- Colors -->
-				<section class="border-b border-border">
-					<div class="px-6 py-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
-						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// FOUNDATION</span>
-						<h1 class="font-display mt-4 text-4xl font-bold uppercase md:text-5xl">COLORS</h1>
-						<p class="font-body mt-6 max-w-2xl text-muted-foreground">
-							Cobalt blue primary with yellow and red accents on dark backgrounds.
-						</p>
-					</div>
-					<div class="grid grid-cols-12 gap-px border-t border-border bg-border">
-						<div class="col-span-4 sm:col-span-2">
-							<div class="h-24 bg-primary"></div>
-							<div class="bg-background px-4 py-3">
-								<p class="font-ui text-xs font-semibold">Cobalt</p>
-								<p class="font-mono text-[10px] text-muted-foreground">#00A3FF</p>
-							</div>
-						</div>
-						<div class="col-span-4 sm:col-span-2">
-							<div class="h-24 bg-yellow-500"></div>
-							<div class="bg-background px-4 py-3">
-								<p class="font-ui text-xs font-semibold">Yellow</p>
-								<p class="font-mono text-[10px] text-muted-foreground">#FFD500</p>
-							</div>
-						</div>
-						<div class="col-span-4 sm:col-span-2">
-							<div class="h-24 bg-red-500"></div>
-							<div class="bg-background px-4 py-3">
-								<p class="font-ui text-xs font-semibold">Red</p>
-								<p class="font-mono text-[10px] text-muted-foreground">#EF4444</p>
-							</div>
-						</div>
-						<div class="col-span-4 sm:col-span-2">
-							<div class="h-24 border-y border-border bg-background"></div>
-							<div class="bg-background px-4 py-3">
-								<p class="font-ui text-xs font-semibold">Black 950</p>
-								<p class="font-mono text-[10px] text-muted-foreground">#000814</p>
-							</div>
-						</div>
-						<div class="col-span-4 sm:col-span-2">
-							<div class="h-24 bg-card"></div>
-							<div class="bg-background px-4 py-3">
-								<p class="font-ui text-xs font-semibold">Black 900</p>
-								<p class="font-mono text-[10px] text-muted-foreground">#001122</p>
-							</div>
-						</div>
-						<div class="col-span-4 sm:col-span-2">
-							<div class="h-24 bg-border"></div>
-							<div class="bg-background px-4 py-3">
-								<p class="font-ui text-xs font-semibold">Border</p>
-								<p class="font-mono text-[10px] text-muted-foreground">#1a2744</p>
-							</div>
-						</div>
-					</div>
-				</section>
-
-			{:else if activeSection === 'typography'}
-				<!-- Typography -->
-				<section class="border-b border-border">
-					<div class="px-6 py-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
-						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// FOUNDATION</span>
-						<h1 class="font-display mt-4 text-4xl font-bold uppercase md:text-5xl">TYPOGRAPHY</h1>
-						<p class="font-body mt-6 max-w-2xl text-muted-foreground">
-							Four distinct typefaces for display, body, UI, and code elements.
-						</p>
-					</div>
-					<div class="grid grid-cols-12 gap-px border-t border-border bg-border">
-						<div class="col-span-12 flex flex-col bg-background px-6 py-8 sm:col-span-6 md:px-12 lg:px-16">
-							<span class="font-mono text-[10px] tracking-widest text-primary">DISPLAY</span>
-							<p class="font-display mt-3 text-3xl font-bold uppercase">Tourney</p>
-							<p class="font-body mt-3 text-sm text-muted-foreground">Headlines & titles</p>
-						</div>
-						<div class="col-span-12 flex flex-col bg-card px-6 py-8 sm:col-span-6 md:px-12 lg:px-16">
-							<span class="font-mono text-[10px] tracking-widest text-primary">BODY</span>
-							<p class="font-body mt-3 text-2xl">Hubot Sans</p>
-							<p class="font-body mt-3 text-sm text-muted-foreground">Body text & paragraphs</p>
-						</div>
-						<div class="col-span-12 flex flex-col bg-card px-6 py-8 sm:col-span-6 md:px-12 lg:px-16">
-							<span class="font-mono text-[10px] tracking-widest text-primary">UI</span>
-							<p class="font-ui mt-3 text-2xl font-semibold tracking-wider">Chakra Petch</p>
-							<p class="font-body mt-3 text-sm text-muted-foreground">Buttons & labels</p>
-						</div>
-						<div class="col-span-12 flex flex-col bg-background px-6 py-8 sm:col-span-6 md:px-12 lg:px-16">
-							<span class="font-mono text-[10px] tracking-widest text-primary">CODE</span>
-							<p class="font-mono mt-3 text-xl">JetBrains Mono</p>
-							<p class="font-body mt-3 text-sm text-muted-foreground">Code & technical text</p>
-						</div>
-					</div>
-				</section>
-
-			{:else if activeSection === 'spacing'}
-				<!-- Spacing -->
-				<section class="border-b border-border">
-					<div class="px-6 py-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
-						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// FOUNDATION</span>
-						<h1 class="font-display mt-4 text-4xl font-bold uppercase md:text-5xl">SPACING</h1>
-						<p class="font-body mt-6 max-w-2xl text-muted-foreground">
-							Consistent spacing creates visual rhythm. Use these values throughout your layouts.
-						</p>
-					</div>
-					<div class="grid grid-cols-2 gap-px border-t border-border bg-border md:grid-cols-4">
-						{#each quickStats as { label, value, code } (label)}
-							<div class="flex flex-col justify-center bg-background px-6 py-8">
-								<span class="font-display text-2xl font-bold text-primary">{value}</span>
-								<span class="font-mono mt-2 text-[10px] tracking-widest text-muted-foreground">{label}</span>
-								<code class="font-mono mt-3 text-xs text-primary/70">{code}</code>
-							</div>
-						{/each}
-					</div>
-				</section>
-
-			{:else if activeSection === 'animations'}
-				<!-- Animations -->
-				<section class="border-b border-border">
-					<div class="px-6 py-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
-						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// MOTION</span>
-						<h1 class="font-display mt-4 text-4xl font-bold uppercase md:text-5xl">ANIMATIONS</h1>
-						<p class="font-body mt-6 max-w-2xl text-muted-foreground">
-							Scroll-based animations using Intersection Observer.
-						</p>
-					</div>
-					<div class="grid grid-cols-2 gap-px border-t border-border bg-border md:grid-cols-4">
-						{#each ['fade', 'slide-left', 'slide-right', 'scale'] as anim (anim)}
-							<div class="flex flex-col bg-card px-6 py-8">
-								<span class="font-mono text-[10px] tracking-widest text-primary">{anim.toUpperCase()}</span>
-								<p class="font-body mt-2 text-sm text-muted-foreground">
-									{anim === 'fade' ? 'Opacity 0 to 1' : anim === 'scale' ? 'Scale 95% to 100%' : `Slide from ${anim.split('-')[1]}`}
-								</p>
-								<code class="font-mono mt-4 text-xs text-muted-foreground">animation: '{anim}'</code>
-							</div>
-						{/each}
-					</div>
-				</section>
-
-			{:else if currentComponentDoc}
-				<!-- Dynamic Component Documentation from Markdown -->
-				<section class="border-b border-border">
-					<div class="px-6 py-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
-						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// COMPONENTS</span>
-						<h1 class="font-display mt-4 text-4xl font-bold uppercase md:text-5xl">{currentComponentDoc.title.toUpperCase()}</h1>
-						<p class="font-body mt-6 max-w-2xl text-muted-foreground">
-							{currentComponentDoc.description}
-						</p>
-					</div>
-					<div class="border-t border-border px-6 py-8 md:px-12 lg:px-16">
-						<ComponentDocRenderer content={currentComponentDoc.content} slug={currentComponentDoc.slug} class="max-w-4xl" />
-					</div>
-				</section>
-
 			{:else}
-				<!-- Default / Coming Soon -->
+				<!-- Coming Soon -->
 				<section class="border-b border-border">
 					<div class="flex min-h-[60vh] flex-col items-center justify-center px-6 py-12 md:px-12 lg:px-16">
 						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// COMING.SOON</span>
 						<h1 class="font-display mt-4 text-center text-3xl font-bold uppercase md:text-4xl">
-							{designSystemContent[activeSection]?.title || activeSection.toUpperCase().replace('-', ' ')}
+							{activeSection.toUpperCase().replace(/-/g, ' ')}
 						</h1>
 						<p class="font-body mt-4 max-w-md text-center text-muted-foreground">
 							This section is currently being developed. Check back soon for comprehensive documentation.
@@ -809,11 +485,11 @@
 					<p class="font-body mt-4 max-w-md text-center text-muted-foreground">
 						This documentation section is currently being developed. Check back soon for comprehensive guides.
 					</p>
-				<Button onclick={() => { selectedCategory = 'design-system'; activeSection = 'overview'; }} variant="outline" class="font-ui mt-8 tracking-wider">
-					VIEW DESIGN SYSTEM
-				</Button>
-			</div>
-		</section>
-	{/if}
+					<Button onclick={() => { selectedCategory = 'design-system'; activeSection = 'overview'; }} variant="outline" class="font-ui mt-8 tracking-wider">
+						VIEW DESIGN SYSTEM
+					</Button>
+				</div>
+			</section>
+		{/if}
 	</main>
 </div>
