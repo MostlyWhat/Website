@@ -239,22 +239,42 @@
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground hidden lg:block">// DOCUMENTATION</span>
 			<div class="lg:mt-4">
 				<Select.Root type="single" value={selectedCategory} onValueChange={handleCategoryChange}>
-					<Select.Trigger class="h-11 w-full justify-start gap-3 rounded-none border-border bg-background px-0 shadow-none hover:bg-card">
+					<Select.Trigger showChevron={false} class="group !h-12 w-full justify-start gap-0 border-border bg-background p-0 transition-all hover:border-primary/50">
 						{@const selected = categoryOptions.find(c => c.value === selectedCategory)}
 						{#if selected}
 							{@const Icon = selected.icon}
-							<span class="flex h-11 w-11 shrink-0 items-center justify-center border-r border-border bg-primary/10">
-								<Icon class="h-4 w-4 text-primary" />
+							<span class="flex h-[46px] w-[46px] shrink-0 items-center justify-center border-r border-border bg-primary/10 transition-colors group-hover:bg-primary/20">
+								<Icon class="h-5 w-5 text-primary" />
 							</span>
-							<span class="font-ui text-xs font-medium tracking-wider">{selected.label}</span>
+							<span class="flex flex-1 flex-col items-start justify-center px-4">
+								<span class="font-mono text-[8px] tracking-widest text-muted-foreground">CATEGORY</span>
+								<span class="font-ui text-xs font-semibold tracking-wider">{selected.label}</span>
+							</span>
+							<span class="flex h-[46px] w-[46px] shrink-0 items-center justify-center border-l border-border text-muted-foreground transition-colors group-hover:text-foreground">
+								<ChevronRight class="h-4 w-4 rotate-90" />
+							</span>
 						{/if}
 					</Select.Trigger>
-					<Select.Content class="rounded-none">
+					<Select.Content class="w-[--bits-select-anchor-width] border-t-0 bg-background">
 						{#each categoryOptions as option (option.value)}
 							{@const Icon = option.icon}
-							<Select.Item value={option.value} class="rounded-none py-3 pl-3">
-								<Icon class="h-4 w-4 text-primary" />
-								<span class="font-ui text-xs tracking-wider">{option.label}</span>
+							<Select.Item 
+								value={option.value} 
+								class="!h-12 cursor-pointer gap-0 border-b border-border p-0 pe-0 ps-0 last:border-b-0 data-[highlighted]:bg-card data-[state=checked]:bg-primary/5"
+							>
+								{#snippet children({ selected })}
+									<span class="flex h-[46px] w-[46px] shrink-0 items-center justify-center border-r border-border {selected ? 'bg-primary/20' : 'bg-card'}">
+										<Icon class="h-4 w-4 {selected ? 'text-primary' : 'text-muted-foreground'}" />
+									</span>
+									<span class="flex flex-1 items-center px-4">
+										<span class="font-ui text-xs tracking-wider {selected ? 'text-primary font-semibold' : ''}">{option.label}</span>
+									</span>
+									{#if selected}
+										<span class="flex h-[46px] w-[46px] shrink-0 items-center justify-center border-l border-border bg-primary/10">
+											<span class="h-1.5 w-1.5 bg-primary"></span>
+										</span>
+									{/if}
+								{/snippet}
 							</Select.Item>
 						{/each}
 					</Select.Content>
