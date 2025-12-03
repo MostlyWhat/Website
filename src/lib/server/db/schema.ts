@@ -877,6 +877,40 @@ export const cannedResponsesRelations = relations(cannedResponses, ({ one }) => 
 }));
 
 // =============================================================================
+// SYSTEM SETTINGS TABLE
+// =============================================================================
+// Key-value store for system configuration
+
+export const systemSettings = pgTable('system_settings', {
+	key: text('key').primaryKey(),
+
+	// Value as JSON to support various types
+	value: jsonb('value').notNull(),
+
+	// Categorization
+	category: text('category').notNull(), // e.g., 'general', 'tickets', 'billing', 'email', 'security'
+
+	// Description for admin UI
+	label: text('label').notNull(),
+	description: text('description'),
+
+	// Value constraints
+	valueType: text('value_type').default('string').notNull(), // 'string', 'number', 'boolean', 'json', 'array'
+	isSecret: boolean('is_secret').default(false).notNull(), // Hide value in UI (e.g., API keys)
+
+	// Metadata
+	updatedById: uuid('updated_by_id').references(() => profiles.id, { onDelete: 'set null' }),
+	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+});
+
+export const systemSettingsRelations = relations(systemSettings, ({ one }) => ({
+	updatedBy: one(profiles, {
+		fields: [systemSettings.updatedById],
+		references: [profiles.id]
+	})
+}));
+
+// =============================================================================
 // TYPES EXPORT
 // =============================================================================
 
@@ -927,6 +961,9 @@ export type NewCannedResponse = typeof cannedResponses.$inferInsert;
 
 export type SlaPolicy = typeof slaPolicies.$inferSelect;
 export type NewSlaPolicy = typeof slaPolicies.$inferInsert;
+
+export type SystemSetting = typeof systemSettings.$inferSelect;
+export type NewSystemSetting = typeof systemSettings.$inferInsert;
 
 export type UserRole = 'super_admin' | 'admin' | 'staff' | 'customer';
 export type ProjectStatus = typeof projectStatusEnum.enumValues[number];

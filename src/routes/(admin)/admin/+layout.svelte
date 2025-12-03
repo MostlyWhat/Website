@@ -43,7 +43,8 @@
 		{ href: '/admin/sla-policies', label: 'SLA POLICIES', icon: Clock },
 		{ href: '/admin/canned-responses', label: 'CANNED RESPONSES', icon: MessageSquareText },
 		{ href: '/admin/activity-log', label: 'ACTIVITY LOG', icon: Activity, adminOnly: true },
-		{ href: '/admin/reports', label: 'REPORTS', icon: BarChart3 }
+		{ href: '/admin/reports', label: 'REPORTS', icon: BarChart3 },
+		{ href: '/admin/settings', label: 'SETTINGS', icon: Settings, adminOnly: true }
 	];
 
 	function isActive(href: string, exact?: boolean): boolean {
@@ -59,14 +60,14 @@
 
 <div class="flex h-screen overflow-hidden bg-background">
 	<!-- Desktop Sidebar -->
-	<aside class="hidden w-72 flex-shrink-0 border-r border-border bg-card lg:flex lg:flex-col overflow-hidden">
+	<aside class="hidden w-64 flex-shrink-0 border-r border-border bg-card lg:flex lg:flex-col overflow-hidden">
 		<!-- Logo -->
-		<div class="flex h-16 items-center border-b border-border px-6">
-			<a href={localizeHref('/')} class="group flex items-center gap-3">
+		<div class="flex h-14 items-center border-b border-border px-4">
+			<a href={localizeHref('/')} class="group flex items-center gap-2">
 				<span class="font-display text-sm font-black uppercase tracking-wider text-primary">MOSTLYWHAT</span>
-				<span class="flex items-center gap-1 border border-primary/30 bg-primary/10 px-2 py-0.5">
-					<Shield class="h-3 w-3 text-primary" />
-					<span class="font-mono text-[10px] tracking-wider text-primary">{roleLabel}</span>
+				<span class="flex items-center gap-1 border border-primary/30 bg-primary/10 px-1.5 py-0.5">
+					<Shield class="h-2.5 w-2.5 text-primary" />
+					<span class="font-mono text-[9px] tracking-wider text-primary">{roleLabel}</span>
 				</span>
 			</a>
 		</div>
@@ -77,15 +78,15 @@
 				{#if !adminOnly || isAdmin}
 				<a
 					{href}
-					class="group flex items-center gap-4 border-b border-border px-6 py-4 transition-colors {isActive(href, exact)
+					class="group flex items-center gap-3 border-b border-border px-4 py-2.5 transition-colors {isActive(href, exact)
 						? 'bg-primary/10 text-primary'
 						: 'text-muted-foreground hover:bg-card hover:text-foreground'}"
 				>
-					<div class="flex h-10 w-10 items-center justify-center border transition-colors {isActive(href, exact) ? 'border-primary bg-primary/10' : 'border-border bg-background'}">
-						<Icon class="h-4 w-4 {isActive(href, exact) ? 'text-primary' : ''}" />
+					<div class="flex h-8 w-8 items-center justify-center border transition-colors {isActive(href, exact) ? 'border-primary bg-primary/10' : 'border-border bg-background'}">
+						<Icon class="h-3.5 w-3.5 {isActive(href, exact) ? 'text-primary' : ''}" />
 					</div>
-					<span class="font-ui flex-1 text-xs tracking-wider">{label}</span>
-					<ChevronRight class="h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100 {isActive(href, exact) ? 'opacity-100' : ''}" />
+					<span class="font-ui flex-1 text-[11px] tracking-wider">{label}</span>
+					<ChevronRight class="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100 {isActive(href, exact) ? 'opacity-100' : ''}" />
 				</a>
 				{/if}
 			{/each}
@@ -96,34 +97,34 @@
 			<!-- Back to Portal Link -->
 			<a
 				href="/app"
-				class="flex items-center gap-4 border-b border-border px-6 py-4 transition-colors text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+				class="flex items-center gap-3 border-b border-border px-4 py-2.5 transition-colors text-muted-foreground hover:bg-muted/50 hover:text-foreground"
 			>
-				<div class="flex h-10 w-10 items-center justify-center border border-border bg-background">
-					<Home class="h-4 w-4" />
+				<div class="flex h-8 w-8 items-center justify-center border border-border bg-background">
+					<Home class="h-3.5 w-3.5" />
 				</div>
-				<span class="font-ui flex-1 text-xs tracking-wider">BACK TO PORTAL</span>
-				<ChevronRight class="h-4 w-4" />
+				<span class="font-ui flex-1 text-[11px] tracking-wider">BACK TO PORTAL</span>
+				<ChevronRight class="h-3 w-3" />
 			</a>
 			
 			<!-- Profile -->
-			<div class="border-b border-border px-6 py-4">
-				<div class="flex items-center gap-4">
-					<div class="flex h-12 w-12 items-center justify-center border border-border bg-background">
+			<div class="border-b border-border px-4 py-3">
+				<div class="flex items-center gap-3">
+					<div class="flex h-10 w-10 items-center justify-center border border-border bg-background">
 						{#if data.profile?.avatarUrl}
 							<img
 								src={data.profile.avatarUrl}
 								alt="Avatar"
-								class="h-12 w-12 object-cover"
+								class="h-10 w-10 object-cover"
 							/>
 						{:else}
-							<User class="h-5 w-5 text-primary" />
+							<User class="h-4 w-4 text-primary" />
 						{/if}
 					</div>
 					<div class="flex-1 min-w-0">
-						<p class="font-ui text-sm font-semibold tracking-wider truncate">
+						<p class="font-ui text-xs font-semibold tracking-wider truncate">
 							{data.profile?.displayName ?? data.profile?.firstName ?? 'User'}
 						</p>
-						<p class="font-mono text-[10px] tracking-wider text-muted-foreground truncate uppercase">
+						<p class="font-mono text-[9px] tracking-wider text-muted-foreground truncate uppercase">
 							{data.profile?.role}
 						</p>
 					</div>
@@ -134,17 +135,17 @@
 			<div class="grid grid-cols-2 gap-px bg-border">
 				<a
 					href="/admin/settings"
-					class="flex items-center justify-center gap-2 bg-card px-4 py-4 text-muted-foreground transition-colors hover:bg-card/80 hover:text-foreground"
+					class="flex items-center justify-center gap-1.5 bg-card px-3 py-3 text-muted-foreground transition-colors hover:bg-card/80 hover:text-foreground"
 				>
-					<Settings class="h-4 w-4" />
-					<span class="font-mono text-[10px] tracking-wider">SETTINGS</span>
+					<Settings class="h-3.5 w-3.5" />
+					<span class="font-mono text-[9px] tracking-wider">SETTINGS</span>
 				</a>
 				<a
 					href="/auth/logout"
-					class="flex items-center justify-center gap-2 bg-card px-4 py-4 text-muted-foreground transition-colors hover:bg-card/80 hover:text-foreground"
+					class="flex items-center justify-center gap-1.5 bg-card px-3 py-3 text-muted-foreground transition-colors hover:bg-card/80 hover:text-foreground"
 				>
-					<LogOut class="h-4 w-4" />
-					<span class="font-mono text-[10px] tracking-wider">LOGOUT</span>
+					<LogOut class="h-3.5 w-3.5" />
+					<span class="font-mono text-[9px] tracking-wider">LOGOUT</span>
 				</a>
 			</div>
 		</div>

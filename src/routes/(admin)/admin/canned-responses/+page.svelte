@@ -256,101 +256,102 @@
 					closeDialog();
 				};
 			}}
-			class="space-y-4"
 		>
-			{#if editingResponse}
-				<input type="hidden" name="id" value={editingResponse.id} />
-			{/if}
-			
-			<div>
-				<label for="title" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-					TITLE <span class="text-destructive">*</span>
-				</label>
-				<Input
-					id="title"
-					name="title"
-					type="text"
-					bind:value={title}
-					placeholder="e.g., Greeting Response"
-					required
-					class="mt-2"
-				/>
-			</div>
-
-			<div>
-				<label for="shortcut" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-					SHORTCUT
-				</label>
-				<Input
-					id="shortcut"
-					name="shortcut"
-					type="text"
-					bind:value={shortcut}
-					placeholder="e.g., /greeting"
-					class="mt-2"
-				/>
-				<p class="mt-1 text-xs text-muted-foreground">Type this in the reply box to quickly insert</p>
-			</div>
-
-			<div>
-				<label for="content" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-					CONTENT <span class="text-destructive">*</span>
-				</label>
-				<Textarea
-					id="content"
-					name="content"
-					bind:value={content}
-					rows={6}
-					placeholder="Enter your response template..."
-					required
-					class="mt-2 resize-none"
-				/>
-			</div>
-
-			<div class="grid grid-cols-2 gap-4">
+			<Dialog.Body class="space-y-4">
+				{#if editingResponse}
+					<input type="hidden" name="id" value={editingResponse.id} />
+				{/if}
+				
 				<div>
-					<label for="category" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-						CATEGORY
+					<label for="title" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+						TITLE <span class="text-destructive">*</span>
 					</label>
 					<Input
-						id="category"
-						name="category"
+						id="title"
+						name="title"
 						type="text"
-						bind:value={category}
-						placeholder="e.g., greeting"
+						bind:value={title}
+						placeholder="e.g., Greeting Response"
+						required
 						class="mt-2"
 					/>
 				</div>
+
 				<div>
-					<label class="font-mono text-[10px] tracking-widest text-muted-foreground">
-						VISIBILITY
+					<label for="shortcut" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+						SHORTCUT
 					</label>
-					<div class="mt-2 flex items-center gap-3">
-						<label class="flex items-center gap-2 cursor-pointer">
-							<input 
-								type="radio" 
-								name="isGlobal" 
-								value="true"
-								checked={isGlobal}
-								onchange={() => isGlobal = true}
-								class="h-4 w-4"
-							/>
-							<span class="text-sm">Global</span>
+					<Input
+						id="shortcut"
+						name="shortcut"
+						type="text"
+						bind:value={shortcut}
+						placeholder="e.g., /greeting"
+						class="mt-2"
+					/>
+					<p class="mt-1 text-xs text-muted-foreground">Type this in the reply box to quickly insert</p>
+				</div>
+
+				<div>
+					<label for="content" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+						CONTENT <span class="text-destructive">*</span>
+					</label>
+					<Textarea
+						id="content"
+						name="content"
+						bind:value={content}
+						rows={6}
+						placeholder="Enter your response template..."
+						required
+						class="mt-2 resize-none"
+					/>
+				</div>
+
+				<div class="grid grid-cols-2 gap-4">
+					<div>
+						<label for="category" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+							CATEGORY
 						</label>
-						<label class="flex items-center gap-2 cursor-pointer">
-							<input 
-								type="radio" 
-								name="isGlobal" 
-								value="false"
-								checked={!isGlobal}
-								onchange={() => isGlobal = false}
-								class="h-4 w-4"
-							/>
-							<span class="text-sm">Personal</span>
-						</label>
+						<Input
+							id="category"
+							name="category"
+							type="text"
+							bind:value={category}
+							placeholder="e.g., greeting"
+							class="mt-2"
+						/>
+					</div>
+					<div>
+						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">
+							VISIBILITY
+						</span>
+						<div class="mt-2 flex items-center gap-3" role="radiogroup" aria-label="Visibility">
+							<label class="flex items-center gap-2 cursor-pointer">
+								<input 
+									type="radio" 
+									name="isGlobal" 
+									value="true"
+									checked={isGlobal}
+									onchange={() => isGlobal = true}
+									class="h-4 w-4"
+								/>
+								<span class="text-sm">Global</span>
+							</label>
+							<label class="flex items-center gap-2 cursor-pointer">
+								<input 
+									type="radio" 
+									name="isGlobal" 
+									value="false"
+									checked={!isGlobal}
+									onchange={() => isGlobal = false}
+									class="h-4 w-4"
+								/>
+								<span class="text-sm">Personal</span>
+							</label>
+						</div>
 					</div>
 				</div>
-			</div>
+			</Dialog.Body>
 
 			<Dialog.Footer class="gap-2">
 				<Button type="button" variant="outline" onclick={closeDialog}>
