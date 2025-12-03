@@ -1,5 +1,5 @@
 {
-  "id": "7e404f92-b83b-4e2c-ac1b-50aea65f86f0",
+  "id": "ceade5d6-e809-4181-8416-28685df20f21",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -98,7 +98,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.announcements": {
       "name": "announcements",
@@ -196,7 +196,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.canned_responses": {
       "name": "canned_responses",
@@ -301,7 +301,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.file_uploads": {
       "name": "file_uploads",
@@ -390,7 +390,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.invoices": {
       "name": "invoices",
@@ -636,7 +636,7 @@
       },
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.organization_invites": {
       "name": "organization_invites",
@@ -756,7 +756,7 @@
       },
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.organization_members": {
       "name": "organization_members",
@@ -830,7 +830,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.organizations": {
       "name": "organizations",
@@ -956,7 +956,7 @@
       },
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.payments": {
       "name": "payments",
@@ -1066,10 +1066,10 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
-    "public.pending_organization_members": {
-      "name": "pending_organization_members",
+    "public.pending_org_members": {
+      "name": "pending_org_members",
       "schema": "",
       "columns": {
         "id": {
@@ -1139,9 +1139,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "pending_organization_members_organization_id_organizations_id_fk": {
-          "name": "pending_organization_members_organization_id_organizations_id_fk",
-          "tableFrom": "pending_organization_members",
+        "pending_org_members_organization_id_organizations_id_fk": {
+          "name": "pending_org_members_organization_id_organizations_id_fk",
+          "tableFrom": "pending_org_members",
           "tableTo": "organizations",
           "columnsFrom": [
             "organization_id"
@@ -1152,9 +1152,9 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "pending_organization_members_profile_id_profiles_id_fk": {
-          "name": "pending_organization_members_profile_id_profiles_id_fk",
-          "tableFrom": "pending_organization_members",
+        "pending_org_members_profile_id_profiles_id_fk": {
+          "name": "pending_org_members_profile_id_profiles_id_fk",
+          "tableFrom": "pending_org_members",
           "tableTo": "profiles",
           "columnsFrom": [
             "profile_id"
@@ -1165,9 +1165,9 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "pending_organization_members_invite_id_organization_invites_id_fk": {
-          "name": "pending_organization_members_invite_id_organization_invites_id_fk",
-          "tableFrom": "pending_organization_members",
+        "pending_org_members_invite_id_organization_invites_id_fk": {
+          "name": "pending_org_members_invite_id_organization_invites_id_fk",
+          "tableFrom": "pending_org_members",
           "tableTo": "organization_invites",
           "columnsFrom": [
             "invite_id"
@@ -1178,9 +1178,9 @@
           "onDelete": "set null",
           "onUpdate": "no action"
         },
-        "pending_organization_members_reviewed_by_id_profiles_id_fk": {
-          "name": "pending_organization_members_reviewed_by_id_profiles_id_fk",
-          "tableFrom": "pending_organization_members",
+        "pending_org_members_reviewed_by_id_profiles_id_fk": {
+          "name": "pending_org_members_reviewed_by_id_profiles_id_fk",
+          "tableFrom": "pending_org_members",
           "tableTo": "profiles",
           "columnsFrom": [
             "reviewed_by_id"
@@ -1196,7 +1196,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.profiles": {
       "name": "profiles",
@@ -1307,7 +1307,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.projects": {
       "name": "projects",
@@ -1449,7 +1449,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.proposals": {
       "name": "proposals",
@@ -1675,7 +1675,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.sla_policies": {
       "name": "sla_policies",
@@ -1839,7 +1839,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.system_settings": {
       "name": "system_settings",
@@ -1923,7 +1923,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.ticket_comments": {
       "name": "ticket_comments",
@@ -2015,7 +2015,7 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.tickets": {
       "name": "tickets",
@@ -2210,7 +2210,7 @@
       },
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     }
   },
   "enums": {

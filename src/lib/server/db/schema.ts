@@ -16,7 +16,6 @@
 import {
 	pgTable,
 	pgEnum,
-	pgPolicy,
 	uuid,
 	text,
 	timestamp,
@@ -26,8 +25,8 @@ import {
 	jsonb,
 	primaryKey
 } from 'drizzle-orm/pg-core';
-import { sql, relations } from 'drizzle-orm';
-import { authUsers, authenticatedRole, serviceRole } from 'drizzle-orm/supabase';
+import { relations } from 'drizzle-orm';
+import { authUsers } from 'drizzle-orm/supabase';
 
 // =============================================================================
 // ENUMS
@@ -121,9 +120,7 @@ export const profiles = pgTable('profiles', {
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 	lastLoginAt: timestamp('last_login_at', { withTimezone: true })
-}, (table) => [
-	pgPolicy('service_role_profiles_policy', { as: 'permissive', for: 'all', to: serviceRole, using: sql`true` })
-]);
+}).enableRLS();
 
 // =============================================================================
 // ORGANIZATIONS TABLE
@@ -155,9 +152,7 @@ export const organizations = pgTable('organizations', {
 	// Metadata
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
-}, (table) => [
-	pgPolicy('service_role_organizations_policy', { as: 'permissive', for: 'all', to: serviceRole, using: sql`true` })
-]);
+}).enableRLS();
 
 // =============================================================================
 // ORGANIZATION MEMBERS TABLE
@@ -176,11 +171,8 @@ export const organizationMembers = pgTable(
 		role: text('role').default('member').notNull(), // 'owner', 'admin', 'member'
 		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
 	},
-	(table) => [
-		primaryKey({ columns: [table.organizationId, table.profileId] }),
-		pgPolicy('service_role_organization_members_policy', { as: 'permissive', for: 'all', to: serviceRole, using: sql`true` })
-	]
-);
+	(table) => [primaryKey({ columns: [table.organizationId, table.profileId] })]
+).enableRLS();
 
 // =============================================================================
 // PROJECTS TABLE
@@ -215,9 +207,7 @@ export const projects = pgTable('projects', {
 	metadata: jsonb('metadata'),
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
-}, (table) => [
-	pgPolicy('service_role_projects_policy', { as: 'permissive', for: 'all', to: serviceRole, using: sql`true` })
-]);
+}).enableRLS();
 
 // =============================================================================
 // PROPOSALS TABLE
@@ -283,9 +273,7 @@ export const proposals = pgTable('proposals', {
 	// Metadata
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
-}, (table) => [
-	pgPolicy('service_role_proposals_policy', { as: 'permissive', for: 'all', to: serviceRole, using: sql`true` })
-]);
+}).enableRLS();
 
 // =============================================================================
 // INVOICES TABLE
@@ -352,9 +340,7 @@ export const invoices = pgTable('invoices', {
 	// Metadata
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
-}, (table) => [
-	pgPolicy('service_role_invoices_policy', { as: 'permissive', for: 'all', to: serviceRole, using: sql`true` })
-]);
+}).enableRLS();
 
 // =============================================================================
 // PAYMENTS TABLE
@@ -383,9 +369,7 @@ export const payments = pgTable('payments', {
 		.references(() => profiles.id),
 
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
-}, (table) => [
-	pgPolicy('service_role_payments_policy', { as: 'permissive', for: 'all', to: serviceRole, using: sql`true` })
-]);
+}).enableRLS();
 
 // =============================================================================
 // TICKETS TABLE
@@ -433,9 +417,7 @@ export const tickets = pgTable('tickets', {
 	// Metadata
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
-}, (table) => [
-	pgPolicy('service_role_tickets_policy', { as: 'permissive', for: 'all', to: serviceRole, using: sql`true` })
-]);
+}).enableRLS();
 
 // =============================================================================
 // TICKET COMMENTS TABLE
@@ -466,9 +448,7 @@ export const ticketComments = pgTable('ticket_comments', {
 
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
-}, (table) => [
-	pgPolicy('service_role_ticket_comments_policy', { as: 'permissive', for: 'all', to: serviceRole, using: sql`true` })
-]);
+}).enableRLS();
 
 // =============================================================================
 // ACTIVITY LOG TABLE
@@ -498,9 +478,7 @@ export const activityLog = pgTable('activity_log', {
 	userAgent: text('user_agent'),
 
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
-}, (table) => [
-	pgPolicy('service_role_activity_log_policy', { as: 'permissive', for: 'all', to: serviceRole, using: sql`true` })
-]);
+}).enableRLS();
 
 // =============================================================================
 // FILE UPLOADS TABLE
@@ -527,9 +505,7 @@ export const fileUploads = pgTable('file_uploads', {
 		.references(() => profiles.id),
 
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
-}, (table) => [
-	pgPolicy('service_role_file_uploads_policy', { as: 'permissive', for: 'all', to: serviceRole, using: sql`true` })
-]);
+}).enableRLS();
 
 // =============================================================================
 // RELATIONS
@@ -698,9 +674,7 @@ export const announcements = pgTable('announcements', {
 	// Metadata
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
-}, (table) => [
-	pgPolicy('service_role_announcements_policy', { as: 'permissive', for: 'all', to: serviceRole, using: sql`true` })
-]);
+}).enableRLS();
 
 // =============================================================================
 // ORGANIZATION INVITES TABLE
@@ -739,16 +713,14 @@ export const organizationInvites = pgTable('organization_invites', {
 
 	// Metadata
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
-}, (table) => [
-	pgPolicy('service_role_organization_invites_policy', { as: 'permissive', for: 'all', to: serviceRole, using: sql`true` })
-]);
+}).enableRLS();
 
 // =============================================================================
 // PENDING ORGANIZATION MEMBERS TABLE
 // =============================================================================
 // Members awaiting approval to join an organization
 
-export const pendingOrganizationMembers = pgTable('pending_organization_members', {
+export const pendingOrganizationMembers = pgTable('pending_org_members', {
 	id: uuid('id').primaryKey().defaultRandom(),
 	organizationId: uuid('organization_id')
 		.notNull()
@@ -772,9 +744,7 @@ export const pendingOrganizationMembers = pgTable('pending_organization_members'
 
 	// Metadata
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
-}, (table) => [
-	pgPolicy('service_role_pending_organization_members_policy', { as: 'permissive', for: 'all', to: serviceRole, using: sql`true` })
-]);
+}).enableRLS();
 
 // =============================================================================
 // ANNOUNCEMENTS RELATIONS
@@ -855,9 +825,7 @@ export const slaPolicies = pgTable('sla_policies', {
 		.references(() => profiles.id),
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
-}, (table) => [
-	pgPolicy('service_role_sla_policies_policy', { as: 'permissive', for: 'all', to: serviceRole, using: sql`true` })
-]);
+}).enableRLS();
 
 export const slaPoliciesRelations = relations(slaPolicies, ({ one }) => ({
 	createdBy: one(profiles, {
@@ -896,9 +864,7 @@ export const cannedResponses = pgTable('canned_responses', {
 	// Metadata
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
-}, (table) => [
-	pgPolicy('service_role_canned_responses_policy', { as: 'permissive', for: 'all', to: serviceRole, using: sql`true` })
-]);
+}).enableRLS();
 
 export const cannedResponsesRelations = relations(cannedResponses, ({ one }) => ({
 	createdBy: one(profiles, {
@@ -932,9 +898,7 @@ export const systemSettings = pgTable('system_settings', {
 	// Metadata
 	updatedById: uuid('updated_by_id').references(() => profiles.id, { onDelete: 'set null' }),
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
-}, (table) => [
-	pgPolicy('service_role_system_settings_policy', { as: 'permissive', for: 'all', to: serviceRole, using: sql`true` })
-]);
+}).enableRLS();
 
 export const systemSettingsRelations = relations(systemSettings, ({ one }) => ({
 	updatedBy: one(profiles, {
