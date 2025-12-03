@@ -47,7 +47,7 @@ export const load: PageServerLoad = async ({ locals }) => {
         status: string;
         createdAt: Date;
     }> = [];
-    
+
     try {
         userRequests = await db
             .select({
