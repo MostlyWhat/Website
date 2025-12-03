@@ -51,10 +51,10 @@
 </svelte:head>
 
 <!-- Full height section with grid layout -->
-<section class="min-h-[calc(100dvh-4rem)] border-b border-border">
-	<div class="grid grid-cols-12 gap-px bg-border">
+<section class="h-full">
+	<div class="grid h-full grid-cols-12 gap-px bg-border">
 		<!-- Left Panel - Progress -->
-		<div class="col-span-12 hidden flex-col justify-between bg-background px-6 py-16 md:px-12 lg:col-span-4 lg:flex lg:px-16">
+		<div class="col-span-12 hidden flex-col justify-between bg-background px-6 py-12 md:px-12 lg:col-span-6 lg:flex lg:px-16">
 			<div>
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// ONBOARDING</span>
 				<h1 class="font-display mt-6 text-3xl font-bold uppercase md:text-4xl">
@@ -102,7 +102,7 @@
 		</div>
 
 		<!-- Right Panel - Form -->
-		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:px-12 lg:col-span-8 lg:px-16">
+		<div class="col-span-12 flex flex-col justify-center overflow-y-auto bg-background px-6 py-8 md:px-12 lg:col-span-6 lg:px-16">
 			<!-- Mobile Header -->
 			<div class="mb-8 lg:hidden">
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// ONBOARDING — STEP {currentStep}/{totalSteps}</span>

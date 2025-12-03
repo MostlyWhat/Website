@@ -1,4 +1,4 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { fail, redirect, isRedirect } from '@sveltejs/kit';
 import type { Actions, RequestEvent } from '@sveltejs/kit';
 import { completeOnboarding } from '$lib/server/auth';
 
@@ -42,6 +42,10 @@ export const actions = {
 
             redirect(303, redirectTo);
         } catch (error) {
+            // Re-throw redirects - they're not errors
+            if (isRedirect(error)) {
+                throw error;
+            }
             console.error('Onboarding error:', error);
             return fail(500, { error: 'Failed to complete onboarding. Please try again.' });
         }
