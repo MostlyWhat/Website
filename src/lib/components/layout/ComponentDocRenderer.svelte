@@ -24,9 +24,27 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import * as Popover from '$lib/components/ui/popover';
 	import * as Sheet from '$lib/components/ui/sheet';
+	import * as Breadcrumb from '$lib/components/ui/breadcrumb';
+	import * as Carousel from '$lib/components/ui/carousel';
+	import * as Collapsible from '$lib/components/ui/collapsible';
+	import * as Command from '$lib/components/ui/command';
+	import * as ContextMenu from '$lib/components/ui/context-menu';
+	import * as Drawer from '$lib/components/ui/drawer';
+	import * as HoverCard from '$lib/components/ui/hover-card';
+	import * as Menubar from '$lib/components/ui/menubar';
+	import * as NavigationMenu from '$lib/components/ui/navigation-menu';
+	import * as Pagination from '$lib/components/ui/pagination';
+	import * as RadioGroup from '$lib/components/ui/radio-group';
+	import * as Resizable from '$lib/components/ui/resizable';
+	import * as Toggle from '$lib/components/ui/toggle';
+	import * as ToggleGroup from '$lib/components/ui/toggle-group';
 	import { ScrollArea } from '$lib/components/ui/scroll-area';
 	import { AspectRatio } from '$lib/components/ui/aspect-ratio';
 	import * as Avatar from '$lib/components/ui/avatar';
+	import { Slider } from '$lib/components/ui/slider';
+	import { Calendar } from '$lib/components/ui/calendar';
+	import { Spinner } from '$lib/components/ui/spinner';
+	import { Kbd } from '$lib/components/ui/kbd';
 	import {
 		Mail,
 		ArrowRight,
@@ -40,6 +58,7 @@
 		Check,
 		ChevronDown,
 		ChevronRight,
+		ChevronLeft,
 		Bold,
 		Italic,
 		Underline,
@@ -49,8 +68,14 @@
 		LogOut,
 		Plus,
 		Menu,
-		X
+		X,
+		Home,
+		File,
+		Search,
+		CalendarIcon,
+		ChevronsUpDown
 	} from '@lucide/svelte';
+	import { today, getLocalTimeZone, CalendarDate } from '@internationalized/date';
 
 	interface Props {
 		/** Raw markdown content to render */
@@ -72,8 +97,15 @@
 	let dialogOpen = $state(false);
 	let alertDialogOpen = $state(false);
 	let sheetOpen = $state(false);
+	let drawerOpen = $state(false);
+	let collapsibleOpen = $state(false);
 	let copied = $state(false);
 	let selectedValue = $state('');
+	let sliderValue = $state(50);
+	let calendarValue = $state<CalendarDate | undefined>(today(getLocalTimeZone()));
+	let togglePressed = $state(false);
+	let toggleGroupValue = $state('center');
+	let radioValue = $state('option1');
 
 	// Copy code to clipboard
 	async function copyCode(code: string) {
@@ -135,6 +167,20 @@
 		return blocks;
 	}
 
+	// Check if component has a preview available
+	function hasPreview(componentSlug: string): boolean {
+		const previewComponents = [
+			'button', 'badge', 'input', 'textarea', 'switch', 'checkbox', 'label',
+			'progress', 'separator', 'skeleton', 'card', 'dialog', 'tabs', 'accordion',
+			'alert', 'tooltip', 'alert-dialog', 'aspect-ratio', 'avatar', 'popover',
+			'dropdown-menu', 'sheet', 'scroll-area', 'select', 'breadcrumb', 'calendar',
+			'carousel', 'collapsible', 'command', 'context-menu', 'drawer', 'hover-card',
+			'menubar', 'navigation-menu', 'pagination', 'radio-group', 'resizable',
+			'slider', 'toggle', 'toggle-group', 'spinner', 'kbd'
+		];
+		return previewComponents.includes(componentSlug);
+	}
+
 	marked.use({ renderer });
 	const contentBlocks = $derived(processContent(content));
 </script>
@@ -149,9 +195,11 @@
 			<!-- Live Example Container -->
 			<div class="my-8 border border-border bg-card/50">
 				<!-- Preview Area -->
-				<div class="p-6 border-b border-border">
-					<p class="font-mono text-[10px] tracking-widest text-muted-foreground mb-4">// PREVIEW</p>
-					<div class="flex flex-wrap items-center gap-4">
+				<div class="border-b border-border">
+					<div class="flex items-center justify-between px-4 py-2 border-b border-border bg-muted/30">
+						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// PREVIEW</span>
+					</div>
+					<div class="p-6 flex flex-wrap items-center gap-4 min-h-[120px]">
 						<!-- Button Examples -->
 						{#if slug === 'button'}
 							{#if block.code?.includes('variant="secondary"')}
@@ -289,7 +337,7 @@
 						{:else if slug === 'skeleton'}
 							{#if block.code?.includes('Card')}
 								<div class="flex items-center space-x-4">
-									<Skeleton class="h-12 w-12 rounded-full" />
+									<Skeleton class="h-12 w-12" />
 									<div class="space-y-2">
 										<Skeleton class="h-4 w-[250px]" />
 										<Skeleton class="h-4 w-[200px]" />
@@ -366,12 +414,6 @@
 									<Accordion.Trigger class="font-ui">IS IT STYLED?</Accordion.Trigger>
 									<Accordion.Content>
 										<p class="text-sm text-muted-foreground">Yes. Styled with Tailwind CSS.</p>
-									</Accordion.Content>
-								</Accordion.Item>
-								<Accordion.Item value="item-3">
-									<Accordion.Trigger class="font-ui">IS IT ANIMATED?</Accordion.Trigger>
-									<Accordion.Content>
-										<p class="text-sm text-muted-foreground">Yes. Smooth expand/collapse animation.</p>
 									</Accordion.Content>
 								</Accordion.Item>
 							</Accordion.Root>
@@ -538,8 +580,306 @@
 								</Select.Content>
 							</Select.Root>
 
+						<!-- Breadcrumb Examples -->
+						{:else if slug === 'breadcrumb'}
+							<Breadcrumb.Root>
+								<Breadcrumb.List>
+									<Breadcrumb.Item>
+										<Breadcrumb.Link href="/">Home</Breadcrumb.Link>
+									</Breadcrumb.Item>
+									<Breadcrumb.Separator />
+									<Breadcrumb.Item>
+										<Breadcrumb.Link href="/docs">Docs</Breadcrumb.Link>
+									</Breadcrumb.Item>
+									<Breadcrumb.Separator />
+									<Breadcrumb.Item>
+										<Breadcrumb.Page>Breadcrumb</Breadcrumb.Page>
+									</Breadcrumb.Item>
+								</Breadcrumb.List>
+							</Breadcrumb.Root>
+
+						<!-- Calendar Examples -->
+						{:else if slug === 'calendar'}
+							<Calendar type="single" bind:value={calendarValue} class="border border-border" />
+
+						<!-- Carousel Examples -->
+						{:else if slug === 'carousel'}
+							<div class="w-full max-w-xs">
+								<Carousel.Root>
+									<Carousel.Content>
+										{#each [1, 2, 3, 4, 5] as item}
+											<Carousel.Item>
+												<div class="p-1">
+													<Card.Root>
+														<Card.Content class="flex aspect-square items-center justify-center p-6">
+															<span class="text-4xl font-semibold">{item}</span>
+														</Card.Content>
+													</Card.Root>
+												</div>
+											</Carousel.Item>
+										{/each}
+									</Carousel.Content>
+									<Carousel.Previous />
+									<Carousel.Next />
+								</Carousel.Root>
+							</div>
+
+						<!-- Collapsible Examples -->
+						{:else if slug === 'collapsible'}
+							<Collapsible.Root bind:open={collapsibleOpen} class="w-[350px] space-y-2">
+								<div class="flex items-center justify-between space-x-4 px-4">
+									<h4 class="text-sm font-semibold">@peduarte starred 3 repositories</h4>
+									<Collapsible.Trigger>
+										{#snippet child({ props })}
+											<Button {...props} variant="ghost" size="sm" class="w-9 p-0">
+												<ChevronsUpDown class="h-4 w-4" />
+												<span class="sr-only">Toggle</span>
+											</Button>
+										{/snippet}
+									</Collapsible.Trigger>
+								</div>
+								<div class="border border-border px-4 py-3 font-mono text-sm">
+									@radix-ui/primitives
+								</div>
+								<Collapsible.Content class="space-y-2">
+									<div class="border border-border px-4 py-3 font-mono text-sm">
+										@radix-ui/colors
+									</div>
+									<div class="border border-border px-4 py-3 font-mono text-sm">
+										@stitches/react
+									</div>
+								</Collapsible.Content>
+							</Collapsible.Root>
+
+						<!-- Command Examples -->
+						{:else if slug === 'command'}
+							<Command.Root class="border border-border w-[350px]">
+								<Command.Input placeholder="Type a command or search..." />
+								<Command.List>
+									<Command.Empty>No results found.</Command.Empty>
+									<Command.Group heading="Suggestions">
+										<Command.Item>
+											<CalendarIcon class="mr-2 h-4 w-4" />
+											<span>Calendar</span>
+										</Command.Item>
+										<Command.Item>
+											<Search class="mr-2 h-4 w-4" />
+											<span>Search</span>
+										</Command.Item>
+										<Command.Item>
+											<Settings class="mr-2 h-4 w-4" />
+											<span>Settings</span>
+										</Command.Item>
+									</Command.Group>
+								</Command.List>
+							</Command.Root>
+
+						<!-- Context Menu Examples -->
+						{:else if slug === 'context-menu'}
+							<ContextMenu.Root>
+								<ContextMenu.Trigger class="flex h-[150px] w-[300px] items-center justify-center border border-dashed border-border text-sm">
+									Right click here
+								</ContextMenu.Trigger>
+								<ContextMenu.Content class="w-64">
+									<ContextMenu.Item>Back</ContextMenu.Item>
+									<ContextMenu.Item>Forward</ContextMenu.Item>
+									<ContextMenu.Item>Reload</ContextMenu.Item>
+									<ContextMenu.Separator />
+									<ContextMenu.Item>Save As...</ContextMenu.Item>
+									<ContextMenu.Item>Print...</ContextMenu.Item>
+								</ContextMenu.Content>
+							</ContextMenu.Root>
+
+						<!-- Drawer Examples -->
+						{:else if slug === 'drawer'}
+							<Drawer.Root bind:open={drawerOpen}>
+								<Drawer.Trigger>
+									{#snippet child({ props })}
+										<Button {...props} variant="outline" class="font-ui">OPEN DRAWER</Button>
+									{/snippet}
+								</Drawer.Trigger>
+								<Drawer.Content>
+									<Drawer.Header>
+										<Drawer.Title>Drawer Title</Drawer.Title>
+										<Drawer.Description>Drawer description goes here.</Drawer.Description>
+									</Drawer.Header>
+									<div class="p-4">
+										<p class="text-sm text-muted-foreground">Drawer content goes here.</p>
+									</div>
+									<Drawer.Footer>
+										<Button onclick={() => drawerOpen = false}>Close</Button>
+									</Drawer.Footer>
+								</Drawer.Content>
+							</Drawer.Root>
+
+						<!-- Hover Card Examples -->
+						{:else if slug === 'hover-card'}
+							<HoverCard.Root>
+								<HoverCard.Trigger>
+									{#snippet child({ props })}
+										<Button {...props} variant="link" class="font-ui">@MOSTLYWHAT</Button>
+									{/snippet}
+								</HoverCard.Trigger>
+								<HoverCard.Content class="w-80">
+									<div class="flex justify-between space-x-4">
+										<Avatar.Root>
+											<Avatar.Fallback>MW</Avatar.Fallback>
+										</Avatar.Root>
+										<div class="space-y-1">
+											<h4 class="text-sm font-semibold">@mostlywhat</h4>
+											<p class="text-sm text-muted-foreground">
+												Digital solutions and software development studio.
+											</p>
+										</div>
+									</div>
+								</HoverCard.Content>
+							</HoverCard.Root>
+
+						<!-- Menubar Examples -->
+						{:else if slug === 'menubar'}
+							<Menubar.Root>
+								<Menubar.Menu>
+									<Menubar.Trigger>File</Menubar.Trigger>
+									<Menubar.Content>
+										<Menubar.Item>New Tab</Menubar.Item>
+										<Menubar.Item>New Window</Menubar.Item>
+										<Menubar.Separator />
+										<Menubar.Item>Print</Menubar.Item>
+									</Menubar.Content>
+								</Menubar.Menu>
+								<Menubar.Menu>
+									<Menubar.Trigger>Edit</Menubar.Trigger>
+									<Menubar.Content>
+										<Menubar.Item>Undo</Menubar.Item>
+										<Menubar.Item>Redo</Menubar.Item>
+										<Menubar.Separator />
+										<Menubar.Item>Cut</Menubar.Item>
+										<Menubar.Item>Copy</Menubar.Item>
+										<Menubar.Item>Paste</Menubar.Item>
+									</Menubar.Content>
+								</Menubar.Menu>
+							</Menubar.Root>
+
+						<!-- Navigation Menu Examples -->
+						{:else if slug === 'navigation-menu'}
+							<NavigationMenu.Root>
+								<NavigationMenu.List>
+									<NavigationMenu.Item>
+										<NavigationMenu.Trigger>Getting Started</NavigationMenu.Trigger>
+										<NavigationMenu.Content>
+											<div class="p-4">
+												<p class="text-sm">Introduction content here.</p>
+											</div>
+										</NavigationMenu.Content>
+									</NavigationMenu.Item>
+									<NavigationMenu.Item>
+										<NavigationMenu.Link href="/docs">Documentation</NavigationMenu.Link>
+									</NavigationMenu.Item>
+								</NavigationMenu.List>
+							</NavigationMenu.Root>
+
+						<!-- Pagination Examples -->
+						{:else if slug === 'pagination'}
+							<Pagination.Root count={100} perPage={10} siblingCount={1}>
+								{#snippet children({ pages, currentPage })}
+									<Pagination.Content>
+										<Pagination.Item>
+											<Pagination.PrevButton />
+										</Pagination.Item>
+										{#each pages as page (page.key)}
+											{#if page.type === 'ellipsis'}
+												<Pagination.Item>
+													<Pagination.Ellipsis />
+												</Pagination.Item>
+											{:else}
+												<Pagination.Item>
+													<Pagination.Link {page} isActive={currentPage === page.value}>
+														{page.value}
+													</Pagination.Link>
+												</Pagination.Item>
+											{/if}
+										{/each}
+										<Pagination.Item>
+											<Pagination.NextButton />
+										</Pagination.Item>
+									</Pagination.Content>
+								{/snippet}
+							</Pagination.Root>
+
+						<!-- Radio Group Examples -->
+						{:else if slug === 'radio-group'}
+							<RadioGroup.Root bind:value={radioValue}>
+								<div class="flex items-center space-x-2">
+									<RadioGroup.Item value="option1" id="option1" />
+									<Label for="option1">Option 1</Label>
+								</div>
+								<div class="flex items-center space-x-2">
+									<RadioGroup.Item value="option2" id="option2" />
+									<Label for="option2">Option 2</Label>
+								</div>
+								<div class="flex items-center space-x-2">
+									<RadioGroup.Item value="option3" id="option3" />
+									<Label for="option3">Option 3</Label>
+								</div>
+							</RadioGroup.Root>
+
+						<!-- Resizable Examples -->
+						{:else if slug === 'resizable'}
+							<Resizable.PaneGroup direction="horizontal" class="min-h-[200px] max-w-md border border-border">
+								<Resizable.Pane defaultSize={50}>
+									<div class="flex h-full items-center justify-center p-6">
+										<span class="font-semibold">Panel 1</span>
+									</div>
+								</Resizable.Pane>
+								<Resizable.Handle />
+								<Resizable.Pane defaultSize={50}>
+									<div class="flex h-full items-center justify-center p-6">
+										<span class="font-semibold">Panel 2</span>
+									</div>
+								</Resizable.Pane>
+							</Resizable.PaneGroup>
+
+						<!-- Slider Examples -->
+						{:else if slug === 'slider'}
+							<Slider type="single" bind:value={sliderValue} max={100} step={1} class="w-[60%]" />
+
+						<!-- Toggle Examples -->
+						{:else if slug === 'toggle'}
+							<Toggle.Root bind:pressed={togglePressed} aria-label="Toggle bold">
+								<Bold class="h-4 w-4" />
+							</Toggle.Root>
+
+						<!-- Toggle Group Examples -->
+						{:else if slug === 'toggle-group'}
+							<ToggleGroup.Root type="single" bind:value={toggleGroupValue}>
+								<ToggleGroup.Item value="left" aria-label="Align left">
+									<ChevronLeft class="h-4 w-4" />
+								</ToggleGroup.Item>
+								<ToggleGroup.Item value="center" aria-label="Align center">
+									<Bold class="h-4 w-4" />
+								</ToggleGroup.Item>
+								<ToggleGroup.Item value="right" aria-label="Align right">
+									<ChevronRight class="h-4 w-4" />
+								</ToggleGroup.Item>
+							</ToggleGroup.Root>
+
+						<!-- Spinner Examples -->
+						{:else if slug === 'spinner'}
+							<div class="flex items-center gap-4">
+								<Spinner size="sm" />
+								<Spinner size="md" />
+								<Spinner size="lg" />
+							</div>
+
+						<!-- Kbd Examples -->
+						{:else if slug === 'kbd'}
+							<div class="flex items-center gap-1">
+								<Kbd>⌘</Kbd>
+								<Kbd>K</Kbd>
+							</div>
+
 						{:else}
-							<p class="text-sm text-muted-foreground">Preview not available</p>
+							<p class="text-sm text-muted-foreground italic">Preview not available for this component.</p>
 						{/if}
 					</div>
 				</div>
@@ -606,7 +946,6 @@
 		font-size: 0.85em;
 		background: var(--muted);
 		padding: 0.2em 0.4em;
-		border-radius: 0.25rem;
 	}
 
 	:global(.component-doc .prose-custom pre) {
