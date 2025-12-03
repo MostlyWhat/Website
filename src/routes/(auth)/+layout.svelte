@@ -10,6 +10,13 @@
 	import { ArrowRight } from '@lucide/svelte';
 
 	let { children } = $props();
+
+	const footerLinks = [
+		{ href: '/contact', label: 'Contact' },
+		{ href: '/legal/privacy-policy', label: 'Privacy' },
+		{ href: '/legal/terms-of-service', label: 'Terms of use' },
+		{ href: '/docs/foundation/accessibility', label: 'Accessibility' }
+	];
 </script>
 
 <div class="flex h-screen flex-col overflow-hidden bg-background">
@@ -31,7 +38,26 @@
 	</header>
 
 	<!-- Main content -->
-	<main class="flex-1 overflow-hidden">
+	<main class="flex-1 overflow-auto">
 		{@render children()}
 	</main>
+
+	<!-- Footer -->
+	<footer class="shrink-0 border-t border-border bg-card/50">
+		<div class="flex h-12 items-center justify-between px-6 md:px-12 lg:px-16">
+			<span class="font-mono text-[10px] tracking-wider text-muted-foreground">
+				© {new Date().getFullYear()} MostlyWhat
+			</span>
+			<nav class="flex items-center gap-4 md:gap-6">
+				{#each footerLinks as link}
+					<a 
+						href={localizeHref(link.href)} 
+						class="font-mono text-[10px] tracking-wider text-muted-foreground transition-colors hover:text-foreground"
+					>
+						{link.label}
+					</a>
+				{/each}
+			</nav>
+		</div>
+	</footer>
 </div>

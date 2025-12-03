@@ -9,6 +9,7 @@ import type { Actions, PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
 import { proposals, projects, organizations } from '$lib/server/db/schema';
 import { eq, desc } from 'drizzle-orm';
+import { proposalActivity, getClientIp } from '$lib/server/activity-logger';
 
 export const load: PageServerLoad = async ({ locals }) => {
     // Verify admin/staff role
@@ -110,6 +111,9 @@ export const actions: Actions = {
                 })
                 .returning({ id: proposals.id });
 
+            // Log activity
+            await proposalActivity.created(newProposal.id, title.trim(), locals.profile.id, getClientIp(request));
+
             redirect(303, `/admin/proposals/${newProposal.id}`);
         } catch (err) {
             if ((err as { status?: number }).status === 303) throw err; // Re-throw redirect
@@ -178,6 +182,9 @@ export const actions: Actions = {
                     createdById: locals.profile.id
                 })
                 .returning({ id: proposals.id });
+
+            // Log activity for draft save
+            await proposalActivity.created(newProposal.id, title.trim(), locals.profile.id, getClientIp(request));
 
             return { success: true, proposalId: newProposal.id };
         } catch (err) {

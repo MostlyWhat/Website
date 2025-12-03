@@ -2,6 +2,7 @@ import { db } from '$lib/server/db';
 import { projects, organizations, profiles } from '$lib/server/db/schema';
 import { eq, desc } from 'drizzle-orm';
 import { fail, redirect } from '@sveltejs/kit';
+import { projectActivity, getClientIp } from '$lib/server/activity-logger';
 import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -110,6 +111,9 @@ export const actions: Actions = {
                 estimatedBudget: estimatedBudget ? estimatedBudget : null,
                 currency
             }).returning();
+
+            // Log activity
+            await projectActivity.created(newProject.id, newProject.name, locals.profile.id, getClientIp(request));
 
             throw redirect(302, `/admin/projects/${newProject.id}`);
         } catch (err) {

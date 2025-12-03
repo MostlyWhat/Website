@@ -4,10 +4,12 @@
 	 * 
 	 * Error page for the admin dashboard routes.
 	 * Clean, minimal design matching the admin layout.
+	 * Includes its own header since error pages don't inherit layouts.
 	 */
 	import { page } from '$app/state';
+	import { localizeHref } from '$lib/paraglide/runtime';
 	import { Button } from '$lib/components/ui/button';
-	import { ArrowLeft, RefreshCw, LayoutDashboard, AlertTriangle, FileQuestion, Users, Settings } from '@lucide/svelte';
+	import { ArrowLeft, RefreshCw, LayoutDashboard, AlertTriangle, FileQuestion, Users, Settings, ExternalLink } from '@lucide/svelte';
 
 	const errorMessages: Record<number, { title: string; description: string }> = {
 		400: { title: 'BAD REQUEST', description: 'The request was invalid or cannot be processed.' },
@@ -27,7 +29,22 @@
 	<title>{page.status} - {error.title} | Admin | MostlyWhat Systems</title>
 </svelte:head>
 
-<div class="flex min-h-[calc(100dvh-4rem)] flex-col">
+<div class="flex min-h-screen flex-col bg-background">
+	<!-- Top Bar -->
+	<header class="flex h-16 flex-shrink-0 items-center justify-between border-b border-border px-6">
+		<a href="/admin" class="group flex items-center gap-2">
+			<span class="font-display text-sm font-black uppercase tracking-wider text-primary">MOSTLYWHAT</span>
+			<span class="font-mono text-[10px] tracking-wider text-muted-foreground">// ADMIN</span>
+		</a>
+		<a 
+			href={localizeHref('/')} 
+			class="font-ui flex items-center gap-2 text-xs tracking-wider text-muted-foreground transition-colors hover:text-foreground"
+		>
+			<span>BACK TO SITE</span>
+			<ExternalLink class="h-3 w-3" />
+		</a>
+	</header>
+
 	<!-- Main Error Content -->
 	<section class="flex flex-1 flex-col items-center justify-center border-b border-border bg-background px-6 py-16 md:px-12 lg:px-16">
 		<div class="text-center">

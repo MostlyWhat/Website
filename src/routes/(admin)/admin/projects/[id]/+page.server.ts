@@ -3,6 +3,7 @@ import { projects, profiles, organizations, proposals, tickets, invoices } from 
 import { eq, desc, and, or, count } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 import { error, fail, redirect } from '@sveltejs/kit';
+import { projectActivity, getClientIp } from '$lib/server/activity-logger';
 import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
@@ -142,6 +143,14 @@ export const actions: Actions = {
         const formData = await request.formData();
         const assignedToId = formData.get('assignedToId') as string;
 
+        // Get project name and assigned user name for activity log
+        const [project] = await db.select({ name: projects.name }).from(projects).where(eq(projects.id, params.id));
+        let assigneeName: string | null = null;
+        if (assignedToId) {
+            const [assignee] = await db.select({ displayName: profiles.displayName }).from(profiles).where(eq(profiles.id, assignedToId));
+            assigneeName = assignee?.displayName ?? null;
+        }
+
         await db
             .update(projects)
             .set({
@@ -149,6 +158,9 @@ export const actions: Actions = {
                 updatedAt: new Date()
             })
             .where(eq(projects.id, params.id));
+
+        // Log activity
+        await projectActivity.assigned(params.id, project?.name ?? 'Unknown', assigneeName, locals.profile.id, getClientIp(request));
 
         return { success: true, message: 'Project assigned successfully' };
     },
@@ -160,6 +172,10 @@ export const actions: Actions = {
 
         const formData = await request.formData();
         const status = formData.get('status') as string;
+
+        // Get current project for activity log
+        const [project] = await db.select({ name: projects.name, status: projects.status }).from(projects).where(eq(projects.id, params.id));
+        const oldStatus = project?.status ?? 'unknown';
 
         const updateData: Record<string, unknown> = {
             status,
@@ -177,6 +193,9 @@ export const actions: Actions = {
             .update(projects)
             .set(updateData)
             .where(eq(projects.id, params.id));
+
+        // Log activity
+        await projectActivity.statusChanged(params.id, project?.name ?? 'Unknown', oldStatus, status, locals.profile.id, getClientIp(request));
 
         return { success: true, message: 'Status updated successfully' };
     },

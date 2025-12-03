@@ -10,6 +10,7 @@ import { db } from '$lib/server/db';
 import { proposals, projects, organizations, profiles } from '$lib/server/db/schema';
 import { eq, or } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
+import { proposalActivity, getClientIp } from '$lib/server/activity-logger';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
     // Verify admin/staff role
@@ -113,6 +114,9 @@ export const actions: Actions = {
         const formData = await request.formData();
         const assignedToId = formData.get('assignedToId') as string;
 
+        // Get proposal title for activity log
+        const [proposal] = await db.select({ title: proposals.title }).from(proposals).where(eq(proposals.id, params.id));
+
         await db
             .update(proposals)
             .set({
@@ -121,10 +125,18 @@ export const actions: Actions = {
             })
             .where(eq(proposals.id, params.id));
 
+        // Log activity
+        let assigneeName: string | null = null;
+        if (assignedToId) {
+            const [assignee] = await db.select({ displayName: profiles.displayName }).from(profiles).where(eq(profiles.id, assignedToId));
+            assigneeName = assignee?.displayName ?? null;
+        }
+        await proposalActivity.updated(params.id, proposal?.title ?? 'Unknown', { assignee: { old: null, new: assigneeName } }, locals.profile.id, getClientIp(request));
+
         return { success: true, message: 'Proposal assigned successfully' };
     },
 
-    send: async ({ params, locals }) => {
+    send: async ({ request, params, locals }) => {
         if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Unauthorized' });
         }
@@ -132,7 +144,7 @@ export const actions: Actions = {
         try {
             // Verify proposal exists and is in draft status
             const [proposal] = await db
-                .select({ id: proposals.id, status: proposals.status })
+                .select({ id: proposals.id, status: proposals.status, title: proposals.title })
                 .from(proposals)
                 .where(eq(proposals.id, params.id))
                 .limit(1);
@@ -154,6 +166,10 @@ export const actions: Actions = {
                 })
                 .where(eq(proposals.id, params.id));
 
+            // Log activity
+            await proposalActivity.sent(params.id, proposal.title, locals.profile.id, getClientIp(request));
+            await proposalActivity.statusChanged(params.id, proposal.title, 'draft', 'sent', locals.profile.id, getClientIp(request));
+
             return { success: true, message: 'Proposal sent successfully' };
         } catch (err) {
             console.error('Send proposal error:', err);
@@ -161,14 +177,14 @@ export const actions: Actions = {
         }
     },
 
-    withdraw: async ({ params, locals }) => {
+    withdraw: async ({ request, params, locals }) => {
         if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Unauthorized' });
         }
 
         try {
             const [proposal] = await db
-                .select({ id: proposals.id, status: proposals.status })
+                .select({ id: proposals.id, status: proposals.status, title: proposals.title })
                 .from(proposals)
                 .where(eq(proposals.id, params.id))
                 .limit(1);
@@ -190,6 +206,9 @@ export const actions: Actions = {
                     updatedAt: new Date()
                 })
                 .where(eq(proposals.id, params.id));
+
+            // Log activity
+            await proposalActivity.statusChanged(params.id, proposal.title, proposal.status, 'draft', locals.profile.id, getClientIp(request));
 
             return { success: true, message: 'Proposal withdrawn' };
         } catch (err) {

@@ -137,7 +137,8 @@ export const DELETE: RequestHandler = async ({ request, locals }) => {
     }
 
     try {
-        const { fileId } = await request.json();
+        const body = await request.json() as { fileId?: string };
+        const { fileId } = body;
 
         if (!fileId) {
             throw error(400, 'File ID is required');

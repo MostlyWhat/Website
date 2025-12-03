@@ -2,6 +2,7 @@ import { db } from '$lib/server/db';
 import { proposals, projects, organizations, profiles, organizationMembers } from '$lib/server/db/schema';
 import { eq, and, inArray } from 'drizzle-orm';
 import { error } from '@sveltejs/kit';
+import { proposalActivity, getClientIp } from '$lib/server/activity-logger';
 import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
@@ -90,10 +91,13 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 };
 
 export const actions: Actions = {
-    accept: async ({ params, locals }) => {
+    accept: async ({ params, locals, request }) => {
         if (!locals.user || !locals.profile) {
             error(401, 'Unauthorized');
         }
+
+        // Get proposal title for activity log
+        const [proposal] = await db.select({ title: proposals.title, status: proposals.status }).from(proposals).where(eq(proposals.id, params.id));
 
         await db
             .update(proposals)
@@ -103,6 +107,10 @@ export const actions: Actions = {
                 approvedById: locals.profile.id
             })
             .where(eq(proposals.id, params.id));
+
+        // Log activity
+        await proposalActivity.approved(params.id, proposal?.title ?? 'Unknown', locals.profile.id, getClientIp(request));
+        await proposalActivity.statusChanged(params.id, proposal?.title ?? 'Unknown', proposal?.status ?? 'viewed', 'accepted', locals.profile.id, getClientIp(request));
 
         return { success: true };
     },
@@ -115,6 +123,9 @@ export const actions: Actions = {
         const formData = await request.formData();
         const reason = formData.get('reason') as string;
 
+        // Get proposal title for activity log
+        const [proposal] = await db.select({ title: proposals.title, status: proposals.status }).from(proposals).where(eq(proposals.id, params.id));
+
         await db
             .update(proposals)
             .set({
@@ -123,6 +134,10 @@ export const actions: Actions = {
                 rejectionReason: reason || null
             })
             .where(eq(proposals.id, params.id));
+
+        // Log activity
+        await proposalActivity.rejected(params.id, proposal?.title ?? 'Unknown', locals.profile.id, getClientIp(request));
+        await proposalActivity.statusChanged(params.id, proposal?.title ?? 'Unknown', proposal?.status ?? 'viewed', 'rejected', locals.profile.id, getClientIp(request));
 
         return { success: true };
     }

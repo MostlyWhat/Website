@@ -266,6 +266,237 @@ export const organizationActivity = {
 };
 
 /**
+ * Log project-related activities
+ */
+export const projectActivity = {
+    async created(projectId: string, name: string, performedById: string, ipAddress?: string) {
+        await logActivity({
+            entityType: 'project',
+            entityId: projectId,
+            activityType: 'created',
+            description: `Project "${name}" was created`,
+            performedById,
+            ipAddress
+        });
+    },
+
+    async statusChanged(
+        projectId: string,
+        name: string,
+        oldStatus: string,
+        newStatus: string,
+        performedById: string,
+        ipAddress?: string
+    ) {
+        await logActivity({
+            entityType: 'project',
+            entityId: projectId,
+            activityType: 'status_changed',
+            description: `Project "${name}" status changed from ${oldStatus} to ${newStatus}`,
+            previousValues: { status: oldStatus },
+            newValues: { status: newStatus },
+            performedById,
+            ipAddress
+        });
+    },
+
+    async assigned(
+        projectId: string,
+        name: string,
+        assigneeName: string | null,
+        performedById: string,
+        ipAddress?: string
+    ) {
+        const description = assigneeName
+            ? `Project "${name}" was assigned to ${assigneeName}`
+            : `Project "${name}" was unassigned`;
+        await logActivity({
+            entityType: 'project',
+            entityId: projectId,
+            activityType: 'assigned',
+            description,
+            newValues: { assignee: assigneeName },
+            performedById,
+            ipAddress
+        });
+    },
+
+    async updated(
+        projectId: string,
+        name: string,
+        changes: Record<string, { old: unknown; new: unknown }>,
+        performedById: string,
+        ipAddress?: string
+    ) {
+        const changedFields = Object.keys(changes).join(', ');
+        await logActivity({
+            entityType: 'project',
+            entityId: projectId,
+            activityType: 'updated',
+            description: `Project "${name}" updated: ${changedFields}`,
+            previousValues: Object.fromEntries(Object.entries(changes).map(([k, v]) => [k, v.old])),
+            newValues: Object.fromEntries(Object.entries(changes).map(([k, v]) => [k, v.new])),
+            performedById,
+            ipAddress
+        });
+    }
+};
+
+/**
+ * Log proposal-related activities
+ */
+export const proposalActivity = {
+    async created(proposalId: string, title: string, performedById: string, ipAddress?: string) {
+        await logActivity({
+            entityType: 'proposal',
+            entityId: proposalId,
+            activityType: 'created',
+            description: `Proposal "${title}" was created`,
+            performedById,
+            ipAddress
+        });
+    },
+
+    async statusChanged(
+        proposalId: string,
+        title: string,
+        oldStatus: string,
+        newStatus: string,
+        performedById: string,
+        ipAddress?: string
+    ) {
+        await logActivity({
+            entityType: 'proposal',
+            entityId: proposalId,
+            activityType: 'status_changed',
+            description: `Proposal "${title}" status changed from ${oldStatus} to ${newStatus}`,
+            previousValues: { status: oldStatus },
+            newValues: { status: newStatus },
+            performedById,
+            ipAddress
+        });
+    },
+
+    async approved(proposalId: string, title: string, performedById: string, ipAddress?: string) {
+        await logActivity({
+            entityType: 'proposal',
+            entityId: proposalId,
+            activityType: 'approved',
+            description: `Proposal "${title}" was approved`,
+            performedById,
+            ipAddress
+        });
+    },
+
+    async rejected(proposalId: string, title: string, performedById: string, ipAddress?: string) {
+        await logActivity({
+            entityType: 'proposal',
+            entityId: proposalId,
+            activityType: 'rejected',
+            description: `Proposal "${title}" was rejected`,
+            performedById,
+            ipAddress
+        });
+    },
+
+    async sent(proposalId: string, title: string, performedById: string, ipAddress?: string) {
+        await logActivity({
+            entityType: 'proposal',
+            entityId: proposalId,
+            activityType: 'email_sent',
+            description: `Proposal "${title}" was sent to client`,
+            performedById,
+            ipAddress
+        });
+    },
+
+    async updated(
+        proposalId: string,
+        title: string,
+        changes: Record<string, { old: unknown; new: unknown }>,
+        performedById: string,
+        ipAddress?: string
+    ) {
+        const changedFields = Object.keys(changes).join(', ');
+        await logActivity({
+            entityType: 'proposal',
+            entityId: proposalId,
+            activityType: 'updated',
+            description: `Proposal "${title}" updated: ${changedFields}`,
+            previousValues: Object.fromEntries(Object.entries(changes).map(([k, v]) => [k, v.old])),
+            newValues: Object.fromEntries(Object.entries(changes).map(([k, v]) => [k, v.new])),
+            performedById,
+            ipAddress
+        });
+    }
+};
+
+/**
+ * Log invoice-related activities
+ */
+export const invoiceActivity = {
+    async created(invoiceId: string, invoiceNumber: string, performedById: string, ipAddress?: string) {
+        await logActivity({
+            entityType: 'invoice',
+            entityId: invoiceId,
+            activityType: 'created',
+            description: `Invoice #${invoiceNumber} was created`,
+            performedById,
+            ipAddress
+        });
+    },
+
+    async statusChanged(
+        invoiceId: string,
+        invoiceNumber: string,
+        oldStatus: string,
+        newStatus: string,
+        performedById: string,
+        ipAddress?: string
+    ) {
+        await logActivity({
+            entityType: 'invoice',
+            entityId: invoiceId,
+            activityType: 'status_changed',
+            description: `Invoice #${invoiceNumber} status changed from ${oldStatus} to ${newStatus}`,
+            previousValues: { status: oldStatus },
+            newValues: { status: newStatus },
+            performedById,
+            ipAddress
+        });
+    },
+
+    async paymentReceived(
+        invoiceId: string,
+        invoiceNumber: string,
+        amount: number,
+        performedById: string,
+        ipAddress?: string
+    ) {
+        await logActivity({
+            entityType: 'invoice',
+            entityId: invoiceId,
+            activityType: 'payment_received',
+            description: `Payment of $${amount.toFixed(2)} received for invoice #${invoiceNumber}`,
+            newValues: { amount },
+            performedById,
+            ipAddress
+        });
+    },
+
+    async sent(invoiceId: string, invoiceNumber: string, performedById: string, ipAddress?: string) {
+        await logActivity({
+            entityType: 'invoice',
+            entityId: invoiceId,
+            activityType: 'email_sent',
+            description: `Invoice #${invoiceNumber} was sent to client`,
+            performedById,
+            ipAddress
+        });
+    }
+};
+
+/**
  * Get the client IP address from request headers
  */
 export function getClientIp(request: Request): string | undefined {

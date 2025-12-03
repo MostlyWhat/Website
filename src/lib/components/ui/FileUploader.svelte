@@ -5,7 +5,7 @@
 	 * A reusable component for uploading files to the server.
 	 * Supports drag & drop, file preview, and progress indication.
 	 */
-	import { Paperclip, X, Upload, File, Image, FileText, Loader2, AlertCircle } from '@lucide/svelte';
+	import { Paperclip, X, Upload, File as FileIcon, Image, FileText, Loader2, AlertCircle } from '@lucide/svelte';
 
 	interface FileItem {
 		id?: string;
@@ -17,6 +17,14 @@
 		uploadedBy?: string;
 		status?: 'pending' | 'uploading' | 'complete' | 'error';
 		error?: string;
+	}
+
+	interface UploadResponse {
+		file: {
+			id: string;
+			url: string;
+		};
+		message?: string;
 	}
 
 	let {
@@ -52,22 +60,22 @@
 	function getFileIcon(type: string) {
 		if (type.startsWith('image/')) return Image;
 		if (type.includes('pdf') || type.includes('document')) return FileText;
-		return File;
+		return FileIcon;
 	}
 
-	async function uploadFile(file: File) {
+	async function uploadFile(fileToUpload: File) {
 		// Create pending file item
 		const pendingFile: FileItem = {
-			name: file.name,
-			type: file.type,
-			size: file.size,
+			name: fileToUpload.name,
+			type: fileToUpload.type,
+			size: fileToUpload.size,
 			status: 'uploading'
 		};
 		files = [...files, pendingFile];
 
 		try {
 			const formData = new FormData();
-			formData.append('file', file);
+			formData.append('file', fileToUpload);
 			formData.append('entityType', entityType);
 			formData.append('entityId', entityId);
 
@@ -76,14 +84,14 @@
 				body: formData
 			});
 
-			const result = await response.json();
+			const result = await response.json() as UploadResponse;
 
 			if (!response.ok) {
 				throw new Error(result.message || 'Upload failed');
 			}
 
 			// Update file with server data
-			const index = files.findIndex(f => f.name === file.name && f.status === 'uploading');
+			const index = files.findIndex(f => f.name === fileToUpload.name && f.status === 'uploading');
 			if (index !== -1) {
 				files[index] = {
 					...files[index],
@@ -96,7 +104,7 @@
 			}
 		} catch (err) {
 			// Mark file as error
-			const index = files.findIndex(f => f.name === file.name && f.status === 'uploading');
+			const index = files.findIndex(f => f.name === fileToUpload.name && f.status === 'uploading');
 			if (index !== -1) {
 				files[index] = {
 					...files[index],
