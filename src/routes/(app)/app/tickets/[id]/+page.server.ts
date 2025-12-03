@@ -31,6 +31,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
             createdAt: tickets.createdAt,
             updatedAt: tickets.updatedAt,
             resolvedAt: tickets.resolvedAt,
+            closedAt: tickets.closedAt,
             dueAt: tickets.dueAt,
             firstResponseAt: tickets.firstResponseAt,
             organizationId: tickets.organizationId,
@@ -159,6 +160,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
             category: ticket.category || 'general',
             created_at: ticket.createdAt.toISOString(),
             updated_at: ticket.updatedAt.toISOString(),
+            closed_at: ticket.closedAt?.toISOString() ?? null,
             project: ticket.projectName || 'No Project',
             assigned_to: assigneeData ? {
                 name: `${assigneeData.firstName || ''} ${assigneeData.lastName || ''}`.trim() || 'Staff',
@@ -335,7 +337,9 @@ export const actions: Actions = {
             const ticketData = await db
                 .select({
                     id: tickets.id,
-                    createdById: tickets.createdById
+                    createdById: tickets.createdById,
+                    status: tickets.status,
+                    closedAt: tickets.closedAt
                 })
                 .from(tickets)
                 .where(eq(tickets.id, ticketId))
@@ -345,10 +349,29 @@ export const actions: Actions = {
                 return fail(404, { error: 'Ticket not found' });
             }
 
+            const ticket = ticketData[0];
             const isStaff = ['super_admin', 'admin', 'staff'].includes(locals.profile.role);
 
-            if (!isStaff && ticketData[0].createdById !== locals.profile.id) {
+            // Check authorization
+            if (!isStaff && ticket.createdById !== locals.profile.id) {
                 return fail(403, { error: 'You cannot reopen this ticket' });
+            }
+
+            // Check if ticket is actually closed or resolved
+            if (ticket.status !== 'closed' && ticket.status !== 'resolved') {
+                return fail(400, { error: 'This ticket is not closed' });
+            }
+
+            // Non-staff can only reopen within 7 days
+            if (!isStaff && ticket.closedAt) {
+                const daysSinceClosed = Math.floor(
+                    (Date.now() - new Date(ticket.closedAt).getTime()) / (1000 * 60 * 60 * 24)
+                );
+                if (daysSinceClosed > 7) {
+                    return fail(400, { 
+                        error: 'Tickets can only be reopened within 7 days of closing. Please create a new ticket.' 
+                    });
+                }
             }
 
             await db.update(tickets)

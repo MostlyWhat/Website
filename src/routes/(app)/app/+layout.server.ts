@@ -1,4 +1,7 @@
 import { redirect } from '@sveltejs/kit';
+import { db } from '$lib/server/db';
+import { announcements } from '$lib/server/db/schema';
+import { eq, and, lte, gte, desc, isNull, or } from 'drizzle-orm';
 import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async ({ locals }) => {
@@ -12,9 +15,30 @@ export const load: LayoutServerLoad = async ({ locals }) => {
         redirect(303, '/onboarding');
     }
 
+    // Fetch active announcements
+    const now = new Date();
+    const activeAnnouncements = await db
+        .select({
+            id: announcements.id,
+            title: announcements.title,
+            content: announcements.content,
+            priority: announcements.priority
+        })
+        .from(announcements)
+        .where(
+            and(
+                eq(announcements.isActive, true),
+                or(isNull(announcements.startsAt), lte(announcements.startsAt, now)),
+                or(isNull(announcements.endsAt), gte(announcements.endsAt, now))
+            )
+        )
+        .orderBy(desc(announcements.priority), desc(announcements.createdAt))
+        .limit(5);
+
     return {
         session: locals.session,
         user: locals.user,
-        profile: locals.profile
+        profile: locals.profile,
+        announcements: activeAnnouncements
     };
 };

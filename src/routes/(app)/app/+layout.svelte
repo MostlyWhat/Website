@@ -18,12 +18,31 @@
 		X,
 		User,
 		Home,
-		ChevronRight
+		ChevronRight,
+		Shield,
+		Megaphone
 	} from '@lucide/svelte';
 	import * as Sheet from '$lib/components/ui/sheet';
 
 	let { children, data } = $props();
 	let mobileMenuOpen = $state(false);
+	let dismissedAnnouncements = $state<string[]>([]);
+
+	// Check if user has admin access
+	const isAdmin = $derived(
+		data.profile?.role === 'super_admin' || 
+		data.profile?.role === 'admin' || 
+		data.profile?.role === 'staff'
+	);
+
+	// Active announcements (filter out dismissed ones)
+	const visibleAnnouncements = $derived(
+		(data.announcements ?? []).filter(a => !dismissedAnnouncements.includes(a.id))
+	);
+
+	function dismissAnnouncement(id: string) {
+		dismissedAnnouncements = [...dismissedAnnouncements, id];
+	}
 
 	const navigation = [
 		{ href: '/app', label: 'DASHBOARD', icon: LayoutDashboard, exact: true },
@@ -99,7 +118,16 @@
 			</div>
 
 			<!-- Actions -->
-			<div class="grid grid-cols-2 gap-px bg-border">
+			<div class="grid gap-px bg-border {isAdmin ? 'grid-cols-3' : 'grid-cols-2'}">
+				{#if isAdmin}
+					<a
+						href="/admin"
+						class="flex items-center justify-center gap-2 bg-card px-4 py-4 text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
+					>
+						<Shield class="h-4 w-4" />
+						<span class="font-mono text-[10px] tracking-wider">ADMIN</span>
+					</a>
+				{/if}
 				<a
 					href="/app/settings"
 					class="flex items-center justify-center gap-2 bg-card px-4 py-4 text-muted-foreground transition-colors hover:bg-card/80 hover:text-foreground"
@@ -176,7 +204,17 @@
 									</div>
 								</div>
 							</div>
-							<div class="grid grid-cols-2 gap-px bg-border">
+							<div class="grid gap-px bg-border {isAdmin ? 'grid-cols-3' : 'grid-cols-2'}">
+								{#if isAdmin}
+									<a
+										href="/admin"
+										onclick={() => (mobileMenuOpen = false)}
+										class="flex items-center justify-center gap-2 bg-background px-4 py-4 text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
+									>
+										<Shield class="h-4 w-4" />
+										<span class="font-mono text-[10px] tracking-wider">ADMIN</span>
+									</a>
+								{/if}
 								<a
 									href="/app/settings"
 									onclick={() => (mobileMenuOpen = false)}
@@ -206,6 +244,42 @@
 				BACK TO MAIN SITE
 			</a>
 		</div>
+
+		<!-- Announcement Bar -->
+		{#if visibleAnnouncements.length > 0}
+			{@const announcement = visibleAnnouncements[0]}
+			<div 
+				class="flex items-center gap-4 border-b px-4 py-2 {announcement.priority === 'high' 
+					? 'border-destructive/30 bg-destructive/10' 
+					: announcement.priority === 'medium' 
+						? 'border-primary/30 bg-primary/10' 
+						: 'border-border bg-card/50'}"
+			>
+				<Megaphone class="h-4 w-4 flex-shrink-0 {announcement.priority === 'high' 
+					? 'text-destructive' 
+					: announcement.priority === 'medium' 
+						? 'text-primary' 
+						: 'text-muted-foreground'}" />
+				<div class="flex-1 min-w-0">
+					{#if announcement.title}
+						<span class="font-ui text-xs font-semibold tracking-wider {announcement.priority === 'high' 
+							? 'text-destructive' 
+							: announcement.priority === 'medium' 
+								? 'text-primary' 
+								: 'text-foreground'}">{announcement.title}</span>
+						<span class="mx-2 text-muted-foreground">—</span>
+					{/if}
+					<span class="font-body text-sm text-muted-foreground">{announcement.content}</span>
+				</div>
+				<button
+					type="button"
+					onclick={() => dismissAnnouncement(announcement.id)}
+					class="flex h-6 w-6 flex-shrink-0 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
+				>
+					<X class="h-4 w-4" />
+				</button>
+			</div>
+		{/if}
 
 		<!-- Page Content -->
 		<main class="flex-1 overflow-auto">

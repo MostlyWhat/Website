@@ -35,7 +35,7 @@ export const load: PageServerLoad = async ({ locals }) => {
             organizationId: projects.organizationId
         })
         .from(proposals)
-        .leftJoin(projects, eq(proposals.projectId, projects.id))
+        .innerJoin(projects, eq(proposals.projectId, projects.id))
         .where(inArray(projects.organizationId, orgIds))
         .orderBy(desc(proposals.createdAt));
 

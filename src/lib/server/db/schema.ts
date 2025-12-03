@@ -258,6 +258,9 @@ export const proposals = pgTable('proposals', {
 	respondedAt: timestamp('responded_at', { withTimezone: true }),
 	expiresAt: timestamp('expires_at', { withTimezone: true }),
 
+	// Assignment (staff working on this proposal)
+	assignedToId: uuid('assigned_to_id').references(() => profiles.id, { onDelete: 'set null' }),
+
 	// Approval tracking
 	approvedById: uuid('approved_by_id').references(() => profiles.id),
 	rejectionReason: text('rejection_reason'),
@@ -646,6 +649,148 @@ export const fileUploadsRelations = relations(fileUploads, ({ one }) => ({
 }));
 
 // =============================================================================
+// ANNOUNCEMENTS TABLE
+// =============================================================================
+// Portal-wide announcements set by super admin
+
+export const announcements = pgTable('announcements', {
+	id: uuid('id').primaryKey().defaultRandom(),
+
+	// Content
+	title: text('title').notNull(),
+	message: text('message').notNull(),
+	type: text('type').default('info').notNull(), // 'info', 'warning', 'success', 'error'
+
+	// Visibility
+	isActive: boolean('is_active').default(true).notNull(),
+	startsAt: timestamp('starts_at', { withTimezone: true }),
+	endsAt: timestamp('ends_at', { withTimezone: true }),
+
+	// Targeting (null = show to all)
+	targetRoles: text('target_roles').array(), // ['customer', 'staff', 'admin']
+
+	// Who created this
+	createdById: uuid('created_by_id')
+		.notNull()
+		.references(() => profiles.id),
+
+	// Metadata
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+});
+
+// =============================================================================
+// ORGANIZATION INVITES TABLE
+// =============================================================================
+// Invite codes for joining organizations
+
+export const organizationInvites = pgTable('organization_invites', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	organizationId: uuid('organization_id')
+		.notNull()
+		.references(() => organizations.id, { onDelete: 'cascade' }),
+
+	// Invite code (unique, short)
+	code: text('code').notNull().unique(),
+
+	// Who this invite is for (optional - if specified, only that email can use it)
+	email: text('email'),
+
+	// Role to assign when joining
+	role: text('role').default('member').notNull(), // 'admin', 'member'
+
+	// Usage limits
+	maxUses: integer('max_uses').default(1),
+	usedCount: integer('used_count').default(0).notNull(),
+
+	// Validity
+	expiresAt: timestamp('expires_at', { withTimezone: true }),
+
+	// Approval required
+	requiresApproval: boolean('requires_approval').default(false).notNull(),
+
+	// Who created this invite
+	createdById: uuid('created_by_id')
+		.notNull()
+		.references(() => profiles.id),
+
+	// Metadata
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
+});
+
+// =============================================================================
+// PENDING ORGANIZATION MEMBERS TABLE
+// =============================================================================
+// Members awaiting approval to join an organization
+
+export const pendingOrganizationMembers = pgTable('pending_organization_members', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	organizationId: uuid('organization_id')
+		.notNull()
+		.references(() => organizations.id, { onDelete: 'cascade' }),
+	profileId: uuid('profile_id')
+		.notNull()
+		.references(() => profiles.id, { onDelete: 'cascade' }),
+	inviteId: uuid('invite_id')
+		.references(() => organizationInvites.id, { onDelete: 'set null' }),
+
+	// Requested role
+	requestedRole: text('requested_role').default('member').notNull(),
+
+	// Status
+	status: text('status').default('pending').notNull(), // 'pending', 'approved', 'rejected'
+
+	// Who reviewed this request
+	reviewedById: uuid('reviewed_by_id').references(() => profiles.id),
+	reviewedAt: timestamp('reviewed_at', { withTimezone: true }),
+	rejectionReason: text('rejection_reason'),
+
+	// Metadata
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
+});
+
+// =============================================================================
+// ANNOUNCEMENTS RELATIONS
+// =============================================================================
+
+export const announcementsRelations = relations(announcements, ({ one }) => ({
+	createdBy: one(profiles, {
+		fields: [announcements.createdById],
+		references: [profiles.id]
+	})
+}));
+
+export const organizationInvitesRelations = relations(organizationInvites, ({ one }) => ({
+	organization: one(organizations, {
+		fields: [organizationInvites.organizationId],
+		references: [organizations.id]
+	}),
+	createdBy: one(profiles, {
+		fields: [organizationInvites.createdById],
+		references: [profiles.id]
+	})
+}));
+
+export const pendingOrganizationMembersRelations = relations(pendingOrganizationMembers, ({ one }) => ({
+	organization: one(organizations, {
+		fields: [pendingOrganizationMembers.organizationId],
+		references: [organizations.id]
+	}),
+	profile: one(profiles, {
+		fields: [pendingOrganizationMembers.profileId],
+		references: [profiles.id]
+	}),
+	invite: one(organizationInvites, {
+		fields: [pendingOrganizationMembers.inviteId],
+		references: [organizationInvites.id]
+	}),
+	reviewedBy: one(profiles, {
+		fields: [pendingOrganizationMembers.reviewedById],
+		references: [profiles.id]
+	})
+}));
+
+// =============================================================================
 // TYPES EXPORT
 // =============================================================================
 
@@ -682,7 +827,16 @@ export type NewActivityLogEntry = typeof activityLog.$inferInsert;
 export type FileUpload = typeof fileUploads.$inferSelect;
 export type NewFileUpload = typeof fileUploads.$inferInsert;
 
-export type UserRole = 'admin' | 'staff' | 'customer';
+export type Announcement = typeof announcements.$inferSelect;
+export type NewAnnouncement = typeof announcements.$inferInsert;
+
+export type OrganizationInvite = typeof organizationInvites.$inferSelect;
+export type NewOrganizationInvite = typeof organizationInvites.$inferInsert;
+
+export type PendingOrganizationMember = typeof pendingOrganizationMembers.$inferSelect;
+export type NewPendingOrganizationMember = typeof pendingOrganizationMembers.$inferInsert;
+
+export type UserRole = 'super_admin' | 'admin' | 'staff' | 'customer';
 export type ProjectStatus = typeof projectStatusEnum.enumValues[number];
 export type ProposalStatus = typeof proposalStatusEnum.enumValues[number];
 export type InvoiceStatus = typeof invoiceStatusEnum.enumValues[number];

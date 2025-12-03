@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { ArrowLeft, Send, Loader2, Clock, CheckCircle2, AlertTriangle, Paperclip, AlertCircle } from '@lucide/svelte';
+	import { ArrowLeft, Send, Loader2, Clock, CheckCircle2, AlertTriangle, Paperclip, AlertCircle, RefreshCcw } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { enhance } from '$app/forms';
 
@@ -11,6 +11,31 @@
 
 	let newMessage = $state('');
 	let sending = $state(false);
+
+	// Calculate if ticket can be reopened (within 7 days of closing)
+	const canReopen = $derived(() => {
+		if (ticket.status !== 'closed' && ticket.status !== 'resolved') {
+			return false;
+		}
+		if (data.isStaff) {
+			return true; // Staff can always reopen
+		}
+		if (!ticket.closed_at) {
+			return true; // No close date, allow reopen
+		}
+		const daysSinceClosed = Math.floor(
+			(Date.now() - new Date(ticket.closed_at).getTime()) / (1000 * 60 * 60 * 24)
+		);
+		return daysSinceClosed <= 7;
+	});
+
+	const daysUntilCantReopen = $derived(() => {
+		if (!ticket.closed_at) return 7;
+		const daysSinceClosed = Math.floor(
+			(Date.now() - new Date(ticket.closed_at).getTime()) / (1000 * 60 * 60 * 24)
+		);
+		return Math.max(0, 7 - daysSinceClosed);
+	});
 
 	function formatDateTime(date: string): string {
 		return new Date(date).toLocaleDateString('en-US', {
@@ -109,16 +134,41 @@
 		<div class="grid grid-cols-12 gap-px bg-border">
 			<!-- Messages -->
 			<div class="col-span-12 bg-background lg:col-span-8">
+				<!-- Initial Issue Section -->
+				{#if ticket.messages.length > 0}
+					{@const initialMessage = ticket.messages[0]}
+					<div class="border-b border-border px-6 py-8 md:px-12 lg:px-16 bg-card/50">
+						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">INITIAL ISSUE</span>
+						<div class="mt-4 flex items-start gap-4">
+							<div class="flex h-10 w-10 flex-shrink-0 items-center justify-center border border-primary/50 bg-primary/10">
+								<span class="font-mono text-xs uppercase text-primary">{initialMessage.author.split(' ').map((n: string) => n[0]).join('')}</span>
+							</div>
+							<div class="flex-1">
+								<div class="flex items-center gap-2">
+									<span class="font-ui text-sm font-semibold">{initialMessage.author}</span>
+									<span class="font-mono text-[10px] tracking-widest text-muted-foreground">
+										{formatDateTime(initialMessage.created_at)}
+									</span>
+								</div>
+								<div class="font-body mt-3 text-sm leading-relaxed whitespace-pre-line">
+									{initialMessage.content}
+								</div>
+							</div>
+						</div>
+					</div>
+				{/if}
+
+				<!-- Conversation Section -->
 				<div class="px-6 py-8 md:px-12 lg:px-16">
 					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONVERSATION</span>
 				</div>
 				
 				<div class="divide-y divide-border border-t border-border">
-					{#each ticket.messages as message}
+					{#each ticket.messages.slice(1) as message}
 						<div class="px-6 py-6 md:px-12 lg:px-16 {message.is_staff ? 'bg-card' : ''}">
 							<div class="flex items-start gap-4">
 								<div class="flex h-10 w-10 flex-shrink-0 items-center justify-center border border-border {message.is_staff ? 'bg-primary text-primary-foreground' : 'bg-background'}">
-									<span class="font-mono text-xs uppercase">{message.author.split(' ').map(n => n[0]).join('')}</span>
+									<span class="font-mono text-xs uppercase">{message.author.split(' ').map((n: string) => n[0]).join('')}</span>
 								</div>
 								<div class="flex-1">
 									<div class="flex items-center gap-2">
@@ -145,6 +195,10 @@
 									{/if}
 								</div>
 							</div>
+						</div>
+					{:else}
+						<div class="px-6 py-8 md:px-12 lg:px-16 text-center">
+							<p class="font-body text-sm text-muted-foreground">No replies yet. We'll respond to your ticket soon.</p>
 						</div>
 					{/each}
 				</div>
@@ -198,14 +252,24 @@
 							<CheckCircle2 class="h-5 w-5 flex-shrink-0 text-muted-foreground" />
 							<div>
 								<p class="font-ui text-sm font-semibold">Ticket Closed</p>
-								<p class="font-body mt-1 text-sm text-muted-foreground">
-									This ticket has been closed. If you have additional questions, please open a new ticket.
-								</p>
-								<form method="POST" action="?/reopenTicket" class="mt-3">
-									<Button type="submit" variant="outline" size="sm" class="font-ui text-xs tracking-wider">
-										REOPEN TICKET
+								{#if canReopen()}
+									<p class="font-body mt-1 text-sm text-muted-foreground">
+										This ticket has been closed. You can reopen it within {daysUntilCantReopen()} day{daysUntilCantReopen() === 1 ? '' : 's'}.
+									</p>
+									<form method="POST" action="?/reopenTicket" class="mt-3">
+										<Button type="submit" variant="outline" size="sm" class="font-ui text-xs tracking-wider">
+											<RefreshCcw class="mr-2 h-3 w-3" />
+											REOPEN TICKET
+										</Button>
+									</form>
+								{:else}
+									<p class="font-body mt-1 text-sm text-muted-foreground">
+										This ticket has been closed for more than 7 days. If you have additional questions, please open a new ticket.
+									</p>
+									<Button href="/app/tickets/new" variant="outline" size="sm" class="font-ui mt-3 text-xs tracking-wider">
+										CREATE NEW TICKET
 									</Button>
-								</form>
+								{/if}
 							</div>
 						</div>
 					</div>
@@ -280,12 +344,28 @@
 								CLOSE TICKET
 							</Button>
 						</form>
-						<form method="POST" action="?/reopenTicket">
-							<Button type="submit" variant="outline" class="font-ui w-full text-xs tracking-wider">
-								REOPEN TICKET
+						{#if canReopen()}
+							<form method="POST" action="?/reopenTicket">
+								<Button type="submit" variant="outline" class="font-ui w-full text-xs tracking-wider">
+									<RefreshCcw class="mr-2 h-4 w-4" />
+									REOPEN TICKET
+								</Button>
+							</form>
+						{/if}
+					{:else if ticket.status === 'closed'}
+						{#if canReopen()}
+							<form method="POST" action="?/reopenTicket">
+								<Button type="submit" variant="outline" class="font-ui w-full text-xs tracking-wider">
+									<RefreshCcw class="mr-2 h-4 w-4" />
+									REOPEN TICKET
+								</Button>
+							</form>
+						{:else}
+							<Button href="/app/tickets/new" class="font-ui w-full text-xs tracking-wider">
+								CREATE NEW TICKET
 							</Button>
-						</form>
-					{:else if ticket.status !== 'closed'}
+						{/if}
+					{:else}
 						<form method="POST" action="?/markResolved">
 							<Button type="submit" variant="outline" class="font-ui w-full text-xs tracking-wider">
 								<CheckCircle2 class="mr-2 h-4 w-4" />

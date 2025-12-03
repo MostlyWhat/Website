@@ -53,7 +53,7 @@ export const load: PageServerLoad = async ({ locals }) => {
         db
             .select({ count: sql<number>`count(*)::int` })
             .from(proposals)
-            .leftJoin(projects, eq(proposals.projectId, projects.id))
+            .innerJoin(projects, eq(proposals.projectId, projects.id))
             .where(
                 and(
                     inArray(projects.organizationId, orgIds),
@@ -114,7 +114,7 @@ export const load: PageServerLoad = async ({ locals }) => {
                 type: sql<string>`'proposal'`
             })
             .from(proposals)
-            .leftJoin(projects, eq(proposals.projectId, projects.id))
+            .innerJoin(projects, eq(proposals.projectId, projects.id))
             .where(inArray(projects.organizationId, orgIds))
             .orderBy(desc(proposals.updatedAt))
             .limit(3),
