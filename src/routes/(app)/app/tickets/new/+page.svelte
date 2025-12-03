@@ -1,0 +1,194 @@
+<script lang="ts">
+	/**
+	 * Create New Ticket Page
+	 */
+	import { ArrowLeft, Send, Loader2, Paperclip, AlertTriangle } from '@lucide/svelte';
+	import { Button } from '$lib/components/ui/button';
+
+	let { data } = $props();
+	
+	let loading = $state(false);
+	let subject = $state('');
+	let description = $state('');
+	let priority = $state('medium');
+	let category = $state('general');
+
+	async function handleSubmit(e: Event) {
+		e.preventDefault();
+		loading = true;
+		// TODO: Implement ticket creation
+		await new Promise(resolve => setTimeout(resolve, 1000));
+		loading = false;
+	}
+</script>
+
+<svelte:head>
+	<title>New Ticket | MostlyWhat Systems</title>
+</svelte:head>
+
+<div class="min-h-[calc(100dvh-4rem)]">
+	<!-- Header Section -->
+	<section class="border-b border-border bg-background px-6 py-8 md:px-12 lg:px-16">
+		<a
+			href="/app/tickets"
+			class="group inline-flex items-center gap-2 text-muted-foreground transition-colors hover:text-foreground"
+		>
+			<ArrowLeft class="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+			<span class="font-mono text-[10px] tracking-widest">BACK TO TICKETS</span>
+		</a>
+		<h1 class="font-display mt-6 text-2xl font-bold uppercase md:text-3xl">Submit a Ticket</h1>
+		<p class="font-body mt-2 text-muted-foreground">
+			Describe your issue and our team will get back to you as soon as possible.
+		</p>
+	</section>
+
+	<!-- Form Section -->
+	<section class="border-b border-border bg-background">
+		<form onsubmit={handleSubmit} class="grid grid-cols-12 gap-px bg-border">
+			<!-- Main Form -->
+			<div class="col-span-12 bg-background px-6 py-8 lg:col-span-8 md:px-12 lg:px-16">
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">01 — TICKET DETAILS</span>
+				
+				<div class="mt-6 space-y-6">
+					<!-- Subject -->
+					<div>
+						<label for="subject" class="font-ui text-xs font-medium tracking-wider text-foreground">
+							SUBJECT
+						</label>
+						<input
+							type="text"
+							id="subject"
+							bind:value={subject}
+							placeholder="Brief description of your issue"
+							class="font-body mt-2 h-12 w-full border border-border bg-card px-4 text-sm focus:border-primary focus:outline-none"
+							required
+						/>
+					</div>
+
+					<!-- Description -->
+					<div>
+						<label for="description" class="font-ui text-xs font-medium tracking-wider text-foreground">
+							DESCRIPTION
+						</label>
+						<textarea
+							id="description"
+							bind:value={description}
+							placeholder="Please provide as much detail as possible about your issue..."
+							rows="8"
+							class="font-body mt-2 w-full resize-none border border-border bg-card p-4 text-sm focus:border-primary focus:outline-none"
+							required
+						></textarea>
+					</div>
+
+					<!-- Attachments -->
+					<div>
+						<label class="font-ui text-xs font-medium tracking-wider text-foreground">
+							ATTACHMENTS <span class="text-muted-foreground">(OPTIONAL)</span>
+						</label>
+						<div class="mt-2 flex items-center justify-center border border-dashed border-border bg-card p-8 transition-colors hover:border-primary/50">
+							<div class="text-center">
+								<Paperclip class="mx-auto h-8 w-8 text-muted-foreground/50" />
+								<p class="font-body mt-2 text-sm text-muted-foreground">
+									Drag and drop files here or <button type="button" class="text-primary underline">browse</button>
+								</p>
+								<p class="font-mono mt-1 text-[10px] tracking-wider text-muted-foreground/70">
+									Max 10MB per file. Supported: PNG, JPG, PDF, ZIP
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Sidebar Options -->
+			<div class="col-span-12 bg-background px-6 py-8 lg:col-span-4 lg:border-l lg:border-border md:px-12 lg:px-8">
+				<!-- Category -->
+				<div>
+					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">02 — CATEGORY</span>
+					<div class="mt-4 space-y-2">
+						{#each [
+							{ value: 'general', label: 'General Support' },
+							{ value: 'billing', label: 'Billing & Payments' },
+							{ value: 'technical', label: 'Technical Issue' },
+							{ value: 'feature', label: 'Feature Request' },
+							{ value: 'bug', label: 'Bug Report' }
+						] as { value, label }}
+							<label
+								class="group flex cursor-pointer items-center gap-3 border p-3 transition-colors {category === value ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}"
+							>
+								<input
+									type="radio"
+									name="category"
+									{value}
+									bind:group={category}
+									class="sr-only"
+								/>
+								<div class="flex h-5 w-5 flex-shrink-0 items-center justify-center border {category === value ? 'border-primary bg-primary' : 'border-border bg-background'}">
+									{#if category === value}
+										<div class="h-2 w-2 bg-background"></div>
+									{/if}
+								</div>
+								<span class="font-ui text-xs tracking-wider">{label}</span>
+							</label>
+						{/each}
+					</div>
+				</div>
+
+				<!-- Priority -->
+				<div class="mt-8">
+					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">03 — PRIORITY</span>
+					<div class="mt-4 space-y-2">
+						{#each [
+							{ value: 'low', label: 'Low', desc: 'General question or minor issue' },
+							{ value: 'medium', label: 'Medium', desc: 'Important but not urgent' },
+							{ value: 'high', label: 'High', desc: 'Significantly impacting work' },
+							{ value: 'urgent', label: 'Urgent', desc: 'Critical - system down', icon: AlertTriangle }
+						] as { value, label, desc, icon }}
+							<label
+								class="group flex cursor-pointer items-start gap-3 border p-3 transition-colors {priority === value ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}"
+							>
+								<input
+									type="radio"
+									name="priority"
+									{value}
+									bind:group={priority}
+									class="sr-only"
+								/>
+								<div class="flex h-5 w-5 flex-shrink-0 items-center justify-center border {priority === value ? 'border-primary bg-primary' : 'border-border bg-background'}">
+									{#if priority === value}
+										<div class="h-2 w-2 bg-background"></div>
+									{/if}
+								</div>
+								<div class="flex-1">
+									<div class="flex items-center gap-2">
+										{#if icon}
+											<svelte:component this={icon} class="h-3 w-3 text-red-500" />
+										{/if}
+										<span class="font-ui text-xs font-semibold tracking-wider uppercase">{label}</span>
+									</div>
+									<p class="font-body mt-0.5 text-xs text-muted-foreground">{desc}</p>
+								</div>
+							</label>
+						{/each}
+					</div>
+				</div>
+			</div>
+
+			<!-- Form Actions -->
+			<div class="col-span-12 flex items-center justify-end gap-4 bg-card px-6 py-4 md:px-12 lg:px-16">
+				<Button variant="outline" href="/app/tickets" class="font-ui text-xs tracking-wider">
+					CANCEL
+				</Button>
+				<Button type="submit" disabled={loading} class="font-ui text-xs tracking-wider">
+					{#if loading}
+						<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+						SUBMITTING...
+					{:else}
+						<Send class="mr-2 h-4 w-4" />
+						SUBMIT TICKET
+					{/if}
+				</Button>
+			</div>
+		</form>
+	</section>
+</div>

@@ -2,9 +2,17 @@
 	import { page } from '$app/state';
 	import * as m from '$lib/paraglide/messages';
 	import { getLocale, locales, localizeHref, type Locale } from '$lib/paraglide/runtime';
-	import { Menu, X, ArrowUpRight, Globe, ChevronDown, ChevronRight, Search } from '@lucide/svelte';
+	import { Menu, X, ArrowUpRight, Globe, ChevronDown, ChevronRight, Search, Phone, LogIn, LayoutDashboard } from '@lucide/svelte';
 	import { GlitchText } from '$lib/components/ui/glitch-text';
 	import * as Sheet from '$lib/components/ui/sheet';
+
+	// Get session data from page data (passed from layout)
+	const session = $derived(page.data.session);
+	const profile = $derived(page.data.profile);
+	const isLoggedIn = $derived(!!session);
+	const dashboardUrl = $derived(
+		profile?.role === 'admin' || profile?.role === 'staff' ? '/admin' : '/app'
+	);
 
 	let mobileMenuOpen = $state(false);
 	let langMenuOpen = $state(false);
@@ -97,6 +105,15 @@
 				<Search class="h-4 w-4" />
 			</a>
 
+			<!-- Contact Icon Button -->
+			<a
+				href={localizeHref('/contact')}
+				class="hidden aspect-square h-16 items-center justify-center border-l border-border text-muted-foreground transition-colors hover:bg-card hover:text-foreground lg:flex"
+				aria-label="Contact"
+			>
+				<Phone class="h-4 w-4" />
+			</a>
+
 			<!-- Language Switcher -->
 			<div class="lang-menu relative hidden items-stretch border-l border-border lg:flex">
 				<button
@@ -129,14 +146,24 @@
 				{/if}
 			</div>
 
-			<!-- Contact CTA -->
-			<a
-				href={localizeHref('/contact')}
-				class="font-ui hidden flex-1 items-center justify-center gap-2 border-l border-border bg-primary text-xs tracking-widest text-primary-foreground transition-colors hover:bg-primary/90 lg:flex"
-			>
-				CONTACT
-				<ArrowUpRight class="h-3.5 w-3.5" />
-			</a>
+			<!-- Auth Button: Login or Dashboard -->
+			{#if isLoggedIn}
+				<a
+					href={dashboardUrl}
+					class="font-ui hidden flex-1 items-center justify-center gap-2 border-l border-border bg-primary text-xs tracking-widest text-primary-foreground transition-colors hover:bg-primary/90 lg:flex"
+				>
+					<LayoutDashboard class="h-3.5 w-3.5" />
+					DASHBOARD
+				</a>
+			{:else}
+				<a
+					href={localizeHref('/auth/login')}
+					class="font-ui hidden flex-1 items-center justify-center gap-2 border-l border-border bg-primary text-xs tracking-widest text-primary-foreground transition-colors hover:bg-primary/90 lg:flex"
+				>
+					<LogIn class="h-3.5 w-3.5" />
+					LOGIN
+				</a>
+			{/if}
 
 			<!-- Mobile menu button - Sheet Trigger -->
 			<Sheet.Root bind:open={mobileMenuOpen}>
@@ -206,15 +233,26 @@
 							</div>
 						</div>
 
-						<!-- Contact Button -->
-						<a
-							href={localizeHref('/contact')}
-							class="font-display flex items-center justify-center gap-3 bg-primary py-6 text-xl font-bold uppercase tracking-widest text-primary-foreground"
-							onclick={() => (mobileMenuOpen = false)}
-						>
-							CONTACT
-							<ArrowUpRight class="h-5 w-5" />
-						</a>
+						<!-- Login/Dashboard Button -->
+						{#if isLoggedIn}
+							<a
+								href={localizeHref(dashboardUrl)}
+								class="font-display flex items-center justify-center gap-3 bg-primary py-6 text-xl font-bold uppercase tracking-widest text-primary-foreground"
+								onclick={() => (mobileMenuOpen = false)}
+							>
+								DASHBOARD
+								<ArrowUpRight class="h-5 w-5" />
+							</a>
+						{:else}
+							<a
+								href={localizeHref('/auth/login')}
+								class="font-display flex items-center justify-center gap-3 bg-primary py-6 text-xl font-bold uppercase tracking-widest text-primary-foreground"
+								onclick={() => (mobileMenuOpen = false)}
+							>
+								LOGIN
+								<ArrowUpRight class="h-5 w-5" />
+							</a>
+						{/if}
 					</div>
 				</Sheet.Content>
 			</Sheet.Root>

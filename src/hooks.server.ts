@@ -1,6 +1,15 @@
 import type { Handle } from '@sveltejs/kit';
+import { sequence } from '@sveltejs/kit/hooks';
 import { paraglideMiddleware } from '$lib/paraglide/server';
+import { createServerClient } from '@supabase/ssr';
+import { env } from '$env/dynamic/public';
+import { db } from '$lib/server/db';
+import { profiles } from '$lib/server/db/schema';
+import { eq } from 'drizzle-orm';
 
+/**
+ * Paraglide i18n middleware
+ */
 const handleParaglide: Handle = ({ event, resolve }) =>
 	paraglideMiddleware(event.request, ({ request, locale }) => {
 		event.request = request;
@@ -10,4 +19,162 @@ const handleParaglide: Handle = ({ event, resolve }) =>
 		});
 	});
 
-export const handle: Handle = handleParaglide;
+/**
+ * Supabase Auth middleware
+ * 
+ * Creates a Supabase client for each request and handles session management.
+ * All database operations should still go through Drizzle ORM.
+ */
+const handleSupabase: Handle = async ({ event, resolve }) => {
+	const supabaseUrl = env.PUBLIC_SUPABASE_URL;
+	const supabaseAnonKey = env.PUBLIC_SUPABASE_ANON_KEY;
+
+	if (!supabaseUrl || !supabaseAnonKey) {
+		// Skip Supabase setup if not configured (dev without Supabase)
+		event.locals.session = null;
+		event.locals.user = null;
+		event.locals.profile = null;
+		return resolve(event);
+	}
+
+	// Create Supabase client for this request
+	event.locals.supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+		cookies: {
+			getAll: () => event.cookies.getAll(),
+			setAll: (cookiesToSet) => {
+				for (const { name, value, options } of cookiesToSet) {
+					event.cookies.set(name, value, { ...options, path: '/' });
+				}
+			}
+		}
+	});
+
+	/**
+	 * Safe session getter that validates JWT
+	 * Unlike `supabase.auth.getSession()`, this validates the JWT before returning.
+	 */
+	event.locals.safeGetSession = async () => {
+		const {
+			data: { session }
+		} = await event.locals.supabase.auth.getSession();
+
+		if (!session) {
+			return { session: null, user: null };
+		}
+
+		// Validate the JWT by calling getUser()
+		const {
+			data: { user },
+			error
+		} = await event.locals.supabase.auth.getUser();
+
+		if (error) {
+			// JWT validation failed
+			return { session: null, user: null };
+		}
+
+		return { session, user };
+	};
+
+	// Get the session and user
+	const { session, user } = await event.locals.safeGetSession();
+	event.locals.session = session;
+	event.locals.user = user;
+
+	// Get the user's profile from our database if authenticated
+	if (user) {
+		try {
+			const profile = await db.query.profiles.findFirst({
+				where: eq(profiles.id, user.id)
+			});
+			event.locals.profile = profile ?? null;
+		} catch {
+			// Profile might not exist yet (new user)
+			event.locals.profile = null;
+		}
+	} else {
+		event.locals.profile = null;
+	}
+
+	return resolve(event, {
+		filterSerializedResponseHeaders(name) {
+			// Supabase libraries use these headers
+			return name === 'content-range' || name === 'x-supabase-api-version';
+		}
+	});
+};
+
+/**
+ * Route protection middleware
+ * 
+ * Protects routes based on authentication status and user roles.
+ */
+const handleRouteProtection: Handle = async ({ event, resolve }) => {
+	const { pathname } = event.url;
+	const { user, profile } = event.locals;
+
+	// Define protected route patterns
+	const isAuthRoute = pathname.startsWith('/auth');
+	const isAppRoute = pathname.startsWith('/app');
+	const isAdminRoute = pathname.startsWith('/admin');
+	const isOnboardingRoute = pathname.startsWith('/onboarding');
+	const isApiRoute = pathname.startsWith('/api');
+
+	// Skip protection for API routes (they handle their own auth)
+	if (isApiRoute) {
+		return resolve(event);
+	}
+
+	// Auth routes: Redirect to dashboard if already logged in
+	if (isAuthRoute && !pathname.includes('/logout') && !pathname.includes('/callback')) {
+		if (user) {
+			// If user hasn't completed onboarding, redirect there
+			if (profile && !profile.onboardingCompleted) {
+				return new Response(null, {
+					status: 302,
+					headers: { Location: '/onboarding' }
+				});
+			}
+			// Otherwise redirect to appropriate dashboard
+			const redirectTo = profile?.role === 'admin' || profile?.role === 'staff' ? '/admin' : '/app';
+			return new Response(null, {
+				status: 302,
+				headers: { Location: redirectTo }
+			});
+		}
+	}
+
+	// Protected routes: Require authentication
+	if (isAppRoute || isAdminRoute || isOnboardingRoute) {
+		if (!user) {
+			const redirectUrl = `/auth/login?redirectTo=${encodeURIComponent(pathname)}`;
+			return new Response(null, {
+				status: 302,
+				headers: { Location: redirectUrl }
+			});
+		}
+
+		// Check if user needs to complete onboarding
+		if (!isOnboardingRoute && profile && !profile.onboardingCompleted) {
+			return new Response(null, {
+				status: 302,
+				headers: { Location: '/onboarding' }
+			});
+		}
+
+		// Admin routes: Require admin or staff role
+		if (isAdminRoute) {
+			if (!profile || (profile.role !== 'admin' && profile.role !== 'staff')) {
+				return new Response(null, {
+					status: 302,
+					headers: { Location: '/app' }
+				});
+			}
+		}
+	}
+
+	return resolve(event);
+};
+
+// Combine all handlers in sequence
+export const handle: Handle = sequence(handleParaglide, handleSupabase, handleRouteProtection);
