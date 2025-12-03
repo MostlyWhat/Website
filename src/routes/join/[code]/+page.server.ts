@@ -1,9 +1,9 @@
 import { db } from '$lib/server/db';
-import { 
-    organizations, 
-    organizationInvites, 
+import {
+    organizations,
+    organizationInvites,
     organizationMembers,
-    pendingOrganizationMembers 
+    pendingOrganizationMembers
 } from '$lib/server/db/schema';
 import { eq, and, gt, or, sql } from 'drizzle-orm';
 import { error, fail, redirect } from '@sveltejs/kit';

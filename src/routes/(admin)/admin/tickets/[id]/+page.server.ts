@@ -425,7 +425,7 @@ export const actions: Actions = {
             .limit(1);
 
         const currentTags = ticketData?.tags ?? [];
-        
+
         // Check if tag already exists
         if (currentTags.includes(tag)) {
             return fail(400, { error: 'Tag already exists' });
@@ -459,7 +459,7 @@ export const actions: Actions = {
             .limit(1);
 
         const currentTags = ticketData?.tags ?? [];
-        
+
         // Remove the tag
         const newTags = currentTags.filter(t => t !== tag);
 

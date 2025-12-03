@@ -26,23 +26,23 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 
     // Build where conditions
     const conditions = [];
-    
+
     if (entityType) {
         conditions.push(eq(activityLog.entityType, entityType));
     }
-    
+
     if (activityType) {
         conditions.push(eq(activityLog.activityType, activityType as any));
     }
-    
+
     if (search) {
         conditions.push(ilike(activityLog.description, `%${search}%`));
     }
-    
+
     if (startDate) {
         conditions.push(gte(activityLog.createdAt, new Date(startDate)));
     }
-    
+
     if (endDate) {
         // Add 1 day to include the end date
         const end = new Date(endDate);

@@ -1,10 +1,10 @@
 import { db } from '$lib/server/db';
-import { 
-    organizations, 
-    organizationMembers, 
-    organizationInvites, 
+import {
+    organizations,
+    organizationMembers,
+    organizationInvites,
     pendingOrganizationMembers,
-    profiles, 
+    profiles,
     projects
 } from '$lib/server/db/schema';
 import { eq, desc, and, gt } from 'drizzle-orm';

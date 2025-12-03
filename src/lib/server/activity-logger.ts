@@ -274,17 +274,17 @@ export function getClientIp(request: Request): string | undefined {
     if (forwardedFor) {
         return forwardedFor.split(',')[0].trim();
     }
-    
+
     const realIp = request.headers.get('x-real-ip');
     if (realIp) {
         return realIp;
     }
-    
+
     // CF specific
     const cfConnectingIp = request.headers.get('cf-connecting-ip');
     if (cfConnectingIp) {
         return cfConnectingIp;
     }
-    
+
     return undefined;
 }
