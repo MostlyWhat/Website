@@ -45,6 +45,15 @@
 	import { Calendar } from '$lib/components/ui/calendar';
 	import { Spinner } from '$lib/components/ui/spinner';
 	import { Kbd } from '$lib/components/ui/kbd';
+	import * as Empty from '$lib/components/ui/empty';
+	import { NativeSelect, NativeSelectOption } from '$lib/components/ui/native-select';
+	import { GlitchText } from '$lib/components/ui/glitch-text';
+	import { RangeCalendar } from '$lib/components/ui/range-calendar';
+	import * as InputOTP from '$lib/components/ui/input-otp';
+	import * as Table from '$lib/components/ui/table';
+	import { Toaster } from '$lib/components/ui/sonner';
+	import * as ButtonGroup from '$lib/components/ui/button-group';
+	import { InputGroup, InputGroupInput, InputGroupText } from '$lib/components/ui/input-group';
 	import {
 		Mail,
 		ArrowRight,
@@ -876,6 +885,178 @@
 							<div class="flex items-center gap-1">
 								<Kbd>⌘</Kbd>
 								<Kbd>K</Kbd>
+							</div>
+
+						<!-- Empty Examples -->
+						{:else if slug === 'empty'}
+							<Empty.Root>
+								<Empty.Media>
+									<Search class="h-10 w-10 text-muted-foreground" />
+								</Empty.Media>
+								<Empty.Header>
+									<Empty.Title>No results found</Empty.Title>
+									<Empty.Description>Try adjusting your search or filter.</Empty.Description>
+								</Empty.Header>
+							</Empty.Root>
+
+						<!-- Native Select Examples -->
+						{:else if slug === 'native-select'}
+							<NativeSelect>
+								<NativeSelectOption value="">Select an option</NativeSelectOption>
+								<NativeSelectOption value="1">Option 1</NativeSelectOption>
+								<NativeSelectOption value="2">Option 2</NativeSelectOption>
+								<NativeSelectOption value="3">Option 3</NativeSelectOption>
+							</NativeSelect>
+
+						<!-- Glitch Text Examples -->
+						{:else if slug === 'glitch-text'}
+							<GlitchText text="GLITCH" class="text-4xl font-display font-bold" />
+
+						<!-- Range Calendar Examples -->
+						{:else if slug === 'range-calendar'}
+							<RangeCalendar class="border border-border" />
+
+						<!-- Input OTP Examples -->
+						{:else if slug === 'input-otp'}
+							<InputOTP.Root maxlength={6}>
+								{#snippet children({ cells })}
+									<InputOTP.Group>
+										{#each cells.slice(0, 3) as cell}
+											<InputOTP.Slot {cell} />
+										{/each}
+									</InputOTP.Group>
+									<InputOTP.Separator />
+									<InputOTP.Group>
+										{#each cells.slice(3, 6) as cell}
+											<InputOTP.Slot {cell} />
+										{/each}
+									</InputOTP.Group>
+								{/snippet}
+							</InputOTP.Root>
+
+						<!-- Table Examples -->
+						{:else if slug === 'table'}
+							<Table.Root>
+								<Table.Header>
+									<Table.Row>
+										<Table.Head>Name</Table.Head>
+										<Table.Head>Status</Table.Head>
+										<Table.Head class="text-right">Amount</Table.Head>
+									</Table.Row>
+								</Table.Header>
+								<Table.Body>
+									<Table.Row>
+										<Table.Cell class="font-medium">INV001</Table.Cell>
+										<Table.Cell>Paid</Table.Cell>
+										<Table.Cell class="text-right">$250.00</Table.Cell>
+									</Table.Row>
+									<Table.Row>
+										<Table.Cell class="font-medium">INV002</Table.Cell>
+										<Table.Cell>Pending</Table.Cell>
+										<Table.Cell class="text-right">$150.00</Table.Cell>
+									</Table.Row>
+								</Table.Body>
+							</Table.Root>
+
+						<!-- Sonner / Toast Examples -->
+						{:else if slug === 'sonner'}
+							<div class="text-sm text-muted-foreground italic">
+								Toast notifications appear when triggered. Add Toaster component to your layout.
+							</div>
+
+						<!-- Button Group Examples -->
+						{:else if slug === 'button-group'}
+							<ButtonGroup.Root>
+								<Button variant="outline">Left</Button>
+								<Button variant="outline">Center</Button>
+								<Button variant="outline">Right</Button>
+							</ButtonGroup.Root>
+
+						<!-- Input Group Examples -->
+						{:else if slug === 'input-group'}
+							<InputGroup>
+								<InputGroupText>@</InputGroupText>
+								<InputGroupInput placeholder="Username" />
+							</InputGroup>
+
+						<!-- Data Table Examples -->
+						{:else if slug === 'data-table'}
+							<Table.Root>
+								<Table.Header>
+									<Table.Row>
+										<Table.Head class="w-12"><Checkbox /></Table.Head>
+										<Table.Head>Name</Table.Head>
+										<Table.Head>Email</Table.Head>
+										<Table.Head>Status</Table.Head>
+									</Table.Row>
+								</Table.Header>
+								<Table.Body>
+									<Table.Row>
+										<Table.Cell><Checkbox /></Table.Cell>
+										<Table.Cell>John Doe</Table.Cell>
+										<Table.Cell>john@example.com</Table.Cell>
+										<Table.Cell><Badge>Active</Badge></Table.Cell>
+									</Table.Row>
+								</Table.Body>
+							</Table.Root>
+
+						<!-- Form Examples -->
+						{:else if slug === 'form'}
+							<form class="space-y-4 max-w-sm">
+								<div class="space-y-2">
+									<Label for="form-name">Name</Label>
+									<Input id="form-name" placeholder="Enter your name" />
+								</div>
+								<div class="space-y-2">
+									<Label for="form-email">Email</Label>
+									<Input id="form-email" type="email" placeholder="Enter your email" />
+								</div>
+								<Button type="submit">Submit</Button>
+							</form>
+
+						<!-- Field Examples -->
+						{:else if slug === 'field'}
+							<div class="space-y-2 max-w-sm">
+								<Label for="field-example">Username</Label>
+								<Input id="field-example" placeholder="Enter username" />
+								<p class="text-xs text-muted-foreground">This is your public display name.</p>
+							</div>
+
+						<!-- Item Examples -->
+						{:else if slug === 'item'}
+							<div class="space-y-2">
+								<div class="flex items-center gap-3 p-3 border border-border hover:bg-card transition-colors cursor-pointer">
+									<User class="h-5 w-5 text-muted-foreground" />
+									<div>
+										<p class="font-ui text-sm font-medium">Profile</p>
+										<p class="text-xs text-muted-foreground">View and edit your profile</p>
+									</div>
+								</div>
+							</div>
+
+						<!-- Sidebar Examples -->
+						{:else if slug === 'sidebar'}
+							<div class="border border-border p-4 max-w-xs">
+								<nav class="space-y-1">
+									<button class="flex w-full items-center gap-3 px-3 py-2 text-sm font-medium bg-primary/10 text-primary text-left">
+										<Home class="h-4 w-4" />
+										Dashboard
+									</button>
+									<button class="flex w-full items-center gap-3 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-card text-left">
+										<Settings class="h-4 w-4" />
+										Settings
+									</button>
+								</nav>
+							</div>
+
+						<!-- Chart Examples -->
+						{:else if slug === 'chart'}
+							<div class="h-32 w-full flex items-end justify-around gap-2 border border-border p-4">
+								<div class="w-8 bg-primary h-[60%]"></div>
+								<div class="w-8 bg-primary h-[80%]"></div>
+								<div class="w-8 bg-primary h-[40%]"></div>
+								<div class="w-8 bg-primary h-[90%]"></div>
+								<div class="w-8 bg-primary h-[50%]"></div>
 							</div>
 
 						{:else}

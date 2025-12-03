@@ -218,8 +218,13 @@
 	function isActive(href: string): boolean {
 		// Exact match for root
 		if (href === '/docs' && currentPath === '/docs') return true;
-		// For other paths, check if current path starts with href
-		if (href !== '/docs' && currentPath.startsWith(href)) return true;
+		// For component/foundation paths, require exact match to avoid alert matching alert-dialog
+		if (href !== '/docs') {
+			// Exact match
+			if (currentPath === href) return true;
+			// Or match with trailing slash
+			if (currentPath === href + '/') return true;
+		}
 		return false;
 	}
 </script>
@@ -231,6 +236,7 @@
 
 <!-- Docs Layout with Sidebar -->
 <div class="flex min-h-[calc(100vh-theme(spacing.16))] flex-col border-b border-border lg:flex-row">
+	<!-- Prevent layout shift by ensuring consistent structure -->
 	<!-- Mobile Header -->
 	<div class="flex h-14 items-center justify-between border-b border-border bg-card px-6 md:px-12 lg:hidden">
 		<span class="font-mono text-xs tracking-widest text-muted-foreground">// DOCUMENTATION</span>
@@ -355,7 +361,7 @@
 	</aside>
 
 	<!-- Main Content -->
-	<main class="flex-1">
+	<main class="flex-1 min-h-[calc(100vh-theme(spacing.16)-theme(spacing.14))] lg:min-h-[calc(100vh-theme(spacing.16))]">
 		{@render children()}
 	</main>
 </div>
