@@ -26,6 +26,7 @@ import {
 	primaryKey
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
+import { authUsers } from 'drizzle-orm/supabase';
 
 // =============================================================================
 // ENUMS
@@ -95,7 +96,7 @@ export const activityTypeEnum = pgEnum('activity_type', [
 // Extends Supabase Auth users with additional profile information
 
 export const profiles = pgTable('profiles', {
-	id: uuid('id').primaryKey(), // References auth.users.id
+	id: uuid('id').primaryKey().references(() => authUsers.id, { onDelete: 'cascade' }),
 	email: text('email').notNull(),
 	firstName: text('first_name'),
 	lastName: text('last_name'),

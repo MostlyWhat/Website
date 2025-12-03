@@ -30,42 +30,63 @@ export const DEFAULT_PREFERENCES = {
  * This is called after successful authentication.
  */
 export async function getOrCreateProfile(user: User): Promise<Profile> {
-    // Try to get existing profile
-    const existingProfile = await db.query.profiles.findFirst({
-        where: eq(profiles.id, user.id)
-    });
+    try {
+        // Try to get existing profile (may have been created by database trigger)
+        const existingProfile = await db.query.profiles.findFirst({
+            where: eq(profiles.id, user.id)
+        });
 
-    if (existingProfile) {
-        // Update last login
-        await db
-            .update(profiles)
-            .set({ lastLoginAt: new Date() })
-            .where(eq(profiles.id, user.id));
+        if (existingProfile) {
+            // Update last login
+            await db
+                .update(profiles)
+                .set({ lastLoginAt: new Date() })
+                .where(eq(profiles.id, user.id));
 
-        return existingProfile;
+            return existingProfile;
+        }
+
+        // Create new profile for first-time users
+        // Note: A database trigger may also create profiles, so we handle conflicts
+        const newProfile: NewProfile = {
+            id: user.id,
+            email: user.email ?? '',
+            firstName: user.user_metadata?.full_name?.split(' ')[0] ?? 
+                       user.user_metadata?.first_name ?? null,
+            lastName: user.user_metadata?.full_name?.split(' ').slice(1).join(' ') ?? 
+                      user.user_metadata?.last_name ?? null,
+            displayName: user.user_metadata?.full_name ?? user.user_metadata?.name ?? null,
+            avatarUrl: user.user_metadata?.avatar_url ?? null,
+            role: 'customer', // Default role for new users
+            onboardingCompleted: false,
+            preferences: DEFAULT_PREFERENCES,
+            lastLoginAt: new Date()
+        };
+
+        const [createdProfile] = await db
+            .insert(profiles)
+            .values(newProfile)
+            .onConflictDoUpdate({
+                target: profiles.id,
+                set: {
+                    lastLoginAt: new Date(),
+                    // Update fields that might be missing from trigger-created profile
+                    displayName: newProfile.displayName,
+                    preferences: newProfile.preferences
+                }
+            })
+            .returning();
+
+        if (!createdProfile) {
+            throw new Error('Profile insert returned no data');
+        }
+
+        return createdProfile;
+    } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : String(err);
+        console.error('Database error saving new user:', errorMessage, err);
+        throw error(500, `Database error saving new user: ${errorMessage}`);
     }
-
-    // Create new profile for first-time users
-    const newProfile: NewProfile = {
-        id: user.id,
-        email: user.email ?? '',
-        firstName: user.user_metadata?.full_name?.split(' ')[0] ?? null,
-        lastName: user.user_metadata?.full_name?.split(' ').slice(1).join(' ') ?? null,
-        displayName: user.user_metadata?.full_name ?? user.user_metadata?.name ?? null,
-        avatarUrl: user.user_metadata?.avatar_url ?? null,
-        role: 'customer', // Default role for new users
-        onboardingCompleted: false,
-        preferences: DEFAULT_PREFERENCES,
-        lastLoginAt: new Date()
-    };
-
-    const [createdProfile] = await db.insert(profiles).values(newProfile).returning();
-
-    if (!createdProfile) {
-        error(500, 'Failed to create user profile');
-    }
-
-    return createdProfile;
 }
 
 /**

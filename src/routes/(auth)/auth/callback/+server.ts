@@ -24,11 +24,16 @@ export const GET = async ({ url, locals: { supabase } }: RequestEvent) => {
         }
 
         if (data.user) {
-            const profile = await getOrCreateProfile(data.user);
+            try {
+                const profile = await getOrCreateProfile(data.user);
 
-            // Redirect to onboarding if not completed
-            if (!profile.onboardingCompleted) {
-                redirect(303, '/onboarding');
+                // Redirect to onboarding if not completed
+                if (!profile.onboardingCompleted) {
+                    redirect(303, '/onboarding');
+                }
+            } catch (profileError) {
+                console.error('Profile creation error:', profileError);
+                // Still redirect - profile will be created on next login
             }
         }
 
@@ -48,16 +53,24 @@ export const GET = async ({ url, locals: { supabase } }: RequestEvent) => {
         }
 
         if (data.user) {
-            const profile = await getOrCreateProfile(data.user);
+            try {
+                const profile = await getOrCreateProfile(data.user);
 
-            // For password reset, redirect to reset page
-            if (type === 'recovery') {
-                redirect(303, '/auth/reset-password');
-            }
+                // For password reset, redirect to reset page
+                if (type === 'recovery') {
+                    redirect(303, '/auth/reset-password');
+                }
 
-            // For email verification or magic link
-            if (!profile.onboardingCompleted) {
-                redirect(303, '/onboarding');
+                // For email verification or magic link
+                if (!profile.onboardingCompleted) {
+                    redirect(303, '/onboarding');
+                }
+            } catch (profileError) {
+                console.error('Profile creation error:', profileError);
+                // For password reset, still redirect
+                if (type === 'recovery') {
+                    redirect(303, '/auth/reset-password');
+                }
             }
         }
 

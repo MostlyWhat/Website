@@ -52,7 +52,12 @@ export const actions: Actions = {
 
         // If auto-confirmed (development mode), create profile and redirect
         if (data.user && data.session) {
-            await getOrCreateProfile(data.user);
+            try {
+                await getOrCreateProfile(data.user);
+            } catch (profileError) {
+                console.error('Failed to create profile:', profileError);
+                return fail(500, { error: 'Account created but profile setup failed. Please try logging in.' });
+            }
             redirect(303, '/onboarding');
         }
 
