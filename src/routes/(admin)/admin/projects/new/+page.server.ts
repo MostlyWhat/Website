@@ -70,7 +70,7 @@ export const actions: Actions = {
         }
 
         const formData = await request.formData();
-        
+
         const name = formData.get('name') as string;
         const description = formData.get('description') as string;
         const organizationId = formData.get('organizationId') as string;

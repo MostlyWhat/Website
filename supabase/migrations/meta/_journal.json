@@ -5,22 +5,15 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1764741812813,
-      "tag": "0000_aromatic_black_cat",
+      "when": 1764781612238,
+      "tag": "0000_initial_schema",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1764749823867,
-      "tag": "0001_fast_gambit",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1764750967192,
-      "tag": "0002_add_canned_responses_table",
+      "when": 1764782633199,
+      "tag": "0001_icy_proteus",
       "breakpoints": true
     }
   ]

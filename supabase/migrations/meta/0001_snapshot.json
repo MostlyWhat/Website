@@ -1,6 +1,6 @@
 {
-  "id": "4cb98611-5360-4601-9ee9-f71e7abc8cbd",
-  "prevId": "f578c864-eb6b-4790-a952-eb8c4067191e",
+  "id": "0b6cf677-db2f-4fd6-8588-b6f1244515e0",
+  "prevId": "7e404f92-b83b-4e2c-ac1b-50aea65f86f0",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -96,7 +96,17 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
-      "policies": {},
+      "policies": {
+        "service_role_activity_log_policy": {
+          "name": "service_role_activity_log_policy",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "service_role"
+          ],
+          "using": "true"
+        }
+      },
       "checkConstraints": {},
       "isRLSEnabled": false
     },
@@ -194,7 +204,132 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
-      "policies": {},
+      "policies": {
+        "service_role_announcements_policy": {
+          "name": "service_role_announcements_policy",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "service_role"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.canned_responses": {
+      "name": "canned_responses",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "shortcut": {
+          "name": "shortcut",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "content": {
+          "name": "content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "category": {
+          "name": "category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_global": {
+          "name": "is_global",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "created_by_id": {
+          "name": "created_by_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "usage_count": {
+          "name": "usage_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "last_used_at": {
+          "name": "last_used_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "canned_responses_created_by_id_profiles_id_fk": {
+          "name": "canned_responses_created_by_id_profiles_id_fk",
+          "tableFrom": "canned_responses",
+          "tableTo": "profiles",
+          "columnsFrom": [
+            "created_by_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "service_role_canned_responses_policy": {
+          "name": "service_role_canned_responses_policy",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "service_role"
+          ],
+          "using": "true"
+        }
+      },
       "checkConstraints": {},
       "isRLSEnabled": false
     },
@@ -283,7 +418,17 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
-      "policies": {},
+      "policies": {
+        "service_role_file_uploads_policy": {
+          "name": "service_role_file_uploads_policy",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "service_role"
+          ],
+          "using": "true"
+        }
+      },
       "checkConstraints": {},
       "isRLSEnabled": false
     },
@@ -529,7 +674,17 @@
           ]
         }
       },
-      "policies": {},
+      "policies": {
+        "service_role_invoices_policy": {
+          "name": "service_role_invoices_policy",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "service_role"
+          ],
+          "using": "true"
+        }
+      },
       "checkConstraints": {},
       "isRLSEnabled": false
     },
@@ -649,7 +804,17 @@
           ]
         }
       },
-      "policies": {},
+      "policies": {
+        "service_role_organization_invites_policy": {
+          "name": "service_role_organization_invites_policy",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "service_role"
+          ],
+          "using": "true"
+        }
+      },
       "checkConstraints": {},
       "isRLSEnabled": false
     },
@@ -723,7 +888,17 @@
         }
       },
       "uniqueConstraints": {},
-      "policies": {},
+      "policies": {
+        "service_role_organization_members_policy": {
+          "name": "service_role_organization_members_policy",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "service_role"
+          ],
+          "using": "true"
+        }
+      },
       "checkConstraints": {},
       "isRLSEnabled": false
     },
@@ -849,7 +1024,17 @@
           ]
         }
       },
-      "policies": {},
+      "policies": {
+        "service_role_organizations_policy": {
+          "name": "service_role_organizations_policy",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "service_role"
+          ],
+          "using": "true"
+        }
+      },
       "checkConstraints": {},
       "isRLSEnabled": false
     },
@@ -959,7 +1144,17 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
-      "policies": {},
+      "policies": {
+        "service_role_payments_policy": {
+          "name": "service_role_payments_policy",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "service_role"
+          ],
+          "using": "true"
+        }
+      },
       "checkConstraints": {},
       "isRLSEnabled": false
     },
@@ -1089,7 +1284,17 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
-      "policies": {},
+      "policies": {
+        "service_role_pending_organization_members_policy": {
+          "name": "service_role_pending_organization_members_policy",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "service_role"
+          ],
+          "using": "true"
+        }
+      },
       "checkConstraints": {},
       "isRLSEnabled": false
     },
@@ -1200,7 +1405,17 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
-      "policies": {},
+      "policies": {
+        "service_role_profiles_policy": {
+          "name": "service_role_profiles_policy",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "service_role"
+          ],
+          "using": "true"
+        }
+      },
       "checkConstraints": {},
       "isRLSEnabled": false
     },
@@ -1342,7 +1557,17 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
-      "policies": {},
+      "policies": {
+        "service_role_projects_policy": {
+          "name": "service_role_projects_policy",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "service_role"
+          ],
+          "using": "true"
+        }
+      },
       "checkConstraints": {},
       "isRLSEnabled": false
     },
@@ -1568,7 +1793,285 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
-      "policies": {},
+      "policies": {
+        "service_role_proposals_policy": {
+          "name": "service_role_proposals_policy",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "service_role"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.sla_policies": {
+      "name": "sla_policies",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "urgent_response_hours": {
+          "name": "urgent_response_hours",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1
+        },
+        "urgent_resolution_hours": {
+          "name": "urgent_resolution_hours",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 4
+        },
+        "high_response_hours": {
+          "name": "high_response_hours",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 4
+        },
+        "high_resolution_hours": {
+          "name": "high_resolution_hours",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 8
+        },
+        "medium_response_hours": {
+          "name": "medium_response_hours",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 8
+        },
+        "medium_resolution_hours": {
+          "name": "medium_resolution_hours",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 24
+        },
+        "low_response_hours": {
+          "name": "low_response_hours",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 24
+        },
+        "low_resolution_hours": {
+          "name": "low_resolution_hours",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 72
+        },
+        "business_hours_only": {
+          "name": "business_hours_only",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "business_hours_start": {
+          "name": "business_hours_start",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 9
+        },
+        "business_hours_end": {
+          "name": "business_hours_end",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 17
+        },
+        "business_days": {
+          "name": "business_days",
+          "type": "integer[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{1,2,3,4,5}'"
+        },
+        "is_default": {
+          "name": "is_default",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "created_by_id": {
+          "name": "created_by_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "sla_policies_created_by_id_profiles_id_fk": {
+          "name": "sla_policies_created_by_id_profiles_id_fk",
+          "tableFrom": "sla_policies",
+          "tableTo": "profiles",
+          "columnsFrom": [
+            "created_by_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "service_role_sla_policies_policy": {
+          "name": "service_role_sla_policies_policy",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "service_role"
+          ],
+          "using": "true"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.system_settings": {
+      "name": "system_settings",
+      "schema": "",
+      "columns": {
+        "key": {
+          "name": "key",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "category": {
+          "name": "category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "label": {
+          "name": "label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "value_type": {
+          "name": "value_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'string'"
+        },
+        "is_secret": {
+          "name": "is_secret",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "updated_by_id": {
+          "name": "updated_by_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "system_settings_updated_by_id_profiles_id_fk": {
+          "name": "system_settings_updated_by_id_profiles_id_fk",
+          "tableFrom": "system_settings",
+          "tableTo": "profiles",
+          "columnsFrom": [
+            "updated_by_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "service_role_system_settings_policy": {
+          "name": "service_role_system_settings_policy",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "service_role"
+          ],
+          "using": "true"
+        }
+      },
       "checkConstraints": {},
       "isRLSEnabled": false
     },
@@ -1660,7 +2163,17 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
-      "policies": {},
+      "policies": {
+        "service_role_ticket_comments_policy": {
+          "name": "service_role_ticket_comments_policy",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "service_role"
+          ],
+          "using": "true"
+        }
+      },
       "checkConstraints": {},
       "isRLSEnabled": false
     },
@@ -1855,7 +2368,17 @@
           ]
         }
       },
-      "policies": {},
+      "policies": {
+        "service_role_tickets_policy": {
+          "name": "service_role_tickets_policy",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "service_role"
+          ],
+          "using": "true"
+        }
+      },
       "checkConstraints": {},
       "isRLSEnabled": false
     }

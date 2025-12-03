@@ -1,7 +1,7 @@
 import { db } from '$lib/server/db';
-import { 
+import {
     tickets, projects, invoices, organizations, profiles,
-    organizationMembers 
+    organizationMembers
 } from '$lib/server/db/schema';
 import { sql, eq, and, gte, lte, count } from 'drizzle-orm';
 import { redirect } from '@sveltejs/kit';
@@ -19,7 +19,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 
     // Get date range from query params (default: last 30 days)
     const endDate = url.searchParams.get('endDate') ?? new Date().toISOString().split('T')[0];
-    const startDate = url.searchParams.get('startDate') ?? 
+    const startDate = url.searchParams.get('startDate') ??
         new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
     const startDateTime = new Date(startDate);
