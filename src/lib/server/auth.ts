@@ -51,10 +51,10 @@ export async function getOrCreateProfile(user: User): Promise<Profile> {
         const newProfile: NewProfile = {
             id: user.id,
             email: user.email ?? '',
-            firstName: user.user_metadata?.full_name?.split(' ')[0] ?? 
-                       user.user_metadata?.first_name ?? null,
-            lastName: user.user_metadata?.full_name?.split(' ').slice(1).join(' ') ?? 
-                      user.user_metadata?.last_name ?? null,
+            firstName: user.user_metadata?.full_name?.split(' ')[0] ??
+                user.user_metadata?.first_name ?? null,
+            lastName: user.user_metadata?.full_name?.split(' ').slice(1).join(' ') ??
+                user.user_metadata?.last_name ?? null,
             displayName: user.user_metadata?.full_name ?? user.user_metadata?.name ?? null,
             avatarUrl: user.user_metadata?.avatar_url ?? null,
             role: 'customer', // Default role for new users
