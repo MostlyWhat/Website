@@ -596,7 +596,7 @@ html.docs-transition::view-transition-new(root) {
 	list-style: none;
 }
 
-.prose-custom ul li {
+.prose-custom ul > li {
 	position: relative;
 	padding-left: 1.5rem;
 	margin-bottom: 0.5rem;
@@ -609,7 +609,7 @@ html.docs-transition::view-transition-new(root) {
 	color: var(--foreground);
 }
 
-.prose-custom ul li::before {
+.prose-custom ul > li::before {
 	content: "";
 	position: absolute;
 	left: 0;
@@ -619,12 +619,28 @@ html.docs-transition::view-transition-new(root) {
 	background: var(--primary);
 }
 
+/* Nested unordered list bullets */
+.prose-custom ul ul > li::before {
+	width: 4px;
+	height: 4px;
+	top: 0.6875rem;
+	background: transparent;
+	border: 1px solid var(--muted-foreground);
+}
+
+.prose-custom ul ul ul > li::before {
+	width: 4px;
+	height: 4px;
+	background: var(--muted-foreground);
+	border: none;
+}
+
 .prose-custom ol {
 	list-style: none;
 	counter-reset: ol-counter;
 }
 
-.prose-custom ol li {
+.prose-custom ol > li {
 	position: relative;
 	padding-left: 2rem;
 	margin-bottom: 0.5rem;
@@ -632,7 +648,7 @@ html.docs-transition::view-transition-new(root) {
 	counter-increment: ol-counter;
 }
 
-.prose-custom ol li::before {
+.prose-custom ol > li::before {
 	content: counter(ol-counter);
 	position: absolute;
 	left: 0;
@@ -643,6 +659,11 @@ html.docs-transition::view-transition-new(root) {
 	color: var(--primary);
 	width: 1.25rem;
 	text-align: right;
+}
+
+/* Nested ordered lists reset counter */
+.prose-custom ol ol {
+	counter-reset: ol-counter;
 }
 
 /* Nested lists */
