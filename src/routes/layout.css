@@ -279,38 +279,6 @@
 	}
 }
 
-/* Reduced view transitions for docs pages - less jumping effect */
-html.docs-transition::view-transition-old(root),
-html.docs-transition::view-transition-new(root) {
-	animation-duration: 150ms;
-}
-
-html.docs-transition::view-transition-old(root) {
-	animation-name: vt-fade-out-docs;
-}
-
-html.docs-transition::view-transition-new(root) {
-	animation-name: vt-fade-in-docs;
-}
-
-@keyframes vt-fade-in-docs {
-	from {
-		opacity: 0;
-	}
-	to {
-		opacity: 1;
-	}
-}
-
-@keyframes vt-fade-out-docs {
-	from {
-		opacity: 1;
-	}
-	to {
-		opacity: 0;
-	}
-}
-
 /* Named view transitions */
 .vt-hero { view-transition-name: hero; }
 .vt-nav { view-transition-name: nav; }
