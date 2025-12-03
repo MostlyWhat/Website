@@ -92,6 +92,20 @@
 
 		<!-- User Section -->
 		<div class="mt-auto">
+			<!-- Admin Panel Access (for staff) -->
+			{#if isAdmin}
+				<a
+					href="/admin"
+					class="flex items-center gap-4 border-b border-border px-6 py-4 transition-colors text-muted-foreground hover:bg-primary/10 hover:text-primary"
+				>
+					<div class="flex h-10 w-10 items-center justify-center border border-primary/30 bg-primary/10">
+						<Shield class="h-4 w-4 text-primary" />
+					</div>
+					<span class="font-ui flex-1 text-xs tracking-wider">ADMIN PANEL</span>
+					<ChevronRight class="h-4 w-4" />
+				</a>
+			{/if}
+			
 			<!-- Profile -->
 			<div class="border-b border-border px-6 py-4">
 				<div class="flex items-center gap-4">
@@ -118,16 +132,7 @@
 			</div>
 
 			<!-- Actions -->
-			<div class="grid gap-px bg-border {isAdmin ? 'grid-cols-3' : 'grid-cols-2'}">
-				{#if isAdmin}
-					<a
-						href="/admin"
-						class="flex items-center justify-center gap-2 bg-card px-4 py-4 text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
-					>
-						<Shield class="h-4 w-4" />
-						<span class="font-mono text-[10px] tracking-wider">ADMIN</span>
-					</a>
-				{/if}
+			<div class="grid grid-cols-2 gap-px bg-border">
 				<a
 					href="/app/settings"
 					class="flex items-center justify-center gap-2 bg-card px-4 py-4 text-muted-foreground transition-colors hover:bg-card/80 hover:text-foreground"
@@ -189,6 +194,19 @@
 
 						<!-- User Section -->
 						<div class="mt-auto border-t border-border">
+							{#if isAdmin}
+								<a
+									href="/admin"
+									onclick={() => (mobileMenuOpen = false)}
+									class="flex items-center gap-4 border-b border-border px-6 py-4 transition-colors text-muted-foreground hover:bg-primary/10 hover:text-primary"
+								>
+									<div class="flex h-10 w-10 items-center justify-center border border-primary/30 bg-primary/10">
+										<Shield class="h-4 w-4 text-primary" />
+									</div>
+									<span class="font-ui flex-1 text-xs tracking-wider">ADMIN PANEL</span>
+									<ChevronRight class="h-4 w-4" />
+								</a>
+							{/if}
 							<div class="border-b border-border px-6 py-4">
 								<div class="flex items-center gap-4">
 									<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">
@@ -204,17 +222,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="grid gap-px bg-border {isAdmin ? 'grid-cols-3' : 'grid-cols-2'}">
-								{#if isAdmin}
-									<a
-										href="/admin"
-										onclick={() => (mobileMenuOpen = false)}
-										class="flex items-center justify-center gap-2 bg-background px-4 py-4 text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
-									>
-										<Shield class="h-4 w-4" />
-										<span class="font-mono text-[10px] tracking-wider">ADMIN</span>
-									</a>
-								{/if}
+							<div class="grid grid-cols-2 gap-px bg-border">
 								<a
 									href="/app/settings"
 									onclick={() => (mobileMenuOpen = false)}
@@ -269,7 +277,7 @@
 								: 'text-foreground'}">{announcement.title}</span>
 						<span class="mx-2 text-muted-foreground">—</span>
 					{/if}
-					<span class="font-body text-sm text-muted-foreground">{announcement.content}</span>
+					<span class="font-body text-sm text-muted-foreground">{announcement.message}</span>
 				</div>
 				<button
 					type="button"

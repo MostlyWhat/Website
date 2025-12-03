@@ -791,6 +791,92 @@ export const pendingOrganizationMembersRelations = relations(pendingOrganization
 }));
 
 // =============================================================================
+// SLA POLICIES TABLE
+// =============================================================================
+// Service Level Agreement policies for ticket management
+
+export const slaPolicies = pgTable('sla_policies', {
+	id: uuid('id').primaryKey().defaultRandom(),
+
+	// Basic Info
+	name: text('name').notNull(),
+	description: text('description'),
+
+	// Priority-based targets (in hours)
+	urgentResponseHours: integer('urgent_response_hours').default(1).notNull(),
+	urgentResolutionHours: integer('urgent_resolution_hours').default(4).notNull(),
+	highResponseHours: integer('high_response_hours').default(4).notNull(),
+	highResolutionHours: integer('high_resolution_hours').default(8).notNull(),
+	mediumResponseHours: integer('medium_response_hours').default(8).notNull(),
+	mediumResolutionHours: integer('medium_resolution_hours').default(24).notNull(),
+	lowResponseHours: integer('low_response_hours').default(24).notNull(),
+	lowResolutionHours: integer('low_resolution_hours').default(72).notNull(),
+
+	// Business hours
+	businessHoursOnly: boolean('business_hours_only').default(true).notNull(),
+	businessHoursStart: integer('business_hours_start').default(9).notNull(), // 0-23
+	businessHoursEnd: integer('business_hours_end').default(17).notNull(), // 0-23
+	businessDays: integer('business_days').array().default([1, 2, 3, 4, 5]).notNull(), // 0=Sun, 1=Mon, etc.
+
+	// Status
+	isDefault: boolean('is_default').default(false).notNull(),
+	isActive: boolean('is_active').default(true).notNull(),
+
+	// Metadata
+	createdById: uuid('created_by_id')
+		.notNull()
+		.references(() => profiles.id),
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+});
+
+export const slaPoliciesRelations = relations(slaPolicies, ({ one }) => ({
+	createdBy: one(profiles, {
+		fields: [slaPolicies.createdById],
+		references: [profiles.id]
+	})
+}));
+
+// =============================================================================
+// CANNED RESPONSES TABLE
+// =============================================================================
+// Pre-defined response templates for tickets
+
+export const cannedResponses = pgTable('canned_responses', {
+	id: uuid('id').primaryKey().defaultRandom(),
+
+	// Basic Info
+	title: text('title').notNull(),
+	shortcut: text('shortcut'), // Quick access shortcut like "/greeting"
+	content: text('content').notNull(),
+
+	// Categorization
+	category: text('category'), // e.g., 'greeting', 'closing', 'technical', 'billing'
+
+	// Visibility
+	isGlobal: boolean('is_global').default(true).notNull(), // Available to all staff
+	isActive: boolean('is_active').default(true).notNull(), // Can be disabled without deleting
+	createdById: uuid('created_by_id')
+		.notNull()
+		.references(() => profiles.id),
+
+	// Usage tracking
+	usageCount: integer('usage_count').default(0).notNull(),
+	lastUsedAt: timestamp('last_used_at', { withTimezone: true }),
+
+	// Metadata
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+});
+
+export const cannedResponsesRelations = relations(cannedResponses, ({ one }) => ({
+	createdBy: one(profiles, {
+		fields: [cannedResponses.createdById],
+		references: [profiles.id]
+	})
+}));
+
+// =============================================================================
 // TYPES EXPORT
 // =============================================================================
 
@@ -835,6 +921,12 @@ export type NewOrganizationInvite = typeof organizationInvites.$inferInsert;
 
 export type PendingOrganizationMember = typeof pendingOrganizationMembers.$inferSelect;
 export type NewPendingOrganizationMember = typeof pendingOrganizationMembers.$inferInsert;
+
+export type CannedResponse = typeof cannedResponses.$inferSelect;
+export type NewCannedResponse = typeof cannedResponses.$inferInsert;
+
+export type SlaPolicy = typeof slaPolicies.$inferSelect;
+export type NewSlaPolicy = typeof slaPolicies.$inferInsert;
 
 export type UserRole = 'super_admin' | 'admin' | 'staff' | 'customer';
 export type ProjectStatus = typeof projectStatusEnum.enumValues[number];

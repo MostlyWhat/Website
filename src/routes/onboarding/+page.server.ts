@@ -36,7 +36,7 @@ export const actions = {
             });
 
             // Redirect based on role
-            const redirectTo = profile.role === 'admin' || profile.role === 'staff'
+            const redirectTo = profile.role === 'super_admin' || profile.role === 'admin' || profile.role === 'staff'
                 ? '/admin'
                 : '/app';
 

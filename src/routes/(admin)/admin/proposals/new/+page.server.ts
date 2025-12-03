@@ -46,20 +46,20 @@ export const actions: Actions = {
         }
 
         const formData = await request.formData();
-        
+
         const projectId = formData.get('projectId') as string;
         const title = formData.get('title') as string;
         const summary = formData.get('summary') as string;
-        
+
         // Line items from JSON
         const lineItemsJson = formData.get('lineItems') as string;
         const sectionsJson = formData.get('sections') as string;
-        
+
         // Pricing
         const subtotalStr = formData.get('subtotal') as string;
         const taxRateStr = formData.get('taxRate') as string;
         const discountStr = formData.get('discount') as string;
-        
+
         // Expiry
         const expiresAtStr = formData.get('expiresAt') as string;
 
@@ -75,7 +75,7 @@ export const actions: Actions = {
             // Parse line items and sections
             let lineItems: Array<{ description: string; quantity: number; unitPrice: number; total: number }> = [];
             let sections: Array<{ title: string; content: string; order: number }> = [];
-            
+
             try {
                 if (lineItemsJson) lineItems = JSON.parse(lineItemsJson);
                 if (sectionsJson) sections = JSON.parse(sectionsJson);
@@ -125,7 +125,7 @@ export const actions: Actions = {
         }
 
         const formData = await request.formData();
-        
+
         const projectId = formData.get('projectId') as string;
         const title = formData.get('title') as string;
         const summary = formData.get('summary') as string;
@@ -146,7 +146,7 @@ export const actions: Actions = {
         try {
             let lineItems: Array<{ description: string; quantity: number; unitPrice: number; total: number }> = [];
             let sections: Array<{ title: string; content: string; order: number }> = [];
-            
+
             try {
                 if (lineItemsJson) lineItems = JSON.parse(lineItemsJson);
                 if (sectionsJson) sections = JSON.parse(sectionsJson);

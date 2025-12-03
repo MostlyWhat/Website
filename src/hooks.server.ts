@@ -136,7 +136,7 @@ const handleRouteProtection: Handle = async ({ event, resolve }) => {
 				});
 			}
 			// Otherwise redirect to appropriate dashboard
-			const redirectTo = profile?.role === 'admin' || profile?.role === 'staff' ? '/admin' : '/app';
+			const redirectTo = profile?.role === 'super_admin' || profile?.role === 'admin' || profile?.role === 'staff' ? '/admin' : '/app';
 			return new Response(null, {
 				status: 302,
 				headers: { Location: redirectTo }
@@ -162,9 +162,10 @@ const handleRouteProtection: Handle = async ({ event, resolve }) => {
 			});
 		}
 
-		// Admin routes: Require admin or staff role
+		// Admin routes: Require admin, super_admin, or staff role
 		if (isAdminRoute) {
-			if (!profile || (profile.role !== 'admin' && profile.role !== 'staff')) {
+			const allowedRoles = ['super_admin', 'admin', 'staff'];
+			if (!profile || !allowedRoles.includes(profile.role ?? '')) {
 				return new Response(null, {
 					status: 302,
 					headers: { Location: '/app' }

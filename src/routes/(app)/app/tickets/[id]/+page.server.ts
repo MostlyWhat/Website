@@ -368,8 +368,8 @@ export const actions: Actions = {
                     (Date.now() - new Date(ticket.closedAt).getTime()) / (1000 * 60 * 60 * 24)
                 );
                 if (daysSinceClosed > 7) {
-                    return fail(400, { 
-                        error: 'Tickets can only be reopened within 7 days of closing. Please create a new ticket.' 
+                    return fail(400, {
+                        error: 'Tickets can only be reopened within 7 days of closing. Please create a new ticket.'
                     });
                 }
             }

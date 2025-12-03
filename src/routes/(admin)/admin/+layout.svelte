@@ -22,7 +22,10 @@
 		BarChart3,
 		Home,
 		ChevronRight,
-		Shield
+		Shield,
+		MessageSquareText,
+		Clock,
+		Activity
 	} from '@lucide/svelte';
 	import * as Sheet from '$lib/components/ui/sheet';
 
@@ -37,6 +40,9 @@
 		{ href: '/admin/proposals', label: 'PROPOSALS', icon: FileText },
 		{ href: '/admin/invoices', label: 'INVOICES', icon: Receipt },
 		{ href: '/admin/tickets', label: 'TICKETS', icon: Ticket },
+		{ href: '/admin/sla-policies', label: 'SLA POLICIES', icon: Clock },
+		{ href: '/admin/canned-responses', label: 'CANNED RESPONSES', icon: MessageSquareText },
+		{ href: '/admin/activity-log', label: 'ACTIVITY LOG', icon: Activity, adminOnly: true },
 		{ href: '/admin/reports', label: 'REPORTS', icon: BarChart3 }
 	];
 
@@ -67,7 +73,8 @@
 
 		<!-- Navigation -->
 		<nav class="flex-1 overflow-y-auto border-b border-border">
-			{#each navigation as { href, label, icon: Icon, exact }}
+			{#each navigation as { href, label, icon: Icon, exact, adminOnly }}
+				{#if !adminOnly || isAdmin}
 				<a
 					{href}
 					class="group flex items-center gap-4 border-b border-border px-6 py-4 transition-colors {isActive(href, exact)
@@ -80,11 +87,24 @@
 					<span class="font-ui flex-1 text-xs tracking-wider">{label}</span>
 					<ChevronRight class="h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100 {isActive(href, exact) ? 'opacity-100' : ''}" />
 				</a>
+				{/if}
 			{/each}
 		</nav>
 
 		<!-- User Section -->
 		<div class="mt-auto">
+			<!-- Back to Portal Link -->
+			<a
+				href="/app"
+				class="flex items-center gap-4 border-b border-border px-6 py-4 transition-colors text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+			>
+				<div class="flex h-10 w-10 items-center justify-center border border-border bg-background">
+					<Home class="h-4 w-4" />
+				</div>
+				<span class="font-ui flex-1 text-xs tracking-wider">BACK TO PORTAL</span>
+				<ChevronRight class="h-4 w-4" />
+			</a>
+			
 			<!-- Profile -->
 			<div class="border-b border-border px-6 py-4">
 				<div class="flex items-center gap-4">
@@ -160,7 +180,8 @@
 
 						<!-- Navigation -->
 						<nav class="flex-1 overflow-auto">
-							{#each navigation as { href, label, icon: Icon, exact }}
+							{#each navigation as { href, label, icon: Icon, exact, adminOnly }}
+								{#if !adminOnly || isAdmin}
 								<a
 									{href}
 									onclick={() => (mobileMenuOpen = false)}
@@ -174,11 +195,24 @@
 									<span class="font-ui flex-1 text-xs tracking-wider">{label}</span>
 									<ChevronRight class="h-4 w-4" />
 								</a>
+								{/if}
 							{/each}
 						</nav>
 
 						<!-- User Section -->
 						<div class="mt-auto border-t border-border">
+							<!-- Back to Portal Link -->
+							<a
+								href="/app"
+								onclick={() => (mobileMenuOpen = false)}
+								class="flex items-center gap-4 border-b border-border px-6 py-4 transition-colors text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+							>
+								<div class="flex h-10 w-10 items-center justify-center border border-border bg-card">
+									<Home class="h-4 w-4" />
+								</div>
+								<span class="font-ui flex-1 text-xs tracking-wider">BACK TO PORTAL</span>
+								<ChevronRight class="h-4 w-4" />
+							</a>
 							<div class="border-b border-border px-6 py-4">
 								<div class="flex items-center gap-4">
 									<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">

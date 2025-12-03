@@ -21,8 +21,8 @@ export const load: LayoutServerLoad = async ({ locals }) => {
         .select({
             id: announcements.id,
             title: announcements.title,
-            content: announcements.content,
-            priority: announcements.priority
+            message: announcements.message,
+            priority: announcements.type
         })
         .from(announcements)
         .where(
@@ -32,7 +32,7 @@ export const load: LayoutServerLoad = async ({ locals }) => {
                 or(isNull(announcements.endsAt), gte(announcements.endsAt, now))
             )
         )
-        .orderBy(desc(announcements.priority), desc(announcements.createdAt))
+        .orderBy(desc(announcements.type), desc(announcements.createdAt))
         .limit(5);
 
     return {
