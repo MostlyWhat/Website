@@ -1,0 +1,83 @@
+/* ============================================
+   BASE STYLES
+   ============================================ */
+
+@layer base {
+	* {
+		@apply border-border outline-ring/50;
+	}
+
+	html {
+		scroll-behavior: smooth;
+		scroll-padding-top: 7rem;
+	}
+
+	body {
+		font-family: var(--font-body);
+		@apply bg-background text-foreground antialiased;
+	}
+
+	/* Typography - Display headings use Tourney */
+	h1, .h1 {
+		font-family: var(--font-display);
+		font-weight: 900;
+		text-transform: uppercase;
+		letter-spacing: 0.02em;
+		line-height: 1.1;
+	}
+
+	h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
+		font-family: var(--font-body);
+		font-weight: 700;
+		line-height: 1.25;
+	}
+
+	/* Code blocks */
+	code, pre, .code {
+		font-family: var(--font-mono);
+	}
+
+	/* Selection */
+	::selection {
+		background: var(--primary);
+		color: var(--primary-foreground);
+	}
+}
+
+/* === FONT UTILITY CLASSES === */
+.font-display {
+	font-family: var(--font-display);
+	font-weight: 900;
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+}
+
+.font-body {
+	font-family: var(--font-body);
+}
+
+.font-ui {
+	font-family: var(--font-ui);
+}
+
+.font-mono {
+	font-family: var(--font-mono);
+}
+
+/* === SCROLLBAR === */
+::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+::-webkit-scrollbar-track {
+	background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--border);
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: var(--primary);
+}

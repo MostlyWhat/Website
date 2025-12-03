@@ -197,7 +197,7 @@
 <div class="component-doc {className}" use:scrollAnimate={{ animation: 'fade' }}>
 	{#each contentBlocks as block}
 		{#if block.type === 'markdown'}
-			<div class="prose-custom max-w-4xl">
+			<div class="md-content max-w-4xl">
 				{@html marked(block.content)}
 			</div>
 		{:else if block.type === 'live-example'}
@@ -1091,12 +1091,12 @@
 
 <style>
 	/* Heading anchor links */
-	:global(.component-doc .prose-custom .heading-anchor) {
+	:global(.component-doc .md-content .heading-anchor) {
 		color: inherit;
 		text-decoration: none;
 	}
 
-	:global(.component-doc .prose-custom h2) {
+	:global(.component-doc .md-content h2) {
 		font-family: var(--font-display);
 		font-size: 1.5rem;
 		font-weight: 700;
@@ -1106,7 +1106,7 @@
 		letter-spacing: 0.05em;
 	}
 
-	:global(.component-doc .prose-custom h3) {
+	:global(.component-doc .md-content h3) {
 		font-family: var(--font-ui);
 		font-size: 1rem;
 		font-weight: 600;
@@ -1116,20 +1116,20 @@
 		letter-spacing: 0.05em;
 	}
 
-	:global(.component-doc .prose-custom p) {
+	:global(.component-doc .md-content p) {
 		font-family: var(--font-body);
 		color: var(--muted-foreground);
 		margin-bottom: 1rem;
 	}
 
-	:global(.component-doc .prose-custom code:not(pre code)) {
+	:global(.component-doc .md-content code:not(pre code)) {
 		font-family: var(--font-mono);
 		font-size: 0.85em;
 		background: var(--muted);
 		padding: 0.2em 0.4em;
 	}
 
-	:global(.component-doc .prose-custom pre) {
+	:global(.component-doc .md-content pre) {
 		background: var(--card);
 		border: 1px solid var(--border);
 		padding: 1rem;
@@ -1137,14 +1137,14 @@
 		overflow-x: auto;
 	}
 
-	:global(.component-doc .prose-custom pre code) {
+	:global(.component-doc .md-content pre code) {
 		font-family: var(--font-mono);
 		font-size: 0.75rem;
 		background: transparent;
 		padding: 0;
 	}
 
-	:global(.component-doc .prose-custom table) {
+	:global(.component-doc .md-content table) {
 		width: 100%;
 		border-collapse: collapse;
 		margin: 1.5rem 0;
@@ -1152,7 +1152,7 @@
 		border: 1px solid var(--border);
 	}
 
-	:global(.component-doc .prose-custom th) {
+	:global(.component-doc .md-content th) {
 		font-family: var(--font-ui);
 		font-weight: 600;
 		text-transform: uppercase;
@@ -1166,21 +1166,21 @@
 		background: var(--card);
 	}
 
-	:global(.component-doc .prose-custom th:last-child) {
+	:global(.component-doc .md-content th:last-child) {
 		border-right: none;
 	}
 
-	:global(.component-doc .prose-custom td) {
+	:global(.component-doc .md-content td) {
 		padding: 0.75rem 1rem;
 		border-bottom: 1px solid var(--border);
 		border-right: 1px solid var(--border);
 	}
 
-	:global(.component-doc .prose-custom td:last-child) {
+	:global(.component-doc .md-content td:last-child) {
 		border-right: none;
 	}
 
-	:global(.component-doc .prose-custom td code) {
+	:global(.component-doc .md-content td code) {
 		font-size: 0.75rem;
 	}
 </style>

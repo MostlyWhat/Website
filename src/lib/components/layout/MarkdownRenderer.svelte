@@ -50,49 +50,49 @@
 
 {#if animated}
 	<div 
-		class="prose-custom max-w-3xl {className}"
+		class="md-content max-w-3xl {className}"
 		use:scrollAnimate={{ animation: 'fade' }}
 	>
 		{@html renderedContent}
 	</div>
 {:else}
-	<div class="prose-custom max-w-3xl {className}">
+	<div class="md-content max-w-3xl {className}">
 		{@html renderedContent}
 	</div>
 {/if}
 
 <style>
 	/* Heading anchor links */
-	:global(.prose-custom .heading-anchor) {
+	:global(.md-content .heading-anchor) {
 		color: inherit;
 		text-decoration: none;
 	}
 
 	/* Callout styles */
-	:global(.prose-custom .callout) {
+	:global(.md-content .callout) {
 		border-left-width: 4px;
 		padding: 1rem 1.25rem;
 		margin: 1.5rem 0;
 		background: var(--card);
 	}
 
-	:global(.prose-custom .callout-note) {
+	:global(.md-content .callout-note) {
 		border-left-color: var(--primary);
 	}
 
-	:global(.prose-custom .callout-tip) {
+	:global(.md-content .callout-tip) {
 		border-left-color: #22c55e;
 	}
 
-	:global(.prose-custom .callout-warning) {
+	:global(.md-content .callout-warning) {
 		border-left-color: #f59e0b;
 	}
 
-	:global(.prose-custom .callout-caution) {
+	:global(.md-content .callout-caution) {
 		border-left-color: #ef4444;
 	}
 
-	:global(.prose-custom .callout-important) {
+	:global(.md-content .callout-important) {
 		border-left-color: #8b5cf6;
 	}
 </style>
