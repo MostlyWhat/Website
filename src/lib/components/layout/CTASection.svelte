@@ -4,6 +4,7 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { ArrowRight } from '@lucide/svelte';
 	import type { Snippet } from 'svelte';
+	import { siteConfig, getMailtoLink } from '$lib/config/site';
 
 	interface Stat {
 		value: string;
@@ -158,8 +159,8 @@
 					{@render children()}
 				{:else}
 					<p class="font-mono text-[10px] tracking-widest text-muted-foreground">QUICK CONTACT</p>
-					<a href="mailto:hello@mostlywhat.systems" class="font-ui mt-3 block text-sm uppercase text-primary hover:underline">
-						HELLO@MOSTLYWHAT.SYSTEMS
+					<a href={getMailtoLink('hello')} class="font-ui mt-3 block text-sm uppercase text-primary hover:underline">
+						{siteConfig.emails.hello.toUpperCase()}
 					</a>
 				{/if}
 			</div>

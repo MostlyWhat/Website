@@ -6,6 +6,7 @@
 	import DescriptionSection from '$lib/components/layout/DescriptionSection.svelte';
 	import CTASection from '$lib/components/layout/CTASection.svelte';
 	import * as Accordion from '$lib/components/ui/accordion';
+	import { siteConfig, getMailtoLink } from '$lib/config/site';
 	import {
 		MessageCircleQuestion,
 		BookOpen,
@@ -184,7 +185,7 @@
 					<p class="font-body mt-1 text-xs text-muted-foreground">Critical issues, site outages, security concerns</p>
 				</div>
 			</div>
-			<a href="mailto:urgent@mostlywhat.com" class="font-mono flex items-center gap-2 text-xs tracking-wider text-destructive hover:underline">
+			<a href={getMailtoLink('urgent')} class="font-mono flex items-center gap-2 text-xs tracking-wider text-destructive hover:underline">
 				<Mail class="h-4 w-4" />
 				CONTACT
 			</a>
@@ -258,7 +259,7 @@
 			</div>
 			<div>
 				<h3 class="font-ui text-sm font-semibold tracking-wider">EMAIL</h3>
-				<a href="mailto:support@mostlywhat.com" class="font-mono mt-1 block text-xs text-primary hover:underline">support@mostlywhat.com</a>
+				<a href={getMailtoLink('support')} class="font-mono mt-1 block text-xs text-primary hover:underline">{siteConfig.emails.support}</a>
 			</div>
 		</div>
 		<div class="col-span-12 flex items-center gap-6 bg-card px-6 py-8 sm:col-span-6 md:px-12 lg:col-span-3 lg:px-16">

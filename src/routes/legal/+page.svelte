@@ -5,6 +5,7 @@
 	import HeroSection from '$lib/components/layout/HeroSection.svelte';
 	import DescriptionSection from '$lib/components/layout/DescriptionSection.svelte';
 	import { ChevronRight } from '@lucide/svelte';
+	import { siteConfig, getMailtoLink } from '$lib/config/site';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -63,8 +64,8 @@
 		</div>
 		<div class="col-span-12 flex flex-col justify-center bg-card px-6 py-8 md:px-12 lg:col-span-4 lg:px-16 lg:py-12">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTACT</span>
-			<a href="mailto:legal@mostlywhat.systems" class="font-display mt-2 text-lg text-primary hover:underline md:text-xl">
-				LEGAL@MOSTLYWHAT.SYSTEMS
+			<a href={getMailtoLink('legal')} class="font-display mt-2 text-lg text-primary hover:underline md:text-xl">
+				{siteConfig.emails.legal.toUpperCase()}
 			</a>
 			<p class="font-body mt-4 text-sm text-muted-foreground">
 				We typically respond within 48 hours.

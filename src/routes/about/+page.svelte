@@ -6,6 +6,7 @@
 	import HeroSection from '$lib/components/layout/HeroSection.svelte';
 	import DescriptionSection from '$lib/components/layout/DescriptionSection.svelte';
 	import { ArrowRight, ArrowUpRight, Target, Lightbulb, Users, Rocket } from '@lucide/svelte';
+	import { siteConfig, getMailtoLink } from '$lib/config/site';
 
 	const values = [
 		{ icon: Target, title: 'CLARITY FIRST', desc: 'Clear communication, transparent processes, honest feedback.' },
@@ -163,12 +164,12 @@
 			</a>
 			
 			<a 
-				href="mailto:hello@mostlywhat.systems" 
+				href={getMailtoLink('hello')} 
 				class="group flex items-center justify-between border border-border bg-background px-6 py-4 transition-colors hover:border-primary hover:bg-primary/5"
 			>
 				<div>
 					<span class="font-ui block text-sm tracking-widest">EMAIL DIRECTLY</span>
-					<span class="font-mono mt-1 block text-[10px] tracking-wider text-muted-foreground">hello@mostlywhat.systems</span>
+					<span class="font-mono mt-1 block text-[10px] tracking-wider text-muted-foreground">{siteConfig.emails.hello}</span>
 				</div>
 				<ArrowUpRight class="h-5 w-5 text-muted-foreground group-hover:text-primary" />
 			</a>

@@ -2,6 +2,7 @@
 	import * as m from '$lib/paraglide/messages';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import { Github, Twitter, Mail, ArrowUpRight, type Icon } from '@lucide/svelte';
+	import { siteConfig, getMailtoLink } from '$lib/config/site';
 
 	const currentYear = new Date().getFullYear();
 
@@ -42,9 +43,9 @@
 	};
 
 	const social: SocialLink[] = [
-		{ href: 'https://github.com/mostlywhat', label: 'GH', fullLabel: 'GITHUB', icon: Github },
-		{ href: 'https://x.com/mostlywhat', label: 'X', fullLabel: 'TWITTER', icon: Twitter },
-		{ href: 'mailto:hello@mostlywhat.systems', label: 'EM', fullLabel: 'EMAIL', icon: Mail }
+		{ href: siteConfig.social.github, label: 'GH', fullLabel: 'GITHUB', icon: Github },
+		{ href: siteConfig.social.twitter, label: 'X', fullLabel: 'TWITTER', icon: Twitter },
+		{ href: getMailtoLink('hello'), label: 'EM', fullLabel: 'EMAIL', icon: Mail }
 	];
 </script>
 

@@ -8,6 +8,7 @@
 	import HeroSection from '$lib/components/layout/HeroSection.svelte';
 	import DescriptionSection from '$lib/components/layout/DescriptionSection.svelte';
 	import WideNavSection from '$lib/components/layout/WideNavSection.svelte';
+	import { siteConfig, getMailtoLink } from '$lib/config/site';
 	import {
 		Send,
 		CheckCircle,
@@ -206,8 +207,8 @@
 								<p class="font-body mt-1 text-[11px] text-muted-foreground">
 									For site-down emergencies, email
 									<a
-										href="mailto:urgent@mostlywhat.com"
-										class="text-primary underline hover:no-underline">urgent@mostlywhat.com</a
+										href={getMailtoLink('urgent')}
+										class="text-primary underline hover:no-underline">{siteConfig.emails.urgent}</a
 									>
 								</p>
 							</div>

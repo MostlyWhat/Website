@@ -5,6 +5,7 @@
 	import WideNavSection from '$lib/components/layout/WideNavSection.svelte';
 	import MarkdownRenderer from '$lib/components/layout/MarkdownRenderer.svelte';
 	import { ArrowLeft, ArrowRight, MapPin, Briefcase, Mail } from '@lucide/svelte';
+	import { siteConfig, getMailtoLink } from '$lib/config/site';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -42,7 +43,7 @@
 		</div>
 		<div class="col-span-12 flex flex-col justify-center bg-card px-6 py-12 md:px-12 lg:col-span-4 lg:px-16 lg:py-16">
 			<a 
-				href="mailto:careers@mostlywhat.systems?subject=Application%3A%20{encodeURIComponent(position.title)}"
+				href="{getMailtoLink('careers')}?subject=Application%3A%20{encodeURIComponent(position.title)}"
 				class="group flex items-center justify-center gap-3 border border-primary bg-primary px-6 py-4 text-primary-foreground transition-colors hover:bg-primary/90"
 			>
 				<Mail class="h-5 w-5" />
@@ -50,7 +51,7 @@
 				<ArrowRight class="h-4 w-4 transition-transform group-hover:translate-x-1" />
 			</a>
 			<p class="font-body mt-4 text-center text-xs text-muted-foreground">
-				Send your resume and portfolio to careers@mostlywhat.systems
+				Send your resume and portfolio to {siteConfig.emails.careers}
 			</p>
 		</div>
 	</div>
@@ -116,12 +117,12 @@
 				<div class="max-w-3xl">
 					<h2 class="font-display text-2xl font-bold uppercase">HOW TO APPLY</h2>
 					<div class="font-body mt-4 space-y-3 text-sm text-muted-foreground">
-						<p><strong class="text-foreground">1.</strong> Send your resume and portfolio to <a href="mailto:careers@mostlywhat.systems" class="text-primary hover:underline">careers@mostlywhat.systems</a></p>
+						<p><strong class="text-foreground">1.</strong> Send your resume and portfolio to <a href={getMailtoLink('careers')} class="text-primary hover:underline">{siteConfig.emails.careers}</a></p>
 						<p><strong class="text-foreground">2.</strong> Include a brief note about why you're interested in this role</p>
 						<p><strong class="text-foreground">3.</strong> We'll review your application and get back to you within 5 business days</p>
 					</div>
 					<a 
-						href="mailto:careers@mostlywhat.systems?subject=Application%3A%20{encodeURIComponent(position.title)}"
+						href="{getMailtoLink('careers')}?subject=Application%3A%20{encodeURIComponent(position.title)}"
 						class="group mt-6 inline-flex items-center gap-2 border border-primary bg-primary px-6 py-3 text-primary-foreground transition-colors hover:bg-primary/90"
 					>
 						<Mail class="h-4 w-4" />

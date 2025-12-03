@@ -7,6 +7,7 @@
 	import SectionHeader from '$lib/components/layout/SectionHeader.svelte';
 	import LinkCTASection from '$lib/components/layout/LinkCTASection.svelte';
 	import { ArrowRight, MapPin, Clock, Briefcase, Users } from '@lucide/svelte';
+	import { siteConfig, getMailtoLink } from '$lib/config/site';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -125,5 +126,5 @@
 	title="DON'T SEE YOUR ROLE?"
 	description="We're always looking for talented people. Send us your resume and we'll keep you in mind for future opportunities."
 	buttonText="GET IN TOUCH"
-	buttonHref="mailto:careers@mostlywhat.systems"
+	buttonHref={getMailtoLink('careers')}
 />

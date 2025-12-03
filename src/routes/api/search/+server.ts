@@ -1,6 +1,7 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { parseFrontmatter, extractSlugFromPath, generateExcerpt } from '$lib/utils/markdown';
+import { siteConfig } from '$lib/config/site';
 
 // Content index - built at startup
 interface ContentItem {
@@ -42,7 +43,7 @@ const staticPages: ContentItem[] = [
         url: '/contact',
         category: 'Page',
         excerpt: 'Get in touch with MostlyWhat Systems. Start a project or ask us anything.',
-        content: 'contact us get in touch start a project email hello@mostlywhat.systems reach out inquiry',
+        content: `contact us get in touch start a project email ${siteConfig.emails.hello} reach out inquiry`,
         type: 'page',
         keywords: ['contact', 'email', 'reach', 'project', 'inquiry']
     },

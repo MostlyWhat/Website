@@ -7,6 +7,7 @@
 	import DescriptionSection from '$lib/components/layout/DescriptionSection.svelte';
 	import CTASection from '$lib/components/layout/CTASection.svelte';
 	import { ArrowUpRight } from '@lucide/svelte';
+	import { siteConfig, getMailtoLink } from '$lib/config/site';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -111,8 +112,8 @@
 	{#snippet children()}
 		<div class="text-left">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTACT</span>
-			<a href="mailto:hello@mostlywhat.systems" class="font-display mt-2 block text-xl text-primary transition-colors hover:text-primary/80 md:text-2xl">
-				HELLO@MOSTLYWHAT.SYSTEMS
+			<a href={getMailtoLink('hello')} class="font-display mt-2 block text-xl text-primary transition-colors hover:text-primary/80 md:text-2xl">
+				{siteConfig.emails.hello.toUpperCase()}
 			</a>
 		</div>
 	{/snippet}

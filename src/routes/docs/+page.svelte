@@ -349,7 +349,7 @@
 								{:else}
 									<button
 										type="button"
-										onclick={() => { activeSection = section.id; sidebarOpen = false; }}
+										onclick={() => { activeSection = section.id; sidebarOpen = false; window.scrollTo({ top: 0, behavior: 'instant' }); }}
 										class="flex w-full items-center gap-3 px-2 py-2 text-left transition-colors
 											{activeSection === section.id ? 'border-l-2 border-primary bg-primary/10 text-primary' : 'border-l-2 border-transparent text-muted-foreground hover:bg-background hover:text-foreground'}"
 									>
