@@ -20,7 +20,8 @@
 		Home,
 		ChevronRight,
 		Shield,
-		Megaphone
+		Megaphone,
+		Building2
 	} from '@lucide/svelte';
 	import * as Sheet from '$lib/components/ui/sheet';
 
@@ -35,6 +36,10 @@
 		data.profile?.role === 'staff'
 	);
 
+	// Check if user has organizations
+	const hasOrganizations = $derived((data.userOrganizations ?? []).length > 0);
+	const isOrganizationAccount = $derived(data.profile?.preferences?.accountType === 'organization');
+
 	// Active announcements (filter out dismissed ones)
 	const visibleAnnouncements = $derived(
 		(data.announcements ?? []).filter(a => !dismissedAnnouncements.includes(a.id))
@@ -44,14 +49,16 @@
 		dismissedAnnouncements = [...dismissedAnnouncements, id];
 	}
 
-	const navigation = [
+	// Build navigation dynamically based on account type
+	const navigation = $derived([
 		{ href: '/app', label: 'DASHBOARD', icon: LayoutDashboard, exact: true },
 		{ href: '/app/projects', label: 'PROJECTS', icon: FolderKanban },
+		...(hasOrganizations || isOrganizationAccount ? [{ href: '/app/organization', label: 'ORGANIZATION', icon: Building2 }] : []),
 		{ href: '/app/proposals', label: 'PROPOSALS', icon: FileText },
 		{ href: '/app/invoices', label: 'INVOICES', icon: Receipt },
 		{ href: '/app/tickets', label: 'TICKETS', icon: Ticket },
 		{ href: '/app/settings', label: 'SETTINGS', icon: Settings }
-	];
+	]);
 
 	function isActive(href: string, exact?: boolean): boolean {
 		if (exact) {

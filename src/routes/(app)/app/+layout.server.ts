@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
-import { announcements } from '$lib/server/db/schema';
+import { announcements, organizationMembers, organizations } from '$lib/server/db/schema';
 import { eq, and, lte, gte, desc, isNull, or } from 'drizzle-orm';
 import type { LayoutServerLoad } from './$types';
 
@@ -35,10 +35,25 @@ export const load: LayoutServerLoad = async ({ locals }) => {
         .orderBy(desc(announcements.type), desc(announcements.createdAt))
         .limit(5);
 
+    // Fetch user's organizations
+    const userOrganizations = locals.user 
+        ? await db
+            .select({
+                id: organizations.id,
+                name: organizations.name,
+                slug: organizations.slug,
+                role: organizationMembers.role
+            })
+            .from(organizationMembers)
+            .innerJoin(organizations, eq(organizationMembers.organizationId, organizations.id))
+            .where(eq(organizationMembers.profileId, locals.user.id))
+        : [];
+
     return {
         session: locals.session,
         user: locals.user,
         profile: locals.profile,
-        announcements: activeAnnouncements
+        announcements: activeAnnouncements,
+        userOrganizations
     };
 };

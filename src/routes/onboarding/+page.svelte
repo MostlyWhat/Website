@@ -8,7 +8,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
-	import { Loader2, User, Bell, Palette, ArrowRight, ArrowLeft, CheckCircle } from '@lucide/svelte';
+	import { Loader2, User, Bell, Palette, ArrowRight, ArrowLeft, CheckCircle, Building2, UserCircle } from '@lucide/svelte';
 
 	let { data, form } = $props();
 
@@ -16,6 +16,10 @@
 	let firstName = $state(data.profile?.firstName ?? '');
 	let lastName = $state(data.profile?.lastName ?? '');
 	let phone = $state(data.profile?.phone ?? '');
+
+	// Account type
+	let accountType = $state<'personal' | 'organization'>('personal');
+	let organizationName = $state('');
 
 	// Preferences
 	let emailNotifications = $state(data.profile?.preferences?.emailNotifications ?? true);
@@ -25,7 +29,7 @@
 
 	let isLoading = $state(false);
 	let currentStep = $state(1);
-	const totalSteps = 3;
+	const totalSteps = 4;
 
 	function nextStep() {
 		if (currentStep < totalSteps) {
@@ -39,10 +43,16 @@
 		}
 	}
 
+	// Validation for step 2 (account type)
+	const canProceedFromAccountType = $derived(
+		accountType === 'personal' || (accountType === 'organization' && organizationName.trim().length > 0)
+	);
+
 	const steps = [
 		{ number: 1, icon: User, title: 'PROFILE', desc: 'Personal information' },
-		{ number: 2, icon: Bell, title: 'NOTIFICATIONS', desc: 'Communication preferences' },
-		{ number: 3, icon: Palette, title: 'APPEARANCE', desc: 'Theme settings' }
+		{ number: 2, icon: Building2, title: 'ACCOUNT TYPE', desc: 'Personal or organization' },
+		{ number: 3, icon: Bell, title: 'NOTIFICATIONS', desc: 'Communication preferences' },
+		{ number: 4, icon: Palette, title: 'APPEARANCE', desc: 'Theme settings' }
 	];
 </script>
 
@@ -206,8 +216,101 @@
 						</div>
 					{/if}
 
-					<!-- Step 2: Notification Preferences -->
+					<!-- Step 2: Account Type -->
 					{#if currentStep === 2}
+						<div class="space-y-8">
+							<div>
+								<div class="flex items-center gap-4">
+									<div class="flex h-12 w-12 items-center justify-center border border-primary bg-primary/10">
+										<Building2 class="h-5 w-5 text-primary" />
+									</div>
+									<div>
+										<h2 class="font-display text-xl font-bold uppercase">Account Type</h2>
+										<p class="font-body text-sm text-muted-foreground">How will you be using this account?</p>
+									</div>
+								</div>
+							</div>
+
+							<div class="space-y-4">
+								<label class="cursor-pointer">
+									<input
+										type="radio"
+										name="accountTypeRadio"
+										value="personal"
+										bind:group={accountType}
+										class="peer sr-only"
+									/>
+									<div class="flex items-start gap-4 border-2 border-border bg-card px-6 py-5 transition-colors peer-checked:border-primary peer-checked:bg-primary/5">
+										<div class="flex h-12 w-12 items-center justify-center border border-border bg-background">
+											<UserCircle class="h-6 w-6 text-muted-foreground" />
+										</div>
+										<div class="flex-1">
+											<span class="font-ui text-sm font-semibold tracking-wider">PERSONAL ACCOUNT</span>
+											<p class="font-body mt-1 text-xs text-muted-foreground">
+												For individuals managing personal projects. You can always upgrade to an organization later.
+											</p>
+										</div>
+									</div>
+								</label>
+
+								<label class="cursor-pointer">
+									<input
+										type="radio"
+										name="accountTypeRadio"
+										value="organization"
+										bind:group={accountType}
+										class="peer sr-only"
+									/>
+									<div class="flex items-start gap-4 border-2 border-border bg-card px-6 py-5 transition-colors peer-checked:border-primary peer-checked:bg-primary/5">
+										<div class="flex h-12 w-12 items-center justify-center border border-border bg-background">
+											<Building2 class="h-6 w-6 text-muted-foreground" />
+										</div>
+										<div class="flex-1">
+											<span class="font-ui text-sm font-semibold tracking-wider">ORGANIZATION</span>
+											<p class="font-body mt-1 text-xs text-muted-foreground">
+												For businesses and teams. Create an organization to manage projects, invoices, and invite team members.
+											</p>
+										</div>
+									</div>
+								</label>
+							</div>
+
+							<!-- Organization name input (shown when organization is selected) -->
+							{#if accountType === 'organization'}
+								<div class="space-y-2 border-t border-border pt-6">
+									<Label for="organizationName" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+										ORGANIZATION NAME
+									</Label>
+									<Input
+										id="organizationName"
+										name="organizationName"
+										type="text"
+										required
+										bind:value={organizationName}
+										placeholder="Acme Inc."
+										class="h-12 border-border bg-card px-4 font-body placeholder:text-muted-foreground/50"
+									/>
+									<p class="font-body text-xs text-muted-foreground">
+										You'll be the owner of this organization and can invite others later.
+									</p>
+								</div>
+							{/if}
+
+							<div class="flex justify-between border-t border-border pt-6">
+								<Button type="button" variant="outline" size="lg" class="font-ui tracking-wider" onclick={prevStep}>
+									<ArrowLeft class="mr-2 h-4 w-4" />
+									BACK
+								</Button>
+								<Button type="button" size="lg" class="font-ui tracking-wider" onclick={nextStep} disabled={!canProceedFromAccountType}>
+									CONTINUE
+									<ArrowRight class="ml-2 h-4 w-4" />
+								</Button>
+							</div>
+						</div>
+					{/if}
+
+					<!-- Step 3: Notification Preferences -->
+					{#if currentStep === 3}
 						<div class="space-y-8">
 							<div>
 								<div class="flex items-center gap-4">
@@ -281,8 +384,8 @@
 						</div>
 					{/if}
 
-					<!-- Step 3: Theme & Submit -->
-					{#if currentStep === 3}
+					<!-- Step 4: Theme & Submit -->
+					{#if currentStep === 4}
 						<div class="space-y-8">
 							<div>
 								<div class="flex items-center gap-4">
@@ -344,6 +447,8 @@
 							<input type="hidden" name="firstName" value={firstName} />
 							<input type="hidden" name="lastName" value={lastName} />
 							<input type="hidden" name="phone" value={phone} />
+							<input type="hidden" name="accountType" value={accountType} />
+							<input type="hidden" name="organizationName" value={organizationName} />
 							<input type="hidden" name="emailNotifications" value={emailNotifications.toString()} />
 							<input type="hidden" name="smsNotifications" value={smsNotifications.toString()} />
 							<input type="hidden" name="magicLinkEnabled" value={magicLinkEnabled.toString()} />

@@ -149,6 +149,7 @@ export const profiles = pgTable('profiles', {
 		language: string;
 		timezone: string;
 		magicLinkEnabled: boolean;
+		accountType: 'personal' | 'organization';
 	}>(),
 
 	// Metadata
@@ -232,10 +233,10 @@ export const projects = pgTable('projects', {
 	name: text('name').notNull(),
 	slug: text('slug').notNull(),
 	description: text('description'),
-	
+
 	// 7-Phase System
 	phase: projectPhaseEnum('phase').default('request').notNull(),
-	
+
 	// Legacy status (for backwards compatibility)
 	status: projectStatusEnum('status').default('draft').notNull(),
 
@@ -399,26 +400,26 @@ export const projectRevisions = pgTable('project_revisions', {
 	projectId: uuid('project_id')
 		.notNull()
 		.references(() => projects.id, { onDelete: 'cascade' }),
-	
+
 	// Version reference (e.g., "v1.2", "Build 42")
 	version: text('version'),
-	
+
 	// Revision details
 	title: text('title').notNull(),
 	description: text('description'),
-	
+
 	// Requester and assignee
 	requestedById: uuid('requested_by_id').references(() => profiles.id, { onDelete: 'set null' }),
 	assignedToId: uuid('assigned_to_id').references(() => profiles.id, { onDelete: 'set null' }),
-	
+
 	// Status & priority
 	status: revisionStatusEnum('status').default('pending').notNull(),
 	priority: ticketPriorityEnum('priority').default('medium').notNull(),
-	
+
 	// Resolution
 	resolvedAt: timestamp('resolved_at', { withTimezone: true }),
 	resolutionNotes: text('resolution_notes'),
-	
+
 	// Timestamps
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()

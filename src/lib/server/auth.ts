@@ -20,7 +20,8 @@ export const DEFAULT_PREFERENCES = {
     theme: 'system' as const,
     language: 'en',
     timezone: 'UTC',
-    magicLinkEnabled: false
+    magicLinkEnabled: false,
+    accountType: 'personal' as const
 };
 
 /**
@@ -155,7 +156,8 @@ export async function completeOnboarding(
                 theme: data.preferences?.theme ?? currentProfile.preferences?.theme ?? DEFAULT_PREFERENCES.theme,
                 language: data.preferences?.language ?? currentProfile.preferences?.language ?? DEFAULT_PREFERENCES.language,
                 timezone: data.preferences?.timezone ?? currentProfile.preferences?.timezone ?? DEFAULT_PREFERENCES.timezone,
-                magicLinkEnabled: data.preferences?.magicLinkEnabled ?? currentProfile.preferences?.magicLinkEnabled ?? DEFAULT_PREFERENCES.magicLinkEnabled
+                magicLinkEnabled: data.preferences?.magicLinkEnabled ?? currentProfile.preferences?.magicLinkEnabled ?? DEFAULT_PREFERENCES.magicLinkEnabled,
+                accountType: data.preferences?.accountType ?? currentProfile.preferences?.accountType ?? DEFAULT_PREFERENCES.accountType
             },
             onboardingCompleted: true,
             updatedAt: new Date()
