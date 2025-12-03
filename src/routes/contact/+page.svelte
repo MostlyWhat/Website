@@ -9,6 +9,7 @@
 	import * as Accordion from '$lib/components/ui/accordion';
 	import CTASection from '$lib/components/layout/CTASection.svelte';
 	import HeroSection from '$lib/components/layout/HeroSection.svelte';
+	import { siteConfig, getMailtoLink } from '$lib/config/site';
 	import { 
 		Send, CheckCircle, MessageSquare, FileText, HelpCircle, Headphones,
 		ArrowRight, Mail, MapPin, Clock
@@ -134,7 +135,7 @@
 
 	// Contact info
 	const contactInfo = [
-		{ icon: Mail, label: 'EMAIL', value: 'hello@mostlywhat.systems', href: 'mailto:hello@mostlywhat.systems' },
+		{ icon: Mail, label: 'EMAIL', value: siteConfig.emails.hello, href: getMailtoLink('hello') },
 		{ icon: MapPin, label: 'LOCATION', value: 'Remote • Global', href: null },
 		{ icon: Clock, label: 'RESPONSE', value: '~24 hours', href: null }
 	];

@@ -509,7 +509,7 @@
 										<Sheet.Title>Sheet Title</Sheet.Title>
 										<Sheet.Description>Sheet description goes here.</Sheet.Description>
 									</Sheet.Header>
-									<div class="py-4">
+									<div class="px-4 py-4">
 										<p class="text-sm text-muted-foreground">Sheet content goes here.</p>
 									</div>
 								</Sheet.Content>
@@ -517,7 +517,7 @@
 
 						<!-- Scroll Area Examples -->
 						{:else if slug === 'scroll-area'}
-							<ScrollArea class="h-48 w-48 rounded border border-border">
+							<ScrollArea class="h-48 w-48 border border-border">
 								<div class="p-4">
 									{#each Array(20) as _, i}
 										<div class="py-2 text-sm">Item {i + 1}</div>

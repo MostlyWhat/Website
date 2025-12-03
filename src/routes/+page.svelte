@@ -6,6 +6,7 @@
 	import HeroSection from '$lib/components/layout/HeroSection.svelte';
 	import DescriptionSection from '$lib/components/layout/DescriptionSection.svelte';
 	import CapabilitiesSection from '$lib/components/layout/CapabilitiesSection.svelte';
+	import { siteConfig, getMailtoLink } from '$lib/config/site';
 	import { ArrowRight, ArrowUpRight, Mail, Zap, Shield, Users, Headphones, Code, Palette, BarChart3, Layers, Globe, type Icon } from '@lucide/svelte';
 
 	const services: { icon: typeof Icon; number: string; title: string; desc: string }[] = [
@@ -157,12 +158,12 @@
 				</a>
 				
 				<a 
-					href="mailto:hello@mostlywhat.systems" 
+					href={getMailtoLink('hello')} 
 					class="group flex items-center justify-between border border-border bg-background px-6 py-4 transition-colors hover:border-primary hover:bg-primary/5"
 				>
 					<div>
 						<span class="font-ui block text-sm tracking-widest">EMAIL DIRECTLY</span>
-						<span class="font-mono mt-1 block text-[10px] tracking-wider text-muted-foreground">hello@mostlywhat.systems</span>
+						<span class="font-mono mt-1 block text-[10px] tracking-wider text-muted-foreground">{siteConfig.emails.hello}</span>
 					</div>
 					<Mail class="h-5 w-5 text-muted-foreground group-hover:text-primary" />
 				</a>
@@ -187,7 +188,7 @@
 	<div class="grid grid-cols-12 gap-px bg-border">
 		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-8 md:col-span-4 md:px-12 lg:px-16">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">EMAIL US</span>
-			<a href="mailto:hello@mostlywhat.systems" class="font-display mt-2 text-base text-primary hover:underline md:text-lg">HELLO@MOSTLYWHAT.SYSTEMS</a>
+			<a href={getMailtoLink('hello')} class="font-display mt-2 text-base text-primary hover:underline md:text-lg">{siteConfig.emails.hello.toUpperCase()}</a>
 		</div>
 		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-8 md:col-span-4 md:px-12 lg:px-16">
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">RESPONSE TIME</span>

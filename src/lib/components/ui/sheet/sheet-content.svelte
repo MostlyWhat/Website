@@ -1,7 +1,7 @@
 <script lang="ts" module>
 	import { tv, type VariantProps } from "tailwind-variants";
 	export const sheetVariants = tv({
-		base: "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out fixed z-50 flex flex-col gap-4 shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500",
+		base: "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out fixed z-50 flex flex-col shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500",
 		variants: {
 			side: {
 				top: "data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top inset-x-0 top-0 h-auto border-b",
@@ -31,11 +31,13 @@
 		side = "right",
 		portalProps,
 		children,
+		type = "PANEL",
 		...restProps
 	}: WithoutChildrenOrChild<SheetPrimitive.ContentProps> & {
 		portalProps?: SheetPrimitive.PortalProps;
 		side?: Side;
 		children: Snippet;
+		type?: string;
 	} = $props();
 </script>
 
@@ -47,12 +49,15 @@
 		class={cn(sheetVariants({ side }), className)}
 		{...restProps}
 	>
+		<div class="flex h-10 shrink-0 items-center border-b border-primary bg-primary">
+			<span class="px-4 text-[10px] font-mono font-medium uppercase tracking-widest text-primary-foreground">// {type}</span>
+			<SheetPrimitive.Close
+				class="group ms-auto flex h-10 w-10 items-center justify-center border-l border-primary-foreground/20 outline-none transition-all hover:bg-primary-foreground/20 focus-visible:bg-primary-foreground/20 disabled:pointer-events-none disabled:opacity-50"
+			>
+				<XIcon class="size-3.5 text-primary-foreground" />
+				<span class="sr-only">Close</span>
+			</SheetPrimitive.Close>
+		</div>
 		{@render children?.()}
-		<SheetPrimitive.Close
-			class="group absolute end-4 top-4 flex h-8 w-8 items-center justify-center border border-border bg-card outline-none transition-all hover:border-primary hover:bg-primary focus-visible:border-primary focus-visible:bg-primary focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50"
-		>
-			<XIcon class="size-4 text-muted-foreground transition-colors group-hover:text-primary-foreground group-focus-visible:text-primary-foreground" />
-			<span class="sr-only">Close</span>
-		</SheetPrimitive.Close>
 	</SheetPrimitive.Content>
 </SheetPrimitive.Portal>

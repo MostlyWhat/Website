@@ -170,7 +170,7 @@
 		id: doc.slug,
 		title: doc.title,
 		icon: componentIcons[doc.slug] || Component
-	}));
+	})).sort((a, b) => a.title.localeCompare(b.title));
 
 	const sidebarNav: Record<DocCategory, { title: string; sections: { id: string; title: string; icon: typeof Grid3x3; status?: 'coming-soon' | 'new' }[] }[]> = {
 		'design-system': [
