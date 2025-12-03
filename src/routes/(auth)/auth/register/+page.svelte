@@ -104,12 +104,12 @@
 
 			<!-- Error Message -->
 			{#if form?.error || timeoutError}
-				<div class="mb-6 border border-destructive/50 bg-destructive/10 px-6 py-4">
+				<div class="mb-6 w-full max-w-md border border-destructive/50 bg-destructive/10 px-6 py-4">
 					<p class="font-mono text-sm text-destructive">{form?.error || timeoutError}</p>
 				</div>
 			{/if}
 
-			<div class="max-w-md space-y-8">
+			<div class="w-full max-w-md space-y-8">
 				<!-- OAuth Providers -->
 				<div class="space-y-3">
 					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">QUICK SIGN UP</span>

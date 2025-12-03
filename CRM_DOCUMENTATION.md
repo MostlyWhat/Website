@@ -248,6 +248,60 @@ New users go through an onboarding process:
 | `staff` | 50 | Handle assigned tickets, view assigned projects |
 | `customer` | 10 | View own projects, create tickets, pay invoices |
 
+### Making a User Admin
+
+To promote a user to admin or super_admin role, you need to update their role in the `profiles` table. This can be done via:
+
+#### Option 1: SQL Query (Supabase Dashboard or CLI)
+
+```sql
+-- Promote user to admin
+UPDATE profiles 
+SET role = 'admin' 
+WHERE email = 'user@example.com';
+
+-- Promote user to super_admin
+UPDATE profiles 
+SET role = 'super_admin' 
+WHERE email = 'user@example.com';
+
+-- Or using user ID
+UPDATE profiles 
+SET role = 'admin' 
+WHERE id = 'user-uuid-here';
+```
+
+#### Option 2: Drizzle Studio
+
+```bash
+# Open Drizzle Studio
+pnpm db:studio
+```
+
+1. Navigate to the `profiles` table
+2. Find the user by email or ID
+3. Change the `role` column to `admin` or `super_admin`
+4. Save changes
+
+#### Option 3: Supabase Dashboard
+
+1. Go to your Supabase project dashboard
+2. Navigate to **Table Editor** → **profiles**
+3. Find the user row by email
+4. Edit the `role` column value
+5. Save the changes
+
+#### Option 4: Using the Admin Panel (Super Admin Only)
+
+If you already have a super_admin user:
+1. Log in as super_admin
+2. Go to `/admin/users`
+3. Find the user you want to promote
+4. Click Edit and change their role
+5. Save changes
+
+> **Note**: The first admin must be created manually using Option 1, 2, or 3. Once you have a super_admin, you can use the admin panel to manage other users.
+
 ### Route Protection
 
 | Route Pattern | Required Role |

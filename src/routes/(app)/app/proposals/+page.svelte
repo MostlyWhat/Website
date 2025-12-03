@@ -7,14 +7,11 @@
 
 	let { data } = $props();
 
-	// Placeholder data - will be replaced with real data from database
-	const proposals = [
-		{ id: '1', title: 'Website Redesign Proposal v2', project: 'Website Redesign', status: 'sent', total: 15000, sentAt: '2024-11-28', expiresAt: '2024-12-28', viewedAt: null },
-		{ id: '2', title: 'Mobile App Development', project: 'Mobile App Development', status: 'viewed', total: 45000, sentAt: '2024-11-25', expiresAt: '2024-12-25', viewedAt: '2024-11-26' },
-		{ id: '3', title: 'E-commerce Platform Build', project: 'E-commerce Platform', status: 'accepted', total: 25000, sentAt: '2024-07-15', expiresAt: '2024-08-15', viewedAt: '2024-07-16' }
-	];
+	// Get proposals from server data
+	const proposals = $derived(data.proposals ?? []);
 
-	function formatCurrency(amount: number): string {
+	function formatCurrency(amount: number | null): string {
+		if (amount === null) return '$0';
 		return new Intl.NumberFormat('en-US', {
 			style: 'currency',
 			currency: 'USD',
@@ -22,7 +19,7 @@
 		}).format(amount);
 	}
 
-	function formatDate(dateStr: string | null): string {
+	function formatDate(dateStr: string | Date | null): string {
 		if (!dateStr) return '-';
 		return new Date(dateStr).toLocaleDateString('en-US', { 
 			month: 'short', 

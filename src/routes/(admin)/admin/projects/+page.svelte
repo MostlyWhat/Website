@@ -13,20 +13,14 @@
 	let searchQuery = $state('');
 	let statusFilter = $state<string>('all');
 
-	// Placeholder data
-	const projects = [
-		{ id: '1', name: 'Website Redesign', slug: 'website-redesign', organization: 'Acme Corporation', assignedTo: 'John Staff', status: 'in_progress', budget: 15000, startDate: '2024-11-01', endDate: '2024-12-31' },
-		{ id: '2', name: 'Mobile App Development', slug: 'mobile-app', organization: 'Acme Corporation', assignedTo: 'Jane Staff', status: 'proposal_sent', budget: 45000, startDate: '2024-12-15', endDate: '2025-03-31' },
-		{ id: '3', name: 'CRM Integration', slug: 'crm-integration', organization: 'Global Industries', assignedTo: null, status: 'draft', budget: 8000, startDate: null, endDate: null },
-		{ id: '4', name: 'E-commerce Platform', slug: 'ecommerce', organization: 'StartupXYZ', assignedTo: 'John Staff', status: 'completed', budget: 25000, startDate: '2024-08-01', endDate: '2024-10-31' },
-		{ id: '5', name: 'Analytics Dashboard', slug: 'analytics', organization: 'Global Industries', assignedTo: 'Jane Staff', status: 'on_hold', budget: 12000, startDate: '2024-10-01', endDate: '2024-12-15' }
-	];
+	// Use real data from server
+	const projects = data.projects;
 
 	const filteredProjects = $derived(
 		projects.filter(project => {
 			const matchesSearch = searchQuery === '' || 
 				project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-				project.organization.toLowerCase().includes(searchQuery.toLowerCase());
+				(project.organization?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false);
 			const matchesStatus = statusFilter === 'all' || project.status === statusFilter;
 			return matchesSearch && matchesStatus;
 		})
@@ -40,9 +34,10 @@
 		}).format(amount);
 	}
 
-	function formatDate(dateStr: string | null): string {
-		if (!dateStr) return 'TBD';
-		return new Date(dateStr).toLocaleDateString('en-US', { 
+	function formatDate(date: Date | string | null): string {
+		if (!date) return 'TBD';
+		const d = typeof date === 'string' ? new Date(date) : date;
+		return d.toLocaleDateString('en-US', { 
 			month: 'short', 
 			day: 'numeric', 
 			year: 'numeric' 

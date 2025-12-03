@@ -12,27 +12,47 @@
 
 	let { data } = $props();
 
-	// Placeholder stats - will be replaced with real data from database
-	const stats = [
-		{ label: 'TOTAL USERS', value: '127', change: '+12%', icon: Users, href: '/admin/users' },
-		{ label: 'ORGANIZATIONS', value: '34', change: '+5%', icon: Building2, href: '/admin/organizations' },
-		{ label: 'ACTIVE PROJECTS', value: '18', change: '+3%', icon: FolderKanban, href: '/admin/projects' },
-		{ label: 'OPEN TICKETS', value: '7', change: '-15%', icon: Ticket, href: '/admin/tickets' }
-	];
+	// Get stats from server data
+	const stats = $derived([
+		{ label: 'TOTAL USERS', value: String(data.stats?.totalUsers ?? 0), icon: Users, href: '/admin/users' },
+		{ label: 'ORGANIZATIONS', value: String(data.stats?.organizations ?? 0), icon: Building2, href: '/admin/organizations' },
+		{ label: 'ACTIVE PROJECTS', value: String(data.stats?.activeProjects ?? 0), icon: FolderKanban, href: '/admin/projects' },
+		{ label: 'OPEN TICKETS', value: String(data.stats?.openTickets ?? 0), icon: Ticket, href: '/admin/tickets' }
+	]);
 
-	const pendingItems = [
-		{ type: 'proposal', label: 'Proposals pending approval', count: 3, href: '/admin/proposals?status=pending' },
-		{ type: 'invoice', label: 'Invoices awaiting payment', count: 5, href: '/admin/invoices?status=pending' },
-		{ type: 'ticket', label: 'Tickets awaiting response', count: 4, href: '/admin/tickets?status=open' },
-		{ type: 'user', label: 'Users awaiting approval', count: 2, href: '/admin/users?status=pending' }
-	];
+	// Get pending items from server data
+	const pendingItems = $derived(data.pendingItems ?? []);
 
-	const recentActivity = [
-		{ title: 'New user registered', subtitle: 'john@example.com', time: '5 min ago', icon: Users },
-		{ title: 'Project "Alpha" completed', subtitle: 'Marked as delivered', time: '1 hour ago', icon: CheckCircle },
-		{ title: 'Invoice #INV-042 paid', subtitle: '$4,500.00', time: '2 hours ago', icon: Receipt },
-		{ title: 'New ticket submitted', subtitle: 'Priority: High', time: '3 hours ago', icon: Ticket }
-	];
+	// Get recent activity from server data
+	const recentActivity = $derived(data.recentActivity ?? []);
+
+	// Format time ago
+	function formatTimeAgo(dateStr: string | Date | null): string {
+		if (!dateStr) return 'Unknown';
+		const date = new Date(dateStr);
+		const now = new Date();
+		const diffMs = now.getTime() - date.getTime();
+		const diffMins = Math.floor(diffMs / 60000);
+		const diffHours = Math.floor(diffMins / 60);
+		const diffDays = Math.floor(diffHours / 24);
+
+		if (diffDays > 0) return `${diffDays}d ago`;
+		if (diffHours > 0) return `${diffHours}h ago`;
+		if (diffMins > 0) return `${diffMins}m ago`;
+		return 'Just now';
+	}
+
+	// Get icon component for activity type
+	function getActivityIcon(iconName: string) {
+		switch (iconName) {
+			case 'Users': return Users;
+			case 'FolderKanban': return FolderKanban;
+			case 'Receipt': return Receipt;
+			case 'CheckCircle': return CheckCircle;
+			case 'Ticket': return Ticket;
+			default: return Activity;
+		}
+	}
 
 	const quickActions = [
 		{ label: 'NEW USER', icon: Users, href: '/admin/users/new' },
@@ -62,7 +82,7 @@
 	<!-- Stats Grid -->
 	<section class="border-b border-border">
 		<div class="grid grid-cols-12 gap-px bg-border">
-			{#each stats as { label, value, change, icon: Icon, href }}
+			{#each stats as { label, value, icon: Icon, href }}
 				<a
 					{href}
 					class="group col-span-6 flex flex-col bg-background px-6 py-8 transition-colors hover:bg-card md:col-span-3 md:px-12 lg:px-16"
@@ -71,10 +91,6 @@
 						<div class="flex h-12 w-12 items-center justify-center border border-border bg-card transition-colors group-hover:border-primary">
 							<Icon class="h-5 w-5 text-primary" />
 						</div>
-						<span class="font-mono flex items-center gap-1 text-[10px] tracking-wider {change.startsWith('+') ? 'text-green-500' : 'text-red-500'}">
-							<TrendingUp class="h-3 w-3 {change.startsWith('-') ? 'rotate-180' : ''}" />
-							{change}
-						</span>
 					</div>
 					<span class="font-display mt-6 text-3xl font-bold text-foreground md:text-4xl">{value}</span>
 					<span class="font-mono mt-2 text-[10px] tracking-widest text-muted-foreground">{label}</span>
@@ -143,20 +159,30 @@
 			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">03 — RECENT ACTIVITY</span>
 		</div>
 		<div class="px-6 py-8 md:px-12 lg:px-16">
-			<div class="grid grid-cols-12 gap-4">
-				{#each recentActivity as { title, subtitle, time, icon: Icon }}
-					<div class="col-span-12 flex items-start gap-4 md:col-span-6 lg:col-span-3">
-						<div class="flex h-10 w-10 flex-shrink-0 items-center justify-center border border-border bg-card">
-							<Icon class="h-4 w-4 text-primary" />
+			{#if recentActivity.length > 0}
+				<div class="grid grid-cols-12 gap-4">
+					{#each recentActivity as activity}
+						{@const Icon = getActivityIcon(activity.icon)}
+						<div class="col-span-12 flex items-start gap-4 md:col-span-6 lg:col-span-3">
+							<div class="flex h-10 w-10 flex-shrink-0 items-center justify-center border border-border bg-card">
+								<Icon class="h-4 w-4 text-primary" />
+							</div>
+							<div class="min-w-0 flex-1">
+								<p class="font-ui text-sm font-medium truncate">{activity.title}</p>
+								<p class="font-body text-xs text-muted-foreground">{activity.subtitle}</p>
+								<p class="font-mono mt-1 text-[10px] tracking-wider text-muted-foreground/70">{formatTimeAgo(activity.time)}</p>
+							</div>
 						</div>
-						<div class="min-w-0 flex-1">
-							<p class="font-ui text-sm font-medium truncate">{title}</p>
-							<p class="font-body text-xs text-muted-foreground">{subtitle}</p>
-							<p class="font-mono mt-1 text-[10px] tracking-wider text-muted-foreground/70">{time}</p>
-						</div>
+					{/each}
+				</div>
+			{:else}
+				<div class="flex flex-col items-center justify-center py-8 text-center">
+					<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">
+						<Activity class="h-5 w-5 text-muted-foreground" />
 					</div>
-				{/each}
-			</div>
+					<p class="font-body mt-4 text-sm text-muted-foreground">No recent activity to show.</p>
+				</div>
+			{/if}
 		</div>
 	</section>
 

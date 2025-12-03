@@ -6,7 +6,7 @@
 	 */
 	import { enhance } from '$app/forms';
 	import { goto, invalidateAll } from '$app/navigation';
-	import { ArrowLeft, User, Mail, Bell, Shield, Trash2, Loader2, AlertTriangle, Check } from '@lucide/svelte';
+	import { ArrowLeft, User, Mail, Bell, Shield, Trash2, Loader2, AlertTriangle, Check, KeyRound } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import * as Dialog from '$lib/components/ui/dialog';
@@ -14,6 +14,7 @@
 	let { data, form } = $props();
 
 	let profileLoading = $state(false);
+	let passwordLoading = $state(false);
 	let deleteLoading = $state(false);
 	let showDeleteDialog = $state(false);
 	let deleteConfirmText = $state('');
@@ -24,6 +25,11 @@
 	let displayName = $state(data.profile?.displayName ?? '');
 	let phone = $state(data.profile?.phone ?? '');
 
+	// Password form state
+	let currentPassword = $state('');
+	let newPassword = $state('');
+	let confirmPassword = $state('');
+
 	const canDelete = $derived(deleteConfirmText === 'DELETE MY ACCOUNT');
 
 	function handleProfileSubmit() {
@@ -31,6 +37,17 @@
 			profileLoading = false;
 			if (result.type === 'success') {
 				await invalidateAll();
+			}
+		};
+	}
+
+	function handlePasswordSubmit() {
+		return async ({ result }: { result: any }) => {
+			passwordLoading = false;
+			if (result.type === 'success') {
+				currentPassword = '';
+				newPassword = '';
+				confirmPassword = '';
 			}
 		};
 	}
@@ -211,18 +228,87 @@
 						</div>
 					</div>
 				</div>
+			</div>
+		</div>
+	</section>
 
-				<!-- Security Notice -->
-				<div class="mt-6 border border-border p-6">
-					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">SECURITY</span>
-					<p class="font-body mt-4 text-sm text-muted-foreground">
-						To change your password, use the "Forgot Password" feature on the login page.
-					</p>
-					<Button variant="outline" href="/auth/forgot-password" class="font-ui mt-4 w-full text-xs tracking-wider">
-						CHANGE PASSWORD
-					</Button>
+	<!-- Change Password Section -->
+	<section class="border-b border-border bg-background">
+		<div class="px-6 py-8 md:px-12 lg:px-16">
+			<div class="flex items-center gap-4">
+				<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">
+					<KeyRound class="h-5 w-5 text-primary" />
+				</div>
+				<div>
+					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">02 — SECURITY</span>
+					<h2 class="font-ui text-lg font-semibold tracking-wider">Change Password</h2>
 				</div>
 			</div>
+
+			<form
+				method="POST"
+				action="?/changePassword"
+				use:enhance={() => {
+					passwordLoading = true;
+					return handlePasswordSubmit();
+				}}
+				class="mt-8 max-w-md space-y-6"
+			>
+				<div class="space-y-2">
+					<label for="currentPassword" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+						CURRENT PASSWORD
+					</label>
+					<Input
+						id="currentPassword"
+						name="currentPassword"
+						type="password"
+						bind:value={currentPassword}
+						required
+						class="h-12 border-border bg-card px-4 font-body"
+					/>
+				</div>
+
+				<div class="space-y-2">
+					<label for="newPassword" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+						NEW PASSWORD
+					</label>
+					<Input
+						id="newPassword"
+						name="newPassword"
+						type="password"
+						bind:value={newPassword}
+						required
+						minlength={8}
+						class="h-12 border-border bg-card px-4 font-body"
+					/>
+					<p class="font-mono text-[10px] text-muted-foreground">Minimum 8 characters</p>
+				</div>
+
+				<div class="space-y-2">
+					<label for="confirmPassword" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+						CONFIRM NEW PASSWORD
+					</label>
+					<Input
+						id="confirmPassword"
+						name="confirmPassword"
+						type="password"
+						bind:value={confirmPassword}
+						required
+						class="h-12 border-border bg-card px-4 font-body"
+					/>
+				</div>
+
+				<div class="flex justify-start pt-4">
+					<Button type="submit" disabled={passwordLoading || !currentPassword || !newPassword || newPassword !== confirmPassword} class="font-ui text-xs tracking-wider">
+						{#if passwordLoading}
+							<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+							UPDATING...
+						{:else}
+							UPDATE PASSWORD
+						{/if}
+					</Button>
+				</div>
+			</form>
 		</div>
 	</section>
 

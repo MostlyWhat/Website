@@ -1,4 +1,4 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { fail, redirect, isRedirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { createServiceRoleClient } from '$lib/server/supabase';
 
@@ -33,6 +33,52 @@ export const actions: Actions = {
         return { success: true, message: 'Profile updated successfully' };
     },
 
+    changePassword: async ({ request, locals: { supabase, user } }) => {
+        if (!user) {
+            return fail(401, { error: 'Not authenticated' });
+        }
+
+        const formData = await request.formData();
+        const currentPassword = formData.get('currentPassword') as string;
+        const newPassword = formData.get('newPassword') as string;
+        const confirmPassword = formData.get('confirmPassword') as string;
+
+        // Validation
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            return fail(400, { error: 'All password fields are required' });
+        }
+
+        if (newPassword.length < 8) {
+            return fail(400, { error: 'New password must be at least 8 characters' });
+        }
+
+        if (newPassword !== confirmPassword) {
+            return fail(400, { error: 'New passwords do not match' });
+        }
+
+        // Verify current password by attempting to sign in
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+            email: user.email!,
+            password: currentPassword
+        });
+
+        if (signInError) {
+            return fail(400, { error: 'Current password is incorrect' });
+        }
+
+        // Update password
+        const { error: updateError } = await supabase.auth.updateUser({
+            password: newPassword
+        });
+
+        if (updateError) {
+            console.error('Password update error:', updateError);
+            return fail(500, { error: 'Failed to update password. Please try again.' });
+        }
+
+        return { success: true, message: 'Password updated successfully' };
+    },
+
     deleteAccount: async ({ locals: { user }, cookies }) => {
         if (!user) {
             return fail(401, { error: 'Not authenticated' });
@@ -59,6 +105,9 @@ export const actions: Actions = {
             // Redirect to home page
             redirect(303, '/?accountDeleted=true');
         } catch (err) {
+            if (isRedirect(err)) {
+                throw err;
+            }
             console.error('Account deletion exception:', err);
             return fail(500, { error: 'An unexpected error occurred. Please contact support.' });
         }

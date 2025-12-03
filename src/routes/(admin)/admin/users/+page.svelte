@@ -16,26 +16,20 @@
 	let searchQuery = $state('');
 	let roleFilter = $state<string>('all');
 
-	// Placeholder data - will be replaced with real data from database
-	const users = [
-		{ id: '1', email: 'admin@mostlywhat.systems', firstName: 'Admin', lastName: 'User', role: 'admin', status: 'active', lastLogin: '2024-12-01T10:30:00Z', createdAt: '2024-01-15T00:00:00Z' },
-		{ id: '2', email: 'staff@mostlywhat.systems', firstName: 'Staff', lastName: 'Member', role: 'staff', status: 'active', lastLogin: '2024-12-01T09:00:00Z', createdAt: '2024-03-20T00:00:00Z' },
-		{ id: '3', email: 'john@acme.com', firstName: 'John', lastName: 'Doe', role: 'customer', status: 'active', lastLogin: '2024-11-30T14:00:00Z', createdAt: '2024-06-10T00:00:00Z' },
-		{ id: '4', email: 'jane@global.com', firstName: 'Jane', lastName: 'Smith', role: 'customer', status: 'pending', lastLogin: null, createdAt: '2024-12-01T08:00:00Z' },
-		{ id: '5', email: 'bob@startup.com', firstName: 'Bob', lastName: 'Wilson', role: 'customer', status: 'inactive', lastLogin: '2024-10-15T00:00:00Z', createdAt: '2024-02-28T00:00:00Z' }
-	];
+	// Get users from server data
+	const users = $derived(data.users ?? []);
 
 	const filteredUsers = $derived(
 		users.filter(user => {
 			const matchesSearch = searchQuery === '' || 
-				user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-				`${user.firstName} ${user.lastName}`.toLowerCase().includes(searchQuery.toLowerCase());
+				(user.email ?? '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+				`${user.firstName ?? ''} ${user.lastName ?? ''}`.toLowerCase().includes(searchQuery.toLowerCase());
 			const matchesRole = roleFilter === 'all' || user.role === roleFilter;
 			return matchesSearch && matchesRole;
 		})
 	);
 
-	function formatDate(dateStr: string | null): string {
+	function formatDate(dateStr: string | Date | null): string {
 		if (!dateStr) return 'Never';
 		return new Date(dateStr).toLocaleDateString('en-US', { 
 			month: 'short', 

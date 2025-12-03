@@ -13,21 +13,15 @@
 	let searchQuery = $state('');
 	let statusFilter = $state<string>('all');
 
-	// Placeholder data
-	const invoices = [
-		{ id: '1', invoiceNumber: 'INV-2024-00042', title: 'Website Redesign - Milestone 1', organization: 'Acme Corporation', status: 'paid', total: 5000, amountDue: 0, issueDate: '2024-11-01', dueDate: '2024-11-30', paidAt: '2024-11-28' },
-		{ id: '2', invoiceNumber: 'INV-2024-00043', title: 'Website Redesign - Milestone 2', organization: 'Acme Corporation', status: 'sent', total: 5000, amountDue: 5000, issueDate: '2024-12-01', dueDate: '2024-12-31', paidAt: null },
-		{ id: '3', invoiceNumber: 'INV-2024-00044', title: 'CRM Integration Deposit', organization: 'Global Industries', status: 'overdue', total: 4000, amountDue: 4000, issueDate: '2024-11-01', dueDate: '2024-11-15', paidAt: null },
-		{ id: '4', invoiceNumber: 'INV-2024-00045', title: 'E-commerce Final Payment', organization: 'StartupXYZ', status: 'paid', total: 10000, amountDue: 0, issueDate: '2024-10-15', dueDate: '2024-11-15', paidAt: '2024-11-10' },
-		{ id: '5', invoiceNumber: 'INV-2024-00046', title: 'Analytics Dashboard Setup', organization: 'Global Industries', status: 'draft', total: 6000, amountDue: 6000, issueDate: '2024-12-01', dueDate: '2024-12-31', paidAt: null }
-	];
+	// Use real data from server
+	const invoices = data.invoices;
 
 	const filteredInvoices = $derived(
 		invoices.filter(invoice => {
 			const matchesSearch = searchQuery === '' || 
-				invoice.invoiceNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
-				invoice.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-				invoice.organization.toLowerCase().includes(searchQuery.toLowerCase());
+				(invoice.invoiceNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+				(invoice.title?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+				(invoice.organization?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false);
 			const matchesStatus = statusFilter === 'all' || invoice.status === statusFilter;
 			return matchesSearch && matchesStatus;
 		})
@@ -41,9 +35,10 @@
 		}).format(amount);
 	}
 
-	function formatDate(dateStr: string | null): string {
-		if (!dateStr) return '-';
-		return new Date(dateStr).toLocaleDateString('en-US', { 
+	function formatDate(date: Date | string | null): string {
+		if (!date) return '-';
+		const d = typeof date === 'string' ? new Date(date) : date;
+		return d.toLocaleDateString('en-US', { 
 			month: 'short', 
 			day: 'numeric' 
 		});

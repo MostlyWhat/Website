@@ -12,18 +12,14 @@
 	
 	let searchQuery = $state('');
 
-	// Placeholder data
-	const organizations = [
-		{ id: '1', name: 'Acme Corporation', slug: 'acme-corp', email: 'contact@acme.com', phone: '+1-555-0100', website: 'https://acme.com', projectCount: 5, memberCount: 3, totalRevenue: 45000 },
-		{ id: '2', name: 'Global Industries', slug: 'global-industries', email: 'info@global.com', phone: '+1-555-0200', website: 'https://global.com', projectCount: 2, memberCount: 2, totalRevenue: 18000 },
-		{ id: '3', name: 'StartupXYZ', slug: 'startup-xyz', email: 'hello@startupxyz.com', phone: '+1-555-0300', website: 'https://startupxyz.com', projectCount: 1, memberCount: 1, totalRevenue: 5000 }
-	];
+	// Use real data from server
+	const organizations = data.organizations;
 
 	const filteredOrgs = $derived(
 		organizations.filter(org => 
 			searchQuery === '' || 
 			org.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-			org.email.toLowerCase().includes(searchQuery.toLowerCase())
+			(org.email?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false)
 		)
 	);
 

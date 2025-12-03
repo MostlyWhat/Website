@@ -1,34 +1,20 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import { ArrowLeft, Download, CreditCard, Check, Clock, AlertTriangle } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 
-	// Sample invoice data
-	let invoice = $state({
-		id: 'INV-2024-0042',
-		status: 'pending',
-		project: 'E-Commerce Platform',
-		organization: 'TechCorp Solutions',
-		amount: 15000,
-		currency: 'THB',
-		issued_at: '2024-01-15',
-		due_date: '2024-02-15',
-		paid_at: null,
-		items: [
-			{ description: 'UI/UX Design Phase', quantity: 1, unit_price: 5000, total: 5000 },
-			{ description: 'Frontend Development', quantity: 40, unit_price: 200, total: 8000 },
-			{ description: 'API Integration', quantity: 10, unit_price: 200, total: 2000 }
-		],
-		notes: 'Payment is due within 30 days of invoice date. Please include the invoice number in your payment reference.'
-	});
+	let { data } = $props();
 
-	let isPastDue = $derived(new Date(invoice.due_date) < new Date() && invoice.status !== 'paid');
+	// Get invoice from server data
+	const invoice = $derived(data.invoice);
+
+	let isPastDue = $derived(invoice.dueDate && new Date(invoice.dueDate) < new Date() && invoice.status !== 'paid');
 
 	function formatCurrency(amount: number): string {
-		return new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB' }).format(amount);
+		return new Intl.NumberFormat('en-US', { style: 'currency', currency: invoice.currency ?? 'USD' }).format(amount);
 	}
 
-	function formatDate(date: string): string {
+	function formatDate(date: Date | string | null): string {
+		if (!date) return '-';
 		return new Date(date).toLocaleDateString('en-US', {
 			year: 'numeric',
 			month: 'long',
@@ -40,10 +26,13 @@
 		switch (status) {
 			case 'paid':
 				return { bg: 'bg-green-500/10', text: 'text-green-500', label: 'PAID' };
-			case 'pending':
+			case 'sent':
+			case 'viewed':
 				return { bg: 'bg-yellow-500/10', text: 'text-yellow-500', label: 'PENDING' };
 			case 'overdue':
 				return { bg: 'bg-red-500/10', text: 'text-red-500', label: 'OVERDUE' };
+			case 'partially_paid':
+				return { bg: 'bg-blue-500/10', text: 'text-blue-500', label: 'PARTIAL' };
 			default:
 				return { bg: 'bg-muted', text: 'text-muted-foreground', label: status.toUpperCase() };
 		}
@@ -53,7 +42,7 @@
 </script>
 
 <svelte:head>
-	<title>Invoice {invoice.id} | MostlyWhat Systems</title>
+	<title>Invoice {invoice.invoiceNumber} | MostlyWhat Systems</title>
 </svelte:head>
 
 <div class="min-h-[calc(100dvh-4rem)]">
@@ -68,8 +57,8 @@
 					<ArrowLeft class="h-4 w-4 transition-transform group-hover:-translate-x-1" />
 					<span class="font-mono text-[10px] tracking-widest">BACK TO INVOICES</span>
 				</a>
-				<h1 class="font-display mt-6 text-2xl font-bold uppercase md:text-3xl">{invoice.id}</h1>
-				<p class="font-body mt-2 text-muted-foreground">{invoice.project}</p>
+				<h1 class="font-display mt-6 text-2xl font-bold uppercase md:text-3xl">{invoice.invoiceNumber}</h1>
+				<p class="font-body mt-2 text-muted-foreground">{invoice.title ?? invoice.project ?? 'Invoice'}</p>
 			</div>
 
 			<div class="flex items-center gap-4">
@@ -102,15 +91,15 @@
 					</div>
 					<div class="text-right">
 						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">INVOICE DATE</span>
-						<p class="font-body mt-2 text-sm">{formatDate(invoice.issued_at)}</p>
+						<p class="font-body mt-2 text-sm">{formatDate(invoice.issueDate)}</p>
 					</div>
 					<div>
 						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">PROJECT</span>
-						<p class="font-body mt-2 text-sm">{invoice.project}</p>
+						<p class="font-body mt-2 text-sm">{invoice.project ?? 'N/A'}</p>
 					</div>
 					<div class="text-right">
 						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">DUE DATE</span>
-						<p class="font-body mt-2 text-sm {isPastDue ? 'text-red-500 font-semibold' : ''}">{formatDate(invoice.due_date)}</p>
+						<p class="font-body mt-2 text-sm {isPastDue ? 'text-red-500 font-semibold' : ''}">{formatDate(invoice.dueDate)}</p>
 					</div>
 				</div>
 
@@ -136,22 +125,28 @@
 						</div>
 
 						<!-- Line Items -->
-						{#each invoice.items as item}
-							<div class="grid grid-cols-12 gap-4 border-t border-border px-4 py-4">
-								<div class="col-span-6">
-									<span class="font-body text-sm">{item.description}</span>
+						{#if invoice.lineItems}
+							{#each invoice.lineItems as item}
+								<div class="grid grid-cols-12 gap-4 border-t border-border px-4 py-4">
+									<div class="col-span-6">
+										<span class="font-body text-sm">{item.description}</span>
+									</div>
+									<div class="col-span-2 text-right">
+										<span class="font-mono text-sm">{item.quantity}</span>
+									</div>
+									<div class="col-span-2 text-right">
+										<span class="font-body text-sm">{formatCurrency(item.unitPrice)}</span>
+									</div>
+									<div class="col-span-2 text-right">
+										<span class="font-body text-sm font-medium">{formatCurrency(item.total)}</span>
+									</div>
 								</div>
-								<div class="col-span-2 text-right">
-									<span class="font-mono text-sm">{item.quantity}</span>
-								</div>
-								<div class="col-span-2 text-right">
-									<span class="font-body text-sm">{formatCurrency(item.unit_price)}</span>
-								</div>
-								<div class="col-span-2 text-right">
-									<span class="font-body text-sm font-medium">{formatCurrency(item.total)}</span>
-								</div>
+							{/each}
+						{:else}
+							<div class="border-t border-border px-4 py-4 text-center text-muted-foreground">
+								<span class="font-body text-sm">No line items</span>
 							</div>
-						{/each}
+						{/if}
 
 						<!-- Total -->
 						<div class="grid grid-cols-12 gap-4 border-t border-border bg-card px-4 py-4">
@@ -159,7 +154,7 @@
 								<span class="font-ui text-sm font-semibold tracking-wider">TOTAL</span>
 							</div>
 							<div class="col-span-2 text-right">
-								<span class="font-display text-lg font-bold">{formatCurrency(invoice.amount)}</span>
+								<span class="font-display text-lg font-bold">{formatCurrency(invoice.total)}</span>
 							</div>
 						</div>
 					</div>
@@ -179,7 +174,7 @@
 				<!-- Amount Due Card -->
 				<div class="border border-border p-6">
 					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">AMOUNT DUE</span>
-					<p class="font-display mt-4 text-3xl font-bold">{formatCurrency(invoice.amount)}</p>
+					<p class="font-display mt-4 text-3xl font-bold">{formatCurrency(invoice.amountDue)}</p>
 					
 					{#if invoice.status !== 'paid'}
 						<div class="mt-6 space-y-3">
@@ -213,7 +208,7 @@
 								<div>
 									<p class="font-ui text-xs font-semibold text-green-500">PAID</p>
 									<p class="font-body mt-1 text-xs text-muted-foreground">
-										Thank you for your payment on {invoice.paid_at ? formatDate(invoice.paid_at) : 'N/A'}.
+										Thank you for your payment on {invoice.paidAt ? formatDate(invoice.paidAt) : 'N/A'}.
 									</p>
 								</div>
 							</div>

@@ -14,28 +14,23 @@
 	let statusFilter = $state<string>('all');
 	let priorityFilter = $state<string>('all');
 
-	// Placeholder data
-	const tickets = [
-		{ id: '1', ticketNumber: 'TKT-000042', subject: 'Website not loading on mobile', organization: 'Acme Corporation', createdBy: 'John Doe', assignedTo: 'Jane Staff', status: 'open', priority: 'high', createdAt: '2024-12-01T10:30:00Z', updatedAt: '2024-12-01T14:00:00Z' },
-		{ id: '2', ticketNumber: 'TKT-000043', subject: 'Need to update payment method', organization: 'Global Industries', createdBy: 'Mike Smith', assignedTo: null, status: 'awaiting_staff', priority: 'medium', createdAt: '2024-12-01T09:00:00Z', updatedAt: '2024-12-01T09:00:00Z' },
-		{ id: '3', ticketNumber: 'TKT-000044', subject: 'Feature request: Dark mode', organization: 'StartupXYZ', createdBy: 'Sarah Wilson', assignedTo: 'John Staff', status: 'in_progress', priority: 'low', createdAt: '2024-11-30T16:00:00Z', updatedAt: '2024-12-01T11:00:00Z' },
-		{ id: '4', ticketNumber: 'TKT-000045', subject: 'Urgent: Production server down', organization: 'Acme Corporation', createdBy: 'John Doe', assignedTo: 'Jane Staff', status: 'resolved', priority: 'urgent', createdAt: '2024-11-29T08:00:00Z', updatedAt: '2024-11-29T10:00:00Z' },
-		{ id: '5', ticketNumber: 'TKT-000046', subject: 'Question about API limits', organization: 'Global Industries', createdBy: 'Mike Smith', assignedTo: 'John Staff', status: 'awaiting_customer', priority: 'medium', createdAt: '2024-11-28T14:00:00Z', updatedAt: '2024-11-30T09:00:00Z' }
-	];
+	// Get tickets from server data
+	const tickets = $derived(data.tickets ?? []);
 
 	const filteredTickets = $derived(
 		tickets.filter(ticket => {
 			const matchesSearch = searchQuery === '' || 
 				ticket.ticketNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
 				ticket.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
-				ticket.organization.toLowerCase().includes(searchQuery.toLowerCase());
+				(ticket.organization ?? '').toLowerCase().includes(searchQuery.toLowerCase());
 			const matchesStatus = statusFilter === 'all' || ticket.status === statusFilter;
 			const matchesPriority = priorityFilter === 'all' || ticket.priority === priorityFilter;
 			return matchesSearch && matchesStatus && matchesPriority;
 		})
 	);
 
-	function formatTimeAgo(dateStr: string): string {
+	function formatTimeAgo(dateStr: string | Date | null): string {
+		if (!dateStr) return 'Unknown';
 		const date = new Date(dateStr);
 		const now = new Date();
 		const diffMs = now.getTime() - date.getTime();

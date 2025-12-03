@@ -13,20 +13,14 @@
 	let searchQuery = $state('');
 	let statusFilter = $state<string>('all');
 
-	// Placeholder data
-	const proposals = [
-		{ id: '1', title: 'Website Redesign Proposal v2', project: 'Website Redesign', organization: 'Acme Corporation', status: 'sent', total: 15000, sentAt: '2024-11-28', expiresAt: '2024-12-28', viewedAt: '2024-11-29' },
-		{ id: '2', title: 'Mobile App Development', project: 'Mobile App Development', organization: 'Acme Corporation', status: 'draft', total: 45000, sentAt: null, expiresAt: null, viewedAt: null },
-		{ id: '3', title: 'CRM Integration Services', project: 'CRM Integration', organization: 'Global Industries', status: 'viewed', total: 8500, sentAt: '2024-11-25', expiresAt: '2024-12-25', viewedAt: '2024-11-26' },
-		{ id: '4', title: 'E-commerce Platform Build', project: 'E-commerce Platform', organization: 'StartupXYZ', status: 'accepted', total: 25000, sentAt: '2024-07-15', expiresAt: '2024-08-15', viewedAt: '2024-07-16' },
-		{ id: '5', title: 'Analytics Dashboard Phase 1', project: 'Analytics Dashboard', organization: 'Global Industries', status: 'rejected', total: 12000, sentAt: '2024-09-01', expiresAt: '2024-10-01', viewedAt: '2024-09-05' }
-	];
+	// Use real data from server
+	const proposals = data.proposals;
 
 	const filteredProposals = $derived(
 		proposals.filter(proposal => {
 			const matchesSearch = searchQuery === '' || 
 				proposal.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-				proposal.organization.toLowerCase().includes(searchQuery.toLowerCase());
+				(proposal.organization?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false);
 			const matchesStatus = statusFilter === 'all' || proposal.status === statusFilter;
 			return matchesSearch && matchesStatus;
 		})
@@ -40,9 +34,10 @@
 		}).format(amount);
 	}
 
-	function formatDate(dateStr: string | null): string {
-		if (!dateStr) return '-';
-		return new Date(dateStr).toLocaleDateString('en-US', { 
+	function formatDate(date: Date | string | null): string {
+		if (!date) return '-';
+		const d = typeof date === 'string' ? new Date(date) : date;
+		return d.toLocaleDateString('en-US', { 
 			month: 'short', 
 			day: 'numeric' 
 		});

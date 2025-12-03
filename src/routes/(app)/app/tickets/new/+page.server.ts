@@ -200,10 +200,11 @@ export const actions: Actions = {
             }).returning({ id: tickets.id, ticketNumber: tickets.ticketNumber });
 
             // Redirect to the new ticket
-            throw redirect(303, `/app/tickets/${newTicket.id}`);
+            redirect(303, `/app/tickets/${newTicket.id}`);
         } catch (err) {
-            // Handle redirect
-            if (err instanceof Response) {
+            // Handle redirect - use isRedirect pattern
+            const { isRedirect } = await import('@sveltejs/kit');
+            if (isRedirect(err)) {
                 throw err;
             }
 

@@ -9,20 +9,44 @@
 
 	let { data } = $props();
 
-	// Placeholder stats - will be replaced with real data
-	const stats = [
-		{ label: 'ACTIVE PROJECTS', value: '03', icon: FolderKanban, href: '/app/projects' },
-		{ label: 'PENDING PROPOSALS', value: '01', icon: FileText, href: '/app/proposals' },
-		{ label: 'UNPAID INVOICES', value: '02', icon: Receipt, href: '/app/invoices' },
-		{ label: 'OPEN TICKETS', value: '01', icon: Ticket, href: '/app/tickets' }
-	];
+	// Get stats from server data
+	const stats = $derived([
+		{ label: 'ACTIVE PROJECTS', value: String(data.stats?.activeProjects ?? 0).padStart(2, '0'), icon: FolderKanban, href: '/app/projects' },
+		{ label: 'PENDING PROPOSALS', value: String(data.stats?.pendingProposals ?? 0).padStart(2, '0'), icon: FileText, href: '/app/proposals' },
+		{ label: 'UNPAID INVOICES', value: String(data.stats?.unpaidInvoices ?? 0).padStart(2, '0'), icon: Receipt, href: '/app/invoices' },
+		{ label: 'OPEN TICKETS', value: String(data.stats?.openTickets ?? 0).padStart(2, '0'), icon: Ticket, href: '/app/tickets' }
+	]);
 
-	// Placeholder recent activity
-	const recentActivity = [
-		{ type: 'invoice_paid', title: 'Invoice #INV-001 paid', time: '2 hours ago', icon: CheckCircle },
-		{ type: 'proposal', title: 'New proposal for Project Alpha', time: '1 day ago', icon: FileText },
-		{ type: 'milestone', title: 'Project Beta milestone completed', time: '3 days ago', icon: FolderKanban }
-	];
+	// Get recent activity from server data
+	const recentActivity = $derived(data.recentActivity ?? []);
+
+	// Format time ago
+	function formatTimeAgo(dateStr: string | Date | null): string {
+		if (!dateStr) return 'Unknown';
+		const date = new Date(dateStr);
+		const now = new Date();
+		const diffMs = now.getTime() - date.getTime();
+		const diffMins = Math.floor(diffMs / 60000);
+		const diffHours = Math.floor(diffMins / 60);
+		const diffDays = Math.floor(diffHours / 24);
+
+		if (diffDays > 0) return `${diffDays}d ago`;
+		if (diffHours > 0) return `${diffHours}h ago`;
+		if (diffMins > 0) return `${diffMins}m ago`;
+		return 'Just now';
+	}
+
+	// Get icon component for activity type
+	function getActivityIcon(iconName: string) {
+		switch (iconName) {
+			case 'FolderKanban': return FolderKanban;
+			case 'FileText': return FileText;
+			case 'Receipt': return Receipt;
+			case 'CheckCircle': return CheckCircle;
+			case 'Ticket': return Ticket;
+			default: return Clock;
+		}
+	}
 
 	const quickActions = [
 		{ label: 'SUBMIT TICKET', icon: Ticket, href: '/app/tickets/new' },
@@ -77,14 +101,15 @@
 			<div class="px-6 py-8 md:px-12 lg:px-16">
 				{#if recentActivity.length > 0}
 					<div class="space-y-4">
-						{#each recentActivity as { title, time, icon: Icon }}
+						{#each recentActivity as activity}
+							{@const Icon = getActivityIcon(activity.icon)}
 							<div class="flex items-start gap-4 border-b border-border pb-4 last:border-0 last:pb-0">
 								<div class="flex h-10 w-10 items-center justify-center border border-border bg-card">
 									<Icon class="h-4 w-4 text-primary" />
 								</div>
 								<div class="flex-1">
-									<p class="font-ui text-sm font-medium">{title}</p>
-									<p class="font-mono mt-1 text-[10px] tracking-wider text-muted-foreground">{time}</p>
+									<p class="font-ui text-sm font-medium">{activity.title}</p>
+									<p class="font-mono mt-1 text-[10px] tracking-wider text-muted-foreground">{formatTimeAgo(activity.time)}</p>
 								</div>
 							</div>
 						{/each}

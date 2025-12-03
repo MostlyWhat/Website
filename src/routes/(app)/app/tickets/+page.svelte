@@ -7,14 +7,11 @@
 
 	let { data } = $props();
 
-	// Placeholder data - will be replaced with real data from database
-	const tickets = [
-		{ id: '1', ticketNumber: 'TKT-000042', subject: 'Website not loading on mobile', status: 'in_progress', priority: 'high', assignedTo: 'Jane Staff', createdAt: '2024-12-01T10:30:00Z', updatedAt: '2024-12-01T14:00:00Z', responseCount: 3 },
-		{ id: '2', ticketNumber: 'TKT-000043', subject: 'Need to update billing information', status: 'awaiting_customer', priority: 'medium', assignedTo: 'John Staff', createdAt: '2024-11-30T09:00:00Z', updatedAt: '2024-12-01T11:00:00Z', responseCount: 2 },
-		{ id: '3', ticketNumber: 'TKT-000044', subject: 'Feature request: Export to PDF', status: 'resolved', priority: 'low', assignedTo: 'John Staff', createdAt: '2024-11-28T14:00:00Z', updatedAt: '2024-11-30T09:00:00Z', responseCount: 4 }
-	];
+	// Get tickets from server data
+	const tickets = $derived(data.tickets ?? []);
 
-	function formatTimeAgo(dateStr: string): string {
+	function formatTimeAgo(dateStr: string | Date | null): string {
+		if (!dateStr) return 'Unknown';
 		const date = new Date(dateStr);
 		const now = new Date();
 		const diffMs = now.getTime() - date.getTime();

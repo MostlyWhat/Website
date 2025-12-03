@@ -51,9 +51,9 @@
 	const roleLabel = $derived(data.profile?.role === 'super_admin' ? 'SUPER ADMIN' : data.profile?.role === 'admin' ? 'ADMIN' : 'STAFF');
 </script>
 
-<div class="flex min-h-screen bg-background">
+<div class="flex h-screen overflow-hidden bg-background">
 	<!-- Desktop Sidebar -->
-	<aside class="hidden w-72 flex-shrink-0 border-r border-border bg-card lg:flex lg:flex-col">
+	<aside class="hidden w-72 flex-shrink-0 border-r border-border bg-card lg:flex lg:flex-col overflow-hidden">
 		<!-- Logo -->
 		<div class="flex h-16 items-center border-b border-border px-6">
 			<a href={localizeHref('/')} class="group flex items-center gap-3">
@@ -66,7 +66,7 @@
 		</div>
 
 		<!-- Navigation -->
-		<nav class="flex-1 border-b border-border">
+		<nav class="flex-1 overflow-y-auto border-b border-border">
 			{#each navigation as { href, label, icon: Icon, exact }}
 				<a
 					{href}

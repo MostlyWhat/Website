@@ -6,14 +6,10 @@
 
 	let { data } = $props();
 
-	// Placeholder data - will be replaced with real data from database
-	const projects = [
-		{ id: '1', name: 'Website Redesign', description: 'Complete website overhaul with new branding', status: 'in_progress', progress: 65, startDate: '2024-11-01', endDate: '2024-12-31', assignedTo: 'John Staff' },
-		{ id: '2', name: 'Mobile App Development', description: 'Native iOS and Android application', status: 'proposal_sent', progress: 0, startDate: null, endDate: null, assignedTo: 'Jane Staff' },
-		{ id: '3', name: 'E-commerce Platform', description: 'Online store with payment integration', status: 'completed', progress: 100, startDate: '2024-08-01', endDate: '2024-10-31', assignedTo: 'John Staff' }
-	];
+	// Get projects from server data
+	const projects = $derived(data.projects ?? []);
 
-	function formatDate(dateStr: string | null): string {
+	function formatDate(dateStr: string | Date | null): string {
 		if (!dateStr) return 'TBD';
 		return new Date(dateStr).toLocaleDateString('en-US', { 
 			month: 'short', 
@@ -74,17 +70,7 @@
 									<span class="font-mono text-[10px] tracking-wider uppercase">{statusConfig.label}</span>
 								</span>
 							</div>
-							<p class="font-body mt-1 text-xs text-muted-foreground truncate">{project.description}</p>
-							
-							<!-- Progress Bar -->
-							{#if project.status === 'in_progress'}
-								<div class="mt-3 flex items-center gap-3">
-									<div class="h-1 flex-1 bg-border">
-										<div class="h-full bg-primary" style="width: {project.progress}%"></div>
-									</div>
-									<span class="font-mono text-[10px] tracking-wider text-muted-foreground">{project.progress}%</span>
-								</div>
-							{/if}
+							<p class="font-body mt-1 text-xs text-muted-foreground truncate">{project.description ?? 'No description'}</p>
 						</div>
 
 						<!-- Timeline & Assignee -->

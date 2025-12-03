@@ -1,46 +1,19 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import { ArrowLeft, Calendar, Users, FileText, MessageSquare, CheckCircle2, Clock, AlertCircle } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 
-	// Sample project data
-	let project = $state({
-		id: 'PRJ-2024-0012',
-		name: 'E-Commerce Platform',
-		status: 'in_progress',
-		organization: 'TechCorp Solutions',
-		description: 'A comprehensive e-commerce solution with custom product management, shopping cart, secure checkout, and integration with major payment gateways.',
-		start_date: '2024-02-01',
-		estimated_end_date: '2024-05-15',
-		budget: 150000,
-		currency: 'THB',
-		progress: 45,
-		team: [
-			{ name: 'Sarah Chen', role: 'Project Manager', avatar: null },
-			{ name: 'Mike Johnson', role: 'Lead Developer', avatar: null },
-			{ name: 'Anna Lee', role: 'UI/UX Designer', avatar: null }
-		],
-		milestones: [
-			{ name: 'Discovery & Planning', status: 'completed', date: '2024-02-14' },
-			{ name: 'Design Approval', status: 'completed', date: '2024-03-01' },
-			{ name: 'Frontend Development', status: 'in_progress', date: '2024-04-01' },
-			{ name: 'Backend Integration', status: 'pending', date: '2024-04-15' },
-			{ name: 'Testing & QA', status: 'pending', date: '2024-05-01' },
-			{ name: 'Launch', status: 'pending', date: '2024-05-15' }
-		],
-		recent_activity: [
-			{ action: 'Completed checkout page design', date: '2024-03-10', user: 'Anna Lee' },
-			{ action: 'API endpoints documentation updated', date: '2024-03-09', user: 'Mike Johnson' },
-			{ action: 'Weekly progress report sent', date: '2024-03-08', user: 'Sarah Chen' },
-			{ action: 'Product listing component implemented', date: '2024-03-07', user: 'Mike Johnson' }
-		]
-	});
+	let { data } = $props();
+
+	// Get project from server data
+	const project = $derived(data.project);
+	const recentActivity = $derived(data.recentActivity ?? []);
 
 	function formatCurrency(amount: number): string {
-		return new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB' }).format(amount);
+		return new Intl.NumberFormat('en-US', { style: 'currency', currency: project.currency ?? 'USD' }).format(amount);
 	}
 
-	function formatDate(date: string): string {
+	function formatDate(date: Date | string | null): string {
+		if (!date) return 'TBD';
 		return new Date(date).toLocaleDateString('en-US', {
 			year: 'numeric',
 			month: 'short',
@@ -57,7 +30,12 @@
 			case 'on_hold':
 				return { bg: 'bg-yellow-500/10', text: 'text-yellow-500', label: 'ON HOLD' };
 			case 'pending':
+			case 'draft':
 				return { bg: 'bg-muted', text: 'text-muted-foreground', label: 'PENDING' };
+			case 'proposal_sent':
+				return { bg: 'bg-blue-500/10', text: 'text-blue-500', label: 'PROPOSAL SENT' };
+			case 'proposal_accepted':
+				return { bg: 'bg-green-500/10', text: 'text-green-500', label: 'ACCEPTED' };
 			default:
 				return { bg: 'bg-muted', text: 'text-muted-foreground', label: status.toUpperCase().replace('_', ' ') };
 		}
@@ -83,23 +61,12 @@
 					<span class="font-mono text-[10px] tracking-widest">BACK TO PROJECTS</span>
 				</a>
 				<h1 class="font-display mt-6 text-2xl font-bold uppercase md:text-3xl">{project.name}</h1>
-				<p class="font-mono mt-2 text-xs tracking-widest text-muted-foreground">{project.id}</p>
+				<p class="font-mono mt-2 text-xs tracking-widest text-muted-foreground">{project.organization}</p>
 			</div>
 
 			<span class="font-mono text-[10px] tracking-widest px-3 py-1 {status.bg} {status.text}">
 				{status.label}
 			</span>
-		</div>
-	</section>
-
-	<!-- Progress Bar -->
-	<section class="border-b border-border bg-card px-6 py-4 md:px-12 lg:px-16">
-		<div class="flex items-center justify-between">
-			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">PROJECT PROGRESS</span>
-			<span class="font-mono text-sm font-semibold">{project.progress}%</span>
-		</div>
-		<div class="mt-2 h-2 w-full bg-border">
-			<div class="h-full bg-primary transition-all" style="width: {project.progress}%"></div>
 		</div>
 	</section>
 
@@ -111,69 +78,36 @@
 				<!-- Description -->
 				<div>
 					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">01 — PROJECT OVERVIEW</span>
-					<p class="font-body mt-4 text-base leading-relaxed text-muted-foreground">{project.description}</p>
-				</div>
-
-				<!-- Milestones -->
-				<div class="mt-12">
-					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">02 — MILESTONES</span>
-					
-					<div class="mt-6 space-y-4">
-						{#each project.milestones as milestone, index}
-							{@const milestoneStatus = getStatusBadge(milestone.status)}
-							<div class="flex items-start gap-4">
-								<!-- Timeline indicator -->
-								<div class="flex flex-col items-center">
-									<div class="flex h-8 w-8 items-center justify-center border {milestone.status === 'completed' ? 'border-green-500 bg-green-500/10' : milestone.status === 'in_progress' ? 'border-blue-500 bg-blue-500/10' : 'border-border bg-card'}">
-										{#if milestone.status === 'completed'}
-											<CheckCircle2 class="h-4 w-4 text-green-500" />
-										{:else if milestone.status === 'in_progress'}
-											<Clock class="h-4 w-4 text-blue-500" />
-										{:else}
-											<span class="font-mono text-xs text-muted-foreground">{String(index + 1).padStart(2, '0')}</span>
-										{/if}
-									</div>
-									{#if index < project.milestones.length - 1}
-										<div class="h-8 w-px {milestone.status === 'completed' ? 'bg-green-500' : 'bg-border'}"></div>
-									{/if}
-								</div>
-
-								<div class="flex flex-1 items-center justify-between border border-border px-4 py-3 {milestone.status === 'in_progress' ? 'border-blue-500/30 bg-blue-500/5' : ''}">
-									<div>
-										<span class="font-ui text-sm font-medium">{milestone.name}</span>
-										<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">
-											{formatDate(milestone.date)}
-										</p>
-									</div>
-									<span class="font-mono text-[10px] tracking-widest px-2 py-0.5 {milestoneStatus.bg} {milestoneStatus.text}">
-										{milestoneStatus.label}
-									</span>
-								</div>
-							</div>
-						{/each}
-					</div>
+					<p class="font-body mt-4 text-base leading-relaxed text-muted-foreground">{project.description ?? 'No description available.'}</p>
 				</div>
 
 				<!-- Recent Activity -->
-				<div class="mt-12">
-					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">03 — RECENT ACTIVITY</span>
-					
-					<div class="mt-6 border border-border divide-y divide-border">
-						{#each project.recent_activity as activity}
-							<div class="flex items-start gap-4 px-4 py-4">
-								<div class="flex h-8 w-8 flex-shrink-0 items-center justify-center border border-border bg-card">
-									<span class="font-mono text-xs uppercase">{activity.user.split(' ').map(n => n[0]).join('')}</span>
+				{#if recentActivity.length > 0}
+					<div class="mt-12">
+						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">02 — RECENT ACTIVITY</span>
+						
+						<div class="mt-6 border border-border divide-y divide-border">
+							{#each recentActivity as activity}
+								<div class="flex items-start gap-4 px-4 py-4">
+									<div class="flex h-8 w-8 flex-shrink-0 items-center justify-center border border-border bg-card">
+										<span class="font-mono text-xs uppercase">{(activity.user ?? 'S').charAt(0)}</span>
+									</div>
+									<div class="flex-1">
+										<p class="font-body text-sm">{activity.description}</p>
+										<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">
+											{activity.user} • {formatDate(activity.createdAt)}
+										</p>
+									</div>
 								</div>
-								<div class="flex-1">
-									<p class="font-body text-sm">{activity.action}</p>
-									<p class="font-mono mt-1 text-[10px] tracking-widest text-muted-foreground">
-										{activity.user} • {formatDate(activity.date)}
-									</p>
-								</div>
-							</div>
-						{/each}
+							{/each}
+						</div>
 					</div>
-				</div>
+				{:else}
+					<div class="mt-12">
+						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">02 — RECENT ACTIVITY</span>
+						<p class="font-body mt-4 text-sm text-muted-foreground">No recent activity.</p>
+					</div>
+				{/if}
 			</div>
 
 			<!-- Sidebar -->
@@ -189,7 +123,7 @@
 							</div>
 							<div>
 								<p class="font-mono text-[10px] tracking-widest text-muted-foreground">TIMELINE</p>
-								<p class="font-body text-sm">{formatDate(project.start_date)} — {formatDate(project.estimated_end_date)}</p>
+								<p class="font-body text-sm">{formatDate(project.startDate)} — {formatDate(project.endDate)}</p>
 							</div>
 						</div>
 
@@ -199,28 +133,21 @@
 							</div>
 							<div>
 								<p class="font-mono text-[10px] tracking-widest text-muted-foreground">BUDGET</p>
-								<p class="font-display text-lg font-bold">{formatCurrency(project.budget)}</p>
+								<p class="font-display text-lg font-bold">{formatCurrency(project.estimatedBudget)}</p>
 							</div>
 						</div>
-					</div>
-				</div>
 
-				<!-- Team -->
-				<div class="mt-6 border border-border p-6">
-					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">YOUR TEAM</span>
-					
-					<div class="mt-4 space-y-3">
-						{#each project.team as member}
-							<div class="flex items-center gap-3">
-								<div class="flex h-10 w-10 items-center justify-center border border-border bg-card">
-									<span class="font-mono text-xs uppercase">{member.name.split(' ').map(n => n[0]).join('')}</span>
+						{#if project.assignedTo}
+							<div class="flex items-start gap-3">
+								<div class="flex h-10 w-10 flex-shrink-0 items-center justify-center border border-border bg-card">
+									<Users class="h-5 w-5 text-muted-foreground" />
 								</div>
 								<div>
-									<p class="font-ui text-sm font-medium">{member.name}</p>
-									<p class="font-mono text-[10px] tracking-widest text-muted-foreground">{member.role.toUpperCase()}</p>
+									<p class="font-mono text-[10px] tracking-widest text-muted-foreground">PROJECT LEAD</p>
+									<p class="font-body text-sm">{project.assignedTo}</p>
 								</div>
 							</div>
-						{/each}
+						{/if}
 					</div>
 				</div>
 

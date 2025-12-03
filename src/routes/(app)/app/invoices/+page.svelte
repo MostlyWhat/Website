@@ -7,14 +7,11 @@
 
 	let { data } = $props();
 
-	// Placeholder data - will be replaced with real data from database
-	const invoices = [
-		{ id: '1', invoiceNumber: 'INV-2024-00042', title: 'Website Redesign - Milestone 1', status: 'paid', total: 5000, amountDue: 0, issueDate: '2024-11-01', dueDate: '2024-11-30', paidAt: '2024-11-28' },
-		{ id: '2', invoiceNumber: 'INV-2024-00043', title: 'Website Redesign - Milestone 2', status: 'sent', total: 5000, amountDue: 5000, issueDate: '2024-12-01', dueDate: '2024-12-31', paidAt: null },
-		{ id: '3', invoiceNumber: 'INV-2024-00044', title: 'Mobile App Deposit', status: 'overdue', total: 15000, amountDue: 15000, issueDate: '2024-11-15', dueDate: '2024-11-30', paidAt: null }
-	];
+	// Get invoices from server data
+	const invoices = $derived(data.invoices ?? []);
 
-	function formatCurrency(amount: number): string {
+	function formatCurrency(amount: number | null): string {
+		if (amount === null) return '$0';
 		return new Intl.NumberFormat('en-US', {
 			style: 'currency',
 			currency: 'USD',
@@ -22,7 +19,7 @@
 		}).format(amount);
 	}
 
-	function formatDate(dateStr: string | null): string {
+	function formatDate(dateStr: string | Date | null): string {
 		if (!dateStr) return '-';
 		return new Date(dateStr).toLocaleDateString('en-US', { 
 			month: 'short', 

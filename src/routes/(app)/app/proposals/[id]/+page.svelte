@@ -1,86 +1,28 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { enhance } from '$app/forms';
 	import { ArrowLeft, Check, X, Download, Clock, FileText, Calendar, DollarSign } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 
-	// Sample proposal data
-	let proposal = $state({
-		id: 'PROP-2024-0018',
-		title: 'E-Commerce Platform Development',
-		status: 'sent',
-		organization: 'TechCorp Solutions',
-		created_at: '2024-01-10',
-		valid_until: '2024-02-10',
-		total_amount: 150000,
-		currency: 'THB',
-		summary: 'A comprehensive e-commerce solution with custom product management, shopping cart, secure checkout, and integration with major payment gateways.',
-		scope: [
-			{
-				phase: 'Discovery & Planning',
-				duration: '2 weeks',
-				items: [
-					'Requirements gathering and analysis',
-					'User research and persona development',
-					'Technical architecture planning',
-					'Project timeline and milestones'
-				]
-			},
-			{
-				phase: 'UI/UX Design',
-				duration: '3 weeks',
-				items: [
-					'Wireframing and prototyping',
-					'Visual design system creation',
-					'Responsive design for all devices',
-					'User testing and iterations'
-				]
-			},
-			{
-				phase: 'Development',
-				duration: '8 weeks',
-				items: [
-					'Frontend development (SvelteKit)',
-					'Backend API development',
-					'Database design and implementation',
-					'Payment gateway integration',
-					'Admin dashboard development'
-				]
-			},
-			{
-				phase: 'Testing & Launch',
-				duration: '2 weeks',
-				items: [
-					'Quality assurance testing',
-					'Performance optimization',
-					'Security audit',
-					'Deployment and go-live support'
-				]
-			}
-		],
-		pricing: [
-			{ description: 'Discovery & Planning', amount: 15000 },
-			{ description: 'UI/UX Design', amount: 25000 },
-			{ description: 'Frontend Development', amount: 45000 },
-			{ description: 'Backend Development', amount: 40000 },
-			{ description: 'Testing & QA', amount: 15000 },
-			{ description: 'Project Management', amount: 10000 }
-		],
-		terms: [
-			'50% deposit required to begin work',
-			'25% due upon design approval',
-			'25% due upon project completion',
-			'Proposal valid for 30 days from issue date',
-			'All prices in Thai Baht (THB), exclusive of VAT'
-		]
-	});
+	let { data } = $props();
 
-	let isExpired = $derived(new Date(proposal.valid_until) < new Date() && proposal.status === 'sent');
+	// Get proposal from server data
+	const proposal = $derived(data.proposal);
+
+	let isExpired = $derived(
+		proposal.expiresAt && 
+		new Date(proposal.expiresAt) < new Date() && 
+		['sent', 'viewed'].includes(proposal.status)
+	);
+
+	let isActionable = $derived(['sent', 'viewed'].includes(proposal.status) && !isExpired);
+	let showRejectForm = $state(false);
 
 	function formatCurrency(amount: number): string {
-		return new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB' }).format(amount);
+		return new Intl.NumberFormat('en-US', { style: 'currency', currency: proposal.currency ?? 'USD' }).format(amount);
 	}
 
-	function formatDate(date: string): string {
+	function formatDate(date: Date | string | null): string {
+		if (!date) return '-';
 		return new Date(date).toLocaleDateString('en-US', {
 			year: 'numeric',
 			month: 'long',
@@ -96,6 +38,8 @@
 				return { bg: 'bg-red-500/10', text: 'text-red-500', label: 'REJECTED' };
 			case 'sent':
 				return { bg: 'bg-blue-500/10', text: 'text-blue-500', label: 'AWAITING RESPONSE' };
+			case 'viewed':
+				return { bg: 'bg-purple-500/10', text: 'text-purple-500', label: 'VIEWED' };
 			case 'draft':
 				return { bg: 'bg-muted', text: 'text-muted-foreground', label: 'DRAFT' };
 			default:
@@ -123,7 +67,7 @@
 					<span class="font-mono text-[10px] tracking-widest">BACK TO PROPOSALS</span>
 				</a>
 				<h1 class="font-display mt-6 text-2xl font-bold uppercase md:text-3xl">{proposal.title}</h1>
-				<p class="font-mono mt-2 text-xs tracking-widest text-muted-foreground">{proposal.id}</p>
+				<p class="font-mono mt-2 text-xs tracking-widest text-muted-foreground">{proposal.organization}</p>
 			</div>
 
 			<span class="font-mono text-[10px] tracking-widest px-3 py-1 {status.bg} {status.text}">
@@ -140,70 +84,56 @@
 				<!-- Summary -->
 				<div>
 					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">01 — PROJECT SUMMARY</span>
-					<p class="font-body mt-4 text-base leading-relaxed text-muted-foreground">{proposal.summary}</p>
+					<p class="font-body mt-4 text-base leading-relaxed text-muted-foreground">{proposal.summary ?? 'No summary provided.'}</p>
 				</div>
 
-				<!-- Scope of Work -->
-				<div class="mt-12">
-					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">02 — SCOPE OF WORK</span>
-					
-					<div class="mt-6 space-y-6">
-						{#each proposal.scope as phase, index}
-							<div class="border border-border">
-								<div class="flex items-center justify-between bg-card px-4 py-3">
-									<div class="flex items-center gap-3">
-										<div class="flex h-8 w-8 items-center justify-center border border-border bg-background">
-											<span class="font-mono text-xs">{String(index + 1).padStart(2, '0')}</span>
-										</div>
-										<span class="font-ui text-sm font-semibold tracking-wider uppercase">{phase.phase}</span>
-									</div>
-									<span class="font-mono text-[10px] tracking-widest text-muted-foreground">{phase.duration}</span>
-								</div>
-								<div class="px-4 py-4">
-									<ul class="space-y-2">
-										{#each phase.items as item}
-											<li class="flex items-start gap-2">
-												<div class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 bg-primary"></div>
-												<span class="font-body text-sm text-muted-foreground">{item}</span>
-											</li>
-										{/each}
-									</ul>
-								</div>
-							</div>
-						{/each}
+				<!-- Content (if available) -->
+				{#if proposal.content}
+					<div class="mt-12">
+						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">02 — PROPOSAL DETAILS</span>
+						<div class="font-body mt-4 prose prose-sm max-w-none text-muted-foreground">
+							{@html proposal.content}
+						</div>
 					</div>
-				</div>
+				{/if}
 
-				<!-- Pricing Breakdown -->
+				<!-- Pricing -->
 				<div class="mt-12">
-					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">03 — PRICING BREAKDOWN</span>
+					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">{proposal.content ? '03' : '02'} — PRICING</span>
 					
 					<div class="mt-6 border border-border">
-						{#each proposal.pricing as item}
-							<div class="flex items-center justify-between border-b border-border px-4 py-4 last:border-b-0">
-								<span class="font-body text-sm">{item.description}</span>
-								<span class="font-mono text-sm">{formatCurrency(item.amount)}</span>
+						{#if proposal.subtotal > 0}
+							<div class="flex items-center justify-between border-b border-border px-4 py-4">
+								<span class="font-body text-sm">Subtotal</span>
+								<span class="font-mono text-sm">{formatCurrency(proposal.subtotal)}</span>
 							</div>
-						{/each}
+						{/if}
+						{#if proposal.discount > 0}
+							<div class="flex items-center justify-between border-b border-border px-4 py-4">
+								<span class="font-body text-sm">Discount</span>
+								<span class="font-mono text-sm text-green-500">-{formatCurrency(proposal.discount)}</span>
+							</div>
+						{/if}
+						{#if proposal.taxAmount > 0}
+							<div class="flex items-center justify-between border-b border-border px-4 py-4">
+								<span class="font-body text-sm">Tax ({proposal.taxRate}%)</span>
+								<span class="font-mono text-sm">{formatCurrency(proposal.taxAmount)}</span>
+							</div>
+						{/if}
 						<div class="flex items-center justify-between bg-card px-4 py-4">
 							<span class="font-ui text-sm font-semibold tracking-wider">TOTAL</span>
-							<span class="font-display text-xl font-bold">{formatCurrency(proposal.total_amount)}</span>
+							<span class="font-display text-xl font-bold">{formatCurrency(proposal.total)}</span>
 						</div>
 					</div>
 				</div>
 
-				<!-- Terms & Conditions -->
-				<div class="mt-12">
-					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">04 — TERMS & CONDITIONS</span>
-					<ul class="mt-4 space-y-2">
-						{#each proposal.terms as term}
-							<li class="flex items-start gap-2">
-								<div class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 bg-muted-foreground"></div>
-								<span class="font-body text-sm text-muted-foreground">{term}</span>
-							</li>
-						{/each}
-					</ul>
-				</div>
+				<!-- Rejection Reason (if rejected) -->
+				{#if proposal.status === 'rejected' && proposal.rejectionReason}
+					<div class="mt-12">
+						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">REJECTION REASON</span>
+						<p class="font-body mt-4 text-sm text-red-500">{proposal.rejectionReason}</p>
+					</div>
+				{/if}
 			</div>
 
 			<!-- Sidebar -->
@@ -219,7 +149,7 @@
 							</div>
 							<div>
 								<p class="font-mono text-[10px] tracking-widest text-muted-foreground">TOTAL VALUE</p>
-								<p class="font-display text-lg font-bold">{formatCurrency(proposal.total_amount)}</p>
+								<p class="font-display text-lg font-bold">{formatCurrency(proposal.total)}</p>
 							</div>
 						</div>
 
@@ -229,19 +159,21 @@
 							</div>
 							<div>
 								<p class="font-mono text-[10px] tracking-widest text-muted-foreground">VALID UNTIL</p>
-								<p class="font-body text-sm {isExpired ? 'text-yellow-500 font-semibold' : ''}">{formatDate(proposal.valid_until)}</p>
+								<p class="font-body text-sm {isExpired ? 'text-yellow-500 font-semibold' : ''}">{formatDate(proposal.expiresAt)}</p>
 							</div>
 						</div>
 
-						<div class="flex items-start gap-3">
-							<div class="flex h-10 w-10 flex-shrink-0 items-center justify-center border border-border bg-card">
-								<Clock class="h-5 w-5 text-muted-foreground" />
+						{#if proposal.project}
+							<div class="flex items-start gap-3">
+								<div class="flex h-10 w-10 flex-shrink-0 items-center justify-center border border-border bg-card">
+									<FileText class="h-5 w-5 text-muted-foreground" />
+								</div>
+								<div>
+									<p class="font-mono text-[10px] tracking-widest text-muted-foreground">PROJECT</p>
+									<p class="font-body text-sm">{proposal.project}</p>
+								</div>
 							</div>
-							<div>
-								<p class="font-mono text-[10px] tracking-widest text-muted-foreground">ESTIMATED DURATION</p>
-								<p class="font-body text-sm">15 weeks</p>
-							</div>
-						</div>
+						{/if}
 					</div>
 				</div>
 
