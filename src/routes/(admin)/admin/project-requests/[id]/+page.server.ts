@@ -8,7 +8,7 @@ import type { PageServerLoad, Actions } from './$types';
 async function generateProjectNumber(): Promise<string> {
     const year = new Date().getFullYear();
     const prefix = `PRJ-${year}-`;
-    
+
     const latest = await db
         .select({ projectNumber: projects.projectNumber })
         .from(projects)
@@ -85,7 +85,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
             .from(projects)
             .where(eq(projects.id, req.projectId))
             .limit(1);
-        
+
         if (projectResult.length > 0) {
             project = projectResult[0];
         }

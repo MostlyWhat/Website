@@ -49,17 +49,17 @@ export const load: PageServerLoad = async ({ params, locals, url }) => {
     // Verify user has access to this request's organization
     // (Either they submitted it or are part of the org)
     const isRequester = req.requestedByEmail === locals.profile.email;
-    
+
     if (!isRequester) {
         // Check if user is part of the organization
         const membership = await db.query.organizationMembers.findFirst({
-            where: (om, { and: _and, eq: _eq }) => 
+            where: (om, { and: _and, eq: _eq }) =>
                 _and(
                     _eq(om.organizationId, req.organizationId),
                     _eq(om.profileId, locals.profile!.id)
                 )
         });
-        
+
         if (!membership) {
             error(403, 'You do not have access to this project request.');
         }
@@ -78,7 +78,7 @@ export const load: PageServerLoad = async ({ params, locals, url }) => {
             .from(projects)
             .where(eq(projects.id, req.projectId))
             .limit(1);
-        
+
         if (projectResult.length > 0) {
             project = projectResult[0];
         }

@@ -9,7 +9,7 @@ import type { PageServerLoad, Actions } from './$types';
 async function generateInvoiceNumber(): Promise<string> {
     const year = new Date().getFullYear();
     const prefix = `INV-${year}-`;
-    
+
     // Get the last invoice number for this year
     const [lastInvoice] = await db
         .select({ invoiceNumber: invoices.invoiceNumber })
@@ -87,7 +87,7 @@ export const actions: Actions = {
         // Parse line items
         const lineItemsJson = formData.get('lineItems') as string;
         let lineItems: Array<{ description: string; quantity: number; unitPrice: number; total: number }> = [];
-        
+
         try {
             lineItems = JSON.parse(lineItemsJson || '[]');
         } catch {

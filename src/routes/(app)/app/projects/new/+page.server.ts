@@ -8,7 +8,7 @@ import type { PageServerLoad, Actions } from './$types';
 async function generateRequestNumber(): Promise<string> {
     const year = new Date().getFullYear();
     const prefix = `REQ-${year}-`;
-    
+
     // Get the latest request number for this year
     const latest = await db
         .select({ requestNumber: projectRequests.requestNumber })

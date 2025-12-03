@@ -61,7 +61,7 @@ export const actions: Actions = {
         let slug = generateSlug(name);
         let slugCounter = 0;
         let slugExists = true;
-        
+
         while (slugExists) {
             const checkSlug = slugCounter > 0 ? `${slug}-${slugCounter}` : slug;
             const [existing] = await db
@@ -69,7 +69,7 @@ export const actions: Actions = {
                 .from(organizations)
                 .where(eq(organizations.slug, checkSlug))
                 .limit(1);
-            
+
             if (!existing) {
                 slug = checkSlug;
                 slugExists = false;

@@ -9,7 +9,7 @@ import type { PageServerLoad, Actions } from './$types';
 async function generateProjectNumber(): Promise<string> {
     const year = new Date().getFullYear();
     const prefix = `PRJ-${year}-`;
-    
+
     const [lastProject] = await db
         .select({ projectNumber: projects.projectNumber })
         .from(projects)
@@ -123,7 +123,7 @@ export const actions: Actions = {
 
         try {
             const projectNumber = await generateProjectNumber();
-            
+
             const [newProject] = await db.insert(projects).values({
                 projectNumber,
                 name: name.trim(),

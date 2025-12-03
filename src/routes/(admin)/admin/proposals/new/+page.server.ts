@@ -15,7 +15,7 @@ import { proposalActivity, getClientIp } from '$lib/server/activity-logger';
 async function generateProposalNumber(): Promise<string> {
     const year = new Date().getFullYear();
     const prefix = `PRP-${year}-`;
-    
+
     const [lastProposal] = await db
         .select({ proposalNumber: proposals.proposalNumber })
         .from(proposals)

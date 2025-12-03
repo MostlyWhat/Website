@@ -8,7 +8,7 @@ import type { PageServerLoad, Actions } from './$types';
 async function generateProjectNumber(): Promise<string> {
     const year = new Date().getFullYear();
     const prefix = `PRJ-${year}-`;
-    
+
     const latest = await db
         .select({ projectNumber: projects.projectNumber })
         .from(projects)

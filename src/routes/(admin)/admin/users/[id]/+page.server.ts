@@ -156,14 +156,14 @@ export const actions: Actions = {
             // Log activity
             if (locals.profile) {
                 await userActivity.updated(
-                    params.id, 
-                    user?.email ?? 'Unknown', 
-                    { 
+                    params.id,
+                    user?.email ?? 'Unknown',
+                    {
                         firstName: { old: user?.firstName, new: firstName },
                         lastName: { old: user?.lastName, new: lastName },
                         phone: { old: user?.phone, new: phone }
-                    }, 
-                    locals.profile.id, 
+                    },
+                    locals.profile.id,
                     getClientIp(request)
                 );
             }
@@ -200,10 +200,10 @@ export const actions: Actions = {
             // Log activity
             if (locals.profile) {
                 await userActivity.updated(
-                    params.id, 
-                    user?.email ?? 'Unknown', 
-                    { removedFromOrganization: { old: org?.name ?? organizationId, new: null } }, 
-                    locals.profile.id, 
+                    params.id,
+                    user?.email ?? 'Unknown',
+                    { removedFromOrganization: { old: org?.name ?? organizationId, new: null } },
+                    locals.profile.id,
                     getClientIp(request)
                 );
             }
