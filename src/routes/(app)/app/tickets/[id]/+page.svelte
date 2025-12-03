@@ -1,71 +1,16 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { ArrowLeft, Send, Loader2, Clock, CheckCircle2, AlertTriangle, Paperclip } from '@lucide/svelte';
+	import { ArrowLeft, Send, Loader2, Clock, CheckCircle2, AlertTriangle, Paperclip, AlertCircle } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { enhance } from '$app/forms';
 
-	// Sample ticket data
-	let ticket = $state({
-		id: 'TKT-2024-0089',
-		subject: 'Unable to process payments on checkout page',
-		status: 'in_progress',
-		priority: 'high',
-		category: 'technical',
-		created_at: '2024-03-08T10:30:00Z',
-		updated_at: '2024-03-10T14:15:00Z',
-		project: 'E-Commerce Platform',
-		assigned_to: {
-			name: 'Mike Johnson',
-			role: 'Technical Support'
-		},
-		messages: [
-			{
-				id: 1,
-				author: 'You',
-				is_staff: false,
-				content: 'We are experiencing issues with the checkout page. When customers try to process payments, they receive a generic error message and the transaction fails. This started happening around 10 AM today.',
-				created_at: '2024-03-08T10:30:00Z',
-				attachments: []
-			},
-			{
-				id: 2,
-				author: 'Mike Johnson',
-				is_staff: true,
-				content: 'Thank you for reporting this issue. I am looking into it now. Could you please provide the following information:\n\n1. Which payment gateway are you using?\n2. Are all payment methods affected or only specific ones?\n3. Can you share any error logs from your admin dashboard?',
-				created_at: '2024-03-08T11:45:00Z',
-				attachments: []
-			},
-			{
-				id: 3,
-				author: 'You',
-				is_staff: false,
-				content: 'We are using Stripe as our payment gateway. Both credit card and PromptPay are affected. I have attached a screenshot of the error we are seeing in the admin dashboard.',
-				created_at: '2024-03-08T14:20:00Z',
-				attachments: ['error_screenshot.png']
-			},
-			{
-				id: 4,
-				author: 'Mike Johnson',
-				is_staff: true,
-				content: 'Thank you for the additional information. I have identified the issue - it appears the Stripe API key was rotated on their end and our integration needs to be updated. I am working on this now and will update you once it is resolved.',
-				created_at: '2024-03-10T14:15:00Z',
-				attachments: []
-			}
-		]
-	});
+	let { data, form } = $props();
+	
+	// Use real data from server
+	let ticket = $derived(data.ticket);
 
 	let newMessage = $state('');
 	let sending = $state(false);
-
-	async function handleSubmit(e: Event) {
-		e.preventDefault();
-		if (!newMessage.trim()) return;
-		
-		sending = true;
-		// TODO: Implement message sending
-		await new Promise(resolve => setTimeout(resolve, 1000));
-		sending = false;
-		newMessage = '';
-	}
 
 	function formatDateTime(date: string): string {
 		return new Date(date).toLocaleDateString('en-US', {
@@ -83,6 +28,10 @@
 				return { bg: 'bg-blue-500/10', text: 'text-blue-500', label: 'OPEN' };
 			case 'in_progress':
 				return { bg: 'bg-yellow-500/10', text: 'text-yellow-500', label: 'IN PROGRESS' };
+			case 'awaiting_customer':
+				return { bg: 'bg-purple-500/10', text: 'text-purple-500', label: 'AWAITING RESPONSE' };
+			case 'awaiting_staff':
+				return { bg: 'bg-orange-500/10', text: 'text-orange-500', label: 'AWAITING STAFF' };
 			case 'resolved':
 				return { bg: 'bg-green-500/10', text: 'text-green-500', label: 'RESOLVED' };
 			case 'closed':
@@ -128,7 +77,7 @@
 					<span class="font-mono text-[10px] tracking-widest">BACK TO TICKETS</span>
 				</a>
 				<h1 class="font-display mt-6 text-xl font-bold md:text-2xl">{ticket.subject}</h1>
-				<p class="font-mono mt-2 text-xs tracking-widest text-muted-foreground">{ticket.id}</p>
+				<p class="font-mono mt-2 text-xs tracking-widest text-muted-foreground">{ticket.ticketNumber}</p>
 			</div>
 
 			<div class="flex items-center gap-2">
@@ -144,6 +93,16 @@
 			</div>
 		</div>
 	</section>
+	
+	<!-- Error Messages -->
+	{#if form?.error}
+		<div class="border-b border-red-500/20 bg-red-500/5 px-6 py-4 md:px-12 lg:px-16">
+			<div class="flex items-center gap-3">
+				<AlertCircle class="h-5 w-5 text-red-500" />
+				<p class="font-body text-sm text-red-500">{form.error}</p>
+			</div>
+		</div>
+	{/if}
 
 	<!-- Ticket Content -->
 	<section class="border-b border-border bg-background">
@@ -194,8 +153,23 @@
 				{#if ticket.status !== 'closed'}
 					<div class="border-t border-border px-6 py-6 md:px-12 lg:px-16">
 						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">REPLY</span>
-						<form onsubmit={handleSubmit} class="mt-4">
+						<form 
+							method="POST" 
+							action="?/sendMessage"
+							use:enhance={() => {
+								sending = true;
+								return async ({ update, result }) => {
+									await update();
+									sending = false;
+									if (result.type === 'success') {
+										newMessage = '';
+									}
+								};
+							}}
+							class="mt-4"
+						>
 							<textarea
+								name="message"
 								bind:value={newMessage}
 								placeholder="Type your message..."
 								rows="4"
@@ -227,6 +201,11 @@
 								<p class="font-body mt-1 text-sm text-muted-foreground">
 									This ticket has been closed. If you have additional questions, please open a new ticket.
 								</p>
+								<form method="POST" action="?/reopenTicket" class="mt-3">
+									<Button type="submit" variant="outline" size="sm" class="font-ui text-xs tracking-wider">
+										REOPEN TICKET
+									</Button>
+								</form>
 							</div>
 						</div>
 					</div>
@@ -238,7 +217,6 @@
 				<!-- Ticket Info -->
 				<div class="border border-border p-6">
 					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">TICKET INFORMATION</span>
-					
 					<div class="mt-6 space-y-4">
 						<div>
 							<p class="font-mono text-[10px] tracking-widest text-muted-foreground">STATUS</p>
@@ -283,7 +261,7 @@
 						
 						<div class="mt-4 flex items-center gap-3">
 							<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">
-								<span class="font-mono text-sm uppercase">{ticket.assigned_to.name.split(' ').map(n => n[0]).join('')}</span>
+								<span class="font-mono text-sm uppercase">{ticket.assigned_to.name.split(' ').map((n: string) => n[0]).join('')}</span>
 							</div>
 							<div>
 								<p class="font-ui text-sm font-semibold">{ticket.assigned_to.name}</p>
@@ -296,13 +274,24 @@
 				<!-- Actions -->
 				<div class="mt-6 space-y-3">
 					{#if ticket.status === 'resolved'}
-						<Button class="font-ui w-full text-xs tracking-wider">
-							<CheckCircle2 class="mr-2 h-4 w-4" />
-							MARK AS SOLVED
-						</Button>
-						<Button variant="outline" class="font-ui w-full text-xs tracking-wider">
-							REOPEN TICKET
-						</Button>
+						<form method="POST" action="?/closeTicket">
+							<Button type="submit" class="font-ui w-full text-xs tracking-wider">
+								<CheckCircle2 class="mr-2 h-4 w-4" />
+								CLOSE TICKET
+							</Button>
+						</form>
+						<form method="POST" action="?/reopenTicket">
+							<Button type="submit" variant="outline" class="font-ui w-full text-xs tracking-wider">
+								REOPEN TICKET
+							</Button>
+						</form>
+					{:else if ticket.status !== 'closed'}
+						<form method="POST" action="?/markResolved">
+							<Button type="submit" variant="outline" class="font-ui w-full text-xs tracking-wider">
+								<CheckCircle2 class="mr-2 h-4 w-4" />
+								MARK AS RESOLVED
+							</Button>
+						</form>
 					{/if}
 				</div>
 

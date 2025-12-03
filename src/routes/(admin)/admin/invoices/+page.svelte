@@ -147,6 +147,7 @@
 			<div class="divide-y divide-border">
 				{#each filteredInvoices as invoice}
 					{@const statusConfig = getStatusConfig(invoice.status)}
+					{@const StatusIcon = statusConfig.icon}
 					<a
 						href="/admin/invoices/{invoice.id}"
 						class="group flex items-center gap-4 px-6 py-4 transition-colors hover:bg-card md:px-12 lg:px-16"
@@ -161,7 +162,7 @@
 							<div class="flex items-center gap-3">
 								<h3 class="font-mono text-sm font-bold tracking-wider">{invoice.invoiceNumber}</h3>
 								<span class="inline-flex items-center gap-1 px-2 py-0.5 {statusConfig.class}">
-									<svelte:component this={statusConfig.icon} class="h-3 w-3" />
+									<StatusIcon class="h-3 w-3" />
 									<span class="font-mono text-[10px] tracking-wider uppercase">{statusConfig.label}</span>
 								</span>
 							</div>

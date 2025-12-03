@@ -149,6 +149,7 @@
 		{#if filteredUsers.length > 0}
 			<div class="divide-y divide-border">
 				{#each filteredUsers as user}
+					{@const status = getStatusBadge(user.status)}
 					<a
 						href="/admin/users/{user.id}"
 						class="group flex items-center gap-4 px-6 py-4 transition-colors hover:bg-card md:px-12 lg:px-16"
@@ -174,7 +175,6 @@
 
 						<!-- Status -->
 						<div class="hidden md:block">
-							{@const status = getStatusBadge(user.status)}
 							<span class="inline-flex items-center gap-1 px-2 py-1 {status.class}">
 								<CheckCircle class="h-3 w-3" />
 								<span class="font-mono text-[10px] tracking-wider">{status.label}</span>

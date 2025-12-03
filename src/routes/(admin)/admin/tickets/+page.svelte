@@ -185,7 +185,7 @@
 							<div class="flex items-center gap-3 flex-wrap">
 								<span class="font-mono text-xs font-bold tracking-wider text-muted-foreground">{ticket.ticketNumber}</span>
 								<span class="inline-flex items-center gap-1 px-2 py-0.5 {statusConfig.class}">
-									<svelte:component this={statusConfig.icon} class="h-3 w-3" />
+									<statusConfig.icon class="h-3 w-3" />
 									<span class="font-mono text-[10px] tracking-wider">{statusConfig.label}</span>
 								</span>
 								<span class="px-2 py-0.5 {priorityConfig.class}">

@@ -2,26 +2,31 @@
 	/**
 	 * Create/Edit User Page
 	 */
-	import { ArrowLeft, User, Shield, Mail, Phone, Save, Loader2 } from '@lucide/svelte';
+	import { ArrowLeft, User, Shield, Mail, Phone, Save, Loader2, AlertCircle, CheckCircle } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { enhance } from '$app/forms';
 
-	let { data } = $props();
+	type FormReturn = {
+		error?: string;
+		success?: boolean;
+		message?: string;
+		firstName?: string;
+		lastName?: string;
+		email?: string;
+		phone?: string;
+		role?: string;
+	} | null;
+
+	let { data, form }: { data: Record<string, unknown>; form: FormReturn } = $props();
 	
 	let loading = $state(false);
-	let firstName = $state('');
-	let lastName = $state('');
-	let email = $state('');
-	let phone = $state('');
-	let role = $state('customer');
+	let firstName = $state(form?.firstName || '');
+	let lastName = $state(form?.lastName || '');
+	let email = $state(form?.email || '');
+	let phone = $state(form?.phone || '');
+	let role = $state(form?.role || 'customer');
 	let sendInvite = $state(true);
-
-	async function handleSubmit(e: Event) {
-		e.preventDefault();
-		loading = true;
-		// TODO: Implement user creation
-		await new Promise(resolve => setTimeout(resolve, 1000));
-		loading = false;
-	}
+	let successMessage = $state(form?.success ? form.message : '');
 </script>
 
 <svelte:head>
@@ -44,9 +49,39 @@
 		</p>
 	</section>
 
+	<!-- Success/Error Messages -->
+	{#if form?.error}
+		<div class="border-b border-red-500/20 bg-red-500/5 px-6 py-4 md:px-12 lg:px-16">
+			<div class="flex items-center gap-3">
+				<AlertCircle class="h-5 w-5 text-red-500" />
+				<p class="font-body text-sm text-red-500">{form.error}</p>
+			</div>
+		</div>
+	{/if}
+	
+	{#if successMessage}
+		<div class="border-b border-green-500/20 bg-green-500/5 px-6 py-4 md:px-12 lg:px-16">
+			<div class="flex items-center gap-3">
+				<CheckCircle class="h-5 w-5 text-green-500" />
+				<p class="font-body text-sm text-green-500">{successMessage}</p>
+			</div>
+		</div>
+	{/if}
+
 	<!-- Form Section -->
 	<section class="border-b border-border bg-background">
-		<form onsubmit={handleSubmit} class="grid grid-cols-12 gap-px bg-border">
+		<form 
+			method="POST" 
+			use:enhance={() => {
+				loading = true;
+				successMessage = '';
+				return async ({ update }) => {
+					await update();
+					loading = false;
+				};
+			}}
+			class="grid grid-cols-12 gap-px bg-border"
+		>
 			<!-- Basic Information -->
 			<div class="col-span-12 bg-background px-6 py-8 lg:col-span-8 md:px-12 lg:px-16">
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">01 — BASIC INFORMATION</span>
@@ -62,6 +97,7 @@
 							<input
 								type="text"
 								id="firstName"
+								name="firstName"
 								bind:value={firstName}
 								placeholder="John"
 								class="font-body h-12 w-full border border-border bg-card pl-10 pr-4 text-sm focus:border-primary focus:outline-none"
@@ -80,6 +116,7 @@
 							<input
 								type="text"
 								id="lastName"
+								name="lastName"
 								bind:value={lastName}
 								placeholder="Doe"
 								class="font-body h-12 w-full border border-border bg-card pl-10 pr-4 text-sm focus:border-primary focus:outline-none"
@@ -98,6 +135,7 @@
 							<input
 								type="email"
 								id="email"
+								name="email"
 								bind:value={email}
 								placeholder="john@example.com"
 								class="font-body h-12 w-full border border-border bg-card pl-10 pr-4 text-sm focus:border-primary focus:outline-none"
@@ -116,6 +154,7 @@
 							<input
 								type="tel"
 								id="phone"
+								name="phone"
 								bind:value={phone}
 								placeholder="+1 (555) 000-0000"
 								class="font-body h-12 w-full border border-border bg-card pl-10 pr-4 text-sm focus:border-primary focus:outline-none"
@@ -167,7 +206,9 @@
 					<label class="flex items-start gap-4 cursor-pointer">
 						<input
 							type="checkbox"
+							name="sendInvite"
 							bind:checked={sendInvite}
+							value="true"
 							class="sr-only"
 						/>
 						<div class="flex h-6 w-6 flex-shrink-0 items-center justify-center border {sendInvite ? 'border-primary bg-primary' : 'border-border bg-background'}">

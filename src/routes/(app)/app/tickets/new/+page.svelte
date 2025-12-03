@@ -2,24 +2,25 @@
 	/**
 	 * Create New Ticket Page
 	 */
-	import { ArrowLeft, Send, Loader2, Paperclip, AlertTriangle } from '@lucide/svelte';
+	import { ArrowLeft, Send, Loader2, Paperclip, AlertTriangle, AlertCircle } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { enhance } from '$app/forms';
 
-	let { data } = $props();
+	type FormReturn = {
+		error?: string;
+		subject?: string;
+		description?: string;
+		priority?: string;
+		category?: string;
+	} | null;
+
+	let { data, form }: { data: Record<string, unknown>; form: FormReturn } = $props();
 	
 	let loading = $state(false);
-	let subject = $state('');
-	let description = $state('');
-	let priority = $state('medium');
-	let category = $state('general');
-
-	async function handleSubmit(e: Event) {
-		e.preventDefault();
-		loading = true;
-		// TODO: Implement ticket creation
-		await new Promise(resolve => setTimeout(resolve, 1000));
-		loading = false;
-	}
+	let subject = $state(form?.subject || '');
+	let description = $state(form?.description || '');
+	let priority = $state(form?.priority || 'medium');
+	let category = $state(form?.category || 'general');
 </script>
 
 <svelte:head>
@@ -42,9 +43,29 @@
 		</p>
 	</section>
 
+	<!-- Error Messages -->
+	{#if form?.error}
+		<div class="border-b border-red-500/20 bg-red-500/5 px-6 py-4 md:px-12 lg:px-16">
+			<div class="flex items-center gap-3">
+				<AlertCircle class="h-5 w-5 text-red-500" />
+				<p class="font-body text-sm text-red-500">{form.error}</p>
+			</div>
+		</div>
+	{/if}
+
 	<!-- Form Section -->
 	<section class="border-b border-border bg-background">
-		<form onsubmit={handleSubmit} class="grid grid-cols-12 gap-px bg-border">
+		<form 
+			method="POST" 
+			use:enhance={() => {
+				loading = true;
+				return async ({ update }) => {
+					await update();
+					loading = false;
+				};
+			}}
+			class="grid grid-cols-12 gap-px bg-border"
+		>
 			<!-- Main Form -->
 			<div class="col-span-12 bg-background px-6 py-8 lg:col-span-8 md:px-12 lg:px-16">
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">01 — TICKET DETAILS</span>
@@ -58,6 +79,7 @@
 						<input
 							type="text"
 							id="subject"
+							name="subject"
 							bind:value={subject}
 							placeholder="Brief description of your issue"
 							class="font-body mt-2 h-12 w-full border border-border bg-card px-4 text-sm focus:border-primary focus:outline-none"
@@ -72,6 +94,7 @@
 						</label>
 						<textarea
 							id="description"
+							name="description"
 							bind:value={description}
 							placeholder="Please provide as much detail as possible about your issue..."
 							rows="8"
@@ -82,9 +105,9 @@
 
 					<!-- Attachments -->
 					<div>
-						<label class="font-ui text-xs font-medium tracking-wider text-foreground">
+						<span class="font-ui text-xs font-medium tracking-wider text-foreground">
 							ATTACHMENTS <span class="text-muted-foreground">(OPTIONAL)</span>
-						</label>
+						</span>
 						<div class="mt-2 flex items-center justify-center border border-dashed border-border bg-card p-8 transition-colors hover:border-primary/50">
 							<div class="text-center">
 								<Paperclip class="mx-auto h-8 w-8 text-muted-foreground/50" />
@@ -162,7 +185,8 @@
 								<div class="flex-1">
 									<div class="flex items-center gap-2">
 										{#if icon}
-											<svelte:component this={icon} class="h-3 w-3 text-red-500" />
+											{@const PriorityIcon = icon}
+											<PriorityIcon class="h-3 w-3 text-red-500" />
 										{/if}
 										<span class="font-ui text-xs font-semibold tracking-wider uppercase">{label}</span>
 									</div>

@@ -55,6 +55,7 @@
 			<div class="divide-y divide-border">
 				{#each projects as project}
 					{@const statusConfig = getStatusConfig(project.status)}
+					{@const StatusIcon = statusConfig.icon}
 					<a
 						href="/app/projects/{project.id}"
 						class="group flex items-center gap-4 px-6 py-6 transition-colors hover:bg-card md:px-12 lg:px-16"
@@ -69,7 +70,7 @@
 							<div class="flex items-center gap-3">
 								<h3 class="font-ui text-sm font-semibold tracking-wider truncate">{project.name}</h3>
 								<span class="inline-flex items-center gap-1 px-2 py-0.5 {statusConfig.class}">
-									<svelte:component this={statusConfig.icon} class="h-3 w-3" />
+									<StatusIcon class="h-3 w-3" />
 									<span class="font-mono text-[10px] tracking-wider uppercase">{statusConfig.label}</span>
 								</span>
 							</div>
