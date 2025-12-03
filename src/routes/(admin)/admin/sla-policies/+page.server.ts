@@ -1,6 +1,6 @@
 import { db } from '$lib/server/db';
-import { slaPolicies, profiles } from '$lib/server/db/schema';
-import { eq, desc } from 'drizzle-orm';
+import { slaPolicies, slaOrganizationAssignments, ticketCategories, organizations, profiles } from '$lib/server/db/schema';
+import { eq, desc, asc } from 'drizzle-orm';
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { slaActivity, getClientIp } from '$lib/server/activity-logger';
@@ -33,6 +33,12 @@ export const load: PageServerLoad = async ({ locals }) => {
             businessHoursStart: slaPolicies.businessHoursStart,
             businessHoursEnd: slaPolicies.businessHoursEnd,
             businessDays: slaPolicies.businessDays,
+            appliesToCustomerTypes: slaPolicies.appliesToCustomerTypes,
+            appliesToCategories: slaPolicies.appliesToCategories,
+            priorityOrder: slaPolicies.priorityOrder,
+            escalationEnabled: slaPolicies.escalationEnabled,
+            escalationAfterHours: slaPolicies.escalationAfterHours,
+            escalationNotifyEmails: slaPolicies.escalationNotifyEmails,
             isDefault: slaPolicies.isDefault,
             isActive: slaPolicies.isActive,
             createdAt: slaPolicies.createdAt,
@@ -41,9 +47,41 @@ export const load: PageServerLoad = async ({ locals }) => {
         })
         .from(slaPolicies)
         .leftJoin(profiles, eq(slaPolicies.createdById, profiles.id))
-        .orderBy(desc(slaPolicies.isDefault), slaPolicies.name);
+        .orderBy(desc(slaPolicies.isDefault), desc(slaPolicies.priorityOrder), slaPolicies.name);
 
-    return { policies };
+    // Fetch ticket categories
+    const categories = await db
+        .select()
+        .from(ticketCategories)
+        .orderBy(asc(ticketCategories.sortOrder));
+
+    // Fetch organization assignments with org and policy names
+    const assignments = await db
+        .select({
+            id: slaOrganizationAssignments.id,
+            slaPolicyId: slaOrganizationAssignments.slaPolicyId,
+            organizationId: slaOrganizationAssignments.organizationId,
+            notes: slaOrganizationAssignments.notes,
+            createdAt: slaOrganizationAssignments.createdAt,
+            organizationName: organizations.name,
+            policyName: slaPolicies.name
+        })
+        .from(slaOrganizationAssignments)
+        .leftJoin(organizations, eq(slaOrganizationAssignments.organizationId, organizations.id))
+        .leftJoin(slaPolicies, eq(slaOrganizationAssignments.slaPolicyId, slaPolicies.id))
+        .orderBy(asc(organizations.name));
+
+    // Fetch all organizations for the assignment dropdown
+    const allOrganizations = await db
+        .select({
+            id: organizations.id,
+            name: organizations.name,
+            customerType: organizations.customerType
+        })
+        .from(organizations)
+        .orderBy(asc(organizations.name));
+
+    return { policies, categories, assignments, organizations: allOrganizations };
 };
 
 export const actions: Actions = {
@@ -74,6 +112,35 @@ export const actions: Actions = {
         const businessHoursStart = parseInt(formData.get('businessHoursStart') as string) || 9;
         const businessHoursEnd = parseInt(formData.get('businessHoursEnd') as string) || 17;
 
+        // Business days
+        let businessDays = [1, 2, 3, 4, 5];
+        try {
+            const businessDaysRaw = formData.get('businessDays') as string;
+            if (businessDaysRaw) {
+                businessDays = JSON.parse(businessDaysRaw);
+            }
+        } catch { /* use default */ }
+
+        // Applicability rules
+        let appliesToCustomerTypes: string[] = [];
+        let appliesToCategories: string[] = [];
+        try {
+            const customerTypesRaw = formData.get('appliesToCustomerTypes') as string;
+            if (customerTypesRaw) {
+                appliesToCustomerTypes = JSON.parse(customerTypesRaw);
+            }
+            const categoriesRaw = formData.get('appliesToCategories') as string;
+            if (categoriesRaw) {
+                appliesToCategories = JSON.parse(categoriesRaw);
+            }
+        } catch { /* use defaults */ }
+
+        const priorityOrder = parseInt(formData.get('priorityOrder') as string) || 0;
+
+        // Escalation settings
+        const escalationEnabled = formData.get('escalationEnabled') === 'true';
+        const escalationAfterHours = parseInt(formData.get('escalationAfterHours') as string) || 24;
+
         if (!name?.trim()) {
             return fail(400, { error: 'Policy name is required' });
         }
@@ -100,6 +167,12 @@ export const actions: Actions = {
             businessHoursOnly,
             businessHoursStart,
             businessHoursEnd,
+            businessDays,
+            appliesToCustomerTypes,
+            appliesToCategories,
+            priorityOrder,
+            escalationEnabled,
+            escalationAfterHours,
             isDefault,
             createdById: locals.profile.id
         }).returning({ id: slaPolicies.id });
@@ -139,6 +212,35 @@ export const actions: Actions = {
         const businessHoursStart = parseInt(formData.get('businessHoursStart') as string) || 9;
         const businessHoursEnd = parseInt(formData.get('businessHoursEnd') as string) || 17;
 
+        // Business days
+        let businessDays = [1, 2, 3, 4, 5];
+        try {
+            const businessDaysRaw = formData.get('businessDays') as string;
+            if (businessDaysRaw) {
+                businessDays = JSON.parse(businessDaysRaw);
+            }
+        } catch { /* use default */ }
+
+        // Applicability rules
+        let appliesToCustomerTypes: string[] = [];
+        let appliesToCategories: string[] = [];
+        try {
+            const customerTypesRaw = formData.get('appliesToCustomerTypes') as string;
+            if (customerTypesRaw) {
+                appliesToCustomerTypes = JSON.parse(customerTypesRaw);
+            }
+            const categoriesRaw = formData.get('appliesToCategories') as string;
+            if (categoriesRaw) {
+                appliesToCategories = JSON.parse(categoriesRaw);
+            }
+        } catch { /* use defaults */ }
+
+        const priorityOrder = parseInt(formData.get('priorityOrder') as string) || 0;
+
+        // Escalation settings
+        const escalationEnabled = formData.get('escalationEnabled') === 'true';
+        const escalationAfterHours = parseInt(formData.get('escalationAfterHours') as string) || 24;
+
         if (!id || !name?.trim()) {
             return fail(400, { error: 'Policy ID and name are required' });
         }
@@ -170,6 +272,12 @@ export const actions: Actions = {
                 businessHoursOnly,
                 businessHoursStart,
                 businessHoursEnd,
+                businessDays,
+                appliesToCustomerTypes,
+                appliesToCategories,
+                priorityOrder,
+                escalationEnabled,
+                escalationAfterHours,
                 isDefault,
                 isActive,
                 updatedAt: new Date()
@@ -243,6 +351,151 @@ export const actions: Actions = {
         await slaActivity.setDefault(id, policy?.name ?? 'Unknown', locals.profile.id, getClientIp(request));
 
         return { success: true, message: 'Default SLA policy updated' };
+    },
+
+    assignOrganization: async ({ request, locals }) => {
+        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+            return fail(403, { error: 'Access denied' });
+        }
+
+        const formData = await request.formData();
+        const slaPolicyId = formData.get('slaPolicyId') as string;
+        const organizationId = formData.get('organizationId') as string;
+        const notes = formData.get('notes') as string;
+
+        if (!slaPolicyId || !organizationId) {
+            return fail(400, { error: 'Policy ID and Organization ID are required' });
+        }
+
+        // Check if assignment already exists
+        const existing = await db
+            .select()
+            .from(slaOrganizationAssignments)
+            .where(eq(slaOrganizationAssignments.organizationId, organizationId));
+
+        if (existing.length > 0) {
+            // Update existing assignment
+            await db
+                .update(slaOrganizationAssignments)
+                .set({
+                    slaPolicyId,
+                    notes: notes?.trim() || null,
+                    updatedAt: new Date()
+                })
+                .where(eq(slaOrganizationAssignments.organizationId, organizationId));
+        } else {
+            // Create new assignment
+            await db.insert(slaOrganizationAssignments).values({
+                slaPolicyId,
+                organizationId,
+                notes: notes?.trim() || null,
+                createdById: locals.profile.id
+            });
+        }
+
+        return { success: true, message: 'Organization assigned to SLA policy' };
+    },
+
+    removeAssignment: async ({ request, locals }) => {
+        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+            return fail(403, { error: 'Access denied' });
+        }
+
+        const formData = await request.formData();
+        const id = formData.get('id') as string;
+
+        if (!id) {
+            return fail(400, { error: 'Assignment ID is required' });
+        }
+
+        await db.delete(slaOrganizationAssignments).where(eq(slaOrganizationAssignments.id, id));
+
+        return { success: true, message: 'Organization assignment removed' };
+    },
+
+    createCategory: async ({ request, locals }) => {
+        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+            return fail(403, { error: 'Access denied' });
+        }
+
+        const formData = await request.formData();
+        const name = formData.get('name') as string;
+        const description = formData.get('description') as string;
+        const color = formData.get('color') as string || '#6b7280';
+        const icon = formData.get('icon') as string;
+        const sortOrder = parseInt(formData.get('sortOrder') as string) || 0;
+
+        if (!name?.trim()) {
+            return fail(400, { error: 'Category name is required' });
+        }
+
+        // Generate slug from name
+        const slug = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+        await db.insert(ticketCategories).values({
+            name: name.trim(),
+            slug,
+            description: description?.trim() || null,
+            color,
+            icon: icon?.trim() || null,
+            sortOrder
+        });
+
+        return { success: true, message: 'Category created' };
+    },
+
+    updateCategory: async ({ request, locals }) => {
+        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+            return fail(403, { error: 'Access denied' });
+        }
+
+        const formData = await request.formData();
+        const id = formData.get('id') as string;
+        const name = formData.get('name') as string;
+        const description = formData.get('description') as string;
+        const color = formData.get('color') as string || '#6b7280';
+        const icon = formData.get('icon') as string;
+        const sortOrder = parseInt(formData.get('sortOrder') as string) || 0;
+        const isActive = formData.get('isActive') === 'true';
+
+        if (!id || !name?.trim()) {
+            return fail(400, { error: 'Category ID and name are required' });
+        }
+
+        const slug = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+        await db
+            .update(ticketCategories)
+            .set({
+                name: name.trim(),
+                slug,
+                description: description?.trim() || null,
+                color,
+                icon: icon?.trim() || null,
+                sortOrder,
+                isActive,
+                updatedAt: new Date()
+            })
+            .where(eq(ticketCategories.id, id));
+
+        return { success: true, message: 'Category updated' };
+    },
+
+    deleteCategory: async ({ request, locals }) => {
+        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+            return fail(403, { error: 'Access denied' });
+        }
+
+        const formData = await request.formData();
+        const id = formData.get('id') as string;
+
+        if (!id) {
+            return fail(400, { error: 'Category ID is required' });
+        }
+
+        await db.delete(ticketCategories).where(eq(ticketCategories.id, id));
+
+        return { success: true, message: 'Category deleted' };
     }
 };
 

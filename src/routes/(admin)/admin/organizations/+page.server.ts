@@ -17,11 +17,13 @@ export const load: PageServerLoad = async ({ locals }) => {
     const allOrgs = await db
         .select({
             id: organizations.id,
+            orgNumber: organizations.orgNumber,
             name: organizations.name,
             slug: organizations.slug,
             email: organizations.email,
             phone: organizations.phone,
             website: organizations.website,
+            customerType: organizations.customerType,
             createdAt: organizations.createdAt,
             memberCount: sql<number>`(SELECT count(*) FROM organization_members WHERE organization_id = ${organizations.id})::int`,
             projectCount: sql<number>`(SELECT count(*) FROM projects WHERE organization_id = ${organizations.id})::int`,

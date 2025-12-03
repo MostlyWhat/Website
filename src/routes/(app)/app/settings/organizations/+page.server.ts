@@ -13,6 +13,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     const userOrgs = await db
         .select({
             id: organizations.id,
+            orgNumber: organizations.orgNumber,
             name: organizations.name,
             slug: organizations.slug,
             logoUrl: organizations.logoUrl,

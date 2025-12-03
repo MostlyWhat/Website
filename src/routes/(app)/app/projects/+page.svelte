@@ -4,6 +4,7 @@
 	 */
 	import { FolderKanban, Clock, CheckCircle, Calendar, User, ChevronRight, AlertCircle, Pause, Plus, FileText, Eye, X } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { PhaseBadge, PhaseTimeline } from '$lib/components/ui/phase-badge';
 
 	let { data } = $props();
 
@@ -18,18 +19,6 @@
 			day: 'numeric', 
 			year: 'numeric' 
 		});
-	}
-
-	function getStatusConfig(status: string): { icon: typeof Clock; class: string; label: string } {
-		switch (status) {
-			case 'draft': return { icon: Clock, class: 'bg-muted text-muted-foreground', label: 'Draft' };
-			case 'proposal_sent': return { icon: AlertCircle, class: 'bg-blue-500/10 text-blue-500', label: 'Proposal Sent' };
-			case 'proposal_accepted': return { icon: CheckCircle, class: 'bg-green-500/10 text-green-500', label: 'Accepted' };
-			case 'in_progress': return { icon: Clock, class: 'bg-yellow-500/10 text-yellow-500', label: 'In Progress' };
-			case 'on_hold': return { icon: Pause, class: 'bg-orange-500/10 text-orange-500', label: 'On Hold' };
-			case 'completed': return { icon: CheckCircle, class: 'bg-green-500/10 text-green-500', label: 'Completed' };
-			default: return { icon: Clock, class: 'bg-muted text-muted-foreground', label: status };
-		}
 	}
 
 	function getRequestStatusConfig(status: string): { icon: typeof Clock; class: string; label: string } {
@@ -116,8 +105,6 @@
 		{#if projects.length > 0}
 			<div class="divide-y divide-border">
 				{#each projects as project}
-					{@const statusConfig = getStatusConfig(project.status)}
-					{@const StatusIcon = statusConfig.icon}
 					<a
 						href="/app/projects/{project.id}"
 						class="group flex items-center gap-4 px-6 py-6 transition-colors hover:bg-card md:px-12 lg:px-16"
@@ -129,18 +116,21 @@
 
 						<!-- Project Info -->
 						<div class="min-w-0 flex-1">
-							<div class="flex items-center gap-3">
+							<div class="flex items-center gap-3 flex-wrap">
+								<span class="font-mono text-[10px] text-muted-foreground">{project.projectNumber}</span>
 								<h3 class="font-ui text-sm font-semibold tracking-wider truncate">{project.name}</h3>
-								<span class="inline-flex items-center gap-1 px-2 py-0.5 {statusConfig.class}">
-									<StatusIcon class="h-3 w-3" />
-									<span class="font-mono text-[10px] tracking-wider uppercase">{statusConfig.label}</span>
-								</span>
+								<PhaseBadge phase={project.phase} size="sm" />
 							</div>
 							<p class="font-body mt-1 text-xs text-muted-foreground truncate">{project.description ?? 'No description'}</p>
+							<!-- Phase Timeline for mobile -->
+							<div class="mt-2 lg:hidden">
+								<PhaseTimeline currentPhase={project.phase} compact />
+							</div>
 						</div>
 
-						<!-- Timeline & Assignee -->
+						<!-- Phase Timeline & Info -->
 						<div class="hidden items-center gap-6 lg:flex">
+							<PhaseTimeline currentPhase={project.phase} compact />
 							<div class="text-right">
 								<div class="flex items-center gap-1 justify-end">
 									<Calendar class="h-3 w-3 text-muted-foreground" />

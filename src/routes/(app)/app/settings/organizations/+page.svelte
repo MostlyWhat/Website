@@ -70,7 +70,10 @@
 									{/if}
 								</div>
 								<div>
-									<h3 class="font-ui text-sm font-semibold tracking-wider">{org.name}</h3>
+									<div class="flex items-center gap-2">
+										<h3 class="font-ui text-sm font-semibold tracking-wider">{org.name}</h3>
+										<span class="font-mono text-[10px] text-muted-foreground">{org.orgNumber}</span>
+									</div>
 									<div class="mt-1 flex items-center gap-2">
 										<span class="font-mono text-[10px] tracking-wider px-2 py-0.5 {roleBadge.bg} {roleBadge.text}">
 											{org.role.toUpperCase()}

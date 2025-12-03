@@ -8,11 +8,13 @@
 		Inbox, Eye, X, FileText
 	} from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { PhaseBadge, PhaseTimeline, PHASES_ORDER, getPhaseConfig } from '$lib/components/ui/phase-badge';
+	import type { ProjectPhase } from '$lib/server/db/schema';
 
 	let { data } = $props();
 	
 	let searchQuery = $state('');
-	let statusFilter = $state<string>('all');
+	let phaseFilter = $state<string>('all');
 	let activeTab = $state<'projects' | 'requests'>('projects');
 
 	// Use real data from server
@@ -23,9 +25,11 @@
 		projects.filter(project => {
 			const matchesSearch = searchQuery === '' || 
 				project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-				(project.organization?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false);
-			const matchesStatus = statusFilter === 'all' || project.status === statusFilter;
-			return matchesSearch && matchesStatus;
+				(project.organization?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+				(project.projectNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+				(project.orgNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false);
+			const matchesPhase = phaseFilter === 'all' || project.phase === phaseFilter;
+			return matchesSearch && matchesPhase;
 		})
 	);
 
@@ -33,8 +37,10 @@
 		requests.filter(request => {
 			const matchesSearch = searchQuery === '' || 
 				request.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-				(request.organization?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false);
-			const matchesStatus = statusFilter === 'all' || request.status === statusFilter;
+				(request.organization?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+				(request.requestNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+				(request.orgNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false);
+			const matchesStatus = phaseFilter === 'all' || request.status === phaseFilter;
 			return matchesSearch && matchesStatus;
 		})
 	);
@@ -57,20 +63,6 @@
 		});
 	}
 
-	function getStatusConfig(status: string): { icon: typeof Clock; class: string; label: string } {
-		switch (status) {
-			case 'draft': return { icon: Clock, class: 'bg-muted text-muted-foreground', label: 'Draft' };
-			case 'proposal_sent': return { icon: AlertCircle, class: 'bg-blue-500/10 text-blue-500', label: 'Proposal Sent' };
-			case 'proposal_accepted': return { icon: CheckCircle, class: 'bg-green-500/10 text-green-500', label: 'Accepted' };
-			case 'proposal_rejected': return { icon: AlertCircle, class: 'bg-red-500/10 text-red-500', label: 'Rejected' };
-			case 'in_progress': return { icon: Clock, class: 'bg-yellow-500/10 text-yellow-500', label: 'In Progress' };
-			case 'on_hold': return { icon: Pause, class: 'bg-orange-500/10 text-orange-500', label: 'On Hold' };
-			case 'completed': return { icon: CheckCircle, class: 'bg-green-500/10 text-green-500', label: 'Completed' };
-			case 'cancelled': return { icon: AlertCircle, class: 'bg-red-500/10 text-red-500', label: 'Cancelled' };
-			default: return { icon: Clock, class: 'bg-muted text-muted-foreground', label: status };
-		}
-	}
-
 	function getRequestStatusConfig(status: string): { icon: typeof Clock; class: string; label: string } {
 		switch (status) {
 			case 'pending': return { icon: Clock, class: 'bg-yellow-500/10 text-yellow-500', label: 'Pending' };
@@ -81,6 +73,13 @@
 			default: return { icon: Clock, class: 'bg-muted text-muted-foreground', label: status };
 		}
 	}
+
+	// Phase-based stats
+	const phaseStats = $derived({
+		request: projects.filter(p => p.phase === 'request' || p.phase === 'review').length,
+		active: projects.filter(p => ['proposal', 'confirmed', 'building'].includes(p.phase)).length,
+		completed: projects.filter(p => p.phase === 'completed' || p.phase === 'support').length
+	});
 
 	// Request stats
 	const pendingCount = $derived(requests.filter(r => r.status === 'pending').length);
@@ -113,7 +112,7 @@
 	<section class="border-b border-border bg-card">
 		<div class="flex px-6 md:px-12 lg:px-16">
 			<button
-				onclick={() => { activeTab = 'projects'; statusFilter = 'all'; }}
+				onclick={() => { activeTab = 'projects'; phaseFilter = 'all'; }}
 				class="relative flex items-center gap-2 px-4 py-3 font-mono text-xs tracking-wider transition-colors {activeTab === 'projects' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}"
 			>
 				<FolderKanban class="h-4 w-4" />
@@ -124,7 +123,7 @@
 				{/if}
 			</button>
 			<button
-				onclick={() => { activeTab = 'requests'; statusFilter = 'all'; }}
+				onclick={() => { activeTab = 'requests'; phaseFilter = 'all'; }}
 				class="relative flex items-center gap-2 px-4 py-3 font-mono text-xs tracking-wider transition-colors {activeTab === 'requests' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}"
 			>
 				<Inbox class="h-4 w-4" />
@@ -160,20 +159,21 @@
 				<Filter class="h-4 w-4 text-muted-foreground" />
 				{#if activeTab === 'projects'}
 					<select
-						bind:value={statusFilter}
+						bind:value={phaseFilter}
 						class="font-mono h-10 rounded-none border border-border bg-background px-4 text-xs tracking-wider focus:border-primary focus:outline-none"
 					>
-						<option value="all">ALL STATUS</option>
-						<option value="draft">DRAFT</option>
-						<option value="proposal_sent">PROPOSAL SENT</option>
-						<option value="in_progress">IN PROGRESS</option>
-						<option value="on_hold">ON HOLD</option>
-						<option value="completed">COMPLETED</option>
-						<option value="cancelled">CANCELLED</option>
+						<option value="all">ALL PHASES</option>
+						<option value="request">01 - REQUEST</option>
+						<option value="review">02 - REVIEW</option>
+						<option value="proposal">03 - PROPOSAL</option>
+						<option value="confirmed">04 - CONFIRMED</option>
+						<option value="building">05 - BUILDING</option>
+						<option value="completed">06 - COMPLETED</option>
+						<option value="support">07 - SUPPORT</option>
 					</select>
 				{:else}
 					<select
-						bind:value={statusFilter}
+						bind:value={phaseFilter}
 						class="font-mono h-10 rounded-none border border-border bg-background px-4 text-xs tracking-wider focus:border-primary focus:outline-none"
 					>
 						<option value="all">ALL STATUS</option>
@@ -197,16 +197,16 @@
 					<p class="font-mono text-[10px] tracking-wider text-muted-foreground">TOTAL</p>
 				</div>
 				<div class="col-span-3 bg-background px-6 py-4">
-					<span class="font-display text-xl font-bold text-yellow-500">{projects.filter(p => p.status === 'in_progress').length}</span>
-					<p class="font-mono text-[10px] tracking-wider text-muted-foreground">ACTIVE</p>
+					<span class="font-display text-xl font-bold text-blue-500">{phaseStats.request}</span>
+					<p class="font-mono text-[10px] tracking-wider text-muted-foreground">REQUESTS</p>
 				</div>
 				<div class="col-span-3 bg-background px-6 py-4">
-					<span class="font-display text-xl font-bold text-green-500">{projects.filter(p => p.status === 'completed').length}</span>
-					<p class="font-mono text-[10px] tracking-wider text-muted-foreground">COMPLETED</p>
+					<span class="font-display text-xl font-bold text-yellow-500">{phaseStats.active}</span>
+					<p class="font-mono text-[10px] tracking-wider text-muted-foreground">ACTIVE</p>
 				</div>
 				<div class="col-span-3 bg-background px-6 py-4 md:px-12 lg:px-16">
-					<span class="font-display text-xl font-bold text-foreground">{formatCurrency(projects.reduce((sum, p) => sum + p.budget, 0))}</span>
-					<p class="font-mono text-[10px] tracking-wider text-muted-foreground">TOTAL VALUE</p>
+					<span class="font-display text-xl font-bold text-green-500">{phaseStats.completed}</span>
+					<p class="font-mono text-[10px] tracking-wider text-muted-foreground">COMPLETED</p>
 				</div>
 			{:else}
 				<div class="col-span-3 bg-background px-6 py-4 md:px-12 lg:px-16">
@@ -235,8 +235,6 @@
 			{#if filteredProjects.length > 0}
 				<div class="divide-y divide-border">
 					{#each filteredProjects as project}
-						{@const statusConfig = getStatusConfig(project.status)}
-						{@const StatusIcon = statusConfig.icon}
 						<a
 							href="/admin/projects/{project.id}"
 							class="group flex items-center gap-4 px-6 py-4 transition-colors hover:bg-card md:px-12 lg:px-16"
@@ -248,16 +246,17 @@
 
 							<!-- Project Info -->
 							<div class="min-w-0 flex-1">
-								<div class="flex items-center gap-3">
+								<div class="flex items-center gap-3 flex-wrap">
+									<span class="font-mono text-[10px] text-muted-foreground">{project.projectNumber}</span>
 									<h3 class="font-ui text-sm font-semibold tracking-wider truncate">{project.name}</h3>
-									<span class="inline-flex items-center gap-1 px-2 py-0.5 {statusConfig.class}">
-										<StatusIcon class="h-3 w-3" />
-										<span class="font-mono text-[10px] tracking-wider uppercase">{statusConfig.label}</span>
-									</span>
+									<PhaseBadge phase={project.phase} size="sm" />
 								</div>
 								<div class="mt-1 flex items-center gap-4 text-xs text-muted-foreground">
 									<span class="flex items-center gap-1">
 										<Building2 class="h-3 w-3" />
+										{#if project.orgNumber}
+											<span class="font-mono text-[10px]">{project.orgNumber}</span>
+										{/if}
 										{project.organization}
 									</span>
 									{#if project.assignedTo}
@@ -269,12 +268,13 @@
 								</div>
 							</div>
 
-							<!-- Budget & Dates -->
+							<!-- Phase Timeline (compact) -->
+							<div class="hidden xl:block">
+								<PhaseTimeline currentPhase={project.phase} compact />
+							</div>
+
+							<!-- Dates -->
 							<div class="hidden items-center gap-6 lg:flex">
-								<div class="text-right">
-									<span class="font-display text-lg font-bold text-foreground">{formatCurrency(project.budget)}</span>
-									<p class="font-mono text-[10px] tracking-wider text-muted-foreground">BUDGET</p>
-								</div>
 								<div class="text-right">
 									<div class="flex items-center gap-1">
 										<Calendar class="h-3 w-3 text-muted-foreground" />
@@ -296,9 +296,9 @@
 					</div>
 					<h3 class="font-ui mt-6 text-lg font-semibold tracking-wider">NO PROJECTS FOUND</h3>
 					<p class="font-body mt-2 text-sm text-muted-foreground">
-						{searchQuery || statusFilter !== 'all' ? 'Try adjusting your filters.' : 'Start by creating your first project.'}
+						{searchQuery || phaseFilter !== 'all' ? 'Try adjusting your filters.' : 'Start by creating your first project.'}
 					</p>
-					{#if !searchQuery && statusFilter === 'all'}
+					{#if !searchQuery && phaseFilter === 'all'}
 						<Button href="/admin/projects/new" class="mt-6 font-ui text-xs tracking-wider">
 							<Plus class="mr-2 h-4 w-4" />
 							NEW PROJECT
@@ -325,6 +325,7 @@
 							<!-- Request Info -->
 							<div class="min-w-0 flex-1">
 								<div class="flex items-center gap-3">
+									<span class="font-mono text-[10px] text-muted-foreground">{request.requestNumber}</span>
 									<h3 class="font-ui text-sm font-semibold tracking-wider truncate">{request.title}</h3>
 									<span class="inline-flex items-center gap-1 px-2 py-0.5 {statusConfig.class}">
 										<StatusIcon class="h-3 w-3" />
@@ -332,9 +333,11 @@
 									</span>
 								</div>
 								<div class="mt-1 flex items-center gap-4 text-xs text-muted-foreground">
-									<span class="font-mono">{request.requestNumber}</span>
 									<span class="flex items-center gap-1">
 										<Building2 class="h-3 w-3" />
+										{#if request.orgNumber}
+											<span class="font-mono text-[10px]">{request.orgNumber}</span>
+										{/if}
 										{request.organization}
 									</span>
 								</div>
@@ -364,7 +367,7 @@
 					</div>
 					<h3 class="font-ui mt-6 text-lg font-semibold tracking-wider">NO REQUESTS FOUND</h3>
 					<p class="font-body mt-2 text-sm text-muted-foreground">
-						{searchQuery || statusFilter !== 'all' ? 'Try adjusting your filters.' : 'No project requests have been submitted yet.'}
+						{searchQuery || phaseFilter !== 'all' ? 'Try adjusting your filters.' : 'No project requests have been submitted yet.'}
 					</p>
 				</div>
 			{/if}

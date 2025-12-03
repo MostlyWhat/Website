@@ -90,6 +90,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
             createdByEmail: creatorProfile.email,
             organizationId: tickets.organizationId,
             organizationName: organizations.name,
+            orgNumber: organizations.orgNumber,
             projectId: tickets.projectId
         })
         .from(tickets)
@@ -109,6 +110,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
     const formattedTickets = allTickets.map((ticket) => ({
         ...ticket,
         organization: ticket.organizationName ?? 'Unknown',
+        orgNumber: ticket.orgNumber ?? null,
         createdBy: ticket.createdByName ?? 'Unknown',
         createdByEmail: ticket.createdByEmail,
         assignedTo: ticket.assignedToName

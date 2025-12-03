@@ -34,6 +34,37 @@ import { authUsers } from 'drizzle-orm/supabase';
 
 export const userRoleEnum = pgEnum('user_role', ['super_admin', 'admin', 'staff', 'customer']);
 
+// 7-Phase Project Lifecycle
+export const projectPhaseEnum = pgEnum('project_phase', [
+	'request',      // Phase 01: Client submitted request
+	'review',       // Phase 02: Admin reviewing
+	'proposal',     // Phase 03: Proposal being created/sent
+	'confirmed',    // Phase 04: Both parties confirmed
+	'building',     // Phase 05: Active development
+	'completed',    // Phase 06: Project delivered
+	'support'       // Phase 07: Ongoing support
+]);
+
+// Proposal confirmation status (sub-status for Phase 03-04)
+export const proposalConfirmationStatusEnum = pgEnum('proposal_confirmation_status', [
+	'draft',              // Not yet sent
+	'sent',               // Sent to client
+	'viewed',             // Client viewed
+	'client_accepted',    // Client accepted, awaiting admin
+	'admin_confirmed',    // Both confirmed (triggers phase change)
+	'rejected',           // Client rejected
+	'expired'             // Proposal expired
+]);
+
+// Revision status for project revisions
+export const revisionStatusEnum = pgEnum('revision_status', [
+	'pending',      // Revision requested
+	'in_progress',  // Being worked on
+	'resolved',     // Completed
+	'declined'      // Won't fix
+]);
+
+// Legacy project status (kept for backwards compatibility during migration)
 export const projectStatusEnum = pgEnum('project_status', [
 	'draft',
 	'proposal_sent',
@@ -76,6 +107,10 @@ export const ticketStatusEnum = pgEnum('ticket_status', [
 ]);
 
 export const ticketPriorityEnum = pgEnum('ticket_priority', ['low', 'medium', 'high', 'urgent']);
+
+export const ticketScopeEnum = pgEnum('ticket_scope', ['organization', 'personal']);
+
+export const customerTypeEnum = pgEnum('customer_type', ['personal', 'business', 'enterprise']);
 
 export const activityTypeEnum = pgEnum('activity_type', [
 	'created',
@@ -128,6 +163,8 @@ export const profiles = pgTable('profiles', {
 // Companies/clients that projects and billing are associated with
 export const organizations = pgTable('organizations', {
 	id: uuid('id').primaryKey().defaultRandom(),
+	// Human-readable Organization Number (auto-generated, e.g. ORG-0001)
+	orgNumber: text('org_number').notNull().unique(),
 	name: text('name').notNull(),
 	slug: text('slug').notNull().unique(),
 	description: text('description'),
@@ -148,6 +185,10 @@ export const organizations = pgTable('organizations', {
 
 	// Tax Information
 	taxId: text('tax_id'),
+
+	// Customer Classification & SLA
+	customerType: customerTypeEnum('customer_type').default('business'),
+	defaultSlaPolicyId: uuid('default_sla_policy_id'),
 
 	// Metadata
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
@@ -191,7 +232,17 @@ export const projects = pgTable('projects', {
 	name: text('name').notNull(),
 	slug: text('slug').notNull(),
 	description: text('description'),
+	
+	// 7-Phase System
+	phase: projectPhaseEnum('phase').default('request').notNull(),
+	
+	// Legacy status (for backwards compatibility)
 	status: projectStatusEnum('status').default('draft').notNull(),
+
+	// Proposal Confirmation (for Phase 03-04 two-way confirmation)
+	proposalStatus: proposalConfirmationStatusEnum('proposal_status'),
+	clientAcceptedAt: timestamp('client_accepted_at', { withTimezone: true }),
+	adminConfirmedAt: timestamp('admin_confirmed_at', { withTimezone: true }),
 
 	// Assigned Staff
 	assignedToId: uuid('assigned_to_id').references(() => profiles.id, { onDelete: 'set null' }),
@@ -205,6 +256,11 @@ export const projects = pgTable('projects', {
 	estimatedBudget: decimal('estimated_budget', { precision: 12, scale: 2 }),
 	actualBudget: decimal('actual_budget', { precision: 12, scale: 2 }),
 	currency: text('currency').default('USD').notNull(),
+
+	// Support Phase (Phase 07)
+	supportTierId: uuid('support_tier_id'),
+	supportStartedAt: timestamp('support_started_at', { withTimezone: true }),
+	supportEndsAt: timestamp('support_ends_at', { withTimezone: true }),
 
 	// Metadata
 	metadata: jsonb('metadata'),
@@ -334,6 +390,41 @@ export const proposals = pgTable('proposals', {
 }).enableRLS();
 
 // =============================================================================
+// PROJECT REVISIONS TABLE
+// =============================================================================
+// Change requests during the Building phase
+
+export const projectRevisions = pgTable('project_revisions', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	projectId: uuid('project_id')
+		.notNull()
+		.references(() => projects.id, { onDelete: 'cascade' }),
+	
+	// Version reference (e.g., "v1.2", "Build 42")
+	version: text('version'),
+	
+	// Revision details
+	title: text('title').notNull(),
+	description: text('description'),
+	
+	// Requester and assignee
+	requestedById: uuid('requested_by_id').references(() => profiles.id, { onDelete: 'set null' }),
+	assignedToId: uuid('assigned_to_id').references(() => profiles.id, { onDelete: 'set null' }),
+	
+	// Status & priority
+	status: revisionStatusEnum('status').default('pending').notNull(),
+	priority: ticketPriorityEnum('priority').default('medium').notNull(),
+	
+	// Resolution
+	resolvedAt: timestamp('resolved_at', { withTimezone: true }),
+	resolutionNotes: text('resolution_notes'),
+	
+	// Timestamps
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+}).enableRLS();
+
+// =============================================================================
 // INVOICES TABLE
 // =============================================================================
 
@@ -443,6 +534,9 @@ export const tickets = pgTable('tickets', {
 	// Ticket Number (auto-generated)
 	ticketNumber: text('ticket_number').notNull().unique(),
 
+	// Scope (organization or personal)
+	scope: ticketScopeEnum('scope').default('organization'),
+
 	// Content
 	subject: text('subject').notNull(),
 	description: text('description').notNull(),
@@ -453,6 +547,7 @@ export const tickets = pgTable('tickets', {
 
 	// Category/Type
 	category: text('category'),
+	categoryId: uuid('category_id').references(() => ticketCategories.id, { onDelete: 'set null' }),
 	tags: text('tags').array(),
 
 	// Assignment
@@ -468,7 +563,15 @@ export const tickets = pgTable('tickets', {
 	closedAt: timestamp('closed_at', { withTimezone: true }),
 	resolution: text('resolution'),
 
-	// SLA
+	// SLA Tracking
+	slaPolicyId: uuid('sla_policy_id').references(() => slaPolicies.id, { onDelete: 'set null' }),
+	slaResponseDueAt: timestamp('sla_response_due_at', { withTimezone: true }),
+	slaResolutionDueAt: timestamp('sla_resolution_due_at', { withTimezone: true }),
+	slaFirstResponseAt: timestamp('sla_first_response_at', { withTimezone: true }),
+	slaResolvedAt: timestamp('sla_resolved_at', { withTimezone: true }),
+	slaBreached: boolean('sla_breached').default(false),
+
+	// Legacy SLA fields (kept for backward compatibility)
 	dueAt: timestamp('due_at', { withTimezone: true }),
 	firstResponseAt: timestamp('first_response_at', { withTimezone: true }),
 
@@ -610,6 +713,7 @@ export const projectsRelations = relations(projects, ({ one, many }) => ({
 	proposals: many(proposals),
 	invoices: many(invoices),
 	tickets: many(tickets),
+	revisions: many(projectRevisions),
 	sourceRequest: one(projectRequests, {
 		fields: [projects.id],
 		references: [projectRequests.projectId]
@@ -653,6 +757,23 @@ export const proposalsRelations = relations(proposals, ({ one }) => ({
 	parentProposal: one(proposals, {
 		fields: [proposals.parentProposalId],
 		references: [proposals.id]
+	})
+}));
+
+export const projectRevisionsRelations = relations(projectRevisions, ({ one }) => ({
+	project: one(projects, {
+		fields: [projectRevisions.projectId],
+		references: [projects.id]
+	}),
+	requestedBy: one(profiles, {
+		fields: [projectRevisions.requestedById],
+		references: [profiles.id],
+		relationName: 'requestedBy'
+	}),
+	assignedTo: one(profiles, {
+		fields: [projectRevisions.assignedToId],
+		references: [profiles.id],
+		relationName: 'assignedTo'
 	})
 }));
 
@@ -871,6 +992,24 @@ export const pendingOrganizationMembersRelations = relations(pendingOrganization
 }));
 
 // =============================================================================
+// TICKET CATEGORIES TABLE
+// =============================================================================
+// Define categories for ticket organization and SLA routing
+
+export const ticketCategories = pgTable('ticket_categories', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	name: text('name').notNull(),
+	slug: text('slug').notNull().unique(),
+	description: text('description'),
+	color: text('color').default('#6b7280'),
+	icon: text('icon').default('help-circle'),
+	sortOrder: integer('sort_order').default(0),
+	isActive: boolean('is_active').default(true).notNull(),
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+}).enableRLS();
+
+// =============================================================================
 // SLA POLICIES TABLE
 // =============================================================================
 // Service Level Agreement policies for ticket management
@@ -898,6 +1037,16 @@ export const slaPolicies = pgTable('sla_policies', {
 	businessHoursEnd: integer('business_hours_end').default(17).notNull(), // 0-23
 	businessDays: integer('business_days').array().default([1, 2, 3, 4, 5]).notNull(), // 0=Sun, 1=Mon, etc.
 
+	// Applicability Rules
+	appliesToCustomerTypes: text('applies_to_customer_types').array().default([]), // personal, business, enterprise
+	appliesToCategories: text('applies_to_categories').array().default([]), // category slugs
+	priorityOrder: integer('priority_order').default(0), // Higher = checked first when matching
+
+	// Escalation Settings
+	escalationEnabled: boolean('escalation_enabled').default(false),
+	escalationAfterHours: integer('escalation_after_hours').default(24),
+	escalationNotifyEmails: text('escalation_notify_emails').array().default([]),
+
 	// Status
 	isDefault: boolean('is_default').default(false).notNull(),
 	isActive: boolean('is_active').default(true).notNull(),
@@ -910,9 +1059,44 @@ export const slaPolicies = pgTable('sla_policies', {
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
 }).enableRLS();
 
-export const slaPoliciesRelations = relations(slaPolicies, ({ one }) => ({
+export const slaPoliciesRelations = relations(slaPolicies, ({ one, many }) => ({
 	createdBy: one(profiles, {
 		fields: [slaPolicies.createdById],
+		references: [profiles.id]
+	}),
+	organizationAssignments: many(slaOrganizationAssignments)
+}));
+
+// =============================================================================
+// SLA ORGANIZATION ASSIGNMENTS TABLE
+// =============================================================================
+// Link specific organizations to specific SLA policies (override default)
+
+export const slaOrganizationAssignments = pgTable('sla_org_assignments', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	slaPolicyId: uuid('sla_policy_id')
+		.notNull()
+		.references(() => slaPolicies.id, { onDelete: 'cascade' }),
+	organizationId: uuid('organization_id')
+		.notNull()
+		.references(() => organizations.id, { onDelete: 'cascade' }),
+	notes: text('notes'),
+	createdById: uuid('created_by_id').references(() => profiles.id),
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+}).enableRLS();
+
+export const slaOrganizationAssignmentsRelations = relations(slaOrganizationAssignments, ({ one }) => ({
+	slaPolicy: one(slaPolicies, {
+		fields: [slaOrganizationAssignments.slaPolicyId],
+		references: [slaPolicies.id]
+	}),
+	organization: one(organizations, {
+		fields: [slaOrganizationAssignments.organizationId],
+		references: [organizations.id]
+	}),
+	createdBy: one(profiles, {
+		fields: [slaOrganizationAssignments.createdById],
 		references: [profiles.id]
 	})
 }));
@@ -1021,6 +1205,9 @@ export type NewTicket = typeof tickets.$inferInsert;
 export type TicketComment = typeof ticketComments.$inferSelect;
 export type NewTicketComment = typeof ticketComments.$inferInsert;
 
+export type TicketCategory = typeof ticketCategories.$inferSelect;
+export type NewTicketCategory = typeof ticketCategories.$inferInsert;
+
 export type ActivityLogEntry = typeof activityLog.$inferSelect;
 export type NewActivityLogEntry = typeof activityLog.$inferInsert;
 
@@ -1042,13 +1229,25 @@ export type NewCannedResponse = typeof cannedResponses.$inferInsert;
 export type SlaPolicy = typeof slaPolicies.$inferSelect;
 export type NewSlaPolicy = typeof slaPolicies.$inferInsert;
 
+export type SlaOrganizationAssignment = typeof slaOrganizationAssignments.$inferSelect;
+export type NewSlaOrganizationAssignment = typeof slaOrganizationAssignments.$inferInsert;
+
 export type SystemSetting = typeof systemSettings.$inferSelect;
 export type NewSystemSetting = typeof systemSettings.$inferInsert;
 
+export type ProjectRevision = typeof projectRevisions.$inferSelect;
+export type NewProjectRevision = typeof projectRevisions.$inferInsert;
+
 export type UserRole = 'super_admin' | 'admin' | 'staff' | 'customer';
+export type CustomerType = typeof customerTypeEnum.enumValues[number];
+export type TicketScope = typeof ticketScopeEnum.enumValues[number];
 export type ProjectStatus = typeof projectStatusEnum.enumValues[number];
+export type ProjectPhase = typeof projectPhaseEnum.enumValues[number];
+export type ProposalConfirmationStatus = typeof proposalConfirmationStatusEnum.enumValues[number];
+export type RevisionStatus = typeof revisionStatusEnum.enumValues[number];
 export type ProposalStatus = typeof proposalStatusEnum.enumValues[number];
 export type InvoiceStatus = typeof invoiceStatusEnum.enumValues[number];
 export type TicketStatus = typeof ticketStatusEnum.enumValues[number];
 export type TicketPriority = typeof ticketPriorityEnum.enumValues[number];
 export type ActivityType = typeof activityTypeEnum.enumValues[number];
+

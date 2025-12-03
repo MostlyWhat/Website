@@ -17,14 +17,18 @@ export const load: PageServerLoad = async ({ locals }) => {
     const allProjects = await db
         .select({
             id: projects.id,
+            projectNumber: projects.projectNumber,
             name: projects.name,
             description: projects.description,
+            phase: projects.phase,
             status: projects.status,
+            proposalStatus: projects.proposalStatus,
             startDate: projects.startDate,
             endDate: projects.endDate,
             estimatedBudget: projects.estimatedBudget,
             organizationId: projects.organizationId,
             organizationName: organizations.name,
+            orgNumber: organizations.orgNumber,
             assignedToId: projects.assignedToId,
             assignedToName: profiles.displayName,
             createdAt: projects.createdAt,
@@ -44,6 +48,7 @@ export const load: PageServerLoad = async ({ locals }) => {
         status: string;
         organizationId: string;
         organizationName: string | null;
+        orgNumber: string | null;
         createdAt: Date;
     }> = [];
 
@@ -57,6 +62,7 @@ export const load: PageServerLoad = async ({ locals }) => {
                 status: projectRequests.status,
                 organizationId: projectRequests.organizationId,
                 organizationName: organizations.name,
+                orgNumber: organizations.orgNumber,
                 createdAt: projectRequests.createdAt
             })
             .from(projectRequests)

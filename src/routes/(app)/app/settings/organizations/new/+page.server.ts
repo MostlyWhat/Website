@@ -3,6 +3,7 @@ import { organizations, organizationMembers } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
+import { generateOrgNumber } from '$lib/server/id-generator';
 
 function generateSlug(name: string): string {
     return name
@@ -58,11 +59,15 @@ export const actions: Actions = {
         }
 
         try {
+            // Generate unique org number
+            const orgNumber = await generateOrgNumber();
+
             // Create the organization
             const [newOrg] = await db
                 .insert(organizations)
                 .values({
                     name: name.trim(),
+                    orgNumber,
                     slug,
                     email: email?.trim() || null,
                     phone: phone?.trim() || null,

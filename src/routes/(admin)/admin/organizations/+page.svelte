@@ -19,6 +19,7 @@
 		organizations.filter(org => 
 			searchQuery === '' || 
 			org.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+			org.orgNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
 			(org.email?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false)
 		)
 	);
@@ -103,7 +104,15 @@
 
 						<!-- Org Info -->
 						<div class="min-w-0 flex-1">
-							<h3 class="font-ui text-sm font-semibold tracking-wider truncate">{org.name}</h3>
+							<div class="flex items-center gap-2">
+								<h3 class="font-ui text-sm font-semibold tracking-wider truncate">{org.name}</h3>
+								<span class="font-mono text-[10px] text-muted-foreground">{org.orgNumber}</span>
+								{#if org.customerType}
+									<span class="font-mono text-[10px] px-1.5 py-0.5 {org.customerType === 'enterprise' ? 'bg-purple-500/10 text-purple-500' : org.customerType === 'business' ? 'bg-green-500/10 text-green-500' : 'bg-blue-500/10 text-blue-500'}">
+										{org.customerType.toUpperCase()}
+									</span>
+								{/if}
+							</div>
 							<div class="mt-1 flex items-center gap-4 text-xs text-muted-foreground">
 								<span class="flex items-center gap-1">
 									<Mail class="h-3 w-3" />

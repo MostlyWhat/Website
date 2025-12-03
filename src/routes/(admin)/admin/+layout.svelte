@@ -32,19 +32,28 @@
 	let { children, data } = $props();
 	let mobileMenuOpen = $state(false);
 
+	// Simplified navigation as per PROJECT_SYSTEM_DESIGN.md
 	const navigation = [
 		{ href: '/admin', label: 'DASHBOARD', icon: LayoutDashboard, exact: true },
-		{ href: '/admin/users', label: 'USERS', icon: Users },
-		{ href: '/admin/organizations', label: 'ORGANIZATIONS', icon: Building2 },
 		{ href: '/admin/projects', label: 'PROJECTS', icon: FolderKanban },
-		{ href: '/admin/proposals', label: 'PROPOSALS', icon: FileText },
-		{ href: '/admin/invoices', label: 'INVOICES', icon: Receipt },
+		{ href: '/admin/organizations', label: 'ORGANIZATIONS', icon: Building2 },
 		{ href: '/admin/tickets', label: 'TICKETS', icon: Ticket },
+		{ href: '/admin/reports', label: 'REPORTS', icon: BarChart3 }
+	];
+
+	// Settings submenu items
+	const settingsNav = [
+		{ href: '/admin/users', label: 'USERS', icon: Users },
 		{ href: '/admin/sla-policies', label: 'SLA POLICIES', icon: Clock },
-		{ href: '/admin/canned-responses', label: 'CANNED RESPONSES', icon: MessageSquareText },
+		{ href: '/admin/canned-responses', label: 'RESPONSE TEMPLATES', icon: MessageSquareText },
 		{ href: '/admin/activity-log', label: 'ACTIVITY LOG', icon: Activity, adminOnly: true },
-		{ href: '/admin/reports', label: 'REPORTS', icon: BarChart3 },
-		{ href: '/admin/settings', label: 'SETTINGS', icon: Settings, adminOnly: true }
+		{ href: '/admin/settings', label: 'SYSTEM', icon: Settings, adminOnly: true }
+	];
+
+	// Legacy routes (kept for backwards compatibility)
+	const legacyNav = [
+		{ href: '/admin/proposals', label: 'PROPOSALS', icon: FileText },
+		{ href: '/admin/invoices', label: 'INVOICES', icon: Receipt }
 	];
 
 	function isActive(href: string, exact?: boolean): boolean {
@@ -74,8 +83,8 @@
 
 		<!-- Navigation -->
 		<nav class="flex-1 overflow-y-auto border-b border-border">
-			{#each navigation as { href, label, icon: Icon, exact, adminOnly }}
-				{#if !adminOnly || isAdmin}
+			<!-- Main Navigation -->
+			{#each navigation as { href, label, icon: Icon, exact }}
 				<a
 					{href}
 					class="group flex items-center gap-3 border-b border-border px-4 py-2.5 transition-colors {isActive(href, exact)
@@ -87,6 +96,43 @@
 					</div>
 					<span class="font-ui flex-1 text-[11px] tracking-wider">{label}</span>
 					<ChevronRight class="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100 {isActive(href, exact) ? 'opacity-100' : ''}" />
+				</a>
+			{/each}
+
+			<!-- Legacy Routes (kept for backwards compatibility) -->
+			<div class="px-4 py-2">
+				<span class="font-mono text-[9px] tracking-widest text-muted-foreground/50">LEGACY</span>
+			</div>
+			{#each legacyNav as { href, label, icon: Icon }}
+				<a
+					{href}
+					class="group flex items-center gap-3 border-b border-border px-4 py-2 transition-colors {isActive(href)
+						? 'bg-primary/10 text-primary'
+						: 'text-muted-foreground/70 hover:bg-card hover:text-foreground'}"
+				>
+					<div class="flex h-6 w-6 items-center justify-center border transition-colors {isActive(href) ? 'border-primary bg-primary/10' : 'border-border/50 bg-background'}">
+						<Icon class="h-3 w-3 {isActive(href) ? 'text-primary' : ''}" />
+					</div>
+					<span class="font-ui flex-1 text-[10px] tracking-wider">{label}</span>
+				</a>
+			{/each}
+
+			<!-- Settings Section -->
+			<div class="px-4 py-2 mt-2">
+				<span class="font-mono text-[9px] tracking-widest text-muted-foreground/50">SETTINGS</span>
+			</div>
+			{#each settingsNav as { href, label, icon: Icon, adminOnly }}
+				{#if !adminOnly || isAdmin}
+				<a
+					{href}
+					class="group flex items-center gap-3 border-b border-border px-4 py-2 transition-colors {isActive(href)
+						? 'bg-primary/10 text-primary'
+						: 'text-muted-foreground/70 hover:bg-card hover:text-foreground'}"
+				>
+					<div class="flex h-6 w-6 items-center justify-center border transition-colors {isActive(href) ? 'border-primary bg-primary/10' : 'border-border/50 bg-background'}">
+						<Icon class="h-3 w-3 {isActive(href) ? 'text-primary' : ''}" />
+					</div>
+					<span class="font-ui flex-1 text-[10px] tracking-wider">{label}</span>
 				</a>
 				{/if}
 			{/each}
@@ -181,8 +227,7 @@
 
 						<!-- Navigation -->
 						<nav class="flex-1 overflow-auto">
-							{#each navigation as { href, label, icon: Icon, exact, adminOnly }}
-								{#if !adminOnly || isAdmin}
+							{#each navigation as { href, label, icon: Icon, exact }}
 								<a
 									{href}
 									onclick={() => (mobileMenuOpen = false)}
@@ -196,7 +241,6 @@
 									<span class="font-ui flex-1 text-xs tracking-wider">{label}</span>
 									<ChevronRight class="h-4 w-4" />
 								</a>
-								{/if}
 							{/each}
 						</nav>
 

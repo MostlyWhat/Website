@@ -24,9 +24,12 @@ export const load: PageServerLoad = async ({ locals }) => {
     const userProjects = await db
         .select({
             id: projects.id,
+            projectNumber: projects.projectNumber,
             name: projects.name,
             description: projects.description,
+            phase: projects.phase,
             status: projects.status,
+            proposalStatus: projects.proposalStatus,
             startDate: projects.startDate,
             endDate: projects.endDate,
             organizationId: projects.organizationId,

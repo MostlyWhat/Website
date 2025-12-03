@@ -10,6 +10,7 @@ import { db } from '$lib/server/db';
 import { tickets, organizationMembers, organizations, projects } from '$lib/server/db/schema';
 import { eq, and } from 'drizzle-orm';
 import crypto from 'node:crypto';
+import { generateOrgNumber } from '$lib/server/id-generator';
 
 export const load: PageServerLoad = async ({ locals }) => {
     // Verify user is authenticated
@@ -152,8 +153,10 @@ export const actions: Actions = {
 
             // If still no organization, create a personal one
             if (!organizationId) {
+                const orgNumber = await generateOrgNumber();
                 const [newOrg] = await db.insert(organizations).values({
                     name: `${locals.profile.firstName || 'User'}'s Organization`,
+                    orgNumber,
                     slug: generateSlug(),
                     email: locals.profile.email
                 }).returning({ id: organizations.id });

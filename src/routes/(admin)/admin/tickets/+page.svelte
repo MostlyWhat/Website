@@ -480,6 +480,9 @@
 							<div class="mt-1 flex items-center gap-4 text-xs text-muted-foreground">
 								<span class="flex items-center gap-1">
 									<Building2 class="h-3 w-3" />
+									{#if ticket.orgNumber}
+										<span class="font-mono text-[10px]">{ticket.orgNumber}</span>
+									{/if}
 									{ticket.organization}
 								</span>
 								<span class="flex items-center gap-1">

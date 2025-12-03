@@ -81,13 +81,20 @@
 			<div class="h-12 w-12 border border-border bg-muted flex items-center justify-center">
 				<Building2 class="h-6 w-6 text-muted-foreground" />
 			</div>
-			<div>
-				<h1 class="font-mono text-xl tracking-tight">{data.organization.name}</h1>
+			<div class="flex-1">
+				<div class="flex items-center gap-2">
+					<h1 class="font-mono text-xl tracking-tight">{data.organization.name}</h1>
+					<span class="font-mono text-xs text-muted-foreground">{data.organization.orgNumber}</span>
+					{#if data.organization.customerType}
+						<span class="font-mono text-[10px] px-1.5 py-0.5 {data.organization.customerType === 'enterprise' ? 'bg-purple-500/10 text-purple-500' : data.organization.customerType === 'business' ? 'bg-green-500/10 text-green-500' : 'bg-blue-500/10 text-blue-500'}">
+							{data.organization.customerType.toUpperCase()}
+						</span>
+					{/if}
+				</div>
 				<p class="text-sm text-muted-foreground">@{data.organization.slug}</p>
 			</div>
 		</div>
-		<div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-			{#if data.organization.email}
+		<div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">\n\t\t\t{#if data.organization.email}
 				<div class="flex items-center gap-2 text-sm">
 					<Mail class="h-4 w-4 text-muted-foreground" />
 					<span>{data.organization.email}</span>
