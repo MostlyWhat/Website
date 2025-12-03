@@ -191,7 +191,7 @@
 			{
 				title: 'OVERVIEW',
 				sections: [
-					{ id: 'overview', title: 'Introduction', icon: BookOpen, href: '/docs/api', status: 'coming-soon' },
+					{ id: 'overview', title: 'Introduction', icon: BookOpen, href: '/docs/api' },
 					{ id: 'authentication', title: 'Authentication', icon: Settings, href: '/docs/api/authentication', status: 'coming-soon' }
 				]
 			},
