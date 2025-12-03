@@ -11,6 +11,7 @@ This document tracks the implementation of features and fixes for the MostlyWhat
 - [x] **Sign-in/Sign-up Forms**: Keep forms centered in their area, ensure mobile responsive
 - [x] **App Top Bar**: Fixed missing top bar in app/admin error pages for full screen
 - [x] **Portal Announcement Bar**: Make consistent height, show announcements set by super admin
+- [x] **Admin Page Padding**: Consistent `px-6 py-8 md:px-12 lg:px-16` padding across all admin pages
 - [ ] **Mobile Responsiveness**: Audit all pages for mobile compatibility
 
 ### 2. Navigation & Access
@@ -21,6 +22,7 @@ This document tracks the implementation of features and fixes for the MostlyWhat
 
 ### 3. Onboarding System
 - [x] **Profile Onboarding**: Collect user profile info and preferences after registration
+- [x] **Onboarding Form Centering**: Fixed form centering in right panel
 - [ ] **Organization Setup Flow**: 
   - Business option: Create organization, invite members
   - Personal option: Solo account setup
@@ -30,6 +32,7 @@ This document tracks the implementation of features and fixes for the MostlyWhat
 
 ### 4. Organization Management
 - [x] **Client Organization View**: User settings > Organizations section
+- [x] **Client Create Organization**: `/app/settings/organizations/new` for creating organizations
 - [x] **Admin Organization Management**: `/admin/organizations` full CRUD
 - [x] **Member Roles**: Owner, Admin, Member permissions in schema
 - [x] **Invite Codes**: Generate, share, and manage invite codes
@@ -40,6 +43,7 @@ This document tracks the implementation of features and fixes for the MostlyWhat
 - [x] **Create Proposal**: Admin can create proposals for organizations
 - [x] **Proposal Workflow**: Draft → Sent → Viewed → Accepted/Rejected
 - [x] **Proposal to Project**: Convert accepted proposals to projects
+- [x] **Proposal Detail Grid**: Fixed box grid layout to match add proposal form
 - [x] **Assignment**: Assign staff to proposals
 - [ ] **Edit Proposal**: Allow editing draft proposals
 - [ ] **Proposal PDF Generation**: Generate PDF version for download/email
@@ -50,9 +54,15 @@ This document tracks the implementation of features and fixes for the MostlyWhat
 - [x] **Project from Proposal**: Auto-create project from approved proposal
 - [x] **Admin Projects Page**: `/admin/projects` with list and detail views
 - [x] **Create New Project**: `/admin/projects/new` form
+- [x] **Project Requests**: Client project request system integrated into projects page
+  - [x] Client can submit project requests (`/app/projects/new`)
+  - [x] Request status tracking: pending → under_review → approved/rejected → converted
+  - [x] Admin can review requests at `/admin/project-requests/[id]`
+  - [x] Requests tab integrated into admin projects page
 - [ ] **Project Milestones**: Track project milestones and deliverables
 - [ ] **Project Timeline View**: Visual timeline/Gantt view
 - [ ] **Project Notes**: Internal notes for staff
+- [ ] **Project Stages**: Visual stage progression (request → proposal → active → completed)
 
 ### 7. Ticket System Improvements
 - [x] **Ticket Assignment**: Assign staff to tickets
@@ -65,6 +75,7 @@ This document tracks the implementation of features and fixes for the MostlyWhat
   - Response time targets
   - Resolution time targets  
   - SLA breach alerts (TODO: ticket list visual indicators)
+  - Default SLA Policies in seed.sql (Standard + Premium)
 - [x] **Canned Responses**: Pre-defined response templates for common issues (admin page + ticket integration)
 - [ ] **Ticket Merging**: Merge duplicate tickets
 - [ ] **Ticket Splitting**: Split ticket into multiple tickets
@@ -162,13 +173,14 @@ This document tracks the implementation of features and fixes for the MostlyWhat
 
 ## Database Schema
 
-### Tables (17 total, all with RLS enabled)
+### Tables (18 total, all with RLS enabled)
 - [x] `profiles` - User profiles linked to Supabase Auth
 - [x] `organizations` - Client organizations/companies
 - [x] `organization_members` - M:N relationship profiles↔organizations
 - [x] `organization_invites` - Invite codes for joining organizations
 - [x] `pending_org_members` - Members awaiting approval
 - [x] `projects` - Client projects
+- [x] `project_requests` - Client project requests (NEW)
 - [x] `proposals` - Project proposals
 - [x] `invoices` - Billing invoices
 - [x] `payments` - Payment records
@@ -204,7 +216,8 @@ src/routes/
 │   ├── canned-responses/  # Response templates
 │   ├── invoices/          # Invoice management
 │   ├── organizations/     # Organization management
-│   ├── projects/          # Project management
+│   ├── projects/          # Project management (includes requests tab)
+│   ├── project-requests/  # Project request detail pages
 │   ├── proposals/         # Proposal management
 │   ├── reports/           # Analytics dashboard
 │   ├── settings/          # System settings
@@ -214,11 +227,15 @@ src/routes/
 ├── (app)/app/             # Client portal routes
 │   ├── invoices/          # Client invoices
 │   ├── projects/          # Client projects
+│   │   ├── new/           # Submit new project request
+│   │   ├── requests/      # View request status
+│   │   └── [id]/          # Project detail
 │   ├── proposals/         # Client proposals
 │   ├── settings/          # User settings
 │   │   ├── danger/        # Account deletion
 │   │   ├── notifications/ # Notification prefs
-│   │   ├── organizations/ # Org membership
+│   │   ├── organizations/ # Org membership + create
+│   │   │   └── new/       # Create organization
 │   │   └── password/      # Password change
 │   └── tickets/           # Client tickets
 ├── (auth)/auth/           # Authentication routes
@@ -231,8 +248,32 @@ src/routes/
 
 ## Next Steps (Priority Order)
 
-1. **Entity Activity Integration**: Wire up activity logging to ticket, project, proposal operations
-2. **Organization Owner Dashboard**: Enhanced management for org owners
-3. **PDF Generation**: Proposal and invoice PDF export
-4. **Email Notifications**: Basic email notifications for key events
-5. **Knowledge Base**: Article management system
+1. **Project Stages UI**: Visual stage progression showing request → proposal → development → completed
+2. **Entity Activity Integration**: Wire up activity logging to ticket, project, proposal operations  
+3. **Organization Owner Dashboard**: Enhanced management for org owners
+4. **PDF Generation**: Proposal and invoice PDF export
+5. **Email Notifications**: Basic email notifications for key events
+6. **Knowledge Base**: Article management system
+
+---
+
+## Recent Changes (December 2024)
+
+### Project Request System
+- Added `project_requests` table for client-submitted project requests
+- Clients can submit requests at `/app/projects/new`
+- Requests have status flow: pending → under_review → approved/rejected → converted
+- Admin project requests integrated as tab in `/admin/projects` page
+- Admin detail view at `/admin/project-requests/[id]` with approve/reject/convert actions
+- Request can be converted to project with one click
+
+### Client Organization Creation
+- Added `/app/settings/organizations/new` for clients to create their own organizations
+- Creator becomes automatic owner
+- Organizations can be managed from settings page
+
+### UI Consistency Fixes
+- Fixed admin page padding consistency (`px-6 py-8 md:px-12 lg:px-16`)
+- Fixed onboarding form centering
+- Fixed proposal detail page box grid layout
+- Default SLA policies added to seed.sql (Standard + Premium)

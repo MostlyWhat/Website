@@ -25,8 +25,7 @@
 		Shield,
 		MessageSquareText,
 		Clock,
-		Activity,
-		Inbox
+		Activity
 	} from '@lucide/svelte';
 	import * as Sheet from '$lib/components/ui/sheet';
 
@@ -37,7 +36,6 @@
 		{ href: '/admin', label: 'DASHBOARD', icon: LayoutDashboard, exact: true },
 		{ href: '/admin/users', label: 'USERS', icon: Users },
 		{ href: '/admin/organizations', label: 'ORGANIZATIONS', icon: Building2 },
-		{ href: '/admin/project-requests', label: 'PROJECT REQUESTS', icon: Inbox },
 		{ href: '/admin/projects', label: 'PROJECTS', icon: FolderKanban },
 		{ href: '/admin/proposals', label: 'PROPOSALS', icon: FileText },
 		{ href: '/admin/invoices', label: 'INVOICES', icon: Receipt },

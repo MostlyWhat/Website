@@ -39,23 +39,37 @@ export const load: PageServerLoad = async ({ locals }) => {
         .orderBy(desc(projects.updatedAt));
 
     // Fetch project requests (pending, under_review, approved, rejected)
-    const userRequests = await db
-        .select({
-            id: projectRequests.id,
-            requestNumber: projectRequests.requestNumber,
-            title: projectRequests.title,
-            projectType: projectRequests.projectType,
-            status: projectRequests.status,
-            createdAt: projectRequests.createdAt
-        })
-        .from(projectRequests)
-        .where(
-            and(
-                inArray(projectRequests.organizationId, orgIds),
-                ne(projectRequests.status, 'converted')
+    let userRequests: Array<{
+        id: string;
+        requestNumber: string;
+        title: string;
+        projectType: string;
+        status: string;
+        createdAt: Date;
+    }> = [];
+    
+    try {
+        userRequests = await db
+            .select({
+                id: projectRequests.id,
+                requestNumber: projectRequests.requestNumber,
+                title: projectRequests.title,
+                projectType: projectRequests.projectType,
+                status: projectRequests.status,
+                createdAt: projectRequests.createdAt
+            })
+            .from(projectRequests)
+            .where(
+                and(
+                    inArray(projectRequests.organizationId, orgIds),
+                    ne(projectRequests.status, 'converted')
+                )
             )
-        )
-        .orderBy(desc(projectRequests.createdAt));
+            .orderBy(desc(projectRequests.createdAt));
+    } catch (error) {
+        // Table may not exist yet
+        console.warn('Project requests table not available:', error);
+    }
 
     return {
         projects: userProjects.map((p) => ({
