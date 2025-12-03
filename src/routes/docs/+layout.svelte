@@ -168,13 +168,13 @@
 				title: 'OVERVIEW',
 				sections: [
 					{ id: 'overview', title: 'Introduction', icon: BookOpen, href: '/docs/products' },
-					{ id: 'architecture', title: 'Architecture', icon: Blocks, href: '/docs/products/architecture', status: 'coming-soon' }
+					{ id: 'architecture', title: 'Architecture', icon: Blocks, href: '/docs/products/architecture' }
 				]
 			},
 			{
 				title: 'WEB APPLICATIONS',
 				sections: [
-					{ id: 'sveltekit', title: 'SvelteKit Apps', icon: Component, href: '/docs/products/sveltekit', status: 'coming-soon' },
+					{ id: 'sveltekit', title: 'SvelteKit Apps', icon: Component, href: '/docs/products/sveltekit' },
 					{ id: 'static-sites', title: 'Static Sites', icon: FileText, href: '/docs/products/static-sites', status: 'coming-soon' },
 					{ id: 'dashboards', title: 'Dashboards', icon: Layout, href: '/docs/products/dashboards', status: 'coming-soon' }
 				]
@@ -182,8 +182,7 @@
 			{
 				title: 'DEPLOYMENT',
 				sections: [
-					{ id: 'cloudflare', title: 'Cloudflare', icon: Server, href: '/docs/products/cloudflare', status: 'coming-soon' },
-					{ id: 'vercel', title: 'Vercel', icon: Zap, href: '/docs/products/vercel', status: 'coming-soon' }
+					{ id: 'deployment', title: 'Deployment Guide', icon: Server, href: '/docs/products/deployment' }
 				]
 			}
 		],
@@ -192,14 +191,14 @@
 				title: 'OVERVIEW',
 				sections: [
 					{ id: 'overview', title: 'Introduction', icon: BookOpen, href: '/docs/api' },
-					{ id: 'authentication', title: 'Authentication', icon: Settings, href: '/docs/api/authentication', status: 'coming-soon' }
+					{ id: 'authentication', title: 'Authentication', icon: Settings, href: '/docs/api/authentication' }
 				]
 			},
 			{
 				title: 'ENDPOINTS',
 				sections: [
-					{ id: 'contact', title: 'Contact API', icon: Code2, href: '/docs/api/contact', status: 'coming-soon' },
-					{ id: 'search', title: 'Search API', icon: Search, href: '/docs/api/search', status: 'coming-soon' }
+					{ id: 'contact', title: 'Contact API', icon: Code2, href: '/docs/api/contact' },
+					{ id: 'search', title: 'Search API', icon: Search, href: '/docs/api/search' }
 				]
 			}
 		]

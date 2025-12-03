@@ -10,6 +10,11 @@
 	
 	let { children } = $props();
 
+	// Check if navigation involves docs routes (for reduced animations)
+	function isDocsNavigation(currentPath: string, targetPath?: string): boolean {
+		return currentPath.startsWith('/docs') || (targetPath?.startsWith('/docs') ?? false);
+	}
+
 	// Track navigation state globally for TransmissionLoader
 	beforeNavigate((navigation) => {
 		// Only show loader for actual page changes, not hash links
@@ -37,10 +42,18 @@
 		const targetPath = navigation.to?.url.pathname;
 		if (currentPath === targetPath) return;
 
+		// Add class for reduced animations in docs
+		const isDocsRoute = isDocsNavigation(currentPath, targetPath);
+		if (isDocsRoute) {
+			document.documentElement.classList.add('docs-transition');
+		}
+
 		return new Promise((resolve) => {
 			document.startViewTransition(async () => {
 				resolve();
 				await navigation.complete;
+				// Remove class after transition
+				document.documentElement.classList.remove('docs-transition');
 			});
 		});
 	});
