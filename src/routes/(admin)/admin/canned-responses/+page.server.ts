@@ -3,6 +3,7 @@ import { cannedResponses, profiles } from '$lib/server/db/schema';
 import { eq, desc, or } from 'drizzle-orm';
 import { error, fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
+import { cannedResponseActivity, getClientIp } from '$lib/server/activity-logger';
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user || !locals.profile) {
@@ -72,14 +73,17 @@ export const actions: Actions = {
         // Only admins can create global responses
         const canCreateGlobal = ['admin', 'super_admin'].includes(locals.profile.role ?? '');
 
-        await db.insert(cannedResponses).values({
+        const [created] = await db.insert(cannedResponses).values({
             title: title.trim(),
             shortcut: shortcut?.trim() || null,
             content: content.trim(),
             category: category?.trim() || null,
             isGlobal: canCreateGlobal ? isGlobal : false,
             createdById: locals.profile.id
-        });
+        }).returning({ id: cannedResponses.id });
+
+        // Log activity
+        await cannedResponseActivity.created(created.id, title.trim(), locals.profile.id, getClientIp(request));
 
         return { success: true, message: 'Canned response created successfully' };
     },
@@ -103,7 +107,7 @@ export const actions: Actions = {
 
         // Check ownership or admin status
         const [existing] = await db
-            .select({ createdById: cannedResponses.createdById })
+            .select({ createdById: cannedResponses.createdById, title: cannedResponses.title })
             .from(cannedResponses)
             .where(eq(cannedResponses.id, id))
             .limit(1);
@@ -131,6 +135,9 @@ export const actions: Actions = {
             })
             .where(eq(cannedResponses.id, id));
 
+        // Log activity
+        await cannedResponseActivity.updated(id, title.trim(), locals.profile.id, getClientIp(request));
+
         return { success: true, message: 'Canned response updated successfully' };
     },
 
@@ -148,7 +155,7 @@ export const actions: Actions = {
 
         // Check ownership or admin status
         const [existing] = await db
-            .select({ createdById: cannedResponses.createdById })
+            .select({ createdById: cannedResponses.createdById, title: cannedResponses.title })
             .from(cannedResponses)
             .where(eq(cannedResponses.id, id))
             .limit(1);
@@ -165,6 +172,9 @@ export const actions: Actions = {
         }
 
         await db.delete(cannedResponses).where(eq(cannedResponses.id, id));
+
+        // Log activity
+        await cannedResponseActivity.deleted(id, existing.title, locals.profile.id, getClientIp(request));
 
         return { success: true, message: 'Canned response deleted successfully' };
     }

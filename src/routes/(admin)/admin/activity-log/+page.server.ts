@@ -20,6 +20,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
     const search = url.searchParams.get('search') || '';
     const startDate = url.searchParams.get('startDate') || '';
     const endDate = url.searchParams.get('endDate') || '';
+    const performerId = url.searchParams.get('performerId') || '';
     const page = Math.max(1, parseInt(url.searchParams.get('page') || '1'));
     const limit = 50;
     const offset = (page - 1) * limit;
@@ -48,6 +49,10 @@ export const load: PageServerLoad = async ({ locals, url }) => {
         const end = new Date(endDate);
         end.setDate(end.getDate() + 1);
         conditions.push(lte(activityLog.createdAt, end));
+    }
+
+    if (performerId) {
+        conditions.push(eq(activityLog.performedById, performerId));
     }
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
@@ -86,6 +91,23 @@ export const load: PageServerLoad = async ({ locals, url }) => {
         .from(activityLog)
         .orderBy(activityLog.entityType);
 
+    // Get all staff/admin users for performer filter
+    const performers = await db
+        .select({
+            id: profiles.id,
+            displayName: profiles.displayName,
+            email: profiles.email
+        })
+        .from(profiles)
+        .where(
+            or(
+                eq(profiles.role, 'admin'),
+                eq(profiles.role, 'super_admin'),
+                eq(profiles.role, 'staff')
+            )
+        )
+        .orderBy(profiles.displayName);
+
     return {
         activities,
         pagination: {
@@ -99,8 +121,10 @@ export const load: PageServerLoad = async ({ locals, url }) => {
             activityType,
             search,
             startDate,
-            endDate
+            endDate,
+            performerId
         },
-        entityTypes: entityTypes.map(e => e.entityType)
+        entityTypes: entityTypes.map(e => e.entityType),
+        performers
     };
 };

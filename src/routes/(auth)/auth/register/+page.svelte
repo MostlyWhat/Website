@@ -95,7 +95,7 @@
 		</div>
 
 		<!-- Right Panel - Register Form -->
-		<div class="col-span-12 flex flex-col justify-center overflow-y-auto bg-background px-6 py-8 md:px-12 lg:col-span-6 lg:px-16">
+		<div class="col-span-12 flex flex-col items-center justify-center overflow-y-auto bg-background px-6 py-8 md:px-12 lg:col-span-6 lg:px-16">
 			<!-- Mobile Header -->
 			<div class="mb-8 lg:hidden">
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// AUTH.REGISTER</span>

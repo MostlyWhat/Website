@@ -17,6 +17,11 @@
 	let isActionable = $derived(['sent', 'viewed'].includes(proposal.status) && !isExpired);
 	let showRejectForm = $state(false);
 
+	// Calculate pricing section number based on which sections have content
+	let pricingSectionNum = $derived(
+		2 + (proposal.content?.sections?.length ? 1 : 0) + (proposal.content?.lineItems?.length ? 1 : 0)
+	);
+
 	function formatCurrency(amount: number): string {
 		return new Intl.NumberFormat('en-US', { style: 'currency', currency: proposal.currency ?? 'USD' }).format(amount);
 	}
@@ -87,19 +92,49 @@
 					<p class="font-body mt-4 text-base leading-relaxed text-muted-foreground">{proposal.summary ?? 'No summary provided.'}</p>
 				</div>
 
-				<!-- Content (if available) -->
-				{#if proposal.content}
+				<!-- Sections (if available) -->
+				{#if proposal.content?.sections?.length}
 					<div class="mt-12">
 						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">02 — PROPOSAL DETAILS</span>
-						<div class="font-body mt-4 prose prose-sm max-w-none text-muted-foreground">
-							{@html proposal.content}
+						<div class="mt-6 space-y-8">
+							{#each proposal.content.sections.sort((a, b) => a.order - b.order) as section, i}
+								<div>
+									<h3 class="font-ui text-sm font-semibold tracking-wider uppercase">{section.title}</h3>
+									<div class="font-body mt-3 text-sm leading-relaxed text-muted-foreground prose prose-sm max-w-none">
+										{@html section.content}
+									</div>
+								</div>
+							{/each}
+						</div>
+					</div>
+				{/if}
+
+				<!-- Line Items (if available) -->
+				{#if proposal.content?.lineItems?.length}
+					<div class="mt-12">
+						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">{proposal.content?.sections?.length ? '03' : '02'} — LINE ITEMS</span>
+						<div class="mt-6 border border-border">
+							<div class="hidden sm:grid grid-cols-12 border-b border-border bg-card px-4 py-3">
+								<span class="col-span-6 font-mono text-[10px] tracking-widest text-muted-foreground">DESCRIPTION</span>
+								<span class="col-span-2 font-mono text-[10px] tracking-widest text-muted-foreground text-right">QTY</span>
+								<span class="col-span-2 font-mono text-[10px] tracking-widest text-muted-foreground text-right">UNIT PRICE</span>
+								<span class="col-span-2 font-mono text-[10px] tracking-widest text-muted-foreground text-right">TOTAL</span>
+							</div>
+							{#each proposal.content.lineItems as item}
+								<div class="grid grid-cols-12 border-b border-border px-4 py-4 last:border-b-0">
+									<span class="col-span-12 sm:col-span-6 font-body text-sm">{item.description}</span>
+									<span class="col-span-4 sm:col-span-2 font-mono text-sm text-right text-muted-foreground">{item.quantity}</span>
+									<span class="col-span-4 sm:col-span-2 font-mono text-sm text-right text-muted-foreground">{formatCurrency(item.unitPrice)}</span>
+									<span class="col-span-4 sm:col-span-2 font-mono text-sm text-right">{formatCurrency(item.total)}</span>
+								</div>
+							{/each}
 						</div>
 					</div>
 				{/if}
 
 				<!-- Pricing -->
 				<div class="mt-12">
-					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">{proposal.content ? '03' : '02'} — PRICING</span>
+					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">{pricingSectionNum.toString().padStart(2, '0')} — PRICING</span>
 					
 					<div class="mt-6 border border-border">
 						{#if proposal.subtotal > 0}
@@ -178,22 +213,60 @@
 				</div>
 
 				<!-- Actions -->
-				{#if proposal.status === 'sent' && !isExpired}
+				{#if isActionable}
 					<div class="mt-6 border border-border p-6">
 						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">YOUR RESPONSE</span>
 						<p class="font-body mt-4 text-sm text-muted-foreground">
 							Please review the proposal carefully. Once you're ready, you can accept or decline below.
 						</p>
-						<div class="mt-6 space-y-3">
-							<Button class="font-ui w-full text-xs tracking-wider bg-green-600 hover:bg-green-700">
-								<Check class="mr-2 h-4 w-4" />
-								ACCEPT PROPOSAL
-							</Button>
-							<Button variant="outline" class="font-ui w-full text-xs tracking-wider text-red-500 hover:bg-red-500/10 hover:text-red-500">
-								<X class="mr-2 h-4 w-4" />
-								DECLINE
-							</Button>
-						</div>
+						
+						{#if !showRejectForm}
+							<div class="mt-6 space-y-3">
+								<form method="POST" action="?/accept" use:enhance>
+									<Button type="submit" class="font-ui w-full text-xs tracking-wider bg-green-600 hover:bg-green-700">
+										<Check class="mr-2 h-4 w-4" />
+										ACCEPT PROPOSAL
+									</Button>
+								</form>
+								<Button 
+									variant="outline" 
+									class="font-ui w-full text-xs tracking-wider text-red-500 hover:bg-red-500/10 hover:text-red-500"
+									onclick={() => showRejectForm = true}
+								>
+									<X class="mr-2 h-4 w-4" />
+									DECLINE
+								</Button>
+							</div>
+						{:else}
+							<form method="POST" action="?/reject" use:enhance class="mt-6 space-y-4">
+								<div>
+									<label for="reason" class="font-mono text-[10px] tracking-widest text-muted-foreground">REASON FOR DECLINING (OPTIONAL)</label>
+									<textarea
+										id="reason"
+										name="reason"
+										rows="3"
+										class="mt-2 w-full rounded-none border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-foreground"
+										placeholder="Please let us know why you're declining this proposal..."
+									></textarea>
+								</div>
+								<div class="flex gap-3">
+									<Button 
+										type="button" 
+										variant="outline" 
+										class="font-ui flex-1 text-xs tracking-wider"
+										onclick={() => showRejectForm = false}
+									>
+										CANCEL
+									</Button>
+									<Button 
+										type="submit" 
+										class="font-ui flex-1 text-xs tracking-wider bg-red-600 hover:bg-red-700"
+									>
+										CONFIRM DECLINE
+									</Button>
+								</div>
+							</form>
+						{/if}
 					</div>
 				{:else if proposal.status === 'accepted'}
 					<div class="mt-6 border border-green-500/20 bg-green-500/10 p-6">

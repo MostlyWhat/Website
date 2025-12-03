@@ -91,42 +91,43 @@
 		</div>
 
 		<!-- Right Panel - Login Form -->
-		<div class="col-span-12 flex flex-col justify-center overflow-y-auto bg-background px-6 py-8 md:px-12 lg:col-span-6 lg:px-16">
-			<!-- Mobile Header -->
-			<div class="mb-8 lg:hidden">
-				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// AUTH.LOGIN</span>
-				<h1 class="font-display mt-4 text-3xl font-bold uppercase">WELCOME BACK</h1>
-			</div>
-
-			<!-- Error Message -->
-			{#if form?.error || timeoutError}
-				<div class="mb-6 w-full max-w-md border border-destructive/50 bg-destructive/10 px-6 py-4">
-					<p class="font-mono text-sm text-destructive">{form?.error || timeoutError}</p>
+		<div class="col-span-12 flex flex-col items-center justify-center overflow-y-auto bg-background px-6 py-8 md:px-12 lg:col-span-6 lg:px-16">
+			<div class="w-full max-w-md">
+				<!-- Mobile Header -->
+				<div class="mb-8 lg:hidden">
+					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// AUTH.LOGIN</span>
+					<h1 class="font-display mt-4 text-3xl font-bold uppercase">WELCOME BACK</h1>
 				</div>
-			{/if}
 
-			<!-- Success Message (for magic link) -->
-			{#if form?.success}
-				<div class="mb-6 w-full max-w-md border border-primary/50 bg-primary/10 px-6 py-4">
-					<p class="font-mono text-sm text-primary">{form.message}</p>
-				</div>
-			{/if}
+				<!-- Error Message -->
+				{#if form?.error || timeoutError}
+					<div class="mb-6 border border-destructive/50 bg-destructive/10 px-6 py-4">
+						<p class="font-mono text-sm text-destructive">{form?.error || timeoutError}</p>
+					</div>
+				{/if}
 
-			<div class="w-full max-w-md space-y-8">
-				<!-- OAuth Providers -->
-				<div class="space-y-3">
-					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">QUICK SIGN IN</span>
+				<!-- Success Message (for magic link) -->
+				{#if form?.success}
+					<div class="mb-6 border border-primary/50 bg-primary/10 px-6 py-4">
+						<p class="font-mono text-sm text-primary">{form.message}</p>
+					</div>
+				{/if}
+
+				<div class="space-y-8">
+					<!-- OAuth Providers -->
+					<div class="space-y-3">
+						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">QUICK SIGN IN</span>
 					
-					<a
-						href="/auth/oauth/github?redirectTo={encodeURIComponent(redirectTo)}"
-						class="group flex w-full items-center gap-4 border border-border bg-card px-6 py-4 transition-colors hover:bg-card/80"
-					>
-						<div class="flex h-10 w-10 items-center justify-center border border-border bg-background">
-							<Github class="h-4 w-4" />
-						</div>
-						<span class="font-ui flex-1 text-sm tracking-wider">Continue with GitHub</span>
-						<ArrowRight class="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
-					</a>
+						<a
+							href="/auth/oauth/github?redirectTo={encodeURIComponent(redirectTo)}"
+							class="group flex w-full items-center gap-4 border border-border bg-card px-6 py-4 transition-colors hover:bg-card/80"
+						>
+							<div class="flex h-10 w-10 items-center justify-center border border-border bg-background">
+								<Github class="h-4 w-4" />
+							</div>
+							<span class="font-ui flex-1 text-sm tracking-wider">Continue with GitHub</span>
+							<ArrowRight class="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
+						</a>
 
 					<a
 						href="/auth/oauth/google?redirectTo={encodeURIComponent(redirectTo)}"

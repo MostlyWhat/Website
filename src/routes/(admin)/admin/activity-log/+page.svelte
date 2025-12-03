@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { Activity, Search, Filter, ChevronLeft, ChevronRight, Calendar, User, FileText, Clock, ArrowRight, ExternalLink } from '@lucide/svelte';
+	import { Activity, Search, Filter, ChevronLeft, ChevronRight, Calendar, User, FileText, Clock, ArrowRight, ExternalLink, Users } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 
 	let { data } = $props();
@@ -11,11 +11,13 @@
 	let activityType = $state(data.filters.activityType);
 	let startDate = $state(data.filters.startDate);
 	let endDate = $state(data.filters.endDate);
+	let performerId = $state(data.filters.performerId);
 
 	const activityTypes = [
 		{ value: '', label: 'All Activities' },
 		{ value: 'created', label: 'Created' },
 		{ value: 'updated', label: 'Updated' },
+		{ value: 'deleted', label: 'Deleted' },
 		{ value: 'status_changed', label: 'Status Changed' },
 		{ value: 'comment_added', label: 'Comment Added' },
 		{ value: 'file_uploaded', label: 'File Uploaded' },
@@ -33,6 +35,7 @@
 		if (activityType) params.set('activityType', activityType);
 		if (startDate) params.set('startDate', startDate);
 		if (endDate) params.set('endDate', endDate);
+		if (performerId) params.set('performerId', performerId);
 		goto(`?${params.toString()}`);
 	}
 
@@ -42,6 +45,7 @@
 		activityType = '';
 		startDate = '';
 		endDate = '';
+		performerId = '';
 		goto('/admin/activity-log');
 	}
 
@@ -126,72 +130,91 @@
 		activityType = data.filters.activityType;
 		startDate = data.filters.startDate;
 		endDate = data.filters.endDate;
+		performerId = data.filters.performerId;
 	});
 </script>
 
 <svelte:head>
-	<title>Activity Log | Admin</title>
+	<title>Activity Log | Admin | MostlyWhat Systems</title>
 </svelte:head>
 
-<div class="container max-w-7xl mx-auto px-4 py-12">
+<div class="space-y-8">
 	<!-- Header -->
-	<div class="mb-8">
-		<h1 class="font-mono text-2xl md:text-3xl tracking-tight text-foreground mb-2">
-			Activity Log
-		</h1>
-		<p class="text-muted-foreground">
-			View and search all system activities
-		</p>
+	<div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+		<div>
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// ADMIN.ACTIVITY</span>
+			<h1 class="font-display mt-2 text-2xl font-bold uppercase tracking-tight md:text-3xl">
+				Activity Log
+			</h1>
+			<p class="font-body mt-2 text-muted-foreground">
+				View and search all system activities and audit trail
+			</p>
+		</div>
 	</div>
 
 	<!-- Filters -->
-	<div class="border border-border bg-background mb-8">
+	<div class="border border-border bg-card">
 		<div class="border-b border-border px-6 py-4">
 			<div class="flex items-center gap-2">
 				<Filter class="h-4 w-4 text-muted-foreground" />
-				<h2 class="font-mono text-xs tracking-widest text-muted-foreground">FILTERS</h2>
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">FILTERS</span>
 			</div>
 		</div>
 		<div class="p-6">
-			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+			<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 				<!-- Search -->
 				<div class="lg:col-span-2">
-					<label for="search-input" class="block text-sm font-medium text-muted-foreground mb-1">Search</label>
+					<label for="search-input" class="font-mono mb-2 block text-[10px] tracking-widest text-muted-foreground">SEARCH</label>
 					<div class="relative">
-						<Search class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+						<Search class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 						<input
 							id="search-input"
 							type="text"
 							bind:value={search}
 							placeholder="Search descriptions..."
-							class="w-full pl-10 pr-4 py-2 border border-border bg-card text-foreground focus:border-primary focus:outline-none"
+							class="font-body w-full border border-border bg-background py-2 pl-10 pr-4 text-sm focus:border-primary focus:outline-none"
 							onkeydown={(e) => e.key === 'Enter' && applyFilters()}
 						/>
 					</div>
 				</div>
 
+				<!-- Performer (User) Filter -->
+				<div>
+					<label for="performer-select" class="font-mono mb-2 block text-[10px] tracking-widest text-muted-foreground">PERFORMED BY</label>
+					<select
+						id="performer-select"
+						bind:value={performerId}
+						class="font-body w-full border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
+					>
+						<option value="">All Users</option>
+						{#each data.performers as performer}
+							<option value={performer.id}>{performer.displayName || performer.email}</option>
+						{/each}
+					</select>
+				</div>
+
 				<!-- Entity Type -->
 				<div>
-					<label for="entity-type-select" class="block text-sm font-medium text-muted-foreground mb-1">Entity Type</label>
+					<label for="entity-type-select" class="font-mono mb-2 block text-[10px] tracking-widest text-muted-foreground">ENTITY TYPE</label>
 					<select
 						id="entity-type-select"
 						bind:value={entityType}
-						class="w-full px-3 py-2 border border-border bg-card text-foreground focus:border-primary focus:outline-none"
+						class="font-body w-full border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
 					>
 						<option value="">All Entities</option>
 						{#each data.entityTypes as type}
-							<option value={type}>{type.charAt(0).toUpperCase() + type.slice(1)}</option>
+							<option value={type}>{type.replace('_', ' ').toUpperCase()}</option>
 						{/each}
 					</select>
 				</div>
 
 				<!-- Activity Type -->
 				<div>
-					<label for="activity-type-select" class="block text-sm font-medium text-muted-foreground mb-1">Activity Type</label>
+					<label for="activity-type-select" class="font-mono mb-2 block text-[10px] tracking-widest text-muted-foreground">ACTIVITY TYPE</label>
 					<select
 						id="activity-type-select"
 						bind:value={activityType}
-						class="w-full px-3 py-2 border border-border bg-card text-foreground focus:border-primary focus:outline-none"
+						class="font-body w-full border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
 					>
 						{#each activityTypes as type}
 							<option value={type.value}>{type.label}</option>
@@ -200,130 +223,128 @@
 				</div>
 
 				<!-- Date Range -->
-				<div class="lg:col-span-2 grid grid-cols-2 gap-4">
-					<div>
-						<label for="start-date-input" class="block text-sm font-medium text-muted-foreground mb-1">Start Date</label>
-						<input
-							id="start-date-input"
-							type="date"
-							bind:value={startDate}
-							class="w-full px-3 py-2 border border-border bg-card text-foreground focus:border-primary focus:outline-none"
-						/>
-					</div>
-					<div>
-						<label for="end-date-input" class="block text-sm font-medium text-muted-foreground mb-1">End Date</label>
-						<input
-							id="end-date-input"
-							type="date"
-							bind:value={endDate}
-							class="w-full px-3 py-2 border border-border bg-card text-foreground focus:border-primary focus:outline-none"
-						/>
-					</div>
+				<div>
+					<label for="start-date-input" class="font-mono mb-2 block text-[10px] tracking-widest text-muted-foreground">START DATE</label>
+					<input
+						id="start-date-input"
+						type="date"
+						bind:value={startDate}
+						class="font-body w-full border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
+					/>
 				</div>
+				<div>
+					<label for="end-date-input" class="font-mono mb-2 block text-[10px] tracking-widest text-muted-foreground">END DATE</label>
+					<input
+						id="end-date-input"
+						type="date"
+						bind:value={endDate}
+						class="font-body w-full border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
+					/>
+				</div>
+			</div>
 
-				<!-- Buttons -->
-				<div class="lg:col-span-3 flex items-end gap-2">
-					<Button onclick={applyFilters}>
-						<Search class="h-4 w-4 mr-2" />
-						Apply Filters
-					</Button>
-					<Button variant="outline" onclick={clearFilters}>
-						Clear
-					</Button>
-				</div>
+			<!-- Filter Buttons -->
+			<div class="mt-6 flex items-center gap-3">
+				<Button onclick={applyFilters} class="font-mono text-xs tracking-wider">
+					<Search class="mr-2 h-4 w-4" />
+					APPLY FILTERS
+				</Button>
+				<Button variant="outline" onclick={clearFilters} class="font-mono text-xs tracking-wider">
+					CLEAR
+				</Button>
 			</div>
 		</div>
 	</div>
 
 	<!-- Activity List -->
-	<div class="border border-border bg-background">
-		<div class="border-b border-border px-6 py-4 flex items-center justify-between">
+	<div class="border border-border bg-card">
+		<div class="flex items-center justify-between border-b border-border px-6 py-4">
 			<div class="flex items-center gap-2">
 				<Activity class="h-4 w-4 text-muted-foreground" />
-				<h2 class="font-mono text-xs tracking-widest text-muted-foreground">ACTIVITIES</h2>
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">ACTIVITIES</span>
 			</div>
-			<span class="text-sm text-muted-foreground">
+			<span class="font-mono text-xs text-muted-foreground">
 				{data.pagination.total} total
 			</span>
 		</div>
 
 		{#if data.activities.length === 0}
 			<div class="p-12 text-center">
-				<Activity class="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-				<p class="text-muted-foreground">No activities found</p>
-				<p class="text-sm text-muted-foreground mt-1">Try adjusting your filters</p>
+				<Activity class="mx-auto mb-4 h-12 w-12 text-muted-foreground opacity-50" />
+				<p class="font-body text-muted-foreground">No activities found</p>
+				<p class="font-body mt-1 text-sm text-muted-foreground">Try adjusting your filters</p>
 			</div>
 		{:else}
 			<div class="divide-y divide-border">
 				{#each data.activities as activity}
 					{@const entityLink = getEntityLink(activity.entityType, activity.entityId)}
-					<div class="p-6 hover:bg-muted/50 transition-colors">
+					<div class="p-6 transition-colors hover:bg-muted/50">
 						<div class="flex items-start gap-4">
 							<!-- Activity Icon -->
-							<div class="flex-shrink-0 mt-1">
-								<div class="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-									{#if activity.activityType === 'created'}
-										<FileText class="h-4 w-4 text-green-500" />
-									{:else if activity.activityType === 'status_changed'}
-										<ArrowRight class="h-4 w-4 text-yellow-500" />
-									{:else if activity.activityType === 'assigned'}
-										<User class="h-4 w-4 text-indigo-500" />
-									{:else if activity.activityType === 'comment_added'}
-										<FileText class="h-4 w-4 text-purple-500" />
-									{:else}
-										<Activity class="h-4 w-4 text-muted-foreground" />
-									{/if}
+							<div class="mt-1 flex-shrink-0">
+								<div class="flex h-10 w-10 items-center justify-center border border-border bg-background">
+								{#if activity.activityType === 'created'}
+									<FileText class="h-4 w-4 text-green-500" />
+								{:else if activity.activityType === 'status_changed'}
+									<ArrowRight class="h-4 w-4 text-yellow-500" />
+								{:else if activity.activityType === 'assigned'}
+									<User class="h-4 w-4 text-indigo-500" />
+								{:else if activity.activityType === 'comment_added'}
+									<FileText class="h-4 w-4 text-purple-500" />
+								{:else}
+									<Activity class="h-4 w-4 text-muted-foreground" />
+								{/if}
 								</div>
 							</div>
 
 							<!-- Activity Content -->
-							<div class="flex-1 min-w-0">
+							<div class="min-w-0 flex-1">
 								<div class="flex items-start justify-between gap-4">
 									<div>
-										<p class="text-foreground">
+										<p class="font-body text-foreground">
 											{activity.description}
 										</p>
-										<div class="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+										<div class="mt-2 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
 											<!-- Performer -->
 											{#if activity.performerName}
 												<span class="flex items-center gap-1">
 													<User class="h-3 w-3" />
-													{activity.performerName}
+													<span class="font-mono text-xs">{activity.performerName}</span>
 												</span>
 											{/if}
 
 											<!-- Entity Type -->
 											<span class="flex items-center gap-1">
 												<FileText class="h-3 w-3" />
-												{activity.entityType}
+												<span class="font-mono text-xs uppercase">{activity.entityType.replace('_', ' ')}</span>
 											</span>
 
 											<!-- Timestamp -->
 											<span class="flex items-center gap-1" title={formatTimestamp(activity.createdAt)}>
 												<Clock class="h-3 w-3" />
-												{formatRelativeTime(activity.createdAt)}
+												<span class="font-mono text-xs">{formatRelativeTime(activity.createdAt)}</span>
 											</span>
 
 											<!-- IP Address -->
 											{#if activity.ipAddress}
-												<span class="text-xs font-mono">
+												<span class="font-mono text-xs text-muted-foreground/60">
 													{activity.ipAddress}
 												</span>
 											{/if}
 										</div>
 									</div>
 
-									<div class="flex items-center gap-2 flex-shrink-0">
+									<div class="flex flex-shrink-0 items-center gap-2">
 										<!-- Activity Type Badge -->
-										<span class="px-2 py-1 text-xs border {getActivityTypeColor(activity.activityType)}">
-											{activity.activityType.replace('_', ' ')}
+										<span class="border px-2 py-1 font-mono text-[10px] tracking-widest {getActivityTypeColor(activity.activityType)}">
+											{activity.activityType.replace('_', ' ').toUpperCase()}
 										</span>
 
 										<!-- Link to Entity -->
 										{#if entityLink}
 											<a
 												href={entityLink}
-												class="p-1.5 text-muted-foreground hover:text-primary transition-colors"
+												class="p-1.5 text-muted-foreground transition-colors hover:text-primary"
 												title="View {activity.entityType}"
 											>
 												<ExternalLink class="h-4 w-4" />
@@ -334,18 +355,18 @@
 
 								<!-- Changes (if any) -->
 								{#if activity.previousValues || activity.newValues}
-									<div class="mt-3 p-3 bg-muted/50 border border-border text-sm">
-										<div class="grid grid-cols-2 gap-4">
+									<div class="mt-4 border border-border bg-muted/30 p-4">
+										<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 											{#if activity.previousValues}
 												<div>
-													<span class="font-mono text-xs text-muted-foreground">Before:</span>
-													<pre class="mt-1 text-xs overflow-x-auto">{JSON.stringify(activity.previousValues, null, 2)}</pre>
+													<span class="font-mono text-[10px] tracking-widest text-muted-foreground">BEFORE</span>
+													<pre class="mt-2 overflow-x-auto font-mono text-xs text-muted-foreground">{JSON.stringify(activity.previousValues, null, 2)}</pre>
 												</div>
 											{/if}
 											{#if activity.newValues}
 												<div>
-													<span class="font-mono text-xs text-muted-foreground">After:</span>
-													<pre class="mt-1 text-xs overflow-x-auto">{JSON.stringify(activity.newValues, null, 2)}</pre>
+													<span class="font-mono text-[10px] tracking-widest text-muted-foreground">AFTER</span>
+													<pre class="mt-2 overflow-x-auto font-mono text-xs text-foreground">{JSON.stringify(activity.newValues, null, 2)}</pre>
 												</div>
 											{/if}
 										</div>
@@ -359,8 +380,8 @@
 
 			<!-- Pagination -->
 			{#if data.pagination.totalPages > 1}
-				<div class="border-t border-border px-6 py-4 flex items-center justify-between">
-					<p class="text-sm text-muted-foreground">
+				<div class="flex items-center justify-between border-t border-border px-6 py-4">
+					<p class="font-mono text-xs text-muted-foreground">
 						Showing {(data.pagination.page - 1) * data.pagination.limit + 1} - {Math.min(data.pagination.page * data.pagination.limit, data.pagination.total)} of {data.pagination.total}
 					</p>
 					<div class="flex items-center gap-2">
@@ -372,8 +393,8 @@
 						>
 							<ChevronLeft class="h-4 w-4" />
 						</Button>
-						<span class="text-sm text-muted-foreground px-2">
-							Page {data.pagination.page} of {data.pagination.totalPages}
+						<span class="px-2 font-mono text-xs text-muted-foreground">
+							{data.pagination.page} / {data.pagination.totalPages}
 						</span>
 						<Button
 							variant="outline"

@@ -1,11 +1,11 @@
 import { db } from '$lib/server/db';
-import { projects, organizationMembers, profiles } from '$lib/server/db/schema';
-import { eq, inArray, desc } from 'drizzle-orm';
+import { projects, organizationMembers, profiles, projectRequests } from '$lib/server/db/schema';
+import { eq, inArray, desc, and, ne } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user || !locals.profile) {
-        return { projects: [] };
+        return { projects: [], requests: [] };
     }
 
     // Get user's organization IDs
@@ -17,7 +17,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     const orgIds = userOrgs.map((o) => o.organizationId);
 
     if (orgIds.length === 0) {
-        return { projects: [] };
+        return { projects: [], requests: [] };
     }
 
     // Fetch projects for user's organizations
@@ -38,10 +38,30 @@ export const load: PageServerLoad = async ({ locals }) => {
         .where(inArray(projects.organizationId, orgIds))
         .orderBy(desc(projects.updatedAt));
 
+    // Fetch project requests (pending, under_review, approved, rejected)
+    const userRequests = await db
+        .select({
+            id: projectRequests.id,
+            requestNumber: projectRequests.requestNumber,
+            title: projectRequests.title,
+            projectType: projectRequests.projectType,
+            status: projectRequests.status,
+            createdAt: projectRequests.createdAt
+        })
+        .from(projectRequests)
+        .where(
+            and(
+                inArray(projectRequests.organizationId, orgIds),
+                ne(projectRequests.status, 'converted')
+            )
+        )
+        .orderBy(desc(projectRequests.createdAt));
+
     return {
         projects: userProjects.map((p) => ({
             ...p,
             assignedTo: p.assignedToName ?? 'Unassigned'
-        }))
+        })),
+        requests: userRequests
     };
 };

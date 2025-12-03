@@ -10,6 +10,7 @@ import {
 import { eq, desc, and, gt } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 import { error, fail, redirect } from '@sveltejs/kit';
+import { organizationActivity, getClientIp } from '$lib/server/activity-logger';
 import type { PageServerLoad, Actions } from './$types';
 
 // Generate a random invite code
@@ -164,6 +165,10 @@ export const actions: Actions = {
             createdById: locals.profile.id
         });
 
+        // Log activity
+        const [org] = await db.select({ name: organizations.name }).from(organizations).where(eq(organizations.id, params.id));
+        await organizationActivity.inviteCreated(params.id, org?.name ?? 'Unknown', code, locals.profile.id, getClientIp(request));
+
         return { success: true, message: 'Invite created successfully', code };
     },
 
@@ -175,6 +180,10 @@ export const actions: Actions = {
         const formData = await request.formData();
         const inviteId = formData.get('inviteId') as string;
 
+        // Get invite code for logging
+        const [invite] = await db.select({ code: organizationInvites.code }).from(organizationInvites).where(eq(organizationInvites.id, inviteId));
+        const [org] = await db.select({ name: organizations.name }).from(organizations).where(eq(organizations.id, params.id));
+
         await db
             .delete(organizationInvites)
             .where(
@@ -183,6 +192,9 @@ export const actions: Actions = {
                     eq(organizationInvites.organizationId, params.id)
                 )
             );
+
+        // Log activity
+        await organizationActivity.inviteDeleted(params.id, org?.name ?? 'Unknown', invite?.code ?? 'Unknown', locals.profile.id, getClientIp(request));
 
         return { success: true, message: 'Invite deleted' };
     },
@@ -210,6 +222,10 @@ export const actions: Actions = {
             return fail(404, { error: 'Pending member not found' });
         }
 
+        // Get org and user info for logging
+        const [org] = await db.select({ name: organizations.name }).from(organizations).where(eq(organizations.id, params.id));
+        const [user] = await db.select({ email: profiles.email }).from(profiles).where(eq(profiles.id, pending.profileId));
+
         // Add to organization members
         await db.insert(organizationMembers).values({
             organizationId: params.id,
@@ -227,6 +243,9 @@ export const actions: Actions = {
             })
             .where(eq(pendingOrganizationMembers.id, pendingId));
 
+        // Log activity
+        await organizationActivity.memberApproved(params.id, org?.name ?? 'Unknown', user?.email ?? 'Unknown', locals.profile.id, getClientIp(request));
+
         return { success: true, message: 'Member approved' };
     },
 
@@ -238,6 +257,14 @@ export const actions: Actions = {
         const formData = await request.formData();
         const pendingId = formData.get('pendingId') as string;
         const reason = formData.get('reason') as string;
+
+        // Get pending member info for logging
+        const [pending] = await db
+            .select({ profileId: pendingOrganizationMembers.profileId })
+            .from(pendingOrganizationMembers)
+            .where(eq(pendingOrganizationMembers.id, pendingId));
+        const [org] = await db.select({ name: organizations.name }).from(organizations).where(eq(organizations.id, params.id));
+        const [user] = pending ? await db.select({ email: profiles.email }).from(profiles).where(eq(profiles.id, pending.profileId)) : [null];
 
         await db
             .update(pendingOrganizationMembers)
@@ -254,6 +281,9 @@ export const actions: Actions = {
                 )
             );
 
+        // Log activity
+        await organizationActivity.memberRejected(params.id, org?.name ?? 'Unknown', user?.email ?? 'Unknown', reason || null, locals.profile.id, getClientIp(request));
+
         return { success: true, message: 'Member rejected' };
     },
 
@@ -265,6 +295,10 @@ export const actions: Actions = {
         const formData = await request.formData();
         const profileId = formData.get('profileId') as string;
 
+        // Get info for activity log
+        const [org] = await db.select({ name: organizations.name }).from(organizations).where(eq(organizations.id, params.id));
+        const [member] = await db.select({ email: profiles.email }).from(profiles).where(eq(profiles.id, profileId));
+
         await db
             .delete(organizationMembers)
             .where(
@@ -273,6 +307,9 @@ export const actions: Actions = {
                     eq(organizationMembers.organizationId, params.id)
                 )
             );
+
+        // Log activity
+        await organizationActivity.memberRemoved(params.id, org?.name ?? 'Unknown', member?.email ?? 'Unknown', locals.profile.id, getClientIp(request));
 
         return { success: true, message: 'Member removed' };
     },
@@ -286,6 +323,11 @@ export const actions: Actions = {
         const profileId = formData.get('profileId') as string;
         const role = formData.get('role') as string;
 
+        // Get current role and user info for logging
+        const [currentMember] = await db.select({ role: organizationMembers.role }).from(organizationMembers).where(and(eq(organizationMembers.profileId, profileId), eq(organizationMembers.organizationId, params.id)));
+        const [org] = await db.select({ name: organizations.name }).from(organizations).where(eq(organizations.id, params.id));
+        const [user] = await db.select({ email: profiles.email }).from(profiles).where(eq(profiles.id, profileId));
+
         await db
             .update(organizationMembers)
             .set({ role })
@@ -296,6 +338,10 @@ export const actions: Actions = {
                 )
             );
 
+        // Log activity
+        await organizationActivity.roleUpdated(params.id, org?.name ?? 'Unknown', user?.email ?? 'Unknown', currentMember?.role ?? 'Unknown', role, locals.profile.id, getClientIp(request));
+
         return { success: true, message: 'Role updated' };
     }
 };
+

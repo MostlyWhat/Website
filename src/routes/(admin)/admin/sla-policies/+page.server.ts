@@ -3,6 +3,7 @@ import { slaPolicies, profiles } from '$lib/server/db/schema';
 import { eq, desc } from 'drizzle-orm';
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
+import { slaActivity, getClientIp } from '$lib/server/activity-logger';
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user || !locals.profile) {
@@ -85,7 +86,7 @@ export const actions: Actions = {
                 .where(eq(slaPolicies.isDefault, true));
         }
 
-        await db.insert(slaPolicies).values({
+        const [created] = await db.insert(slaPolicies).values({
             name: name.trim(),
             description: description?.trim() || null,
             urgentResponseHours,
@@ -101,7 +102,10 @@ export const actions: Actions = {
             businessHoursEnd,
             isDefault,
             createdById: locals.profile.id
-        });
+        }).returning({ id: slaPolicies.id });
+
+        // Log activity
+        await slaActivity.created(created.id, name.trim(), locals.profile.id, getClientIp(request));
 
         return { success: true, message: 'SLA policy created' };
     },
@@ -139,6 +143,9 @@ export const actions: Actions = {
             return fail(400, { error: 'Policy ID and name are required' });
         }
 
+        // Get old values for logging
+        const [oldPolicy] = await db.select().from(slaPolicies).where(eq(slaPolicies.id, id));
+
         // If setting as default, unset other defaults
         if (isDefault) {
             await db
@@ -169,8 +176,18 @@ export const actions: Actions = {
             })
             .where(eq(slaPolicies.id, id));
 
+        // Build changes object for meaningful logging
+        const changes: Record<string, { old: unknown; new: unknown }> = {};
+        if (oldPolicy?.name !== name.trim()) changes.name = { old: oldPolicy?.name, new: name.trim() };
+        if (oldPolicy?.isDefault !== isDefault) changes.isDefault = { old: oldPolicy?.isDefault, new: isDefault };
+        if (oldPolicy?.isActive !== isActive) changes.isActive = { old: oldPolicy?.isActive, new: isActive };
+        if (Object.keys(changes).length > 0) {
+            await slaActivity.updated(id, name.trim(), changes, locals.profile.id, getClientIp(request));
+        }
+
         return { success: true, message: 'SLA policy updated' };
     },
+
 
     delete: async ({ request, locals }) => {
         if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
@@ -184,7 +201,13 @@ export const actions: Actions = {
             return fail(400, { error: 'Policy ID is required' });
         }
 
+        // Get policy name for logging
+        const [policy] = await db.select({ name: slaPolicies.name }).from(slaPolicies).where(eq(slaPolicies.id, id));
+
         await db.delete(slaPolicies).where(eq(slaPolicies.id, id));
+
+        // Log activity
+        await slaActivity.deleted(id, policy?.name ?? 'Unknown', locals.profile.id, getClientIp(request));
 
         return { success: true, message: 'SLA policy deleted' };
     },
@@ -201,6 +224,9 @@ export const actions: Actions = {
             return fail(400, { error: 'Policy ID is required' });
         }
 
+        // Get policy name for logging
+        const [policy] = await db.select({ name: slaPolicies.name }).from(slaPolicies).where(eq(slaPolicies.id, id));
+
         // Unset current default
         await db
             .update(slaPolicies)
@@ -213,6 +239,10 @@ export const actions: Actions = {
             .set({ isDefault: true, updatedAt: new Date() })
             .where(eq(slaPolicies.id, id));
 
+        // Log activity
+        await slaActivity.setDefault(id, policy?.name ?? 'Unknown', locals.profile.id, getClientIp(request));
+
         return { success: true, message: 'Default SLA policy updated' };
     }
 };
+

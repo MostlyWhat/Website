@@ -7,8 +7,11 @@ import { db } from '$lib/server/db';
 import { activityLog } from '$lib/server/db/schema';
 import type { ActivityType } from '$lib/server/db/schema';
 
+// Extended entity types for logging (not all are in the DB enum)
+type EntityType = 'ticket' | 'project' | 'proposal' | 'invoice' | 'organization' | 'user' | 'announcement' | 'sla_policy' | 'canned_response' | 'settings';
+
 export interface LogActivityOptions {
-    entityType: 'ticket' | 'project' | 'proposal' | 'invoice' | 'organization' | 'user' | 'announcement';
+    entityType: EntityType;
     entityId: string;
     activityType: ActivityType;
     description: string;
@@ -262,6 +265,67 @@ export const organizationActivity = {
             performedById,
             ipAddress
         });
+    },
+
+    async memberApproved(orgId: string, orgName: string, memberEmail: string, performedById: string, ipAddress?: string) {
+        await logActivity({
+            entityType: 'organization',
+            entityId: orgId,
+            activityType: 'updated',
+            description: `${memberEmail} was approved to join organization "${orgName}"`,
+            newValues: { approvedMember: memberEmail },
+            performedById,
+            ipAddress
+        });
+    },
+
+    async memberRejected(orgId: string, orgName: string, memberEmail: string, reason: string | null, performedById: string, ipAddress?: string) {
+        await logActivity({
+            entityType: 'organization',
+            entityId: orgId,
+            activityType: 'updated',
+            description: `${memberEmail} was rejected from joining organization "${orgName}"${reason ? `: ${reason}` : ''}`,
+            previousValues: { rejectedMember: memberEmail, reason },
+            performedById,
+            ipAddress
+        });
+    },
+
+    async roleUpdated(orgId: string, orgName: string, memberEmail: string, oldRole: string, newRole: string, performedById: string, ipAddress?: string) {
+        await logActivity({
+            entityType: 'organization',
+            entityId: orgId,
+            activityType: 'updated',
+            description: `${memberEmail}'s role in "${orgName}" changed from ${oldRole} to ${newRole}`,
+            previousValues: { role: oldRole },
+            newValues: { role: newRole },
+            performedById,
+            ipAddress
+        });
+    },
+
+    async inviteCreated(orgId: string, orgName: string, inviteCode: string, performedById: string, ipAddress?: string) {
+        await logActivity({
+            entityType: 'organization',
+            entityId: orgId,
+            activityType: 'updated',
+            description: `Invite code "${inviteCode}" was created for organization "${orgName}"`,
+            newValues: { inviteCode },
+            performedById,
+            ipAddress
+        });
+    },
+
+    async inviteDeleted(orgId: string, orgName: string, inviteCode: string, performedById: string, ipAddress?: string) {
+        await logActivity({
+            entityType: 'organization',
+            entityId: orgId,
+            activityType: 'updated',
+            description: `Invite code "${inviteCode}" was deleted from organization "${orgName}"`,
+            previousValues: { inviteCode },
+            performedById,
+            ipAddress
+        });
     }
 };
 
@@ -490,6 +554,115 @@ export const invoiceActivity = {
             entityId: invoiceId,
             activityType: 'email_sent',
             description: `Invoice #${invoiceNumber} was sent to client`,
+            performedById,
+            ipAddress
+        });
+    }
+};
+
+/**
+ * Log SLA policy-related activities
+ */
+export const slaActivity = {
+    async created(policyId: string, name: string, performedById: string, ipAddress?: string) {
+        await logActivity({
+            entityType: 'sla_policy',
+            entityId: policyId,
+            activityType: 'created',
+            description: `SLA policy "${name}" was created`,
+            performedById,
+            ipAddress
+        });
+    },
+
+    async updated(policyId: string, name: string, changes: Record<string, { old: unknown; new: unknown }>, performedById: string, ipAddress?: string) {
+        const changedFields = Object.keys(changes).join(', ');
+        await logActivity({
+            entityType: 'sla_policy',
+            entityId: policyId,
+            activityType: 'updated',
+            description: `SLA policy "${name}" was updated: ${changedFields}`,
+            previousValues: Object.fromEntries(Object.entries(changes).map(([k, v]) => [k, v.old])),
+            newValues: Object.fromEntries(Object.entries(changes).map(([k, v]) => [k, v.new])),
+            performedById,
+            ipAddress
+        });
+    },
+
+    async deleted(policyId: string, name: string, performedById: string, ipAddress?: string) {
+        await logActivity({
+            entityType: 'sla_policy',
+            entityId: policyId,
+            activityType: 'updated',
+            description: `SLA policy "${name}" was deleted`,
+            performedById,
+            ipAddress
+        });
+    },
+
+    async setDefault(policyId: string, name: string, performedById: string, ipAddress?: string) {
+        await logActivity({
+            entityType: 'sla_policy',
+            entityId: policyId,
+            activityType: 'updated',
+            description: `SLA policy "${name}" was set as default`,
+            newValues: { isDefault: true },
+            performedById,
+            ipAddress
+        });
+    }
+};
+
+/**
+ * Log canned response-related activities
+ */
+export const cannedResponseActivity = {
+    async created(responseId: string, title: string, performedById: string, ipAddress?: string) {
+        await logActivity({
+            entityType: 'canned_response',
+            entityId: responseId,
+            activityType: 'created',
+            description: `Canned response "${title}" was created`,
+            performedById,
+            ipAddress
+        });
+    },
+
+    async updated(responseId: string, title: string, performedById: string, ipAddress?: string) {
+        await logActivity({
+            entityType: 'canned_response',
+            entityId: responseId,
+            activityType: 'updated',
+            description: `Canned response "${title}" was updated`,
+            performedById,
+            ipAddress
+        });
+    },
+
+    async deleted(responseId: string, title: string, performedById: string, ipAddress?: string) {
+        await logActivity({
+            entityType: 'canned_response',
+            entityId: responseId,
+            activityType: 'updated',
+            description: `Canned response "${title}" was deleted`,
+            performedById,
+            ipAddress
+        });
+    }
+};
+
+/**
+ * Log settings-related activities
+ */
+export const settingsActivity = {
+    async updated(settingKey: string, oldValue: unknown, newValue: unknown, performedById: string, ipAddress?: string) {
+        await logActivity({
+            entityType: 'settings',
+            entityId: settingKey,
+            activityType: 'updated',
+            description: `Setting "${settingKey}" was updated`,
+            previousValues: { value: oldValue },
+            newValues: { value: newValue },
             performedById,
             ipAddress
         });

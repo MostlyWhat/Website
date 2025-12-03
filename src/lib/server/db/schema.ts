@@ -184,6 +184,9 @@ export const projects = pgTable('projects', {
 		.notNull()
 		.references(() => organizations.id, { onDelete: 'cascade' }),
 
+	// Human-readable Project Number (auto-generated, e.g. PRJ-2024-0001)
+	projectNumber: text('project_number').notNull().unique(),
+
 	// Basic Info
 	name: text('name').notNull(),
 	slug: text('slug').notNull(),
@@ -210,6 +213,58 @@ export const projects = pgTable('projects', {
 }).enableRLS();
 
 // =============================================================================
+// PROJECT REQUESTS TABLE
+// =============================================================================
+// Requests submitted by clients for new projects
+
+export const projectRequestStatusEnum = pgEnum('project_request_status', [
+	'pending',
+	'under_review',
+	'approved',
+	'rejected',
+	'converted'
+]);
+
+export const projectRequests = pgTable('project_requests', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	organizationId: uuid('organization_id')
+		.notNull()
+		.references(() => organizations.id, { onDelete: 'cascade' }),
+	requestedById: uuid('requested_by_id')
+		.notNull()
+		.references(() => profiles.id, { onDelete: 'cascade' }),
+
+	// Human-readable Request Number (auto-generated, e.g. REQ-2024-00001)
+	requestNumber: text('request_number').notNull().unique(),
+
+	// Basic Info
+	title: text('title').notNull(),
+	description: text('description').notNull(),
+	projectType: text('project_type').notNull(), // website, web_app, mobile_app, design, backend, other
+
+	// Client Preferences
+	budgetRange: text('budget_range'), // under_5k, 5k_15k, 15k_50k, 50k_100k, over_100k, not_sure
+	timeline: text('timeline'), // asap, 1_month, 1_3_months, 3_6_months, flexible
+	goals: text('goals'),
+	requirements: text('requirements'),
+	references: text('references'),
+
+	// Status & Processing
+	status: projectRequestStatusEnum('status').default('pending').notNull(),
+	reviewedById: uuid('reviewed_by_id').references(() => profiles.id, { onDelete: 'set null' }),
+	reviewedAt: timestamp('reviewed_at', { withTimezone: true }),
+	reviewNotes: text('review_notes'),
+
+	// Conversion to Project
+	projectId: uuid('project_id').references(() => projects.id, { onDelete: 'set null' }),
+	convertedAt: timestamp('converted_at', { withTimezone: true }),
+
+	// Timestamps
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+}).enableRLS();
+
+// =============================================================================
 // PROPOSALS TABLE
 // =============================================================================
 
@@ -218,6 +273,9 @@ export const proposals = pgTable('proposals', {
 	projectId: uuid('project_id')
 		.notNull()
 		.references(() => projects.id, { onDelete: 'cascade' }),
+
+	// Human-readable Proposal Number (auto-generated, e.g. PRP-2024-0001)
+	proposalNumber: text('proposal_number').notNull().unique(),
 
 	// Versioning
 	version: integer('version').default(1).notNull(),
@@ -551,7 +609,32 @@ export const projectsRelations = relations(projects, ({ one, many }) => ({
 	}),
 	proposals: many(proposals),
 	invoices: many(invoices),
-	tickets: many(tickets)
+	tickets: many(tickets),
+	sourceRequest: one(projectRequests, {
+		fields: [projects.id],
+		references: [projectRequests.projectId]
+	})
+}));
+
+export const projectRequestsRelations = relations(projectRequests, ({ one }) => ({
+	organization: one(organizations, {
+		fields: [projectRequests.organizationId],
+		references: [organizations.id]
+	}),
+	requestedBy: one(profiles, {
+		fields: [projectRequests.requestedById],
+		references: [profiles.id],
+		relationName: 'requestedBy'
+	}),
+	reviewedBy: one(profiles, {
+		fields: [projectRequests.reviewedById],
+		references: [profiles.id],
+		relationName: 'reviewedBy'
+	}),
+	project: one(projects, {
+		fields: [projectRequests.projectId],
+		references: [projects.id]
+	})
 }));
 
 export const proposalsRelations = relations(proposals, ({ one }) => ({

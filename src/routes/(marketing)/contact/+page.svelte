@@ -68,9 +68,10 @@
 		{ 
 			id: 'support', 
 			icon: Headphones, 
-			title: 'SUPPORT', 
-			desc: 'Technical help for existing clients',
-			action: 'GET SUPPORT'
+			title: 'CLIENT SUPPORT', 
+			desc: 'Sign in to submit tickets with your project ID',
+			action: 'CLIENT LOGIN',
+			href: '/auth/login?redirectTo=/app/tickets/new'
 		},
 		{ 
 			id: 'general', 

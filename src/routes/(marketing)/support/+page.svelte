@@ -117,6 +117,30 @@
 	stats={supportStats}
 />
 
+<!-- Client Login Banner -->
+<section class="border-b border-border">
+	<div class="grid grid-cols-12 gap-px bg-border">
+		<div class="col-span-12 flex items-center justify-between bg-primary/5 px-6 py-6 md:px-12 lg:px-16">
+			<div class="flex items-center gap-4">
+				<div class="flex h-10 w-10 items-center justify-center border border-primary/30 bg-primary/10">
+					<LifeBuoy class="h-5 w-5 text-primary" />
+				</div>
+				<div>
+					<h3 class="font-ui text-sm font-semibold tracking-wider">EXISTING CLIENT?</h3>
+					<p class="font-body mt-1 text-xs text-muted-foreground">Sign in to access your projects, submit tickets with your project ID, and track your support requests.</p>
+				</div>
+			</div>
+			<a
+				href={localizeHref('/auth/login?redirectTo=/app/tickets')}
+				class="font-mono flex items-center gap-2 border border-primary bg-primary px-4 py-2 text-[10px] tracking-wider text-primary-foreground transition-colors hover:bg-primary/90"
+			>
+				CLIENT LOGIN
+				<ArrowRight class="h-3 w-3" />
+			</a>
+		</div>
+	</div>
+</section>
+
 <!-- Main Support Options - Large Tiles -->
 <section class="border-b border-border">
 	<div class="px-6 py-12 md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>

@@ -1,0 +1,120 @@
+import { db } from '$lib/server/db';
+import { projectRequests, organizationMembers, organizations } from '$lib/server/db/schema';
+import { eq, desc, sql } from 'drizzle-orm';
+import { fail, redirect } from '@sveltejs/kit';
+import type { PageServerLoad, Actions } from './$types';
+
+// Generate request number like REQ-YYYY-XXXXX
+async function generateRequestNumber(): Promise<string> {
+    const year = new Date().getFullYear();
+    const prefix = `REQ-${year}-`;
+    
+    // Get the latest request number for this year
+    const latest = await db
+        .select({ requestNumber: projectRequests.requestNumber })
+        .from(projectRequests)
+        .where(sql`${projectRequests.requestNumber} LIKE ${prefix + '%'}`)
+        .orderBy(desc(projectRequests.requestNumber))
+        .limit(1);
+
+    let nextNum = 1;
+    if (latest.length > 0 && latest[0].requestNumber) {
+        const lastNum = parseInt(latest[0].requestNumber.replace(prefix, ''), 10);
+        if (!isNaN(lastNum)) {
+            nextNum = lastNum + 1;
+        }
+    }
+
+    return `${prefix}${String(nextNum).padStart(5, '0')}`;
+}
+
+export const load: PageServerLoad = async ({ locals }) => {
+    if (!locals.user || !locals.profile) {
+        redirect(302, '/auth/login?redirectTo=/app/projects/new');
+    }
+
+    // Get user's organizations
+    const userOrgs = await db
+        .select({
+            id: organizations.id,
+            name: organizations.name
+        })
+        .from(organizationMembers)
+        .innerJoin(organizations, eq(organizationMembers.organizationId, organizations.id))
+        .where(eq(organizationMembers.profileId, locals.profile.id));
+
+    return {
+        organizations: userOrgs
+    };
+};
+
+export const actions: Actions = {
+    default: async ({ request, locals }) => {
+        if (!locals.user || !locals.profile) {
+            return fail(401, { error: 'You must be logged in to submit a project request.' });
+        }
+
+        const formData = await request.formData();
+        const organizationId = formData.get('organizationId') as string;
+        const title = formData.get('title') as string;
+        const description = formData.get('description') as string;
+        const projectType = formData.get('projectType') as string;
+        const budgetRange = formData.get('budgetRange') as string;
+        const timeline = formData.get('timeline') as string;
+        const goals = formData.get('goals') as string;
+        const requirements = formData.get('requirements') as string;
+        const references = formData.get('references') as string;
+
+        // Validation
+        if (!organizationId) {
+            return fail(400, { error: 'Please select an organization.' });
+        }
+        if (!title || title.trim().length < 5) {
+            return fail(400, { error: 'Please provide a project title (at least 5 characters).' });
+        }
+        if (!description || description.trim().length < 20) {
+            return fail(400, { error: 'Please provide a detailed description (at least 20 characters).' });
+        }
+        if (!projectType) {
+            return fail(400, { error: 'Please select a project type.' });
+        }
+
+        // Verify user belongs to the organization
+        const membership = await db
+            .select()
+            .from(organizationMembers)
+            .where(eq(organizationMembers.profileId, locals.profile.id))
+            .then(members => members.find(m => m.organizationId === organizationId));
+
+        if (!membership) {
+            return fail(403, { error: 'You do not have access to this organization.' });
+        }
+
+        try {
+            const requestNumber = await generateRequestNumber();
+
+            const [newRequest] = await db
+                .insert(projectRequests)
+                .values({
+                    requestNumber,
+                    organizationId,
+                    requestedById: locals.profile.id,
+                    title: title.trim(),
+                    description: description.trim(),
+                    projectType,
+                    budgetRange: budgetRange || null,
+                    timeline: timeline || null,
+                    goals: goals?.trim() || null,
+                    requirements: requirements?.trim() || null,
+                    references: references?.trim() || null,
+                    status: 'pending'
+                })
+                .returning({ id: projectRequests.id });
+
+            redirect(303, `/app/projects/requests/${newRequest.id}?success=true`);
+        } catch (error) {
+            console.error('Failed to create project request:', error);
+            return fail(500, { error: 'Failed to submit project request. Please try again.' });
+        }
+    }
+};

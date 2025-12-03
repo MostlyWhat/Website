@@ -8,8 +8,31 @@ import { fail, redirect, error } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
 import { proposals, projects, organizations } from '$lib/server/db/schema';
-import { eq, desc } from 'drizzle-orm';
+import { eq, desc, sql } from 'drizzle-orm';
 import { proposalActivity, getClientIp } from '$lib/server/activity-logger';
+
+// Generate proposal number (e.g., PRP-2024-00001)
+async function generateProposalNumber(): Promise<string> {
+    const year = new Date().getFullYear();
+    const prefix = `PRP-${year}-`;
+    
+    const [lastProposal] = await db
+        .select({ proposalNumber: proposals.proposalNumber })
+        .from(proposals)
+        .where(sql`${proposals.proposalNumber} LIKE ${prefix + '%'}`)
+        .orderBy(desc(proposals.proposalNumber))
+        .limit(1);
+
+    let nextNum = 1;
+    if (lastProposal) {
+        const match = lastProposal.proposalNumber.match(/PRP-\d{4}-(\d+)/);
+        if (match) {
+            nextNum = parseInt(match[1], 10) + 1;
+        }
+    }
+
+    return `${prefix}${nextNum.toString().padStart(5, '0')}`;
+}
 
 export const load: PageServerLoad = async ({ locals }) => {
     // Verify admin/staff role
@@ -91,11 +114,15 @@ export const actions: Actions = {
             const taxAmount = subtotal * (taxRate / 100);
             const total = subtotal + taxAmount - discount;
 
+            // Generate proposal number
+            const proposalNumber = await generateProposalNumber();
+
             // Create the proposal
             const [newProposal] = await db
                 .insert(proposals)
                 .values({
                     projectId,
+                    proposalNumber,
                     title: title.trim(),
                     summary: summary?.trim() || null,
                     content: { lineItems, sections },
@@ -164,10 +191,14 @@ export const actions: Actions = {
             const taxAmount = subtotal * (taxRate / 100);
             const total = subtotal + taxAmount - discount;
 
+            // Generate proposal number
+            const proposalNumber = await generateProposalNumber();
+
             const [newProposal] = await db
                 .insert(proposals)
                 .values({
                     projectId,
+                    proposalNumber,
                     title: title.trim(),
                     summary: summary?.trim() || null,
                     content: { lineItems, sections },

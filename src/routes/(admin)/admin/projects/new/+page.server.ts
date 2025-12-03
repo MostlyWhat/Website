@@ -1,9 +1,32 @@
 import { db } from '$lib/server/db';
 import { projects, organizations, profiles } from '$lib/server/db/schema';
-import { eq, desc } from 'drizzle-orm';
+import { eq, desc, sql } from 'drizzle-orm';
 import { fail, redirect } from '@sveltejs/kit';
 import { projectActivity, getClientIp } from '$lib/server/activity-logger';
 import type { PageServerLoad, Actions } from './$types';
+
+// Generate project number (e.g., PRJ-2024-00001)
+async function generateProjectNumber(): Promise<string> {
+    const year = new Date().getFullYear();
+    const prefix = `PRJ-${year}-`;
+    
+    const [lastProject] = await db
+        .select({ projectNumber: projects.projectNumber })
+        .from(projects)
+        .where(sql`${projects.projectNumber} LIKE ${prefix + '%'}`)
+        .orderBy(desc(projects.projectNumber))
+        .limit(1);
+
+    let nextNum = 1;
+    if (lastProject) {
+        const match = lastProject.projectNumber.match(/PRJ-\d{4}-(\d+)/);
+        if (match) {
+            nextNum = parseInt(match[1], 10) + 1;
+        }
+    }
+
+    return `${prefix}${nextNum.toString().padStart(5, '0')}`;
+}
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user || !locals.profile) {
@@ -99,7 +122,10 @@ export const actions: Actions = {
             + '-' + Date.now().toString(36);
 
         try {
+            const projectNumber = await generateProjectNumber();
+            
             const [newProject] = await db.insert(projects).values({
+                projectNumber,
                 name: name.trim(),
                 slug,
                 description: description?.trim() || null,

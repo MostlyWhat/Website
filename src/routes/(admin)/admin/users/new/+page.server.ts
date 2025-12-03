@@ -9,6 +9,7 @@ import type { Actions, PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
 import { profiles } from '$lib/server/db/schema';
 import { createSupabaseAdminClient } from '$lib/server/supabase';
+import { userActivity, getClientIp } from '$lib/server/activity-logger';
 
 export const load: PageServerLoad = async ({ locals }) => {
     // Verify admin access
@@ -124,6 +125,14 @@ export const actions: Actions = {
                     // Don't fail the request, user was still created
                 }
             }
+
+            // Log activity
+            await userActivity.created(
+                authData.user.id,
+                email,
+                locals.profile.id,
+                getClientIp(request)
+            );
 
             return { success: true, message: `User ${email} created successfully` };
         } catch (err) {

@@ -100,7 +100,7 @@
 	{/if}
 
 	<!-- Content -->
-	<section class="border-b border-border bg-background">
+	<section class="border-b border-border">
 		<div class="grid grid-cols-12 gap-px bg-border">
 			<!-- Main Content -->
 			<div class="col-span-12 bg-background px-6 py-8 lg:col-span-8 md:px-12 lg:px-16">
