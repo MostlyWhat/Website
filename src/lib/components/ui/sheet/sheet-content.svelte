@@ -49,9 +49,9 @@
 	>
 		{@render children?.()}
 		<SheetPrimitive.Close
-			class="ring-offset-background focus-visible:ring-ring focus-visible:outline-hidden absolute end-4 top-4 opacity-70 transition-opacity hover:opacity-100 focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none"
+			class="group absolute end-4 top-4 flex h-8 w-8 items-center justify-center border border-border bg-card outline-none transition-all hover:border-primary hover:bg-primary focus-visible:border-primary focus-visible:bg-primary focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50"
 		>
-			<XIcon class="size-4" />
+			<XIcon class="size-4 text-muted-foreground transition-colors group-hover:text-primary-foreground group-focus-visible:text-primary-foreground" />
 			<span class="sr-only">Close</span>
 		</SheetPrimitive.Close>
 	</SheetPrimitive.Content>

@@ -329,7 +329,7 @@
 											This is a dialog description. Make changes here.
 										</Dialog.Description>
 									</Dialog.Header>
-									<div class="py-4">
+									<div class="px-4 py-4">
 										<p class="text-sm text-muted-foreground">Dialog content goes here.</p>
 									</div>
 									<Dialog.Footer>
