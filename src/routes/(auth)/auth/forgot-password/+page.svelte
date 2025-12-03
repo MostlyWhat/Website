@@ -15,10 +15,34 @@
 
 	let email = $state('');
 	let isLoading = $state(false);
+	let timeoutError = $state('');
+	let loadingTimeout: ReturnType<typeof setTimeout> | null = null;
 
 	function handleSubmit() {
-		return () => {
-			isLoading = true;
+		isLoading = true;
+		timeoutError = '';
+		
+		// Safety timeout - reset loading state after 30 seconds if no response
+		loadingTimeout = setTimeout(() => {
+			if (isLoading) {
+				isLoading = false;
+				timeoutError = 'Request timed out. Please check your connection and try again.';
+				console.error('Form submission timed out');
+			}
+		}, 30000);
+		
+		return async ({ result, update }: { result: any; update: () => Promise<void> }) => {
+			// Clear the timeout since we got a response
+			if (loadingTimeout) {
+				clearTimeout(loadingTimeout);
+				loadingTimeout = null;
+			}
+			
+			// Always reset loading state after form submission completes
+			isLoading = false;
+			
+			// Update form state for all result types
+			await update();
 		};
 	}
 </script>
@@ -28,10 +52,10 @@
 </svelte:head>
 
 <!-- Full height section with grid layout -->
-<section class="min-h-[calc(100dvh-4rem)] border-b border-border">
+<section class="min-h-[calc(100dvh-8rem)] border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
 		<!-- Left Panel - Branding -->
-		<div class="col-span-12 hidden flex-col justify-between bg-background px-6 py-16 md:px-12 lg:col-span-5 lg:flex lg:px-16">
+		<div class="col-span-12 hidden flex-col justify-between bg-background px-6 py-16 md:px-12 lg:col-span-6 lg:flex lg:px-16">
 			<div>
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// AUTH.RESET</span>
 				<h1 class="font-display mt-6 text-4xl font-bold uppercase md:text-5xl">
@@ -56,7 +80,7 @@
 		</div>
 
 		<!-- Right Panel - Form -->
-		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:px-12 lg:col-span-7 lg:px-16">
+		<div class="col-span-12 flex flex-col justify-center bg-background px-6 py-12 md:px-12 lg:col-span-6 lg:px-16">
 			<!-- Mobile Header -->
 			<div class="mb-8 lg:hidden">
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// AUTH.RESET</span>
@@ -73,9 +97,9 @@
 			</a>
 
 			<!-- Error Message -->
-			{#if form?.error}
+			{#if form?.error || timeoutError}
 				<div class="mb-6 border border-destructive/50 bg-destructive/10 px-6 py-4">
-					<p class="font-mono text-sm text-destructive">{form.error}</p>
+					<p class="font-mono text-sm text-destructive">{form?.error || timeoutError}</p>
 				</div>
 			{/if}
 
