@@ -13,6 +13,7 @@ import crypto from 'node:crypto';
 import { generateOrgNumber } from '$lib/server/id-generator';
 import { sendTicketCreatedEmail } from '$lib/server/email';
 import { env } from '$env/dynamic/private';
+import { ticketActivity, organizationActivity, getClientIp } from '$lib/server/activity-logger';
 
 export const load: PageServerLoad = async ({ locals }) => {
     // Verify user is authenticated
@@ -231,6 +232,14 @@ export const actions: Actions = {
                 createdById: locals.profile.id,
                 dueAt: dueDate
             }).returning({ id: tickets.id, ticketNumber: tickets.ticketNumber });
+
+            // Log activity
+            await ticketActivity.created(
+                newTicket.id,
+                newTicket.ticketNumber,
+                locals.profile.id,
+                getClientIp(request)
+            );
 
             // Send confirmation email to ticket creator
             const ticketUrl = `${env.PUBLIC_SITE_URL || 'http://localhost:5173'}/app/tickets/${newTicket.id}`;

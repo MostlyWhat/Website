@@ -11,6 +11,7 @@ import { tickets, ticketComments, profiles, organizations, projects, organizatio
 import { eq, and, or } from 'drizzle-orm';
 import { sendTicketReplyEmail, sendTicketStatusChangeEmail } from '$lib/server/email';
 import { env } from '$env/dynamic/private';
+import { ticketActivity, getClientIp } from '$lib/server/activity-logger';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
     // Verify user is authenticated
@@ -250,6 +251,23 @@ export const actions: Actions = {
                 attachments: []
             });
 
+            // Log activity for comment
+            const ticketInfo = await db
+                .select({ ticketNumber: tickets.ticketNumber })
+                .from(tickets)
+                .where(eq(tickets.id, ticketId))
+                .limit(1);
+            
+            if (ticketInfo[0]) {
+                await ticketActivity.commentAdded(
+                    ticketId,
+                    ticketInfo[0].ticketNumber,
+                    isInternal && isStaff,
+                    locals.profile.id,
+                    getClientIp(request)
+                );
+            }
+
             // Update ticket status and timestamps
             const updateData: { updatedAt: Date; status?: 'awaiting_customer' | 'awaiting_staff'; firstResponseAt?: Date } = {
                 updatedAt: new Date()
@@ -392,6 +410,23 @@ export const actions: Actions = {
                 })
                 .where(eq(tickets.id, ticketId));
 
+            // Log activity
+            const ticketNum = await db
+                .select({ ticketNumber: tickets.ticketNumber })
+                .from(tickets)
+                .where(eq(tickets.id, ticketId))
+                .limit(1);
+            
+            if (ticketNum[0]) {
+                await ticketActivity.statusChanged(
+                    ticketId,
+                    ticketNum[0].ticketNumber,
+                    ticketData[0].status,
+                    'closed',
+                    locals.profile.id
+                );
+            }
+
             return { success: true };
         } catch (err) {
             console.error('Close ticket exception:', err);
@@ -457,6 +492,23 @@ export const actions: Actions = {
                 })
                 .where(eq(tickets.id, ticketId));
 
+            // Log activity
+            const ticketNum = await db
+                .select({ ticketNumber: tickets.ticketNumber })
+                .from(tickets)
+                .where(eq(tickets.id, ticketId))
+                .limit(1);
+            
+            if (ticketNum[0]) {
+                await ticketActivity.statusChanged(
+                    ticketId,
+                    ticketNum[0].ticketNumber,
+                    ticket.status,
+                    'open',
+                    locals.profile.id
+                );
+            }
+
             return { success: true };
         } catch (err) {
             console.error('Reopen ticket exception:', err);
@@ -498,6 +550,23 @@ export const actions: Actions = {
                     updatedAt: new Date()
                 })
                 .where(eq(tickets.id, ticketId));
+
+            // Log activity
+            const ticketNum = await db
+                .select({ ticketNumber: tickets.ticketNumber, status: tickets.status })
+                .from(tickets)
+                .where(eq(tickets.id, ticketId))
+                .limit(1);
+            
+            if (ticketNum[0]) {
+                await ticketActivity.statusChanged(
+                    ticketId,
+                    ticketNum[0].ticketNumber,
+                    'resolved', // We just set it to resolved
+                    'resolved',
+                    locals.profile.id
+                );
+            }
 
             return { success: true };
         } catch (err) {

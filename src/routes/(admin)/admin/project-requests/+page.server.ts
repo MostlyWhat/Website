@@ -3,6 +3,7 @@ import { projectRequests, profiles, organizations, projects } from '$lib/server/
 import { eq, desc, sql, and, ne } from 'drizzle-orm';
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
+import { projectRequestActivity, projectActivity, getClientIp } from '$lib/server/activity-logger';
 
 // Generate project number like PRJ-YYYY-XXXXX
 async function generateProjectNumber(): Promise<string> {
@@ -80,6 +81,13 @@ export const actions: Actions = {
         }
 
         try {
+            // Get old status for logging
+            const [oldRequest] = await db
+                .select({ status: projectRequests.status, title: projectRequests.title })
+                .from(projectRequests)
+                .where(eq(projectRequests.id, requestId))
+                .limit(1);
+
             await db
                 .update(projectRequests)
                 .set({
@@ -90,6 +98,18 @@ export const actions: Actions = {
                     updatedAt: new Date()
                 })
                 .where(eq(projectRequests.id, requestId));
+
+            // Log activity
+            if (oldRequest) {
+                await projectRequestActivity.statusChanged(
+                    requestId,
+                    oldRequest.title,
+                    oldRequest.status,
+                    status,
+                    locals.profile.id,
+                    getClientIp(request)
+                );
+            }
 
             return { success: true, message: `Request status updated to ${status}` };
         } catch (error) {
@@ -157,6 +177,22 @@ export const actions: Actions = {
                     updatedAt: new Date()
                 })
                 .where(eq(projectRequests.id, requestId));
+
+            // Log activity for both request and project
+            await projectRequestActivity.converted(
+                requestId,
+                projectRequest.title,
+                newProject.id,
+                projectName || projectRequest.title,
+                locals.profile.id,
+                getClientIp(request)
+            );
+            await projectActivity.created(
+                newProject.id,
+                projectName || projectRequest.title,
+                locals.profile.id,
+                getClientIp(request)
+            );
 
             return { success: true, message: 'Request converted to project', projectId: newProject.id };
         } catch (error) {

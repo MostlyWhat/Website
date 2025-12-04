@@ -126,9 +126,17 @@
 	<form
 		method="POST"
 		action="?/create"
-		use:enhance={() => {
+		use:enhance={({ cancel }) => {
+			if (loading) {
+				cancel();
+				return;
+			}
 			loading = true;
 			return async ({ result, update }) => {
+				if (result.type === 'redirect') {
+					// Let the redirect happen naturally
+					return;
+				}
 				loading = false;
 				await update();
 			};
@@ -259,44 +267,56 @@
 							</Button>
 						</div>
 
-						<div class="mt-6 space-y-4">
+						<!-- Line Items Table -->
+						<div class="mt-6 border border-border">
+							<!-- Table Header -->
+							<div class="grid grid-cols-12 gap-2 border-b border-border bg-muted/30 px-4 py-3">
+								<span class="col-span-5 font-mono text-[10px] tracking-widest text-muted-foreground">DESCRIPTION</span>
+								<span class="col-span-2 font-mono text-[10px] tracking-widest text-muted-foreground text-center">QTY</span>
+								<span class="col-span-2 font-mono text-[10px] tracking-widest text-muted-foreground text-right">UNIT PRICE</span>
+								<span class="col-span-2 font-mono text-[10px] tracking-widest text-muted-foreground text-right">TOTAL</span>
+								<span class="col-span-1"></span>
+							</div>
+							<!-- Table Body -->
 							{#each lineItems as item, i}
-								<div class="flex items-start gap-4 border border-border p-4">
-									<div class="flex-1">
+								<div class="grid grid-cols-12 gap-2 items-center border-b border-border last:border-b-0 px-4 py-3">
+									<div class="col-span-5">
 										<Input
 											type="text"
 											bind:value={item.description}
-											placeholder="Description"
-											class="h-10 border-border bg-card px-4 font-body text-sm"
+											placeholder="Item description"
+											class="h-9 border-border bg-card px-3 font-body text-sm"
 										/>
 									</div>
-									<div class="w-24">
+									<div class="col-span-2">
 										<Input
 											type="number"
 											bind:value={item.quantity}
 											min="1"
-											placeholder="Qty"
-											class="h-10 border-border bg-card px-4 font-body text-sm text-center"
+											placeholder="1"
+											class="h-9 border-border bg-card px-3 font-mono text-sm text-center"
 										/>
 									</div>
-									<div class="w-32">
+									<div class="col-span-2">
 										<Input
 											type="number"
 											bind:value={item.unitPrice}
 											min="0"
 											step="0.01"
-											placeholder="Price"
-											class="h-10 border-border bg-card px-4 font-body text-sm text-right"
+											placeholder="0.00"
+											class="h-9 border-border bg-card px-3 font-mono text-sm text-right"
 										/>
 									</div>
-									<div class="w-32 flex items-center justify-end">
+									<div class="col-span-2 text-right">
 										<span class="font-mono text-sm">{formatCurrency(item.quantity * item.unitPrice)}</span>
 									</div>
-									{#if lineItems.length > 1}
-										<button type="button" onclick={() => removeLineItem(i)} class="text-muted-foreground hover:text-destructive">
-											<Trash2 class="h-4 w-4" />
-										</button>
-									{/if}
+									<div class="col-span-1 flex justify-end">
+										{#if lineItems.length > 1}
+											<button type="button" onclick={() => removeLineItem(i)} class="text-muted-foreground hover:text-destructive p-1">
+												<Trash2 class="h-4 w-4" />
+											</button>
+										{/if}
+									</div>
 								</div>
 							{/each}
 						</div>

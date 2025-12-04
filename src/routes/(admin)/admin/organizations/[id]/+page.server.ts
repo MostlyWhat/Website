@@ -391,7 +391,7 @@ export const actions: Actions = {
 
         // Log activity
         const [org] = await db.select({ name: organizations.name }).from(organizations).where(eq(organizations.id, params.id));
-        await organizationActivity.memberAdded(params.id, org?.name ?? 'Unknown', user.email, role, locals.profile.id, getClientIp(request));
+        await organizationActivity.memberAdded(params.id, org?.name ?? 'Unknown', user.email, locals.profile.id, getClientIp(request));
 
         return { success: true, message: `${user.email} has been added to the organization` };
     }

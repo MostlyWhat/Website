@@ -4,6 +4,7 @@ import { eq, desc, sql } from 'drizzle-orm';
 import { fail, redirect } from '@sveltejs/kit';
 import { generateOrgNumber } from '$lib/server/id-generator';
 import type { PageServerLoad, Actions } from './$types';
+import { projectRequestActivity, getClientIp } from '$lib/server/activity-logger';
 
 // Generate request number like REQ-YYYY-XXXXX
 async function generateRequestNumber(): Promise<string> {
@@ -158,6 +159,14 @@ export const actions: Actions = {
                     status: 'pending'
                 })
                 .returning({ id: projectRequests.id });
+
+            // Log activity
+            await projectRequestActivity.created(
+                newRequest.id,
+                title.trim(),
+                locals.profile.id,
+                getClientIp(request)
+            );
 
             return redirect(303, `/app/projects/requests/${newRequest.id}?success=true`);
         } catch (error) {

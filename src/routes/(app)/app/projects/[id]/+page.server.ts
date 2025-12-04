@@ -150,7 +150,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
             convertedAt: projectRequests.convertedAt
         })
         .from(projectRequests)
-        .where(eq(projectRequests.convertedProjectId, params.id))
+        .where(eq(projectRequests.projectId, params.id))
         .limit(1);
 
     return {
