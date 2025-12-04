@@ -49,7 +49,7 @@ export const load: PageServerLoad = async ({ locals }) => {
                 .select({ profileId: staffGroupMembers.profileId })
                 .from(staffGroupMembers)
                 .where(eq(staffGroupMembers.groupId, group.id));
-            
+
             groups.push({
                 ...group,
                 memberCount: members.length
@@ -198,7 +198,7 @@ export const actions: Actions = {
         try {
             await db
                 .update(staffGroups)
-                .set({ 
+                .set({
                     isActive: !isActive,
                     updatedAt: new Date()
                 })

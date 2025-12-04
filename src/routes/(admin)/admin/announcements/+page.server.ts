@@ -18,7 +18,7 @@ export const load: PageServerLoad = async ({ locals }) => {
             email: profiles.email,
             displayName: profiles.displayName
         })
-        .from(profiles),
+            .from(profiles),
         db.select().from(staffGroups).orderBy(staffGroups.name),
         db.select().from(organizations).orderBy(organizations.name)
     ]);

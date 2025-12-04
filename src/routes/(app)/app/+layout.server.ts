@@ -36,7 +36,7 @@ export const load: LayoutServerLoad = async ({ locals }) => {
         .select({ announcementId: announcementDismissals.announcementId })
         .from(announcementDismissals)
         .where(eq(announcementDismissals.userId, locals.user.id));
-    
+
     const dismissedIds = dismissedAnnouncements.map(r => r.announcementId);
 
     const now = new Date();
@@ -68,12 +68,12 @@ export const load: LayoutServerLoad = async ({ locals }) => {
                     // Targeted at this specific user
                     eq(announcements.targetUserId, locals.user.id),
                     // Targeted at user's organizations
-                    userOrgIds.length > 0 
+                    userOrgIds.length > 0
                         ? sql`${announcements.targetOrganizationId} = ANY(ARRAY[${sql.raw(userOrgIds.map(id => `'${id}'::uuid`).join(','))}])`
                         : sql`false`
                 ),
                 // Not already dismissed
-                dismissedIds.length > 0 
+                dismissedIds.length > 0
                     ? notInArray(announcements.id, dismissedIds)
                     : sql`true`
             )

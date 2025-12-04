@@ -26,7 +26,7 @@ export const load: LayoutServerLoad = async ({ locals }) => {
         .select({ groupId: staffGroupMembers.groupId })
         .from(staffGroupMembers)
         .where(eq(staffGroupMembers.profileId, locals.profile.id));
-    
+
     const userGroupIds = userStaffGroups.map(g => g.groupId);
 
     // Get dismissed announcement IDs for this user
@@ -34,7 +34,7 @@ export const load: LayoutServerLoad = async ({ locals }) => {
         .select({ announcementId: announcementDismissals.announcementId })
         .from(announcementDismissals)
         .where(eq(announcementDismissals.userId, locals.user.id));
-    
+
     const dismissedIds = dismissedAnnouncements.map(r => r.announcementId);
 
     const now = new Date();
@@ -65,12 +65,12 @@ export const load: LayoutServerLoad = async ({ locals }) => {
                     // Targeted at this specific user
                     eq(announcements.targetUserId, locals.user.id),
                     // Targeted at user's staff groups
-                    userGroupIds.length > 0 
+                    userGroupIds.length > 0
                         ? sql`${announcements.targetStaffGroupId} = ANY(ARRAY[${sql.raw(userGroupIds.map(id => `'${id}'::uuid`).join(','))}])`
                         : sql`false`
                 ),
                 // Not already dismissed
-                dismissedIds.length > 0 
+                dismissedIds.length > 0
                     ? notInArray(announcements.id, dismissedIds)
                     : sql`true`
             )
