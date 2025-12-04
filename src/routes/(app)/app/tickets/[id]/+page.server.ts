@@ -317,7 +317,7 @@ export const actions: Actions = {
                         .select({ email: profiles.email, name: profiles.displayName })
                         .from(profiles)
                         .where(
-                            ticket.assignedToId 
+                            ticket.assignedToId
                                 ? eq(profiles.id, ticket.assignedToId)
                                 : or(
                                     eq(profiles.role, 'super_admin'),

@@ -341,6 +341,11 @@ src/routes/
 - Creator becomes automatic owner
 - Organizations can be managed from settings page
 
+### Ticket System Fixes
+- Fixed `/app/tickets/new` error when `support_articles` table doesn't exist
+- Added try-catch around suggested articles query for graceful fallback
+- Ensures ticket creation works even without knowledge base setup
+
 ### UI Consistency Fixes
 - Fixed admin page padding consistency (`px-6 py-8 md:px-12 lg:px-16`)
 - Fixed onboarding form centering

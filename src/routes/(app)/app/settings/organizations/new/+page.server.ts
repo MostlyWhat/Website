@@ -12,83 +12,83 @@ import { generateOrgNumber } from '$lib/server/id-generator';
 import crypto from 'node:crypto';
 
 export const load: PageServerLoad = async ({ locals }) => {
-	if (!locals.session || !locals.profile) {
-		redirect(303, '/auth/login');
-	}
+    if (!locals.session || !locals.profile) {
+        redirect(303, '/auth/login');
+    }
 
-	return {};
+    return {};
 };
 
 function generateSlug(name: string): string {
-	const base = name
-		.toLowerCase()
-		.replace(/[^a-z0-9]+/g, '-')
-		.replace(/^-|-$/g, '')
-		.slice(0, 30);
-	const random = crypto.randomBytes(3).toString('hex');
-	return `${base}-${random}`;
+    const base = name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '')
+        .slice(0, 30);
+    const random = crypto.randomBytes(3).toString('hex');
+    return `${base}-${random}`;
 }
 
 export const actions: Actions = {
-	default: async ({ request, locals }) => {
-		if (!locals.session || !locals.profile) {
-			return fail(401, { error: 'You must be logged in' });
-		}
+    default: async ({ request, locals }) => {
+        if (!locals.session || !locals.profile) {
+            return fail(401, { error: 'You must be logged in' });
+        }
 
-		const formData = await request.formData();
-		const name = formData.get('name') as string;
-		const email = formData.get('email') as string;
-		const phone = formData.get('phone') as string;
-		const website = formData.get('website') as string;
+        const formData = await request.formData();
+        const name = formData.get('name') as string;
+        const email = formData.get('email') as string;
+        const phone = formData.get('phone') as string;
+        const website = formData.get('website') as string;
 
-		// Validation
-		if (!name?.trim()) {
-			return fail(400, { error: 'Organization name is required', name, email, phone, website });
-		}
+        // Validation
+        if (!name?.trim()) {
+            return fail(400, { error: 'Organization name is required', name, email, phone, website });
+        }
 
-		if (name.trim().length < 2) {
-			return fail(400, { error: 'Organization name must be at least 2 characters', name, email, phone, website });
-		}
+        if (name.trim().length < 2) {
+            return fail(400, { error: 'Organization name must be at least 2 characters', name, email, phone, website });
+        }
 
-		if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-			return fail(400, { error: 'Invalid email address', name, email, phone, website });
-		}
+        if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            return fail(400, { error: 'Invalid email address', name, email, phone, website });
+        }
 
-		try {
-			// Generate organization number and slug
-			const orgNumber = await generateOrgNumber();
-			const slug = generateSlug(name.trim());
+        try {
+            // Generate organization number and slug
+            const orgNumber = await generateOrgNumber();
+            const slug = generateSlug(name.trim());
 
-			// Create the organization
-			const [newOrg] = await db
-				.insert(organizations)
-				.values({
-					name: name.trim(),
-					orgNumber,
-					slug,
-					email: email?.trim() || null,
-					phone: phone?.trim() || null,
-					website: website?.trim() || null
-				})
-				.returning({ id: organizations.id });
+            // Create the organization
+            const [newOrg] = await db
+                .insert(organizations)
+                .values({
+                    name: name.trim(),
+                    orgNumber,
+                    slug,
+                    email: email?.trim() || null,
+                    phone: phone?.trim() || null,
+                    website: website?.trim() || null
+                })
+                .returning({ id: organizations.id });
 
-			// Add user as owner
-			await db.insert(organizationMembers).values({
-				organizationId: newOrg.id,
-				profileId: locals.profile.id,
-				role: 'owner'
-			});
+            // Add user as owner
+            await db.insert(organizationMembers).values({
+                organizationId: newOrg.id,
+                profileId: locals.profile.id,
+                role: 'owner'
+            });
 
-			redirect(303, '/app/settings/organizations');
-		} catch (err) {
-			// Handle redirect
-			const { isRedirect } = await import('@sveltejs/kit');
-			if (isRedirect(err)) {
-				throw err;
-			}
+            redirect(303, '/app/settings/organizations');
+        } catch (err) {
+            // Handle redirect
+            const { isRedirect } = await import('@sveltejs/kit');
+            if (isRedirect(err)) {
+                throw err;
+            }
 
-			console.error('Create organization error:', err);
-			return fail(500, { error: 'Failed to create organization', name, email, phone, website });
-		}
-	}
+            console.error('Create organization error:', err);
+            return fail(500, { error: 'Failed to create organization', name, email, phone, website });
+        }
+    }
 };

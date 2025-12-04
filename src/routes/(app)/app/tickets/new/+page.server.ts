@@ -49,25 +49,31 @@ export const load: PageServerLoad = async ({ locals }) => {
         );
 
     // Get suggested help articles for common ticket topics
-    const suggestedArticles = await db
-        .select({
-            id: supportArticles.id,
-            title: supportArticles.title,
-            slug: supportArticles.slug,
-            category: supportArticles.category
-        })
-        .from(supportArticles)
-        .where(
-            and(
-                eq(supportArticles.isPublished, true),
-                or(
-                    eq(supportArticles.audience, 'user'),
-                    eq(supportArticles.audience, 'all')
+    // Wrapped in try-catch in case support_articles table doesn't exist yet
+    let suggestedArticles: { id: string; title: string; slug: string; category: string }[] = [];
+    try {
+        suggestedArticles = await db
+            .select({
+                id: supportArticles.id,
+                title: supportArticles.title,
+                slug: supportArticles.slug,
+                category: supportArticles.category
+            })
+            .from(supportArticles)
+            .where(
+                and(
+                    eq(supportArticles.isPublished, true),
+                    or(
+                        eq(supportArticles.audience, 'user'),
+                        eq(supportArticles.audience, 'all')
+                    )
                 )
             )
-        )
-        .orderBy(desc(supportArticles.viewCount))
-        .limit(5);
+            .orderBy(desc(supportArticles.viewCount))
+            .limit(5);
+    } catch (error) {
+        console.warn('Support articles query failed (table may not exist):', error);
+    }
 
     return {
         organizations: userOrgs,

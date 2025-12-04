@@ -11,62 +11,62 @@ const RESEND_API_URL = 'https://api.resend.com/emails';
 const FROM_EMAIL = 'MostlyWhat Systems <noreply@mostlywhat.com>';
 
 function getSiteUrl(): string {
-	return env.PUBLIC_SITE_URL || 'http://localhost:5173';
+    return env.PUBLIC_SITE_URL || 'http://localhost:5173';
 }
 
 interface EmailOptions {
-	to: string | string[];
-	subject: string;
-	html: string;
-	text?: string;
-	replyTo?: string;
+    to: string | string[];
+    subject: string;
+    html: string;
+    text?: string;
+    replyTo?: string;
 }
 
 interface EmailResult {
-	success: boolean;
-	id?: string;
-	error?: string;
+    success: boolean;
+    id?: string;
+    error?: string;
 }
 
 /**
  * Send an email using Resend
  */
 export async function sendEmail(options: EmailOptions): Promise<EmailResult> {
-	const apiKey = env.RESEND_API_KEY;
-	if (!apiKey) {
-		console.warn('RESEND_API_KEY not configured, email not sent:', options.subject);
-		return { success: false, error: 'Email service not configured' };
-	}
+    const apiKey = env.RESEND_API_KEY;
+    if (!apiKey) {
+        console.warn('RESEND_API_KEY not configured, email not sent:', options.subject);
+        return { success: false, error: 'Email service not configured' };
+    }
 
-	try {
-		const response = await fetch(RESEND_API_URL, {
-			method: 'POST',
-			headers: {
-				'Authorization': `Bearer ${apiKey}`,
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				from: FROM_EMAIL,
-				to: Array.isArray(options.to) ? options.to : [options.to],
-				subject: options.subject,
-				html: options.html,
-				text: options.text,
-				reply_to: options.replyTo
-			})
-		});
+    try {
+        const response = await fetch(RESEND_API_URL, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                from: FROM_EMAIL,
+                to: Array.isArray(options.to) ? options.to : [options.to],
+                subject: options.subject,
+                html: options.html,
+                text: options.text,
+                reply_to: options.replyTo
+            })
+        });
 
-		if (!response.ok) {
-			const error = await response.text();
-			console.error('Email send failed:', error);
-			return { success: false, error };
-		}
+        if (!response.ok) {
+            const error = await response.text();
+            console.error('Email send failed:', error);
+            return { success: false, error };
+        }
 
-		const data = await response.json() as { id: string };
-		return { success: true, id: data.id };
-	} catch (err) {
-		console.error('Email send error:', err);
-		return { success: false, error: err instanceof Error ? err.message : 'Unknown error' };
-	}
+        const data = await response.json() as { id: string };
+        return { success: true, id: data.id };
+    } catch (err) {
+        console.error('Email send error:', err);
+        return { success: false, error: err instanceof Error ? err.message : 'Unknown error' };
+    }
 }
 
 // =============================================================================
@@ -77,7 +77,7 @@ export async function sendEmail(options: EmailOptions): Promise<EmailResult> {
  * Base HTML email template with MostlyWhat branding
  */
 function baseTemplate(content: string): string {
-	return `
+    return `
 <!DOCTYPE html>
 <html>
 <head>
@@ -126,26 +126,26 @@ function baseTemplate(content: string): string {
 // =============================================================================
 
 export interface ProposalEmailData {
-	recipientName: string;
-	recipientEmail: string;
-	proposalNumber: string;
-	proposalTitle: string;
-	organizationName: string;
-	total: string;
-	currency: string;
-	validUntil?: Date;
-	proposalUrl: string;
+    recipientName: string;
+    recipientEmail: string;
+    proposalNumber: string;
+    proposalTitle: string;
+    organizationName: string;
+    total: string;
+    currency: string;
+    validUntil?: Date;
+    proposalUrl: string;
 }
 
 /**
  * Send email when a proposal is sent to client
  */
 export async function sendProposalEmail(data: ProposalEmailData): Promise<EmailResult> {
-	const validUntilStr = data.validUntil
-		? data.validUntil.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-		: 'Not specified';
+    const validUntilStr = data.validUntil
+        ? data.validUntil.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+        : 'Not specified';
 
-	const content = `
+    const content = `
 		<h1>NEW PROPOSAL</h1>
 		<p>Hello ${data.recipientName},</p>
 		<p>A new proposal has been prepared for <strong>${data.organizationName}</strong>.</p>
@@ -180,19 +180,19 @@ export async function sendProposalEmail(data: ProposalEmailData): Promise<EmailR
 		</div>
 	`;
 
-	return sendEmail({
-		to: data.recipientEmail,
-		subject: `Proposal ${data.proposalNumber}: ${data.proposalTitle}`,
-		html: baseTemplate(content),
-		text: `New Proposal: ${data.proposalTitle}\n\nA proposal has been prepared for ${data.organizationName}.\n\nProposal: ${data.proposalNumber}\nTotal: ${data.currency} ${data.total}\n\nView: ${data.proposalUrl}`
-	});
+    return sendEmail({
+        to: data.recipientEmail,
+        subject: `Proposal ${data.proposalNumber}: ${data.proposalTitle}`,
+        html: baseTemplate(content),
+        text: `New Proposal: ${data.proposalTitle}\n\nA proposal has been prepared for ${data.organizationName}.\n\nProposal: ${data.proposalNumber}\nTotal: ${data.currency} ${data.total}\n\nView: ${data.proposalUrl}`
+    });
 }
 
 /**
  * Send email when a proposal is accepted
  */
 export async function sendProposalAcceptedEmail(data: ProposalEmailData & { acceptedBy: string }): Promise<EmailResult> {
-	const content = `
+    const content = `
 		<h1>PROPOSAL ACCEPTED</h1>
 		<p>Great news! The proposal <strong>${data.proposalNumber}</strong> has been accepted.</p>
 		
@@ -222,19 +222,19 @@ export async function sendProposalAcceptedEmail(data: ProposalEmailData & { acce
 		</p>
 	`;
 
-	return sendEmail({
-		to: data.recipientEmail,
-		subject: `✓ Proposal ${data.proposalNumber} Accepted`,
-		html: baseTemplate(content),
-		text: `Proposal Accepted: ${data.proposalTitle}\n\nThe proposal ${data.proposalNumber} has been accepted by ${data.acceptedBy}.\n\nView: ${data.proposalUrl}`
-	});
+    return sendEmail({
+        to: data.recipientEmail,
+        subject: `✓ Proposal ${data.proposalNumber} Accepted`,
+        html: baseTemplate(content),
+        text: `Proposal Accepted: ${data.proposalTitle}\n\nThe proposal ${data.proposalNumber} has been accepted by ${data.acceptedBy}.\n\nView: ${data.proposalUrl}`
+    });
 }
 
 /**
  * Send email when a proposal is rejected
  */
 export async function sendProposalRejectedEmail(data: ProposalEmailData & { rejectedBy: string; reason?: string }): Promise<EmailResult> {
-	const content = `
+    const content = `
 		<h1>PROPOSAL DECLINED</h1>
 		<p>The proposal <strong>${data.proposalNumber}</strong> has been declined.</p>
 		
@@ -266,12 +266,12 @@ export async function sendProposalRejectedEmail(data: ProposalEmailData & { reje
 		</p>
 	`;
 
-	return sendEmail({
-		to: data.recipientEmail,
-		subject: `Proposal ${data.proposalNumber} Declined`,
-		html: baseTemplate(content),
-		text: `Proposal Declined: ${data.proposalTitle}\n\nThe proposal ${data.proposalNumber} has been declined by ${data.rejectedBy}.\n${data.reason ? `Reason: ${data.reason}\n` : ''}\nView: ${data.proposalUrl}`
-	});
+    return sendEmail({
+        to: data.recipientEmail,
+        subject: `Proposal ${data.proposalNumber} Declined`,
+        html: baseTemplate(content),
+        text: `Proposal Declined: ${data.proposalTitle}\n\nThe proposal ${data.proposalNumber} has been declined by ${data.rejectedBy}.\n${data.reason ? `Reason: ${data.reason}\n` : ''}\nView: ${data.proposalUrl}`
+    });
 }
 
 // =============================================================================
@@ -279,20 +279,20 @@ export async function sendProposalRejectedEmail(data: ProposalEmailData & { reje
 // =============================================================================
 
 export interface TicketEmailData {
-	recipientName: string;
-	recipientEmail: string;
-	ticketNumber: string;
-	subject: string;
-	status: string;
-	priority: string;
-	ticketUrl: string;
+    recipientName: string;
+    recipientEmail: string;
+    ticketNumber: string;
+    subject: string;
+    status: string;
+    priority: string;
+    ticketUrl: string;
 }
 
 /**
  * Send email when a ticket is created
  */
 export async function sendTicketCreatedEmail(data: TicketEmailData): Promise<EmailResult> {
-	const content = `
+    const content = `
 		<h1>TICKET CREATED</h1>
 		<p>Hello ${data.recipientName},</p>
 		<p>Your support ticket has been created and our team will respond shortly.</p>
@@ -325,19 +325,19 @@ export async function sendTicketCreatedEmail(data: TicketEmailData): Promise<Ema
 		</div>
 	`;
 
-	return sendEmail({
-		to: data.recipientEmail,
-		subject: `[${data.ticketNumber}] ${data.subject}`,
-		html: baseTemplate(content),
-		text: `Ticket Created: ${data.subject}\n\nTicket: ${data.ticketNumber}\nPriority: ${data.priority}\nStatus: ${data.status}\n\nView: ${data.ticketUrl}`
-	});
+    return sendEmail({
+        to: data.recipientEmail,
+        subject: `[${data.ticketNumber}] ${data.subject}`,
+        html: baseTemplate(content),
+        text: `Ticket Created: ${data.subject}\n\nTicket: ${data.ticketNumber}\nPriority: ${data.priority}\nStatus: ${data.status}\n\nView: ${data.ticketUrl}`
+    });
 }
 
 /**
  * Send email when a ticket receives a reply
  */
 export async function sendTicketReplyEmail(data: TicketEmailData & { replyFrom: string; replyContent: string }): Promise<EmailResult> {
-	const content = `
+    const content = `
 		<h1>NEW REPLY</h1>
 		<p>Hello ${data.recipientName},</p>
 		<p>There's a new reply on your support ticket.</p>
@@ -366,19 +366,19 @@ export async function sendTicketReplyEmail(data: TicketEmailData & { replyFrom: 
 		</p>
 	`;
 
-	return sendEmail({
-		to: data.recipientEmail,
-		subject: `Re: [${data.ticketNumber}] ${data.subject}`,
-		html: baseTemplate(content),
-		text: `New Reply on Ticket: ${data.subject}\n\nFrom: ${data.replyFrom}\n\n${data.replyContent}\n\nView: ${data.ticketUrl}`
-	});
+    return sendEmail({
+        to: data.recipientEmail,
+        subject: `Re: [${data.ticketNumber}] ${data.subject}`,
+        html: baseTemplate(content),
+        text: `New Reply on Ticket: ${data.subject}\n\nFrom: ${data.replyFrom}\n\n${data.replyContent}\n\nView: ${data.ticketUrl}`
+    });
 }
 
 /**
  * Send email when a ticket status changes
  */
 export async function sendTicketStatusChangeEmail(data: TicketEmailData & { oldStatus: string; newStatus: string }): Promise<EmailResult> {
-	const content = `
+    const content = `
 		<h1>TICKET UPDATE</h1>
 		<p>Hello ${data.recipientName},</p>
 		<p>The status of your ticket has been updated.</p>
@@ -407,12 +407,12 @@ export async function sendTicketStatusChangeEmail(data: TicketEmailData & { oldS
 		</p>
 	`;
 
-	return sendEmail({
-		to: data.recipientEmail,
-		subject: `[${data.ticketNumber}] Status: ${data.newStatus}`,
-		html: baseTemplate(content),
-		text: `Ticket Status Updated: ${data.subject}\n\nTicket: ${data.ticketNumber}\nStatus: ${data.oldStatus} → ${data.newStatus}\n\nView: ${data.ticketUrl}`
-	});
+    return sendEmail({
+        to: data.recipientEmail,
+        subject: `[${data.ticketNumber}] Status: ${data.newStatus}`,
+        html: baseTemplate(content),
+        text: `Ticket Status Updated: ${data.subject}\n\nTicket: ${data.ticketNumber}\nStatus: ${data.oldStatus} → ${data.newStatus}\n\nView: ${data.ticketUrl}`
+    });
 }
 
 // =============================================================================
@@ -420,23 +420,23 @@ export async function sendTicketStatusChangeEmail(data: TicketEmailData & { oldS
 // =============================================================================
 
 export interface InviteEmailData {
-	recipientEmail: string;
-	organizationName: string;
-	inviterName: string;
-	role: string;
-	inviteUrl: string;
-	expiresAt?: Date;
+    recipientEmail: string;
+    organizationName: string;
+    inviterName: string;
+    role: string;
+    inviteUrl: string;
+    expiresAt?: Date;
 }
 
 /**
  * Send organization invite email
  */
 export async function sendInviteEmail(data: InviteEmailData): Promise<EmailResult> {
-	const expiresStr = data.expiresAt
-		? data.expiresAt.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-		: 'Never';
+    const expiresStr = data.expiresAt
+        ? data.expiresAt.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+        : 'Never';
 
-	const content = `
+    const content = `
 		<h1>YOU'RE INVITED</h1>
 		<p>You've been invited to join <strong>${data.organizationName}</strong> on MostlyWhat Systems.</p>
 		
@@ -470,12 +470,12 @@ export async function sendInviteEmail(data: InviteEmailData): Promise<EmailResul
 		</div>
 	`;
 
-	return sendEmail({
-		to: data.recipientEmail,
-		subject: `Invitation to join ${data.organizationName}`,
-		html: baseTemplate(content),
-		text: `You're Invited!\n\nYou've been invited to join ${data.organizationName} as ${data.role} by ${data.inviterName}.\n\nAccept: ${data.inviteUrl}\n\nThis invitation expires: ${expiresStr}`
-	});
+    return sendEmail({
+        to: data.recipientEmail,
+        subject: `Invitation to join ${data.organizationName}`,
+        html: baseTemplate(content),
+        text: `You're Invited!\n\nYou've been invited to join ${data.organizationName} as ${data.role} by ${data.inviterName}.\n\nAccept: ${data.inviteUrl}\n\nThis invitation expires: ${expiresStr}`
+    });
 }
 
 // =============================================================================
@@ -483,20 +483,20 @@ export async function sendInviteEmail(data: InviteEmailData): Promise<EmailResul
 // =============================================================================
 
 export interface ProjectEmailData {
-	recipientName: string;
-	recipientEmail: string;
-	projectNumber: string;
-	projectName: string;
-	organizationName: string;
-	status: string;
-	projectUrl: string;
+    recipientName: string;
+    recipientEmail: string;
+    projectNumber: string;
+    projectName: string;
+    organizationName: string;
+    status: string;
+    projectUrl: string;
 }
 
 /**
  * Send email when a project is created
  */
 export async function sendProjectCreatedEmail(data: ProjectEmailData): Promise<EmailResult> {
-	const content = `
+    const content = `
 		<h1>PROJECT CREATED</h1>
 		<p>Hello ${data.recipientName},</p>
 		<p>A new project has been created for <strong>${data.organizationName}</strong>.</p>
@@ -523,19 +523,19 @@ export async function sendProjectCreatedEmail(data: ProjectEmailData): Promise<E
 		</p>
 	`;
 
-	return sendEmail({
-		to: data.recipientEmail,
-		subject: `Project Created: ${data.projectName}`,
-		html: baseTemplate(content),
-		text: `Project Created: ${data.projectName}\n\nProject: ${data.projectNumber}\nOrganization: ${data.organizationName}\nStatus: ${data.status}\n\nView: ${data.projectUrl}`
-	});
+    return sendEmail({
+        to: data.recipientEmail,
+        subject: `Project Created: ${data.projectName}`,
+        html: baseTemplate(content),
+        text: `Project Created: ${data.projectName}\n\nProject: ${data.projectNumber}\nOrganization: ${data.organizationName}\nStatus: ${data.status}\n\nView: ${data.projectUrl}`
+    });
 }
 
 /**
  * Send email when a project status changes
  */
 export async function sendProjectStatusChangeEmail(data: ProjectEmailData & { oldStatus: string; newStatus: string }): Promise<EmailResult> {
-	const content = `
+    const content = `
 		<h1>PROJECT UPDATE</h1>
 		<p>Hello ${data.recipientName},</p>
 		<p>The status of your project has been updated.</p>
@@ -564,12 +564,12 @@ export async function sendProjectStatusChangeEmail(data: ProjectEmailData & { ol
 		</p>
 	`;
 
-	return sendEmail({
-		to: data.recipientEmail,
-		subject: `[${data.projectNumber}] Status: ${data.newStatus}`,
-		html: baseTemplate(content),
-		text: `Project Status Updated: ${data.projectName}\n\nProject: ${data.projectNumber}\nStatus: ${data.oldStatus} → ${data.newStatus}\n\nView: ${data.projectUrl}`
-	});
+    return sendEmail({
+        to: data.recipientEmail,
+        subject: `[${data.projectNumber}] Status: ${data.newStatus}`,
+        html: baseTemplate(content),
+        text: `Project Status Updated: ${data.projectName}\n\nProject: ${data.projectNumber}\nStatus: ${data.oldStatus} → ${data.newStatus}\n\nView: ${data.projectUrl}`
+    });
 }
 
 // =============================================================================
@@ -577,25 +577,25 @@ export async function sendProjectStatusChangeEmail(data: ProjectEmailData & { ol
 // =============================================================================
 
 export interface InvoiceEmailData {
-	recipientName: string;
-	recipientEmail: string;
-	invoiceNumber: string;
-	organizationName: string;
-	total: string;
-	currency: string;
-	dueDate?: Date;
-	invoiceUrl: string;
+    recipientName: string;
+    recipientEmail: string;
+    invoiceNumber: string;
+    organizationName: string;
+    total: string;
+    currency: string;
+    dueDate?: Date;
+    invoiceUrl: string;
 }
 
 /**
  * Send email when an invoice is created/sent
  */
 export async function sendInvoiceEmail(data: InvoiceEmailData): Promise<EmailResult> {
-	const dueDateStr = data.dueDate
-		? data.dueDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-		: 'Upon receipt';
+    const dueDateStr = data.dueDate
+        ? data.dueDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+        : 'Upon receipt';
 
-	const content = `
+    const content = `
 		<h1>NEW INVOICE</h1>
 		<p>Hello ${data.recipientName},</p>
 		<p>An invoice has been generated for <strong>${data.organizationName}</strong>.</p>
@@ -626,23 +626,23 @@ export async function sendInvoiceEmail(data: InvoiceEmailData): Promise<EmailRes
 		</div>
 	`;
 
-	return sendEmail({
-		to: data.recipientEmail,
-		subject: `Invoice ${data.invoiceNumber} - ${data.currency} ${data.total}`,
-		html: baseTemplate(content),
-		text: `Invoice ${data.invoiceNumber}\n\nOrganization: ${data.organizationName}\nAmount: ${data.currency} ${data.total}\nDue: ${dueDateStr}\n\nView: ${data.invoiceUrl}`
-	});
+    return sendEmail({
+        to: data.recipientEmail,
+        subject: `Invoice ${data.invoiceNumber} - ${data.currency} ${data.total}`,
+        html: baseTemplate(content),
+        text: `Invoice ${data.invoiceNumber}\n\nOrganization: ${data.organizationName}\nAmount: ${data.currency} ${data.total}\nDue: ${dueDateStr}\n\nView: ${data.invoiceUrl}`
+    });
 }
 
 /**
  * Send payment reminder email
  */
 export async function sendPaymentReminderEmail(data: InvoiceEmailData & { daysOverdue: number }): Promise<EmailResult> {
-	const dueDateStr = data.dueDate
-		? data.dueDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-		: 'Unknown';
+    const dueDateStr = data.dueDate
+        ? data.dueDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+        : 'Unknown';
 
-	const content = `
+    const content = `
 		<h1>PAYMENT REMINDER</h1>
 		<p>Hello ${data.recipientName},</p>
 		<p>This is a friendly reminder about an outstanding invoice for <strong>${data.organizationName}</strong>.</p>
@@ -677,10 +677,10 @@ export async function sendPaymentReminderEmail(data: InvoiceEmailData & { daysOv
 		</div>
 	`;
 
-	return sendEmail({
-		to: data.recipientEmail,
-		subject: `Payment Reminder: Invoice ${data.invoiceNumber} (${data.daysOverdue} days overdue)`,
-		html: baseTemplate(content),
-		text: `Payment Reminder\n\nInvoice: ${data.invoiceNumber}\nAmount: ${data.currency} ${data.total}\nDue: ${dueDateStr}\nOverdue: ${data.daysOverdue} days\n\nPay: ${data.invoiceUrl}`
-	});
+    return sendEmail({
+        to: data.recipientEmail,
+        subject: `Payment Reminder: Invoice ${data.invoiceNumber} (${data.daysOverdue} days overdue)`,
+        html: baseTemplate(content),
+        text: `Payment Reminder\n\nInvoice: ${data.invoiceNumber}\nAmount: ${data.currency} ${data.total}\nDue: ${dueDateStr}\nOverdue: ${data.daysOverdue} days\n\nPay: ${data.invoiceUrl}`
+    });
 }
