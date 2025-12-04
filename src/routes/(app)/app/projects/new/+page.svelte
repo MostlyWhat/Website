@@ -128,7 +128,7 @@
 								<Building2 class="h-5 w-5 text-muted-foreground" />
 								<div>
 									<p class="font-mono text-[10px] tracking-widest text-muted-foreground">
-										{data.isPersonalAccount ? 'PERSONAL WORKSPACE' : 'ORGANIZATION'}
+										ORGANIZATION
 									</p>
 									<p class="font-body text-sm">{data.organizations[0].name}</p>
 								</div>
@@ -136,7 +136,7 @@
 						{:else}
 							<div class="border border-amber-500/30 bg-amber-500/5 p-6">
 								<p class="font-body text-sm text-amber-600">
-									Setting up your workspace... Please refresh the page or <a href="/app/organization" class="underline">create an organization</a>.
+									Setting up your organization... Please refresh the page or <a href="/app/organization" class="underline">create an organization</a>.
 								</p>
 							</div>
 						{/if}

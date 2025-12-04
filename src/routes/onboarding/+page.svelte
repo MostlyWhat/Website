@@ -8,7 +8,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
-	import { Loader2, User, Bell, Palette, ArrowRight, ArrowLeft, CheckCircle, Building2, UserCircle } from '@lucide/svelte';
+	import { Loader2, User, Bell, Palette, ArrowRight, ArrowLeft, CheckCircle, Building2, UserCircle, Users, Link } from '@lucide/svelte';
 
 	let { data, form } = $props();
 
@@ -17,9 +17,10 @@
 	let lastName = $state(data.profile?.lastName ?? '');
 	let phone = $state(data.profile?.phone ?? '');
 
-	// Account type
-	let accountType = $state<'personal' | 'organization'>('personal');
+	// Account type: 'personal' = skip org, 'join' = join existing org, 'create' = create new org
+	let accountType = $state<'personal' | 'join' | 'create'>('personal');
 	let organizationName = $state('');
+	let inviteCode = $state('');
 
 	// Preferences
 	let emailNotifications = $state(data.profile?.preferences?.emailNotifications ?? true);
@@ -45,12 +46,14 @@
 
 	// Validation for step 2 (account type)
 	const canProceedFromAccountType = $derived(
-		accountType === 'personal' || (accountType === 'organization' && organizationName.trim().length > 0)
+		accountType === 'personal' || 
+		(accountType === 'create' && organizationName.trim().length > 0) ||
+		(accountType === 'join' && inviteCode.trim().length > 0)
 	);
 
 	const steps = [
 		{ number: 1, icon: User, title: 'PROFILE', desc: 'Personal information' },
-		{ number: 2, icon: Building2, title: 'ACCOUNT TYPE', desc: 'Personal or organization' },
+		{ number: 2, icon: Building2, title: 'ORGANIZATION', desc: 'Skip, join, or create' },
 		{ number: 3, icon: Bell, title: 'NOTIFICATIONS', desc: 'Communication preferences' },
 		{ number: 4, icon: Palette, title: 'APPEARANCE', desc: 'Theme settings' }
 	];
@@ -216,7 +219,7 @@
 						</div>
 					{/if}
 
-					<!-- Step 2: Account Type -->
+					<!-- Step 2: Organization Setup -->
 					{#if currentStep === 2}
 						<div class="space-y-8">
 							<div>
@@ -225,13 +228,14 @@
 										<Building2 class="h-5 w-5 text-primary" />
 									</div>
 									<div>
-										<h2 class="font-display text-xl font-bold uppercase">Account Type</h2>
-										<p class="font-body text-sm text-muted-foreground">How will you be using this account?</p>
+										<h2 class="font-display text-xl font-bold uppercase">Organization Setup</h2>
+										<p class="font-body text-sm text-muted-foreground">Choose how you'd like to get started</p>
 									</div>
 								</div>
 							</div>
 
 							<div class="space-y-4">
+								<!-- Skip / Personal Option -->
 								<label class="cursor-pointer">
 									<input
 										type="radio"
@@ -245,19 +249,42 @@
 											<UserCircle class="h-6 w-6 text-muted-foreground" />
 										</div>
 										<div class="flex-1">
-											<span class="font-ui text-sm font-semibold tracking-wider">PERSONAL ACCOUNT</span>
+											<span class="font-ui text-sm font-semibold tracking-wider">SKIP FOR NOW</span>
 											<p class="font-body mt-1 text-xs text-muted-foreground">
-												For individuals managing personal projects. You can always upgrade to an organization later.
+												Continue without an organization. You can create or join one later from your dashboard.
 											</p>
 										</div>
 									</div>
 								</label>
 
+								<!-- Join Organization Option -->
 								<label class="cursor-pointer">
 									<input
 										type="radio"
 										name="accountTypeRadio"
-										value="organization"
+										value="join"
+										bind:group={accountType}
+										class="peer sr-only"
+									/>
+									<div class="flex items-start gap-4 border-2 border-border bg-card px-6 py-5 transition-colors peer-checked:border-primary peer-checked:bg-primary/5">
+										<div class="flex h-12 w-12 items-center justify-center border border-border bg-background">
+											<Link class="h-6 w-6 text-muted-foreground" />
+										</div>
+										<div class="flex-1">
+											<span class="font-ui text-sm font-semibold tracking-wider">JOIN AN ORGANIZATION</span>
+											<p class="font-body mt-1 text-xs text-muted-foreground">
+												Have an invite code? Enter it to join an existing organization.
+											</p>
+										</div>
+									</div>
+								</label>
+
+								<!-- Create Organization Option -->
+								<label class="cursor-pointer">
+									<input
+										type="radio"
+										name="accountTypeRadio"
+										value="create"
 										bind:group={accountType}
 										class="peer sr-only"
 									/>
@@ -266,17 +293,38 @@
 											<Building2 class="h-6 w-6 text-muted-foreground" />
 										</div>
 										<div class="flex-1">
-											<span class="font-ui text-sm font-semibold tracking-wider">ORGANIZATION</span>
+											<span class="font-ui text-sm font-semibold tracking-wider">CREATE AN ORGANIZATION</span>
 											<p class="font-body mt-1 text-xs text-muted-foreground">
-												For businesses and teams. Create an organization to manage projects, invoices, and invite team members.
+												For businesses and teams. Create your own organization to manage projects and invite members.
 											</p>
 										</div>
 									</div>
 								</label>
 							</div>
 
-							<!-- Organization name input (shown when organization is selected) -->
-							{#if accountType === 'organization'}
+							<!-- Invite code input (shown when join is selected) -->
+							{#if accountType === 'join'}
+								<div class="space-y-2 border-t border-border pt-6">
+									<Label for="inviteCode" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+										INVITE CODE
+									</Label>
+									<Input
+										id="inviteCode"
+										name="inviteCode"
+										type="text"
+										required
+										bind:value={inviteCode}
+										placeholder="Enter your invite code"
+										class="h-12 border-border bg-card px-4 font-body placeholder:text-muted-foreground/50"
+									/>
+									<p class="font-body text-xs text-muted-foreground">
+										Enter the code you received from your organization administrator.
+									</p>
+								</div>
+							{/if}
+
+							<!-- Organization name input (shown when create is selected) -->
+							{#if accountType === 'create'}
 								<div class="space-y-2 border-t border-border pt-6">
 									<Label for="organizationName" class="font-mono text-[10px] tracking-widest text-muted-foreground">
 										ORGANIZATION NAME
@@ -449,6 +497,7 @@
 							<input type="hidden" name="phone" value={phone} />
 							<input type="hidden" name="accountType" value={accountType} />
 							<input type="hidden" name="organizationName" value={organizationName} />
+							<input type="hidden" name="inviteCode" value={inviteCode} />
 							<input type="hidden" name="emailNotifications" value={emailNotifications.toString()} />
 							<input type="hidden" name="smsNotifications" value={smsNotifications.toString()} />
 							<input type="hidden" name="magicLinkEnabled" value={magicLinkEnabled.toString()} />

@@ -257,7 +257,7 @@ export const actions: Actions = {
                 .from(tickets)
                 .where(eq(tickets.id, ticketId))
                 .limit(1);
-            
+
             if (ticketInfo[0]) {
                 await ticketActivity.commentAdded(
                     ticketId,
@@ -416,7 +416,7 @@ export const actions: Actions = {
                 .from(tickets)
                 .where(eq(tickets.id, ticketId))
                 .limit(1);
-            
+
             if (ticketNum[0]) {
                 await ticketActivity.statusChanged(
                     ticketId,
@@ -498,7 +498,7 @@ export const actions: Actions = {
                 .from(tickets)
                 .where(eq(tickets.id, ticketId))
                 .limit(1);
-            
+
             if (ticketNum[0]) {
                 await ticketActivity.statusChanged(
                     ticketId,
@@ -557,7 +557,7 @@ export const actions: Actions = {
                 .from(tickets)
                 .where(eq(tickets.id, ticketId))
                 .limit(1);
-            
+
             if (ticketNum[0]) {
                 await ticketActivity.statusChanged(
                     ticketId,

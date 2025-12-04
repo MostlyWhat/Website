@@ -4,10 +4,16 @@
 	 *
 	 * View and manage organization memberships
 	 */
-	import { Building2, Users, FolderKanban, Ticket, Crown, Shield, User as UserIcon, Plus, ChevronRight } from '@lucide/svelte';
+	import { goto } from '$app/navigation';
+	import { Building2, Users, FolderKanban, Ticket, Crown, Shield, User as UserIcon, Plus, ChevronRight, Link2, Loader2 } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { Input } from '$lib/components/ui/input';
 
 	let { data } = $props();
+
+	let showJoinForm = $state(false);
+	let inviteCode = $state('');
+	let isJoining = $state(false);
 
 	function getRoleIcon(role: string) {
 		switch (role) {
@@ -40,6 +46,12 @@
 			day: 'numeric'
 		});
 	}
+
+	async function handleJoinWithCode() {
+		if (!inviteCode.trim()) return;
+		isJoining = true;
+		await goto(`/join/${inviteCode.trim()}`);
+	}
 </script>
 
 <svelte:head>
@@ -58,16 +70,53 @@
 				<h2 class="font-ui text-lg font-semibold tracking-wider">Organizations</h2>
 			</div>
 		</div>
-		<Button href="/app/settings/organizations/new" size="sm" class="font-ui text-xs tracking-wider">
-			<Plus class="mr-2 h-4 w-4" />
-			NEW ORGANIZATION
-		</Button>
+		<div class="flex items-center gap-3">
+			<Button onclick={() => (showJoinForm = !showJoinForm)} variant="outline" size="sm" class="font-ui text-xs tracking-wider">
+				<Link2 class="mr-2 h-4 w-4" />
+				JOIN
+			</Button>
+			<Button href="/app/settings/organizations/new" size="sm" class="font-ui text-xs tracking-wider">
+				<Plus class="mr-2 h-4 w-4" />
+				NEW
+			</Button>
+		</div>
 	</div>
 
 	<p class="mt-4 font-body text-sm text-muted-foreground">
 		View and manage your organization memberships. Organization owners can manage members and
 		settings.
 	</p>
+
+	<!-- Join with Code Form -->
+	{#if showJoinForm}
+		<div class="mt-6 border border-border bg-card p-6">
+			<h3 class="font-ui text-sm font-semibold tracking-wider">Join with Invite Code</h3>
+			<p class="mt-1 font-body text-sm text-muted-foreground">
+				Enter an invite code to join an existing organization.
+			</p>
+			<div class="mt-4 flex items-end gap-3">
+				<div class="flex-1">
+					<Input
+						type="text"
+						bind:value={inviteCode}
+						placeholder="Enter invite code"
+						class="h-10 border-border bg-background px-4 font-mono"
+					/>
+				</div>
+				<Button onclick={handleJoinWithCode} disabled={isJoining || !inviteCode.trim()} class="font-ui text-xs tracking-wider">
+					{#if isJoining}
+						<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+						JOINING...
+					{:else}
+						JOIN
+					{/if}
+				</Button>
+				<Button variant="outline" onclick={() => { showJoinForm = false; inviteCode = ''; }} class="font-ui text-xs tracking-wider">
+					CANCEL
+				</Button>
+			</div>
+		</div>
+	{/if}
 
 	<!-- Organizations List -->
 	<div class="mt-8 space-y-4">

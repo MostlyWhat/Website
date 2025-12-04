@@ -59,7 +59,7 @@
 	const navigation = $derived([
 		{ href: '/app', label: 'DASHBOARD', icon: LayoutDashboard, exact: true, tutorialId: 'dashboard-link' },
 		{ href: '/app/projects', label: 'PROJECTS', icon: FolderKanban, tutorialId: 'projects-link' },
-		{ href: '/app/organization', label: isPersonalAccount ? 'WORKSPACE' : 'ORGANIZATION', icon: Building2, tutorialId: 'org-link' },
+		{ href: '/app/organization', label: 'ORGANIZATION', icon: Building2, tutorialId: 'org-link' },
 		{ href: '/app/proposals', label: 'PROPOSALS', icon: FileText, tutorialId: 'proposals-link' },
 		{ href: '/app/invoices', label: 'INVOICES', icon: Receipt, tutorialId: 'invoices-link' },
 		{ href: '/app/tickets', label: 'TICKETS', icon: Ticket, tutorialId: 'tickets-link' },

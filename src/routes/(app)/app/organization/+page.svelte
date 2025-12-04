@@ -3,23 +3,27 @@
 	 * Organization Management Page
 	 * 
 	 * Allows users to view and manage their organizations,
-	 * or create a new one if they don't have any.
+	 * create a new one, or join with an invite code.
 	 */
 	import { enhance } from '$app/forms';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
-	import { Building2, Users, Globe, Mail, Phone, Plus, Crown, UserCircle, Loader2 } from '@lucide/svelte';
+	import { Building2, Users, Globe, Mail, Phone, Plus, Crown, UserCircle, Loader2, Link2, Settings, UserPlus, RefreshCw } from '@lucide/svelte';
 
 	let { data, form } = $props();
 
-	let showCreateForm = $state(false);
+	let activeTab = $state<'create' | 'join' | null>(null);
 	let isCreating = $state(false);
+	let isJoining = $state(false);
+	let isRefreshing = $state(false);
 
 	// Form state
 	let orgName = $state('');
 	let orgDescription = $state('');
 	let orgWebsite = $state('');
+	let inviteCode = $state('');
 
 	function getRoleBadgeColor(role: string): string {
 		switch (role) {
@@ -30,6 +34,19 @@
 			default:
 				return 'bg-muted text-muted-foreground border-border';
 		}
+	}
+
+	async function handleJoinWithCode() {
+		if (!inviteCode.trim()) return;
+		isJoining = true;
+		// Navigate to the join page with the code
+		await goto(`/join/${inviteCode.trim()}`);
+	}
+
+	async function handleRefresh() {
+		isRefreshing = true;
+		await invalidateAll();
+		isRefreshing = false;
 	}
 </script>
 
@@ -48,12 +65,24 @@
 					Manage your organization, team members, and settings.
 				</p>
 			</div>
-			{#if data.canCreateOrg && data.organizations.length > 0}
-				<Button onclick={() => (showCreateForm = !showCreateForm)} size="sm" class="font-ui text-xs tracking-wider">
-					<Plus class="mr-2 h-4 w-4" />
-					NEW ORGANIZATION
-				</Button>
-			{/if}
+			<div class="flex items-center gap-3">
+				{#if data.organizations.length > 0}
+					<Button onclick={handleRefresh} variant="outline" size="sm" class="font-ui text-xs tracking-wider" disabled={isRefreshing}>
+						{#if isRefreshing}
+							<RefreshCw class="mr-2 h-4 w-4 animate-spin" />
+						{:else}
+							<RefreshCw class="mr-2 h-4 w-4" />
+						{/if}
+						REFRESH
+					</Button>
+				{/if}
+				{#if data.canCreateOrg && data.organizations.length > 0}
+					<Button onclick={() => (activeTab = activeTab === 'create' ? null : 'create')} size="sm" class="font-ui text-xs tracking-wider">
+						<Plus class="mr-2 h-4 w-4" />
+						NEW ORGANIZATION
+					</Button>
+				{/if}
+			</div>
 		</div>
 	</section>
 
@@ -73,30 +102,94 @@
 				</div>
 			{/if}
 
-			<!-- No Organizations - Prompt to create -->
+			<!-- No Organizations - Prompt to create or join -->
 			{#if data.organizations.length === 0}
 				<div class="border border-border bg-card">
-					<div class="flex flex-col items-center justify-center px-8 py-16 text-center">
+					<div class="flex flex-col items-center justify-center px-8 py-12 text-center">
 						<div class="flex h-16 w-16 items-center justify-center border border-border bg-background">
 							<Building2 class="h-8 w-8 text-muted-foreground" />
 						</div>
 						<h2 class="font-display mt-6 text-xl font-bold uppercase">No Organization Yet</h2>
 						<p class="font-body mt-2 max-w-md text-sm text-muted-foreground">
-							Create an organization to manage projects as a team, invite members, and access business features.
+							Create a new organization or join an existing one with an invite code.
 						</p>
-						<Button
-							onclick={() => (showCreateForm = true)}
-							class="mt-6 font-ui tracking-wider"
-						>
-							<Plus class="mr-2 h-4 w-4" />
-							CREATE ORGANIZATION
-						</Button>
+						
+						<!-- Action Tabs -->
+						<div class="mt-8 flex items-center gap-4">
+							<Button
+								onclick={() => (activeTab = 'create')}
+								variant={activeTab === 'create' ? 'default' : 'outline'}
+								class="font-ui tracking-wider"
+							>
+								<Plus class="mr-2 h-4 w-4" />
+								CREATE NEW
+							</Button>
+							<Button
+								onclick={() => (activeTab = 'join')}
+								variant={activeTab === 'join' ? 'default' : 'outline'}
+								class="font-ui tracking-wider"
+							>
+								<Link2 class="mr-2 h-4 w-4" />
+								JOIN WITH CODE
+							</Button>
+						</div>
+					</div>
+				</div>
+			{/if}
+
+			<!-- Join with Invite Code Form -->
+			{#if activeTab === 'join'}
+				<div class="border border-border bg-card">
+					<div class="border-b border-border px-6 py-4">
+						<h2 class="font-display text-lg font-bold uppercase">Join Organization</h2>
+						<p class="font-body mt-1 text-sm text-muted-foreground">
+							Enter an invite code to join an existing organization
+						</p>
+					</div>
+					<div class="space-y-6 p-6">
+						<div class="space-y-2">
+							<Label for="inviteCode" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+								INVITE CODE *
+							</Label>
+							<Input
+								id="inviteCode"
+								type="text"
+								bind:value={inviteCode}
+								placeholder="Enter invite code (e.g., ABC123)"
+								class="h-12 border-border bg-background px-4 font-mono placeholder:text-muted-foreground/50"
+							/>
+							<p class="font-body text-xs text-muted-foreground">
+								Ask your organization admin for an invite code or use the full invite link.
+							</p>
+						</div>
+
+						<div class="flex justify-end gap-4 border-t border-border pt-6">
+							{#if data.organizations.length > 0}
+								<Button
+									type="button"
+									variant="outline"
+									onclick={() => (activeTab = null)}
+									class="font-ui tracking-wider"
+								>
+									CANCEL
+								</Button>
+							{/if}
+							<Button onclick={handleJoinWithCode} class="font-ui tracking-wider" disabled={isJoining || !inviteCode.trim()}>
+								{#if isJoining}
+									<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+									JOINING...
+								{:else}
+									<Link2 class="mr-2 h-4 w-4" />
+									JOIN ORGANIZATION
+								{/if}
+							</Button>
+						</div>
 					</div>
 				</div>
 			{/if}
 
 	<!-- Create Organization Form -->
-	{#if showCreateForm || (data.organizations.length === 0 && data.canCreateOrg)}
+	{#if activeTab === 'create' && data.canCreateOrg}
 		<div class="border border-border bg-card">
 			<div class="border-b border-border px-6 py-4">
 				<h2 class="font-display text-lg font-bold uppercase">Create Organization</h2>
@@ -109,12 +202,14 @@
 				action="?/createOrganization"
 				use:enhance={() => {
 					isCreating = true;
-					return async ({ update }) => {
+					return async ({ result, update }) => {
+						if (result.type === 'success') {
+							activeTab = null;
+							orgName = '';
+							orgDescription = '';
+							orgWebsite = '';
+						}
 						isCreating = false;
-						showCreateForm = false;
-						orgName = '';
-						orgDescription = '';
-						orgWebsite = '';
 						await update();
 					};
 				}}
@@ -168,7 +263,7 @@
 						<Button
 							type="button"
 							variant="outline"
-							onclick={() => (showCreateForm = false)}
+							onclick={() => (activeTab = null)}
 							class="font-ui tracking-wider"
 						>
 							CANCEL
@@ -184,6 +279,17 @@
 					</Button>
 				</div>
 			</form>
+
+			{#if isCreating}
+				<div class="border-t border-border bg-muted/30 px-6 py-4">
+					<div class="flex items-center gap-3">
+						<Loader2 class="h-4 w-4 animate-spin text-primary" />
+						<p class="font-body text-sm text-muted-foreground">
+							Setting up your organization... This may take a moment.
+						</p>
+					</div>
+				</div>
+			{/if}
 		</div>
 	{/if}
 
@@ -278,10 +384,12 @@
 					<!-- Actions -->
 					{#if org.memberRole === 'owner' || org.memberRole === 'admin'}
 						<div class="flex items-center justify-end gap-4 border-t border-border px-6 py-4">
-							<Button variant="outline" size="sm" class="font-ui text-xs tracking-wider">
+							<Button href="/app/settings/organizations/{org.id}?tab=invites" variant="outline" size="sm" class="font-ui text-xs tracking-wider">
+								<UserPlus class="mr-2 h-3 w-3" />
 								INVITE MEMBER
 							</Button>
-							<Button variant="outline" size="sm" class="font-ui text-xs tracking-wider">
+							<Button href="/app/settings/organizations/{org.id}" variant="outline" size="sm" class="font-ui text-xs tracking-wider">
+								<Settings class="mr-2 h-3 w-3" />
 								SETTINGS
 							</Button>
 						</div>

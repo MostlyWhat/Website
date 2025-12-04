@@ -33,7 +33,7 @@ async function generateRequestNumber(): Promise<string> {
 // Create a personal organization for the user
 async function createPersonalOrganization(profileId: string, userEmail: string, displayName: string): Promise<string> {
     const orgNumber = await generateOrgNumber();
-    const personalOrgName = `${displayName}'s Workspace`;
+    const personalOrgName = `${displayName}'s Organization`;
     const slug = `personal-${profileId.slice(0, 8)}-${Date.now().toString(36)}`;
 
     const [newOrg] = await db
@@ -42,7 +42,7 @@ async function createPersonalOrganization(profileId: string, userEmail: string, 
             orgNumber,
             name: personalOrgName,
             slug,
-            description: 'Personal workspace for individual projects',
+            description: 'Personal organization for individual projects',
             customerType: 'personal',
             email: userEmail
         })

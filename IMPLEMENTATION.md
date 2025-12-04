@@ -24,9 +24,9 @@ This document tracks the implementation of features and fixes for the MostlyWhat
 - [x] **Profile Onboarding**: Collect user profile info and preferences after registration
 - [x] **Onboarding Form Centering**: Fixed form centering in right panel
 - [x] **Tutorial Walkthrough**: Interactive tutorial overlay after onboarding
-- [ ] **Organization Setup Flow**: 
-  - Business option: Create organization, invite members
-  - Personal option: Solo account setup
+- [x] **Organization Setup Flow**: 
+  - Skip option: Continue without organization, create/join later
+  - Create option: Create new organization during onboarding
   - Join option: Join existing organization with invite code (requires approval)
 - [x] **Invite System**: Organization invites with codes, approval workflow
 - [x] **Join via Invite**: `/join/[code]` route for accepting invites
@@ -107,7 +107,9 @@ This document tracks the implementation of features and fixes for the MostlyWhat
 - [x] **Entity Tracking**: Integrated activity logging for projects and proposals
   - Project: create, status change, assign
   - Proposal: create, send, withdraw, accept, reject
-- [ ] **Audit Trail**: Complete audit trail for compliance (add to invoices, tickets)
+- [x] **Audit Trail**: Complete audit trail for compliance
+  - Ticket: create, comment, close, reopen, resolve
+  - Project Request: create, status change, convert to project
 
 ### 9. Settings Pages
 - [x] **Admin Settings**: System-wide settings with category tabs (`/admin/settings`)
