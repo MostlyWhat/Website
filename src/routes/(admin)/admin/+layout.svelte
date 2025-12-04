@@ -32,11 +32,13 @@
 	let { children, data } = $props();
 	let mobileMenuOpen = $state(false);
 
-	// Simplified navigation as per PROJECT_SYSTEM_DESIGN.md
+	// Consolidated navigation - no more legacy section
 	const navigation = [
 		{ href: '/admin', label: 'DASHBOARD', icon: LayoutDashboard, exact: true },
 		{ href: '/admin/projects', label: 'PROJECTS', icon: FolderKanban },
 		{ href: '/admin/organizations', label: 'ORGANIZATIONS', icon: Building2 },
+		{ href: '/admin/proposals', label: 'PROPOSALS', icon: FileText },
+		{ href: '/admin/invoices', label: 'INVOICES', icon: Receipt },
 		{ href: '/admin/tickets', label: 'TICKETS', icon: Ticket },
 		{ href: '/admin/reports', label: 'REPORTS', icon: BarChart3 }
 	];
@@ -45,15 +47,9 @@
 	const settingsNav = [
 		{ href: '/admin/users', label: 'USERS', icon: Users },
 		{ href: '/admin/sla-policies', label: 'SLA POLICIES', icon: Clock },
-		{ href: '/admin/canned-responses', label: 'RESPONSE TEMPLATES', icon: MessageSquareText },
-		{ href: '/admin/activity-log', label: 'ACTIVITY LOG', icon: Activity, adminOnly: true },
+		{ href: '/admin/canned-responses', label: 'TEMPLATES', icon: MessageSquareText },
+		{ href: '/admin/activity-log', label: 'ACTIVITY', icon: Activity, adminOnly: true },
 		{ href: '/admin/settings', label: 'SYSTEM', icon: Settings, adminOnly: true }
-	];
-
-	// Legacy routes (kept for backwards compatibility)
-	const legacyNav = [
-		{ href: '/admin/proposals', label: 'PROPOSALS', icon: FileText },
-		{ href: '/admin/invoices', label: 'INVOICES', icon: Receipt }
 	];
 
 	function isActive(href: string, exact?: boolean): boolean {
@@ -96,24 +92,6 @@
 					</div>
 					<span class="font-ui flex-1 text-[11px] tracking-wider">{label}</span>
 					<ChevronRight class="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100 {isActive(href, exact) ? 'opacity-100' : ''}" />
-				</a>
-			{/each}
-
-			<!-- Legacy Routes (kept for backwards compatibility) -->
-			<div class="px-4 py-2">
-				<span class="font-mono text-[9px] tracking-widest text-muted-foreground/50">LEGACY</span>
-			</div>
-			{#each legacyNav as { href, label, icon: Icon }}
-				<a
-					{href}
-					class="group flex items-center gap-3 border-b border-border px-4 py-2 transition-colors {isActive(href)
-						? 'bg-primary/10 text-primary'
-						: 'text-muted-foreground/70 hover:bg-card hover:text-foreground'}"
-				>
-					<div class="flex h-6 w-6 items-center justify-center border transition-colors {isActive(href) ? 'border-primary bg-primary/10' : 'border-border/50 bg-background'}">
-						<Icon class="h-3 w-3 {isActive(href) ? 'text-primary' : ''}" />
-					</div>
-					<span class="font-ui flex-1 text-[10px] tracking-wider">{label}</span>
 				</a>
 			{/each}
 

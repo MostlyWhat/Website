@@ -37,57 +37,63 @@
 	<title>Organization | MostlyWhat Systems</title>
 </svelte:head>
 
-<div class="space-y-8">
-	<!-- Header -->
-	<div class="flex items-center justify-between">
-		<div>
-			<h1 class="font-display text-2xl font-bold uppercase tracking-wide">Organization</h1>
-			<p class="font-body mt-1 text-sm text-muted-foreground">
-				Manage your organization and team members
-			</p>
-		</div>
-		{#if data.canCreateOrg && data.organizations.length > 0}
-			<Button onclick={() => (showCreateForm = !showCreateForm)} class="font-ui tracking-wider">
-				<Plus class="mr-2 h-4 w-4" />
-				NEW ORGANIZATION
-			</Button>
-		{/if}
-	</div>
-
-	<!-- Error/Success Messages -->
-	{#if form?.error}
-		<div class="border border-destructive/50 bg-destructive/10 px-6 py-4">
-			<p class="font-mono text-sm text-destructive">{form.error}</p>
-		</div>
-	{/if}
-
-	{#if form?.success}
-		<div class="border border-green-500/50 bg-green-500/10 px-6 py-4">
-			<p class="font-mono text-sm text-green-500">Organization created successfully!</p>
-		</div>
-	{/if}
-
-	<!-- No Organizations - Prompt to create -->
-	{#if data.organizations.length === 0}
-		<div class="border border-border bg-card">
-			<div class="flex flex-col items-center justify-center px-8 py-16 text-center">
-				<div class="flex h-16 w-16 items-center justify-center border border-border bg-background">
-					<Building2 class="h-8 w-8 text-muted-foreground" />
-				</div>
-				<h2 class="font-display mt-6 text-xl font-bold uppercase">No Organization Yet</h2>
-				<p class="font-body mt-2 max-w-md text-sm text-muted-foreground">
-					Create an organization to manage projects as a team, invite members, and access business features.
+<div class="min-h-[calc(100dvh-4rem)]">
+	<!-- Header Section -->
+	<section class="border-b border-border bg-background px-6 py-8 md:px-12 lg:px-16">
+		<div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+			<div>
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// TEAM MANAGEMENT</span>
+				<h1 class="font-display mt-2 text-2xl font-bold uppercase md:text-3xl">Organization</h1>
+				<p class="font-body mt-1 text-sm text-muted-foreground">
+					Manage your organization, team members, and settings.
 				</p>
-				<Button
-					onclick={() => (showCreateForm = true)}
-					class="mt-6 font-ui tracking-wider"
-				>
-					<Plus class="mr-2 h-4 w-4" />
-					CREATE ORGANIZATION
-				</Button>
 			</div>
+			{#if data.canCreateOrg && data.organizations.length > 0}
+				<Button onclick={() => (showCreateForm = !showCreateForm)} size="sm" class="font-ui text-xs tracking-wider">
+					<Plus class="mr-2 h-4 w-4" />
+					NEW ORGANIZATION
+				</Button>
+			{/if}
 		</div>
-	{/if}
+	</section>
+
+	<!-- Content -->
+	<section class="border-b border-border bg-background">
+		<div class="px-6 py-8 md:px-12 lg:px-16 space-y-8">
+			<!-- Error/Success Messages -->
+			{#if form?.error}
+				<div class="border border-destructive/50 bg-destructive/10 px-6 py-4">
+					<p class="font-mono text-sm text-destructive">{form.error}</p>
+				</div>
+			{/if}
+
+			{#if form?.success}
+				<div class="border border-green-500/50 bg-green-500/10 px-6 py-4">
+					<p class="font-mono text-sm text-green-500">Organization created successfully!</p>
+				</div>
+			{/if}
+
+			<!-- No Organizations - Prompt to create -->
+			{#if data.organizations.length === 0}
+				<div class="border border-border bg-card">
+					<div class="flex flex-col items-center justify-center px-8 py-16 text-center">
+						<div class="flex h-16 w-16 items-center justify-center border border-border bg-background">
+							<Building2 class="h-8 w-8 text-muted-foreground" />
+						</div>
+						<h2 class="font-display mt-6 text-xl font-bold uppercase">No Organization Yet</h2>
+						<p class="font-body mt-2 max-w-md text-sm text-muted-foreground">
+							Create an organization to manage projects as a team, invite members, and access business features.
+						</p>
+						<Button
+							onclick={() => (showCreateForm = true)}
+							class="mt-6 font-ui tracking-wider"
+						>
+							<Plus class="mr-2 h-4 w-4" />
+							CREATE ORGANIZATION
+						</Button>
+					</div>
+				</div>
+			{/if}
 
 	<!-- Create Organization Form -->
 	{#if showCreateForm || (data.organizations.length === 0 && data.canCreateOrg)}
@@ -284,4 +290,6 @@
 			{/each}
 		</div>
 	{/if}
+		</div>
+	</section>
 </div>

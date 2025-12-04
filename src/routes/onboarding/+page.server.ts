@@ -47,7 +47,7 @@ export const actions = {
             if (accountType === 'organization' && organizationName) {
                 const orgNumber = await generateOrgNumber();
                 const slug = generateSlug(organizationName);
-                
+
                 // Create organization
                 const [newOrg] = await db
                     .insert(organizations)

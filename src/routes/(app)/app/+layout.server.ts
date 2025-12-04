@@ -36,7 +36,7 @@ export const load: LayoutServerLoad = async ({ locals }) => {
         .limit(5);
 
     // Fetch user's organizations
-    const userOrganizations = locals.user 
+    const userOrganizations = locals.user
         ? await db
             .select({
                 id: organizations.id,

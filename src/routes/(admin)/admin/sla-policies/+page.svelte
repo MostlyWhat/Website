@@ -268,10 +268,22 @@
 					<p class="mt-2 text-sm text-muted-foreground">
 						Create your first SLA policy to define response and resolution time targets.
 					</p>
-					<Button onclick={() => showCreateModal = true} class="mt-4">
-						<Plus class="mr-2 h-4 w-4" />
-						Create Policy
-					</Button>
+					<div class="mt-6 flex flex-col items-center gap-3">
+						<Button onclick={() => showCreateModal = true}>
+							<Plus class="mr-2 h-4 w-4" />
+							Create Policy
+						</Button>
+						<span class="text-xs text-muted-foreground">or</span>
+						<form method="POST" action="?/initializeDefaults" use:enhance>
+							<Button type="submit" variant="outline" size="sm" class="font-mono text-xs">
+								<Settings2 class="mr-2 h-4 w-4" />
+								Initialize Default Policies
+							</Button>
+						</form>
+						<p class="mt-1 max-w-xs text-xs text-muted-foreground">
+							Sets up Standard, Priority, and Enterprise SLA policies with recommended settings.
+						</p>
+					</div>
 				</div>
 			{:else}
 				<div class="space-y-4">

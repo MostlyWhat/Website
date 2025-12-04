@@ -233,59 +233,96 @@
 	<section class="border-b border-border bg-background">
 		{#if activeTab === 'projects'}
 			{#if filteredProjects.length > 0}
+				<!-- Grid Header -->
+				<div class="hidden border-b border-border bg-muted/30 lg:block">
+					<div class="grid grid-cols-12 gap-4 px-6 py-2 md:px-12 lg:px-16">
+						<div class="col-span-1 font-mono text-[10px] tracking-wider text-muted-foreground">ID</div>
+						<div class="col-span-3 font-mono text-[10px] tracking-wider text-muted-foreground">PROJECT</div>
+						<div class="col-span-2 font-mono text-[10px] tracking-wider text-muted-foreground">ORGANIZATION</div>
+						<div class="col-span-2 font-mono text-[10px] tracking-wider text-muted-foreground">PHASE</div>
+						<div class="col-span-2 font-mono text-[10px] tracking-wider text-muted-foreground">TIMELINE</div>
+						<div class="col-span-1 font-mono text-[10px] tracking-wider text-muted-foreground">ASSIGNED</div>
+						<div class="col-span-1"></div>
+					</div>
+				</div>
 				<div class="divide-y divide-border">
 					{#each filteredProjects as project}
 						<a
 							href="/admin/projects/{project.id}"
-							class="group flex items-center gap-4 px-6 py-4 transition-colors hover:bg-card md:px-12 lg:px-16"
+							class="group block transition-colors hover:bg-card"
 						>
-							<!-- Icon -->
-							<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">
-								<FolderKanban class="h-5 w-5 text-primary" />
-							</div>
-
-							<!-- Project Info -->
-							<div class="min-w-0 flex-1">
-								<div class="flex items-center gap-3 flex-wrap">
-									<span class="font-mono text-[10px] text-muted-foreground">{project.projectNumber}</span>
+							<!-- Desktop Grid View -->
+							<div class="hidden lg:grid grid-cols-12 gap-4 items-center px-6 py-4 md:px-12 lg:px-16">
+								<!-- Project Number -->
+								<div class="col-span-1">
+									<span class="font-mono text-xs text-muted-foreground">{project.projectNumber}</span>
+								</div>
+								<!-- Project Name -->
+								<div class="col-span-3">
 									<h3 class="font-ui text-sm font-semibold tracking-wider truncate">{project.name}</h3>
+								</div>
+								<!-- Organization -->
+								<div class="col-span-2 flex items-center gap-2">
+									<Building2 class="h-3.5 w-3.5 text-muted-foreground" />
+									<div class="min-w-0">
+										{#if project.orgNumber}
+											<span class="font-mono text-[10px] text-muted-foreground">{project.orgNumber}</span>
+										{/if}
+										<span class="block truncate text-xs">{project.organization}</span>
+									</div>
+								</div>
+								<!-- Phase -->
+								<div class="col-span-2">
 									<PhaseBadge phase={project.phase} size="sm" />
 								</div>
-								<div class="mt-1 flex items-center gap-4 text-xs text-muted-foreground">
-									<span class="flex items-center gap-1">
-										<Building2 class="h-3 w-3" />
-										{#if project.orgNumber}
-											<span class="font-mono text-[10px]">{project.orgNumber}</span>
-										{/if}
-										{project.organization}
-									</span>
+								<!-- Timeline -->
+								<div class="col-span-2">
+									<div class="flex items-center gap-1 text-xs">
+										<Calendar class="h-3 w-3 text-muted-foreground" />
+										<span>{formatDate(project.startDate)}</span>
+										<span class="text-muted-foreground">→</span>
+										<span>{formatDate(project.endDate)}</span>
+									</div>
+								</div>
+								<!-- Assigned To -->
+								<div class="col-span-1">
 									{#if project.assignedTo}
-										<span class="hidden items-center gap-1 sm:flex">
-											<User class="h-3 w-3" />
-											{project.assignedTo}
-										</span>
+										<div class="flex items-center gap-1">
+											<User class="h-3 w-3 text-muted-foreground" />
+											<span class="truncate text-xs">{project.assignedTo}</span>
+										</div>
+									{:else}
+										<span class="text-xs text-muted-foreground">—</span>
 									{/if}
 								</div>
-							</div>
-
-							<!-- Phase Timeline (compact) -->
-							<div class="hidden xl:block">
-								<PhaseTimeline currentPhase={project.phase} compact />
-							</div>
-
-							<!-- Dates -->
-							<div class="hidden items-center gap-6 lg:flex">
-								<div class="text-right">
-									<div class="flex items-center gap-1">
-										<Calendar class="h-3 w-3 text-muted-foreground" />
-										<span class="font-body text-xs">{formatDate(project.startDate)} - {formatDate(project.endDate)}</span>
-									</div>
-									<p class="font-mono text-[10px] tracking-wider text-muted-foreground">TIMELINE</p>
+								<!-- Arrow -->
+								<div class="col-span-1 flex justify-end">
+									<ChevronRight class="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
 								</div>
 							</div>
 
-							<!-- Arrow -->
-							<ChevronRight class="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-1" />
+							<!-- Mobile Card View -->
+							<div class="flex items-center gap-4 px-6 py-4 md:px-12 lg:hidden">
+								<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">
+									<FolderKanban class="h-5 w-5 text-primary" />
+								</div>
+								<div class="min-w-0 flex-1">
+									<div class="flex items-center gap-3 flex-wrap">
+										<span class="font-mono text-[10px] text-muted-foreground">{project.projectNumber}</span>
+										<h3 class="font-ui text-sm font-semibold tracking-wider truncate">{project.name}</h3>
+									</div>
+									<div class="mt-1 flex items-center gap-4 text-xs text-muted-foreground">
+										<span class="flex items-center gap-1">
+											<Building2 class="h-3 w-3" />
+											{project.organization}
+										</span>
+									</div>
+									<div class="mt-2">
+										<PhaseBadge phase={project.phase} size="sm" />
+									</div>
+								</div>
+								<ChevronRight class="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-1" />
+							</div>
 						</a>
 					{/each}
 				</div>
@@ -309,54 +346,92 @@
 		{:else}
 			<!-- Requests List -->
 			{#if filteredRequests.length > 0}
+				<!-- Grid Header -->
+				<div class="hidden border-b border-border bg-muted/30 lg:block">
+					<div class="grid grid-cols-12 gap-4 px-6 py-2 md:px-12 lg:px-16">
+						<div class="col-span-1 font-mono text-[10px] tracking-wider text-muted-foreground">ID</div>
+						<div class="col-span-3 font-mono text-[10px] tracking-wider text-muted-foreground">TITLE</div>
+						<div class="col-span-2 font-mono text-[10px] tracking-wider text-muted-foreground">ORGANIZATION</div>
+						<div class="col-span-2 font-mono text-[10px] tracking-wider text-muted-foreground">TYPE</div>
+						<div class="col-span-2 font-mono text-[10px] tracking-wider text-muted-foreground">STATUS</div>
+						<div class="col-span-1 font-mono text-[10px] tracking-wider text-muted-foreground">SUBMITTED</div>
+						<div class="col-span-1"></div>
+					</div>
+				</div>
 				<div class="divide-y divide-border">
 					{#each filteredRequests as request}
 						{@const statusConfig = getRequestStatusConfig(request.status)}
 						{@const StatusIcon = statusConfig.icon}
 						<a
 							href="/admin/project-requests/{request.id}"
-							class="group flex items-center gap-4 px-6 py-4 transition-colors hover:bg-card md:px-12 lg:px-16"
+							class="group block transition-colors hover:bg-card"
 						>
-							<!-- Icon -->
-							<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">
-								<FileText class="h-5 w-5 text-muted-foreground" />
-							</div>
-
-							<!-- Request Info -->
-							<div class="min-w-0 flex-1">
-								<div class="flex items-center gap-3">
-									<span class="font-mono text-[10px] text-muted-foreground">{request.requestNumber}</span>
+							<!-- Desktop Grid View -->
+							<div class="hidden lg:grid grid-cols-12 gap-4 items-center px-6 py-4 md:px-12 lg:px-16">
+								<!-- Request Number -->
+								<div class="col-span-1">
+									<span class="font-mono text-xs text-muted-foreground">{request.requestNumber}</span>
+								</div>
+								<!-- Title -->
+								<div class="col-span-3">
 									<h3 class="font-ui text-sm font-semibold tracking-wider truncate">{request.title}</h3>
+								</div>
+								<!-- Organization -->
+								<div class="col-span-2 flex items-center gap-2">
+									<Building2 class="h-3.5 w-3.5 text-muted-foreground" />
+									<div class="min-w-0">
+										{#if request.orgNumber}
+											<span class="font-mono text-[10px] text-muted-foreground">{request.orgNumber}</span>
+										{/if}
+										<span class="block truncate text-xs">{request.organization}</span>
+									</div>
+								</div>
+								<!-- Type -->
+								<div class="col-span-2">
+									<span class="font-mono text-xs uppercase tracking-wider">{request.projectType.replace('_', ' ')}</span>
+								</div>
+								<!-- Status -->
+								<div class="col-span-2">
 									<span class="inline-flex items-center gap-1 px-2 py-0.5 {statusConfig.class}">
 										<StatusIcon class="h-3 w-3" />
 										<span class="font-mono text-[10px] tracking-wider uppercase">{statusConfig.label}</span>
 									</span>
 								</div>
-								<div class="mt-1 flex items-center gap-4 text-xs text-muted-foreground">
-									<span class="flex items-center gap-1">
-										<Building2 class="h-3 w-3" />
-										{#if request.orgNumber}
-											<span class="font-mono text-[10px]">{request.orgNumber}</span>
-										{/if}
-										{request.organization}
-									</span>
+								<!-- Date -->
+								<div class="col-span-1">
+									<span class="text-xs text-muted-foreground">{formatDate(request.createdAt)}</span>
+								</div>
+								<!-- Arrow -->
+								<div class="col-span-1 flex justify-end">
+									<ChevronRight class="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
 								</div>
 							</div>
 
-							<!-- Type & Date -->
-							<div class="hidden items-center gap-6 lg:flex">
-								<div class="text-right">
-									<span class="font-mono text-xs uppercase tracking-wider">{request.projectType.replace('_', ' ')}</span>
-									<p class="font-mono text-[10px] tracking-wider text-muted-foreground">TYPE</p>
+							<!-- Mobile Card View -->
+							<div class="flex items-center gap-4 px-6 py-4 md:px-12 lg:hidden">
+								<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">
+									<FileText class="h-5 w-5 text-muted-foreground" />
 								</div>
-								<div class="text-right">
-									<span class="font-body text-xs">{formatDate(request.createdAt)}</span>
-									<p class="font-mono text-[10px] tracking-wider text-muted-foreground">SUBMITTED</p>
+								<div class="min-w-0 flex-1">
+									<div class="flex items-center gap-3">
+										<span class="font-mono text-[10px] text-muted-foreground">{request.requestNumber}</span>
+										<h3 class="font-ui text-sm font-semibold tracking-wider truncate">{request.title}</h3>
+									</div>
+									<div class="mt-1 flex items-center gap-4 text-xs text-muted-foreground">
+										<span class="flex items-center gap-1">
+											<Building2 class="h-3 w-3" />
+											{request.organization}
+										</span>
+									</div>
+									<div class="mt-2">
+										<span class="inline-flex items-center gap-1 px-2 py-0.5 {statusConfig.class}">
+											<StatusIcon class="h-3 w-3" />
+											<span class="font-mono text-[10px] tracking-wider uppercase">{statusConfig.label}</span>
+										</span>
+									</div>
 								</div>
+								<ChevronRight class="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-1" />
 							</div>
-
-							<!-- Arrow -->
-							<ChevronRight class="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-1" />
 						</a>
 					{/each}
 				</div>

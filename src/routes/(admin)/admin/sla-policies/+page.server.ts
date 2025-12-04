@@ -496,6 +496,99 @@ export const actions: Actions = {
         await db.delete(ticketCategories).where(eq(ticketCategories.id, id));
 
         return { success: true, message: 'Category deleted' };
+    },
+
+    initializeDefaults: async ({ locals }) => {
+        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+            return fail(403, { error: 'Access denied' });
+        }
+
+        // Check if policies already exist
+        const existingPolicies = await db.select({ id: slaPolicies.id }).from(slaPolicies).limit(1);
+        if (existingPolicies.length > 0) {
+            return fail(400, { error: 'SLA policies already exist. Delete them first to reinitialize.' });
+        }
+
+        // Create default policies
+        const defaultPolicies = [
+            {
+                name: 'Standard Support',
+                description: 'Default SLA policy for personal and business customers. Response and resolution times are measured in business hours (Mon-Fri, 9AM-5PM).',
+                urgentResponseHours: 2,
+                urgentResolutionHours: 8,
+                highResponseHours: 4,
+                highResolutionHours: 16,
+                mediumResponseHours: 8,
+                mediumResolutionHours: 24,
+                lowResponseHours: 24,
+                lowResolutionHours: 72,
+                businessHoursOnly: true,
+                businessHoursStart: 9,
+                businessHoursEnd: 17,
+                businessDays: [1, 2, 3, 4, 5],
+                appliesToCustomerTypes: ['personal', 'business'],
+                appliesToCategories: [] as string[],
+                priorityOrder: 10,
+                escalationEnabled: false,
+                escalationAfterHours: 24,
+                isDefault: true,
+                isActive: true,
+                createdById: locals.profile.id
+            },
+            {
+                name: 'Priority Support',
+                description: 'Enhanced SLA policy with faster response times. Extended hours (Mon-Sat, 8AM-8PM). Recommended for business customers with active projects.',
+                urgentResponseHours: 1,
+                urgentResolutionHours: 4,
+                highResponseHours: 2,
+                highResolutionHours: 8,
+                mediumResponseHours: 4,
+                mediumResolutionHours: 16,
+                lowResponseHours: 8,
+                lowResolutionHours: 48,
+                businessHoursOnly: true,
+                businessHoursStart: 8,
+                businessHoursEnd: 20,
+                businessDays: [1, 2, 3, 4, 5, 6],
+                appliesToCustomerTypes: ['business'],
+                appliesToCategories: [] as string[],
+                priorityOrder: 20,
+                escalationEnabled: true,
+                escalationAfterHours: 12,
+                isDefault: false,
+                isActive: true,
+                createdById: locals.profile.id
+            },
+            {
+                name: 'Enterprise Support',
+                description: 'Premium 24/7 SLA policy for enterprise customers. Fastest response times with automatic escalation for urgent issues.',
+                urgentResponseHours: 1,
+                urgentResolutionHours: 2,
+                highResponseHours: 1,
+                highResolutionHours: 4,
+                mediumResponseHours: 2,
+                mediumResolutionHours: 8,
+                lowResponseHours: 4,
+                lowResolutionHours: 24,
+                businessHoursOnly: false,
+                businessHoursStart: 0,
+                businessHoursEnd: 23,
+                businessDays: [0, 1, 2, 3, 4, 5, 6],
+                appliesToCustomerTypes: ['enterprise'],
+                appliesToCategories: [] as string[],
+                priorityOrder: 30,
+                escalationEnabled: true,
+                escalationAfterHours: 6,
+                isDefault: false,
+                isActive: true,
+                createdById: locals.profile.id
+            }
+        ];
+
+        for (const policy of defaultPolicies) {
+            await db.insert(slaPolicies).values(policy);
+        }
+
+        return { success: true, message: 'Default SLA policies initialized successfully' };
     }
 };
-

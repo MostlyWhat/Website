@@ -94,74 +94,132 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         .orderBy(desc(proposals.createdAt));
 
     // Fetch related tickets
-    const projectTickets = await db
-        .select({
-            id: tickets.id,
-            ticketNumber: tickets.ticketNumber,
-            subject: tickets.subject,
-            status: tickets.status,
-            priority: tickets.priority,
-            createdAt: tickets.createdAt
-        })
-        .from(tickets)
-        .where(eq(tickets.projectId, projectId))
-        .orderBy(desc(tickets.createdAt));
+    let projectTickets: Array<{
+        id: string;
+        ticketNumber: string;
+        subject: string;
+        status: string;
+        priority: string;
+        createdAt: Date;
+    }> = [];
+    try {
+        projectTickets = await db
+            .select({
+                id: tickets.id,
+                ticketNumber: tickets.ticketNumber,
+                subject: tickets.subject,
+                status: tickets.status,
+                priority: tickets.priority,
+                createdAt: tickets.createdAt
+            })
+            .from(tickets)
+            .where(eq(tickets.projectId, projectId))
+            .orderBy(desc(tickets.createdAt));
+    } catch (error) {
+        console.warn('Error fetching tickets:', error);
+    }
 
     // Fetch related invoices
-    const projectInvoices = await db
-        .select({
-            id: invoices.id,
-            invoiceNumber: invoices.invoiceNumber,
-            status: invoices.status,
-            total: invoices.total,
-            currency: invoices.currency,
-            dueDate: invoices.dueDate,
-            paidAt: invoices.paidAt,
-            createdAt: invoices.createdAt
-        })
-        .from(invoices)
-        .where(eq(invoices.projectId, projectId))
-        .orderBy(desc(invoices.createdAt));
+    let projectInvoices: Array<{
+        id: string;
+        invoiceNumber: string;
+        status: string;
+        total: string;
+        currency: string;
+        dueDate: Date | null;
+        paidAt: Date | null;
+        createdAt: Date;
+    }> = [];
+    try {
+        projectInvoices = await db
+            .select({
+                id: invoices.id,
+                invoiceNumber: invoices.invoiceNumber,
+                status: invoices.status,
+                total: invoices.total,
+                currency: invoices.currency,
+                dueDate: invoices.dueDate,
+                paidAt: invoices.paidAt,
+                createdAt: invoices.createdAt
+            })
+            .from(invoices)
+            .where(eq(invoices.projectId, projectId))
+            .orderBy(desc(invoices.createdAt));
+    } catch (error) {
+        console.warn('Error fetching invoices:', error);
+    }
 
     // Fetch project revisions
-    const revisions = await db
-        .select({
-            id: projectRevisions.id,
-            version: projectRevisions.version,
-            title: projectRevisions.title,
-            description: projectRevisions.description,
-            status: projectRevisions.status,
-            priority: projectRevisions.priority,
-            requestedById: projectRevisions.requestedById,
-            requestedByName: requestedByProfile.displayName,
-            assignedToId: projectRevisions.assignedToId,
-            assignedToName: revisionAssignedProfile.displayName,
-            createdAt: projectRevisions.createdAt,
-            resolvedAt: projectRevisions.resolvedAt,
-            resolutionNotes: projectRevisions.resolutionNotes
-        })
-        .from(projectRevisions)
-        .leftJoin(requestedByProfile, eq(projectRevisions.requestedById, requestedByProfile.id))
-        .leftJoin(revisionAssignedProfile, eq(projectRevisions.assignedToId, revisionAssignedProfile.id))
-        .where(eq(projectRevisions.projectId, projectId))
-        .orderBy(desc(projectRevisions.createdAt));
+    let revisions: Array<{
+        id: string;
+        version: string | null;
+        title: string;
+        description: string | null;
+        status: string;
+        priority: string;
+        requestedById: string | null;
+        requestedByName: string | null;
+        assignedToId: string | null;
+        assignedToName: string | null;
+        createdAt: Date;
+        resolvedAt: Date | null;
+        resolutionNotes: string | null;
+    }> = [];
+    try {
+        revisions = await db
+            .select({
+                id: projectRevisions.id,
+                version: projectRevisions.version,
+                title: projectRevisions.title,
+                description: projectRevisions.description,
+                status: projectRevisions.status,
+                priority: projectRevisions.priority,
+                requestedById: projectRevisions.requestedById,
+                requestedByName: requestedByProfile.displayName,
+                assignedToId: projectRevisions.assignedToId,
+                assignedToName: revisionAssignedProfile.displayName,
+                createdAt: projectRevisions.createdAt,
+                resolvedAt: projectRevisions.resolvedAt,
+                resolutionNotes: projectRevisions.resolutionNotes
+            })
+            .from(projectRevisions)
+            .leftJoin(requestedByProfile, eq(projectRevisions.requestedById, requestedByProfile.id))
+            .leftJoin(revisionAssignedProfile, eq(projectRevisions.assignedToId, revisionAssignedProfile.id))
+            .where(eq(projectRevisions.projectId, projectId))
+            .orderBy(desc(projectRevisions.createdAt));
+    } catch (error) {
+        console.warn('Error fetching revisions:', error);
+    }
 
     // Fetch recent activity for this project
-    const recentActivity = await db
-        .select({
-            id: activityLog.id,
-            activityType: activityLog.activityType,
-            description: activityLog.description,
-            previousValues: activityLog.previousValues,
-            newValues: activityLog.newValues,
-            createdAt: activityLog.createdAt,
-            actorName: profiles.displayName
-        })
-        .from(activityLog)
-        .leftJoin(profiles, eq(activityLog.performedById, profiles.id))
-        .where(eq(activityLog.entityId, projectId))
-        .orderBy(desc(activityLog.createdAt))
-        .limit(20);
+    let recentActivity: Array<{
+        id: string;
+        activityType: string;
+        description: string | null;
+        previousValues: unknown;
+        newValues: unknown;
+        createdAt: Date;
+        actorName: string | null;
+    }> = [];
+    try {
+        recentActivity = await db
+            .select({
+                id: activityLog.id,
+                activityType: activityLog.activityType,
+                description: activityLog.description,
+                previousValues: activityLog.previousValues,
+                newValues: activityLog.newValues,
+                createdAt: activityLog.createdAt,
+                actorName: profiles.displayName
+            })
+            .from(activityLog)
+            .leftJoin(profiles, eq(activityLog.performedById, profiles.id))
+            .where(eq(activityLog.entityId, projectId))
+            .orderBy(desc(activityLog.createdAt))
+            .limit(20);
+    } catch (error) {
+        console.warn('Error fetching activity log:', error);
+    }
 
     // Fetch available staff for assignment
     const staffMembers = await db
