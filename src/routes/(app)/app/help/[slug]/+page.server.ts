@@ -64,7 +64,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
                 .limit(1);
 
             if (author) {
-                authorName = author.displayName ?? 
+                authorName = author.displayName ??
                     [author.firstName, author.lastName].filter(Boolean).join(' ') ??
                     'Support Team';
             }

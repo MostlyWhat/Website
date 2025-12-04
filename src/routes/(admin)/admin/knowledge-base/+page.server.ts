@@ -128,7 +128,7 @@ export const actions: Actions = {
         try {
             await db
                 .update(supportArticles)
-                .set({ 
+                .set({
                     isPublished: !currentStatus,
                     publishedAt: !currentStatus ? new Date() : null,
                     updatedAt: new Date()

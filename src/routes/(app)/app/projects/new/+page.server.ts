@@ -74,11 +74,11 @@ export const load: PageServerLoad = async ({ locals }) => {
 
     // For personal accounts with no organization, auto-create one
     const isPersonalAccount = locals.profile.preferences?.accountType === 'personal';
-    
+
     if (userOrgs.length === 0 && isPersonalAccount) {
         const displayName = locals.profile.displayName || `${locals.profile.firstName} ${locals.profile.lastName}`.trim() || 'User';
         const newOrgId = await createPersonalOrganization(locals.profile.id, locals.user.email ?? '', displayName);
-        
+
         // Refetch organizations
         userOrgs = await db
             .select({

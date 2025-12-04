@@ -123,7 +123,7 @@ export const tutorialStore = {
         if (!currentTutorial) return;
         const tutorial = tutorials[currentTutorial];
         if (!tutorial) return;
-        
+
         if (currentStepIndex < tutorial.steps.length - 1) {
             currentStepIndex++;
         } else {
