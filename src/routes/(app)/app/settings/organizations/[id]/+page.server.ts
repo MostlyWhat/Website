@@ -362,5 +362,76 @@ export const actions: Actions = {
             console.error('Remove member error:', err);
             return fail(500, { error: 'Failed to remove member' });
         }
+    },
+
+    deleteOrganization: async ({ params, locals }) => {
+        if (!locals.session || !locals.profile) {
+            return fail(401, { error: 'Not authenticated' });
+        }
+
+        // Only owners can delete organizations
+        const [membership] = await db
+            .select({ role: organizationMembers.role })
+            .from(organizationMembers)
+            .where(
+                and(
+                    eq(organizationMembers.organizationId, params.id),
+                    eq(organizationMembers.profileId, locals.profile.id)
+                )
+            );
+
+        if (!membership || membership.role !== 'owner') {
+            return fail(403, { error: 'Only the organization owner can delete the organization' });
+        }
+
+        // Check if there are active projects
+        const [projectCount] = await db
+            .select({ count: count() })
+            .from(projects)
+            .where(eq(projects.organizationId, params.id));
+
+        if (projectCount.count > 0) {
+            return fail(400, { error: 'Cannot delete organization with existing projects. Please delete or transfer all projects first.' });
+        }
+
+        // Check if there are open tickets
+        const [ticketCount] = await db
+            .select({ count: count() })
+            .from(tickets)
+            .where(
+                and(
+                    eq(tickets.organizationId, params.id),
+                    inArray(tickets.status, ['open', 'in_progress', 'awaiting_customer', 'awaiting_staff'])
+                )
+            );
+
+        if (ticketCount.count > 0) {
+            return fail(400, { error: 'Cannot delete organization with open tickets. Please close all tickets first.' });
+        }
+
+        try {
+            // Delete invites first (cascade should handle, but being explicit)
+            await db
+                .delete(organizationInvites)
+                .where(eq(organizationInvites.organizationId, params.id));
+
+            // Delete members
+            await db
+                .delete(organizationMembers)
+                .where(eq(organizationMembers.organizationId, params.id));
+
+            // Delete organization
+            await db
+                .delete(organizations)
+                .where(eq(organizations.id, params.id));
+
+            return redirect(303, '/app/settings/organizations?deleted=true');
+        } catch (err) {
+            // Re-throw redirect errors
+            if (err && typeof err === 'object' && 'status' in err && 'location' in err) throw err;
+
+            console.error('Delete organization error:', err);
+            return fail(500, { error: 'Failed to delete organization' });
+        }
     }
 };

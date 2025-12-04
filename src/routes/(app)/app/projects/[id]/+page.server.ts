@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db';
-import { projects, organizations, profiles, organizationMembers, activityLog, projectMilestones } from '$lib/server/db/schema';
+import { projects, organizations, profiles, organizationMembers, activityLog, projectMilestones, proposals, invoices, projectRequests } from '$lib/server/db/schema';
 import { eq, and, inArray, desc, asc } from 'drizzle-orm';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
@@ -102,6 +102,57 @@ export const load: PageServerLoad = async ({ params, locals }) => {
     const totalWeight = milestones.reduce((sum, m) => sum + m.weight, 0);
     const progressPercent = totalWeight > 0 ? Math.round((completedWeight / totalWeight) * 100) : 0;
 
+    // Get proposals for this project
+    const projectProposals = await db
+        .select({
+            id: proposals.id,
+            proposalNumber: proposals.proposalNumber,
+            title: proposals.title,
+            status: proposals.status,
+            total: proposals.total,
+            createdAt: proposals.createdAt,
+            sentAt: proposals.sentAt,
+            expiresAt: proposals.expiresAt
+        })
+        .from(proposals)
+        .where(eq(proposals.projectId, params.id))
+        .orderBy(desc(proposals.createdAt));
+
+    // Get invoices for this project
+    const projectInvoices = await db
+        .select({
+            id: invoices.id,
+            invoiceNumber: invoices.invoiceNumber,
+            title: invoices.title,
+            status: invoices.status,
+            total: invoices.total,
+            amountPaid: invoices.amountPaid,
+            amountDue: invoices.amountDue,
+            dueDate: invoices.dueDate,
+            createdAt: invoices.createdAt
+        })
+        .from(invoices)
+        .where(eq(invoices.projectId, params.id))
+        .orderBy(desc(invoices.createdAt));
+
+    // Get original project request if it exists (linked via metadata or converted project)
+    const [originalRequest] = await db
+        .select({
+            id: projectRequests.id,
+            requestNumber: projectRequests.requestNumber,
+            title: projectRequests.title,
+            description: projectRequests.description,
+            projectType: projectRequests.projectType,
+            budgetRange: projectRequests.budgetRange,
+            timeline: projectRequests.timeline,
+            status: projectRequests.status,
+            createdAt: projectRequests.createdAt,
+            convertedAt: projectRequests.convertedAt
+        })
+        .from(projectRequests)
+        .where(eq(projectRequests.convertedProjectId, params.id))
+        .limit(1);
+
     return {
         project: {
             ...project,
@@ -119,6 +170,17 @@ export const load: PageServerLoad = async ({ params, locals }) => {
             completedWeight,
             totalWeight,
             percent: progressPercent
-        }
+        },
+        proposals: projectProposals.map((p) => ({
+            ...p,
+            total: p.total ? parseFloat(p.total) : 0
+        })),
+        invoices: projectInvoices.map((i) => ({
+            ...i,
+            total: i.total ? parseFloat(i.total) : 0,
+            amountPaid: i.amountPaid ? parseFloat(i.amountPaid) : 0,
+            amountDue: i.amountDue ? parseFloat(i.amountDue) : 0
+        })),
+        originalRequest
     };
 };

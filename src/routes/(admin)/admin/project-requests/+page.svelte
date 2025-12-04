@@ -8,7 +8,7 @@
 	import {
 		FileText, Clock, Eye, CheckCircle, X, FolderKanban,
 		Building2, User, Calendar, DollarSign, Timer, ChevronRight,
-		ArrowUpRight, Loader2
+		ArrowUpRight, Loader2, AlertTriangle
 	} from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 
@@ -16,6 +16,15 @@
 
 	let loading = $state(false);
 	let selectedRequest = $state<string | null>(null);
+	let showRejected = $state(false);
+
+	// Separate requests into active and rejected/failed
+	const activeRequests = $derived(
+		data.requests.filter(r => !['rejected', 'cancelled', 'failed'].includes(r.status))
+	);
+	const rejectedRequests = $derived(
+		data.requests.filter(r => ['rejected', 'cancelled', 'failed'].includes(r.status))
+	);
 
 	function formatDate(date: Date | string | null): string {
 		if (!date) return '-';
@@ -33,6 +42,8 @@
 			case 'under_review': return { icon: Eye, class: 'bg-blue-500/10 text-blue-500', label: 'UNDER REVIEW' };
 			case 'approved': return { icon: CheckCircle, class: 'bg-green-500/10 text-green-500', label: 'APPROVED' };
 			case 'rejected': return { icon: X, class: 'bg-red-500/10 text-red-500', label: 'REJECTED' };
+			case 'cancelled': return { icon: X, class: 'bg-muted text-muted-foreground', label: 'CANCELLED' };
+			case 'failed': return { icon: AlertTriangle, class: 'bg-red-500/10 text-red-500', label: 'FAILED' };
 			case 'converted': return { icon: FolderKanban, class: 'bg-primary/10 text-primary', label: 'CONVERTED' };
 			default: return { icon: Clock, class: 'bg-muted text-muted-foreground', label: status.toUpperCase() };
 		}
@@ -124,11 +135,22 @@
 		</div>
 	{/if}
 
-	<!-- Requests List -->
+	<!-- Active Requests List -->
 	<section class="border-b border-border bg-background">
-		{#if data.requests.length > 0}
+		<div class="border-b border-border px-6 py-4 md:px-12 lg:px-16 flex items-center justify-between">
+			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">ACTIVE REQUESTS</span>
+			{#if rejectedRequests.length > 0}
+				<button 
+					onclick={() => showRejected = !showRejected}
+					class="font-mono text-[10px] tracking-widest text-muted-foreground hover:text-foreground transition-colors"
+				>
+					{showRejected ? 'HIDE' : 'SHOW'} REJECTED ({rejectedRequests.length})
+				</button>
+			{/if}
+		</div>
+		{#if activeRequests.length > 0}
 			<div class="divide-y divide-border">
-				{#each data.requests as request}
+				{#each activeRequests as request}
 					{@const statusConfig = getStatusConfig(request.status)}
 					{@const StatusIcon = statusConfig.icon}
 					<div class="px-6 py-6 md:px-12 lg:px-16">
@@ -239,11 +261,69 @@
 				<div class="flex h-16 w-16 items-center justify-center border border-border bg-card">
 					<FileText class="h-8 w-8 text-muted-foreground/50" />
 				</div>
-				<h3 class="font-ui mt-6 text-lg font-semibold tracking-wider">NO REQUESTS</h3>
+				<h3 class="font-ui mt-6 text-lg font-semibold tracking-wider">NO ACTIVE REQUESTS</h3>
 				<p class="font-body mt-2 text-sm text-muted-foreground">
 					Client project requests will appear here.
 				</p>
 			</div>
 		{/if}
 	</section>
+
+	<!-- Rejected/Cancelled Requests (Collapsed by default) -->
+	{#if showRejected && rejectedRequests.length > 0}
+		<section class="border-b border-border bg-muted/30">
+			<div class="border-b border-border px-6 py-4 md:px-12 lg:px-16">
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">REJECTED / CANCELLED REQUESTS</span>
+			</div>
+			<div class="divide-y divide-border">
+				{#each rejectedRequests as request}
+					{@const statusConfig = getStatusConfig(request.status)}
+					{@const StatusIcon = statusConfig.icon}
+					<div class="px-6 py-6 md:px-12 lg:px-16 opacity-60 hover:opacity-100 transition-opacity">
+						<div class="flex items-start gap-4">
+							<!-- Icon -->
+							<div class="flex h-12 w-12 flex-shrink-0 items-center justify-center border border-border bg-card">
+								<FileText class="h-5 w-5 text-muted-foreground" />
+							</div>
+
+							<!-- Request Info -->
+							<div class="min-w-0 flex-1">
+								<div class="flex items-center gap-3">
+									<span class="font-mono text-[10px] tracking-widest text-muted-foreground">{request.requestNumber}</span>
+									<span class="inline-flex items-center gap-1 px-2 py-0.5 {statusConfig.class}">
+										<StatusIcon class="h-3 w-3" />
+										<span class="font-mono text-[10px] tracking-wider">{statusConfig.label}</span>
+									</span>
+								</div>
+								<h3 class="font-ui mt-1 text-sm font-semibold tracking-wider">{request.title}</h3>
+								
+								<div class="mt-3 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+									<span class="inline-flex items-center gap-1">
+										<Building2 class="h-3 w-3" />
+										{request.organizationName}
+									</span>
+									<span class="inline-flex items-center gap-1">
+										<User class="h-3 w-3" />
+										{request.requestedByName}
+									</span>
+									<span class="inline-flex items-center gap-1">
+										<Calendar class="h-3 w-3" />
+										{formatDate(request.createdAt)}
+									</span>
+								</div>
+							</div>
+
+							<!-- Actions -->
+							<div class="flex flex-shrink-0 items-center gap-2">
+								<Button href="/admin/project-requests/{request.id}" variant="outline" size="sm" class="font-ui text-xs tracking-wider">
+									VIEW
+									<ArrowUpRight class="ml-1 h-3 w-3" />
+								</Button>
+							</div>
+						</div>
+					</div>
+				{/each}
+			</div>
+		</section>
+	{/if}
 </div>

@@ -32,6 +32,7 @@
 	import * as Tabs from '$lib/components/ui/tabs';
 	import { PhaseBadge, PhaseTimeline, PhaseActions } from '$lib/components/ui/phase-badge';
 	import { RevisionList } from '$lib/components/ui/revision';
+	import { StaffAssignmentSelect } from '$lib/components/ui/staff-select';
 	import { cn } from '$lib/utils';
 
 	let { data, form } = $props();
@@ -44,6 +45,7 @@
 	let showNewMilestoneForm = $state(false);
 	let editingMilestoneId = $state<string | null>(null);
 	let phaseActionLoading = $state(false);
+	let assignedStaffId = $state(data.project.assignedTo?.id ?? '');
 
 	function handlePhaseAction(action: string) {
 		phaseActionLoading = true;
@@ -908,24 +910,21 @@
 						<h2 class="font-mono text-xs tracking-widest text-muted-foreground">ASSIGNMENT</h2>
 					</div>
 					<div class="p-6">
-						<form method="POST" action="?/assign" use:enhance>
+						<form method="POST" action="?/assign" use:enhance id="assignProjectForm">
 							<label for="assignedToId" class="block font-mono text-[10px] tracking-widest text-muted-foreground mb-2">
 								ASSIGNED TO
 							</label>
-							<select
-								id="assignedToId"
-								name="assignedToId"
-								class="font-body h-10 w-full border border-border bg-card px-3 text-sm focus:border-primary focus:outline-none"
-								value={data.project.assignedTo?.id ?? ''}
-								onchange={(e) => e.currentTarget.form?.requestSubmit()}
-							>
-								<option value="">Unassigned</option>
-								{#each data.staffMembers as staff (staff.id)}
-									<option value={staff.id}>
-										{staff.displayName} ({staff.role})
-									</option>
-								{/each}
-							</select>
+							<input type="hidden" name="assignedToId" value={assignedStaffId} />
+							<StaffAssignmentSelect
+								value={assignedStaffId}
+								staffMembers={data.staffMembers}
+								onchange={(staffId) => {
+									assignedStaffId = staffId;
+									// Submit form after selection
+									const form = document.getElementById('assignProjectForm') as HTMLFormElement;
+									form?.requestSubmit();
+								}}
+							/>
 						</form>
 					</div>
 				</div>

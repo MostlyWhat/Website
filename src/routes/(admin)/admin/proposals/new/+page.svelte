@@ -17,8 +17,8 @@
 
 	let loading = $state(false);
 
-	// Form state
-	let projectId = $state('');
+	// Form state - use preselected project if provided
+	let projectId = $state(data.preselectedProjectId ?? '');
 	let title = $state('');
 	let summary = $state('');
 	let expiresAt = $state('');

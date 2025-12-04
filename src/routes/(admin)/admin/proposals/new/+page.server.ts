@@ -34,11 +34,14 @@ async function generateProposalNumber(): Promise<string> {
     return `${prefix}${nextNum.toString().padStart(5, '0')}`;
 }
 
-export const load: PageServerLoad = async ({ locals }) => {
+export const load: PageServerLoad = async ({ locals, url }) => {
     // Verify admin/staff role
     if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
         redirect(303, '/admin');
     }
+
+    // Get pre-selected project from query params
+    const preselectedProjectId = url.searchParams.get('projectId');
 
     // Fetch all projects (for the project selector)
     const allProjects = await db
@@ -59,7 +62,8 @@ export const load: PageServerLoad = async ({ locals }) => {
             name: p.name,
             organization: p.organizationName ?? 'Unknown',
             status: p.status
-        }))
+        })),
+        preselectedProjectId
     };
 };
 

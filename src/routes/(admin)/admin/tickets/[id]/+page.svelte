@@ -5,6 +5,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import FileUploader from '$lib/components/ui/FileUploader.svelte';
+	import { StaffAssignmentSelect } from '$lib/components/ui/staff-select';
 
 	let { data, form } = $props();
 
@@ -16,6 +17,7 @@
 	let newTag = $state('');
 	let showAddTag = $state(false);
 	let showAttachments = $state(false);
+	let assignedStaffId = $state(data.ticket.assignedTo?.id ?? '');
 
 	// Local state for attachments that can be modified by FileUploader
 	let attachmentFiles = $state<Array<{
@@ -405,24 +407,21 @@
 						</form>
 
 						<!-- Assignment -->
-						<form method="POST" action="?/assign" use:enhance>
+						<form method="POST" action="?/assign" use:enhance id="assignForm">
 							<label for="assignedToId" class="block font-mono text-[10px] tracking-widest text-muted-foreground mb-2">
 								ASSIGNED TO
 							</label>
-							<select
-								id="assignedToId"
-								name="assignedToId"
-								class="font-body h-10 w-full border border-border bg-card px-3 text-sm focus:border-primary focus:outline-none"
-								value={data.ticket.assignedTo?.id ?? ''}
-								onchange={(e) => e.currentTarget.form?.requestSubmit()}
-							>
-								<option value="">Unassigned</option>
-								{#each data.staffMembers as staff}
-									<option value={staff.id}>
-										{staff.displayName} ({staff.role})
-									</option>
-								{/each}
-							</select>
+							<input type="hidden" name="assignedToId" value={assignedStaffId} />
+							<StaffAssignmentSelect
+								value={assignedStaffId}
+								staffMembers={data.staffMembers}
+								onchange={(staffId) => {
+									assignedStaffId = staffId;
+									// Submit form after selection
+									const form = document.getElementById('assignForm') as HTMLFormElement;
+									form?.requestSubmit();
+								}}
+							/>
 						</form>
 					</div>
 				</div>

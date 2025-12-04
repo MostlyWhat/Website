@@ -23,7 +23,8 @@ import {
 	integer,
 	decimal,
 	jsonb,
-	primaryKey
+	primaryKey,
+	type AnyPgColumn
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { authUsers } from 'drizzle-orm/supabase';
@@ -95,6 +96,22 @@ export const invoiceStatusEnum = pgEnum('invoice_status', [
 	'overdue',
 	'cancelled',
 	'refunded'
+]);
+
+export const invoiceTypeEnum = pgEnum('invoice_type', [
+	'one_time',      // Standard one-time invoice
+	'recurring',     // Recurring invoice (auto-generated from schedule)
+	'deposit',       // Deposit/upfront payment
+	'milestone',     // Milestone-based payment
+	'final'          // Final payment
+]);
+
+export const recurringIntervalEnum = pgEnum('recurring_interval', [
+	'weekly',
+	'bi_weekly',
+	'monthly',
+	'quarterly',
+	'yearly'
 ]);
 
 export const ticketStatusEnum = pgEnum('ticket_status', [
@@ -518,6 +535,18 @@ export const invoices = pgTable('invoices', {
 	amountPaid: decimal('amount_paid', { precision: 12, scale: 2 }).default('0').notNull(),
 	amountDue: decimal('amount_due', { precision: 12, scale: 2 }).notNull(),
 	currency: text('currency').default('USD').notNull(),
+
+	// Invoice Type
+	invoiceType: invoiceTypeEnum('invoice_type').default('one_time').notNull(),
+
+	// Recurring Invoice Settings
+	isRecurring: boolean('is_recurring').default(false).notNull(),
+	recurringInterval: recurringIntervalEnum('recurring_interval'),
+	recurringStartDate: timestamp('recurring_start_date', { withTimezone: true }),
+	recurringEndDate: timestamp('recurring_end_date', { withTimezone: true }),
+	recurringNextDate: timestamp('recurring_next_date', { withTimezone: true }),
+	recurringParentId: uuid('recurring_parent_id').references((): AnyPgColumn => invoices.id, { onDelete: 'set null' }),
+	recurringCount: integer('recurring_count').default(0),
 
 	// Dates
 	issueDate: timestamp('issue_date', { withTimezone: true }).defaultNow().notNull(),
@@ -991,6 +1020,11 @@ export const announcements = pgTable('announcements', {
 	title: text('title').notNull(),
 	message: text('message').notNull(),
 	type: text('type').default('info').notNull(), // 'info', 'warning', 'success', 'error'
+
+	// Link/CTA Button
+	linkUrl: text('link_url'),
+	linkText: text('link_text'),
+	linkStyle: text('link_style').default('link'), // 'link', 'button', 'button_primary'
 
 	// Visibility
 	isActive: boolean('is_active').default(true).notNull(),

@@ -479,4 +479,56 @@
 			{/each}
 		</div>
 	</div>
+
+	<!-- Danger Zone (Owner only) -->
+	{#if data.userRole === 'owner'}
+		<div class="mt-8 border-t border-destructive/30 pt-8">
+			<span class="font-mono text-[10px] tracking-widest text-destructive">DANGER ZONE</span>
+			
+			<div class="mt-4 border border-destructive/30 bg-destructive/5 p-6">
+				<h3 class="font-ui text-sm font-semibold tracking-wider text-destructive">DELETE ORGANIZATION</h3>
+				<p class="font-body mt-2 text-sm text-muted-foreground">
+					Once you delete an organization, there is no going back. All data will be permanently removed.
+					This action cannot be undone.
+				</p>
+				<p class="font-body mt-2 text-sm text-muted-foreground">
+					Before deleting, ensure:
+				</p>
+				<ul class="font-body mt-1 ml-4 list-disc text-sm text-muted-foreground">
+					<li>All projects have been deleted or transferred</li>
+					<li>All open tickets have been closed</li>
+					<li>All outstanding invoices have been settled</li>
+				</ul>
+				<form 
+					method="POST" 
+					action="?/deleteOrganization" 
+					use:enhance={() => {
+						return async ({ result }) => {
+							if (result.type === 'redirect') {
+								window.location.href = result.location;
+							}
+						};
+					}}
+					onsubmit={(e) => {
+						const confirmed = confirm(
+							`Are you sure you want to delete "${data.organization.name}"?\n\nThis action CANNOT be undone. All organization data will be permanently deleted.`
+						);
+						if (!confirmed) {
+							e.preventDefault();
+						}
+					}}
+				>
+					<Button
+						type="submit"
+						variant="destructive"
+						size="sm"
+						class="mt-4 font-ui text-xs tracking-wider"
+					>
+						<Trash2 class="mr-2 h-4 w-4" />
+						DELETE ORGANIZATION
+					</Button>
+				</form>
+			</div>
+		</div>
+	{/if}
 </div>
