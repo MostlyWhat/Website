@@ -7,6 +7,7 @@
 	import { enhance } from '$app/forms';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import { ArrowLeft, Save, Eye, Users, Shield, Globe } from '@lucide/svelte';
+	import { RichTextEditor } from '$lib/components/ui/rich-text-editor';
 
 	let { data, form } = $props<{
 		data: { categories?: string[]; defaultCategories?: string[] };
@@ -143,26 +144,17 @@
 
 				<!-- Content -->
 				<div>
-					<label for="content" class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTENT * (MARKDOWN)</label>
-					<textarea
-						id="content"
-						name="content"
-						bind:value={content}
-						required
-						rows="20"
-						class="font-mono mt-2 w-full border border-border bg-card px-4 py-3 text-sm placeholder:text-muted-foreground focus:border-primary focus:outline-none resize-y"
-						placeholder="# Article Title
-
-Write your article content here using Markdown...
-
-## Section 1
-
-Content for section 1...
-
-## Section 2
-
-Content for section 2..."
-					></textarea>
+					<label for="content" class="font-mono text-[10px] tracking-widest text-muted-foreground">CONTENT *</label>
+					<div class="mt-2">
+						<RichTextEditor
+							bind:value={content}
+							name="content"
+							id="content"
+							placeholder="Write your article content here using Markdown..."
+							rows={20}
+							required
+						/>
+					</div>
 				</div>
 			</div>
 

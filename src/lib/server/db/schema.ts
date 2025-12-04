@@ -909,6 +909,77 @@ export const fileUploadsRelations = relations(fileUploads, ({ one }) => ({
 }));
 
 // =============================================================================
+// STAFF GROUPS TABLE
+// =============================================================================
+// Groups for organizing admin/support staff
+
+export const staffGroups = pgTable('staff_groups', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	name: text('name').notNull(),
+	slug: text('slug').notNull().unique(),
+	description: text('description'),
+	color: text('color').default('#6b7280'),
+	icon: text('icon').default('users'),
+	isActive: boolean('is_active').default(true).notNull(),
+	createdById: uuid('created_by_id')
+		.notNull()
+		.references(() => profiles.id, { onDelete: 'cascade' }),
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+}).enableRLS();
+
+// =============================================================================
+// STAFF GROUP MEMBERS TABLE
+// =============================================================================
+// Links profiles to staff groups
+
+export const staffGroupMembers = pgTable(
+	'staff_group_members',
+	{
+		groupId: uuid('group_id')
+			.notNull()
+			.references(() => staffGroups.id, { onDelete: 'cascade' }),
+		profileId: uuid('profile_id')
+			.notNull()
+			.references(() => profiles.id, { onDelete: 'cascade' }),
+		role: text('role').default('member').notNull(), // 'leader', 'member'
+		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
+	},
+	(table) => [primaryKey({ columns: [table.groupId, table.profileId] })]
+).enableRLS();
+
+// =============================================================================
+// USER NOTIFICATIONS TABLE
+// =============================================================================
+// Individual notifications for users
+
+export const notificationTypeEnum = pgEnum('notification_type', [
+	'announcement',
+	'ticket_update',
+	'project_update',
+	'proposal_update',
+	'invoice_update',
+	'system',
+	'mention'
+]);
+
+export const userNotifications = pgTable('user_notifications', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	userId: uuid('user_id')
+		.notNull()
+		.references(() => profiles.id, { onDelete: 'cascade' }),
+	type: notificationTypeEnum('type').default('system').notNull(),
+	title: text('title').notNull(),
+	message: text('message').notNull(),
+	link: text('link'),
+	isRead: boolean('is_read').default(false).notNull(),
+	readAt: timestamp('read_at', { withTimezone: true }),
+	entityType: text('entity_type'),
+	entityId: uuid('entity_id'),
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
+}).enableRLS();
+
+// =============================================================================
 // ANNOUNCEMENTS TABLE
 // =============================================================================
 // Portal-wide announcements set by super admin
@@ -928,6 +999,13 @@ export const announcements = pgTable('announcements', {
 
 	// Targeting (null = show to all)
 	targetRoles: text('target_roles').array(), // ['customer', 'staff', 'admin']
+	targetUserId: uuid('target_user_id').references(() => profiles.id, { onDelete: 'cascade' }),
+	targetOrganizationId: uuid('target_organization_id').references(() => organizations.id, { onDelete: 'cascade' }),
+	targetStaffGroupId: uuid('target_staff_group_id').references(() => staffGroups.id, { onDelete: 'set null' }),
+
+	// Display options
+	priority: integer('priority').default(0).notNull(),
+	dismissible: boolean('dismissible').default(true).notNull(),
 
 	// Who created this
 	createdById: uuid('created_by_id')
@@ -938,6 +1016,25 @@ export const announcements = pgTable('announcements', {
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
 }).enableRLS();
+
+// =============================================================================
+// ANNOUNCEMENT DISMISSALS TABLE
+// =============================================================================
+// Track which users have dismissed which announcements
+
+export const announcementDismissals = pgTable(
+	'announcement_dismissals',
+	{
+		announcementId: uuid('announcement_id')
+			.notNull()
+			.references(() => announcements.id, { onDelete: 'cascade' }),
+		userId: uuid('user_id')
+			.notNull()
+			.references(() => profiles.id, { onDelete: 'cascade' }),
+		dismissedAt: timestamp('dismissed_at', { withTimezone: true }).defaultNow().notNull()
+	},
+	(table) => [primaryKey({ columns: [table.announcementId, table.userId] })]
+).enableRLS();
 
 // =============================================================================
 // ORGANIZATION INVITES TABLE
@@ -1010,12 +1107,67 @@ export const pendingOrganizationMembers = pgTable('pending_org_members', {
 }).enableRLS();
 
 // =============================================================================
+// STAFF GROUPS RELATIONS
+// =============================================================================
+
+export const staffGroupsRelations = relations(staffGroups, ({ one, many }) => ({
+	createdBy: one(profiles, {
+		fields: [staffGroups.createdById],
+		references: [profiles.id]
+	}),
+	members: many(staffGroupMembers)
+}));
+
+export const staffGroupMembersRelations = relations(staffGroupMembers, ({ one }) => ({
+	group: one(staffGroups, {
+		fields: [staffGroupMembers.groupId],
+		references: [staffGroups.id]
+	}),
+	profile: one(profiles, {
+		fields: [staffGroupMembers.profileId],
+		references: [profiles.id]
+	})
+}));
+
+export const userNotificationsRelations = relations(userNotifications, ({ one }) => ({
+	user: one(profiles, {
+		fields: [userNotifications.userId],
+		references: [profiles.id]
+	})
+}));
+
+// =============================================================================
 // ANNOUNCEMENTS RELATIONS
 // =============================================================================
 
-export const announcementsRelations = relations(announcements, ({ one }) => ({
+export const announcementsRelations = relations(announcements, ({ one, many }) => ({
 	createdBy: one(profiles, {
 		fields: [announcements.createdById],
+		references: [profiles.id]
+	}),
+	targetUser: one(profiles, {
+		fields: [announcements.targetUserId],
+		references: [profiles.id],
+		relationName: 'targetUser'
+	}),
+	targetOrganization: one(organizations, {
+		fields: [announcements.targetOrganizationId],
+		references: [organizations.id]
+	}),
+	targetStaffGroup: one(staffGroups, {
+		fields: [announcements.targetStaffGroupId],
+		references: [staffGroups.id]
+	}),
+	dismissals: many(announcementDismissals)
+}));
+
+export const announcementDismissalsRelations = relations(announcementDismissals, ({ one }) => ({
+	announcement: one(announcements, {
+		fields: [announcementDismissals.announcementId],
+		references: [announcements.id]
+	}),
+	user: one(profiles, {
+		fields: [announcementDismissals.userId],
 		references: [profiles.id]
 	})
 }));
@@ -1354,6 +1506,18 @@ export type NewProjectRevision = typeof projectRevisions.$inferInsert;
 export type ProjectMilestone = typeof projectMilestones.$inferSelect;
 export type NewProjectMilestone = typeof projectMilestones.$inferInsert;
 
+export type StaffGroup = typeof staffGroups.$inferSelect;
+export type NewStaffGroup = typeof staffGroups.$inferInsert;
+
+export type StaffGroupMember = typeof staffGroupMembers.$inferSelect;
+export type NewStaffGroupMember = typeof staffGroupMembers.$inferInsert;
+
+export type UserNotification = typeof userNotifications.$inferSelect;
+export type NewUserNotification = typeof userNotifications.$inferInsert;
+
+export type AnnouncementDismissal = typeof announcementDismissals.$inferSelect;
+export type NewAnnouncementDismissal = typeof announcementDismissals.$inferInsert;
+
 export type UserRole = 'super_admin' | 'admin' | 'staff' | 'customer';
 export type CustomerType = typeof customerTypeEnum.enumValues[number];
 export type TicketScope = typeof ticketScopeEnum.enumValues[number];
@@ -1368,3 +1532,4 @@ export type TicketStatus = typeof ticketStatusEnum.enumValues[number];
 export type TicketPriority = typeof ticketPriorityEnum.enumValues[number];
 export type ActivityType = typeof activityTypeEnum.enumValues[number];
 export type SupportArticleAudience = typeof supportArticleAudienceEnum.enumValues[number];
+export type NotificationType = typeof notificationTypeEnum.enumValues[number];

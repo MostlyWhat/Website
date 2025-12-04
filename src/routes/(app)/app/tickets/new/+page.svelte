@@ -5,6 +5,7 @@
 	import { ArrowLeft, Send, Loader2, Paperclip, AlertTriangle, AlertCircle, BookOpen, ChevronRight } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { enhance } from '$app/forms';
+	import { RichTextEditor } from '$lib/components/ui/rich-text-editor';
 
 	type FormReturn = {
 		error?: string;
@@ -99,15 +100,16 @@
 						<label for="description" class="font-ui text-xs font-medium tracking-wider text-foreground">
 							DESCRIPTION
 						</label>
-						<textarea
-							id="description"
-							name="description"
-							bind:value={description}
-							placeholder="Please provide as much detail as possible about your issue..."
-							rows="8"
-							class="font-body mt-2 w-full resize-none border border-border bg-card p-4 text-sm focus:border-primary focus:outline-none"
-							required
-						></textarea>
+						<div class="mt-2">
+							<RichTextEditor
+								bind:value={description}
+								name="description"
+								id="description"
+								placeholder="Please provide as much detail as possible about your issue..."
+								rows={8}
+								required
+							/>
+						</div>
 					</div>
 
 					<!-- Attachments -->

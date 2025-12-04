@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
-import { announcements, organizationMembers, organizations } from '$lib/server/db/schema';
-import { eq, and, lte, gte, desc, isNull, or } from 'drizzle-orm';
+import { announcements, announcementDismissals, organizationMembers, organizations } from '$lib/server/db/schema';
+import { eq, and, gt, desc, isNull, or, notInArray, lte, sql } from 'drizzle-orm';
 import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async ({ locals }) => {
@@ -14,26 +14,6 @@ export const load: LayoutServerLoad = async ({ locals }) => {
     if (locals.profile && !locals.profile.onboardingCompleted) {
         redirect(303, '/onboarding');
     }
-
-    // Fetch active announcements
-    const now = new Date();
-    const activeAnnouncements = await db
-        .select({
-            id: announcements.id,
-            title: announcements.title,
-            message: announcements.message,
-            priority: announcements.type
-        })
-        .from(announcements)
-        .where(
-            and(
-                eq(announcements.isActive, true),
-                or(isNull(announcements.startsAt), lte(announcements.startsAt, now)),
-                or(isNull(announcements.endsAt), gte(announcements.endsAt, now))
-            )
-        )
-        .orderBy(desc(announcements.type), desc(announcements.createdAt))
-        .limit(5);
 
     // Fetch user's organizations
     const userOrganizations = locals.user
@@ -48,6 +28,58 @@ export const load: LayoutServerLoad = async ({ locals }) => {
             .innerJoin(organizations, eq(organizationMembers.organizationId, organizations.id))
             .where(eq(organizationMembers.profileId, locals.user.id))
         : [];
+
+    const userOrgIds = userOrganizations.map(o => o.id);
+
+    // Get dismissed announcement IDs for this user
+    const dismissedAnnouncements = await db
+        .select({ announcementId: announcementDismissals.announcementId })
+        .from(announcementDismissals)
+        .where(eq(announcementDismissals.userId, locals.user.id));
+    
+    const dismissedIds = dismissedAnnouncements.map(r => r.announcementId);
+
+    const now = new Date();
+
+    // Fetch active announcements targeted at this user
+    const activeAnnouncements = await db
+        .select()
+        .from(announcements)
+        .where(
+            and(
+                eq(announcements.isActive, true),
+                // Check timing
+                or(
+                    isNull(announcements.startsAt),
+                    lte(announcements.startsAt, now)
+                ),
+                or(
+                    isNull(announcements.endsAt),
+                    gt(announcements.endsAt, now)
+                ),
+                // Targeting: global OR targeted at this user OR targeted at user's organizations
+                or(
+                    // Global announcements (no specific targets)
+                    and(
+                        isNull(announcements.targetUserId),
+                        isNull(announcements.targetOrganizationId),
+                        isNull(announcements.targetStaffGroupId)
+                    ),
+                    // Targeted at this specific user
+                    eq(announcements.targetUserId, locals.user.id),
+                    // Targeted at user's organizations
+                    userOrgIds.length > 0 
+                        ? sql`${announcements.targetOrganizationId} = ANY(ARRAY[${sql.raw(userOrgIds.map(id => `'${id}'::uuid`).join(','))}])`
+                        : sql`false`
+                ),
+                // Not already dismissed
+                dismissedIds.length > 0 
+                    ? notInArray(announcements.id, dismissedIds)
+                    : sql`true`
+            )
+        )
+        .orderBy(desc(announcements.createdAt))
+        .limit(5);
 
     return {
         session: locals.session,

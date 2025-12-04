@@ -6,6 +6,7 @@
 	 */
 	import { page } from '$app/state';
 	import { localizeHref } from '$lib/paraglide/runtime';
+	import { enhance } from '$app/forms';
 	import {
 		LayoutDashboard,
 		Users,
@@ -26,12 +27,68 @@
 		MessageSquareText,
 		Clock,
 		Activity,
-		BookOpen
+		BookOpen,
+		UsersRound,
+		Bell,
+		Megaphone,
+		AlertTriangle,
+		Info,
+		CheckCircle,
+		XCircle
 	} from '@lucide/svelte';
 	import * as Sheet from '$lib/components/ui/sheet';
+	import { Button } from '$lib/components/ui/button';
 
 	let { children, data } = $props();
 	let mobileMenuOpen = $state(false);
+	let dismissedAnnouncements = $state<string[]>([]);
+
+	// Active announcements (not dismissed)
+	const visibleAnnouncements = $derived(
+		(data.announcements ?? []).filter(a => !dismissedAnnouncements.includes(a.id))
+	);
+
+	// Build breadcrumbs from URL
+	const breadcrumbs = $derived(() => {
+		const path = page.url.pathname;
+		const segments = path.split('/').filter(Boolean);
+		const crumbs: { href: string; label: string }[] = [];
+		
+		let currentPath = '';
+		for (const segment of segments) {
+			currentPath += '/' + segment;
+			// Convert segment to display label
+			const label = segment
+				.split('-')
+				.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+				.join(' ');
+			crumbs.push({ href: currentPath, label });
+		}
+		
+		return crumbs;
+	});
+
+	function dismissAnnouncement(id: string) {
+		dismissedAnnouncements = [...dismissedAnnouncements, id];
+	}
+
+	function getAnnouncementIcon(type: string) {
+		switch (type) {
+			case 'warning': return AlertTriangle;
+			case 'success': return CheckCircle;
+			case 'error': return XCircle;
+			default: return Info;
+		}
+	}
+
+	function getAnnouncementStyle(type: string) {
+		switch (type) {
+			case 'warning': return 'bg-yellow-500/10 border-yellow-500/30 text-yellow-600 dark:text-yellow-400';
+			case 'success': return 'bg-green-500/10 border-green-500/30 text-green-600 dark:text-green-400';
+			case 'error': return 'bg-red-500/10 border-red-500/30 text-red-600 dark:text-red-400';
+			default: return 'bg-blue-500/10 border-blue-500/30 text-blue-600 dark:text-blue-400';
+		}
+	}
 
 	// Consolidated navigation - no more legacy section
 	const navigation = [
@@ -47,6 +104,8 @@
 	// Settings submenu items
 	const settingsNav = [
 		{ href: '/admin/users', label: 'USERS', icon: Users },
+		{ href: '/admin/staff-groups', label: 'STAFF GROUPS', icon: UsersRound },
+		{ href: '/admin/announcements', label: 'ANNOUNCEMENTS', icon: Megaphone, adminOnly: true },
 		{ href: '/admin/sla-policies', label: 'SLA POLICIES', icon: Clock },
 		{ href: '/admin/canned-responses', label: 'TEMPLATES', icon: MessageSquareText },
 		{ href: '/admin/knowledge-base', label: 'KNOWLEDGE BASE', icon: BookOpen },
@@ -282,6 +341,53 @@
 				<Home class="h-3 w-3" />
 				BACK TO MAIN SITE
 			</a>
+		</div>
+
+		<!-- Announcements Bar -->
+		{#if visibleAnnouncements.length > 0}
+			<div class="border-b border-border">
+				{#each visibleAnnouncements as announcement (announcement.id)}
+					{@const Icon = getAnnouncementIcon(announcement.type)}
+					<div class="flex items-center gap-3 px-4 py-2 {getAnnouncementStyle(announcement.type)} border-b last:border-b-0">
+						<Icon class="h-4 w-4 flex-shrink-0" />
+						<div class="flex-1 min-w-0">
+							<span class="font-mono text-[10px] tracking-wider font-medium">{announcement.title}</span>
+							{#if announcement.message}
+								<span class="font-mono text-[10px] tracking-wider opacity-80 ml-2">{announcement.message}</span>
+							{/if}
+						</div>
+						{#if announcement.dismissible}
+							<button
+								onclick={() => dismissAnnouncement(announcement.id)}
+								class="p-1 hover:bg-white/20 rounded transition-colors"
+							>
+								<X class="h-3 w-3" />
+							</button>
+						{/if}
+					</div>
+				{/each}
+			</div>
+		{/if}
+
+		<!-- Breadcrumbs Bar -->
+		<div class="border-b border-border bg-card/30 px-6 py-2">
+			<nav class="flex items-center gap-2">
+				{#each breadcrumbs() as crumb, i}
+					{#if i > 0}
+						<ChevronRight class="h-3 w-3 text-muted-foreground/50" />
+					{/if}
+					{#if i === breadcrumbs().length - 1}
+						<span class="font-mono text-[10px] tracking-wider text-foreground">{crumb.label}</span>
+					{:else}
+						<a 
+							href={crumb.href} 
+							class="font-mono text-[10px] tracking-wider text-muted-foreground hover:text-foreground transition-colors"
+						>
+							{crumb.label}
+						</a>
+					{/if}
+				{/each}
+			</nav>
 		</div>
 
 		<!-- Page Content -->

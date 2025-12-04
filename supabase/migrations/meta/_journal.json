@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1764799171099,
-      "tag": "0000_omniscient_silverclaw",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1764800094310,
-      "tag": "0001_abandoned_slipstream",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1764831503511,
-      "tag": "0002_curly_vengeance",
+      "when": 1764865657718,
+      "tag": "0000_tearful_black_panther",
       "breakpoints": true
     }
   ]

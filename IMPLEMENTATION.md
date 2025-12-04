@@ -64,6 +64,8 @@ This document tracks the implementation of features and fixes for the MostlyWhat
   - Phase timeline component in admin & client views
   - Phase badges with icons and colors
   - Phase actions for advancing workflow
+  - Back/unreview actions for moving phases backward
+  - Hold/resume and cancel/reactivate actions
 - [x] **Project Milestones**: Track project milestones and deliverables
   - Database schema with weight-based progress tracking
   - Admin CRUD interface for managing milestones
@@ -121,8 +123,10 @@ This document tracks the implementation of features and fixes for the MostlyWhat
 ### 10. Announcement System
 - [x] **Admin Announcement Setting**: Super admin can set portal-wide announcements
 - [x] **Announcement Bar**: Display in portal header when active
-- [ ] **Scheduled Announcements**: Schedule start/end dates for announcements
-- [ ] **Target Audience**: Target announcements to specific organizations
+- [x] **Scheduled Announcements**: Schedule start/end dates for announcements
+- [x] **Target Audience**: Target announcements to specific user, organization, or staff group
+- [x] **Announcements Management**: `/admin/announcements` page for full CRUD management
+- [x] **Breadcrumbs Navigation**: Added breadcrumb navigation to admin layout
 
 ### 11. Reports & Analytics
 - [x] **Admin Reports Page**: `/admin/reports` with dashboard metrics
@@ -143,8 +147,16 @@ This document tracks the implementation of features and fixes for the MostlyWhat
 - [x] **Search**: Full-text search for articles
 - [x] **Article Suggestions**: Suggest relevant articles when creating tickets
 - [x] **Public/Private Articles**: Control visibility (audience: user/admin/all)
+- [x] **Rich Text Editor**: WYSIWYG markdown editor for article content
 
-### 13. Notifications System (New)
+### 13. Staff Groups & Team Management (New)
+- [x] **Staff Groups**: Create admin/support team groups (`/admin/staff-groups`)
+- [x] **Group Types**: admin, support, custom types
+- [x] **Group Permissions**: Configurable permissions per group
+- [x] **Member Management**: Add/remove staff from groups
+- [x] **Announcement Targeting**: Target announcements to staff groups
+
+### 14. Notifications System (New)
 - [x] **Email Notifications**: Email alerts for important events
   - Proposal sent/accepted/rejected notifications
   - Ticket created notifications
@@ -153,7 +165,7 @@ This document tracks the implementation of features and fixes for the MostlyWhat
 - [ ] **Notification Preferences**: User-configurable notification settings
 - [ ] **Digest Emails**: Daily/weekly summary emails
 
-### 14. Invoice System Improvements
+### 15. Invoice System Improvements
 - [x] **Invoice Management**: Admin invoices page with list view
 - [x] **Invoice PDF**: Generate PDF invoices (client-side jsPDF)
 - [ ] **Invoice Generation**: Generate invoices from proposals/projects
@@ -198,14 +210,15 @@ This document tracks the implementation of features and fixes for the MostlyWhat
 
 ## Database Schema
 
-### Tables (19 total, all with RLS enabled)
+### Tables (22 total, all with RLS enabled)
 - [x] `profiles` - User profiles linked to Supabase Auth
 - [x] `organizations` - Client organizations/companies
 - [x] `organization_members` - M:N relationship profiles↔organizations
 - [x] `organization_invites` - Invite codes for joining organizations
 - [x] `pending_org_members` - Members awaiting approval
 - [x] `projects` - Client projects
-- [x] `project_requests` - Client project requests (NEW)
+- [x] `project_requests` - Client project requests
+- [x] `project_milestones` - Project milestones and deliverables
 - [x] `proposals` - Project proposals
 - [x] `invoices` - Billing invoices
 - [x] `payments` - Payment records
@@ -213,11 +226,14 @@ This document tracks the implementation of features and fixes for the MostlyWhat
 - [x] `ticket_comments` - Ticket conversation threads
 - [x] `activity_log` - Audit trail
 - [x] `file_uploads` - File attachment metadata
-- [x] `announcements` - Portal announcements
+- [x] `announcements` - Portal announcements with targeting
+- [x] `announcement_dismissals` - Track dismissed announcements per user
 - [x] `sla_policies` - SLA definitions
 - [x] `canned_responses` - Ticket response templates
 - [x] `system_settings` - Key-value system configuration
-- [x] `support_articles` - Knowledge base articles (NEW)
+- [x] `support_articles` - Knowledge base articles
+- [x] `staff_groups` - Admin/support team groups
+- [x] `staff_group_members` - M:N relationship profiles↔staff_groups
 
 ### Security
 - RLS enabled on all tables (no policies = service role only access)
@@ -239,21 +255,24 @@ This document tracks the implementation of features and fixes for the MostlyWhat
 src/routes/
 ├── (admin)/admin/         # Admin panel routes
 │   ├── activity-log/      # Activity audit log
+│   ├── announcements/     # Announcement management (NEW)
 │   ├── canned-responses/  # Response templates
 │   ├── invoices/          # Invoice management
-│   ├── knowledge-base/    # Knowledge base articles (NEW)
+│   ├── knowledge-base/    # Knowledge base articles
 │   ├── organizations/     # Organization management
 │   ├── projects/          # Project management (includes requests tab)
 │   ├── project-requests/  # Project request detail pages
 │   ├── proposals/         # Proposal management
-│   │   └── [id]/edit/     # Edit proposal (NEW)
+│   │   └── [id]/edit/     # Edit proposal
 │   ├── reports/           # Analytics dashboard
 │   ├── settings/          # System settings
 │   ├── sla-policies/      # SLA management
+│   ├── staff-groups/      # Staff group management (NEW)
+│   │   └── [id]/          # Staff group detail (NEW)
 │   ├── tickets/           # Ticket management
 │   └── users/             # User management
 ├── (app)/app/             # Client portal routes
-│   ├── help/              # Client help center (NEW)
+│   ├── help/              # Client help center
 │   ├── invoices/          # Client invoices
 │   ├── projects/          # Client projects
 │   │   ├── new/           # Submit new project request
@@ -263,10 +282,11 @@ src/routes/
 │   ├── settings/          # User settings
 │   │   ├── danger/        # Account deletion
 │   │   ├── notifications/ # Notification prefs
-│   │   ├── organizations/ # Org membership + create (ENHANCED)
+│   │   ├── organizations/ # Org membership + create
 │   │   │   ├── new/       # Create organization
-│   │   │   └── [id]/      # Organization management (NEW)
-│   │   └── password/      # Password change
+│   │   │   └── [id]/      # Organization management
+│   │   ├── password/      # Password change
+│   │   └── security/      # 2FA settings (NEW)
 │   └── tickets/           # Client tickets (with article suggestions)
 ├── (auth)/auth/           # Authentication routes
 ├── (marketing)/           # Public marketing pages
@@ -287,6 +307,37 @@ src/routes/
 ---
 
 ## Recent Changes (December 2024)
+
+### Staff Groups & Announcements System (Latest)
+- Created `/admin/staff-groups` page for managing admin/support team groups
+- Staff groups with types: admin, support, custom
+- Configurable permissions per group (manage_users, manage_projects, etc.)
+- Group detail page at `/admin/staff-groups/[id]` with member management
+- Added `/admin/announcements` page for full announcement CRUD
+- Announcements support targeting: global, specific user, organization, or staff group
+- Announcements bar in both admin and client layouts with type-based styling
+- Breadcrumb navigation added to admin layout
+- Announcement dismissal tracking per user
+
+### Project Phase Back-Transitions
+- Added unreview action: move reviewed projects back to under review
+- Added revert_to_request action: revert pending projects back to request status
+- Added hold/resume functionality for in_progress projects
+- Added cancel/reactivate functionality
+- PhaseActions component updated with back-transition options
+
+### Rich Text Editor
+- Created `RichTextEditor` component for WYSIWYG markdown editing
+- Toolbar with formatting buttons: bold, italic, headings, lists, code, links
+- Live preview mode with rendered markdown
+- Used in knowledge base article editing
+- Fixed CSS to use regular styles instead of @apply directives
+
+### Staff Assignment Select Component
+- Created `StaffAssignmentSelect` component for cleaner staff assignment UI
+- Group-first selection with tab filtering
+- Shows staff members with role badges
+- Popover-based interface using Svelte 5 patterns
 
 ### Two-Factor Authentication (2FA)
 - Added `/app/settings/security` page for 2FA management

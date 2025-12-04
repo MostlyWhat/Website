@@ -296,37 +296,35 @@
 
 		<!-- Announcement Bar -->
 		{#if visibleAnnouncements.length > 0}
-			{@const announcement = visibleAnnouncements[0]}
-			<div 
-				class="flex items-center gap-4 border-b px-4 py-2 {announcement.priority === 'high' 
-					? 'border-destructive/30 bg-destructive/10' 
-					: announcement.priority === 'medium' 
-						? 'border-primary/30 bg-primary/10' 
-						: 'border-border bg-card/50'}"
-			>
-				<Megaphone class="h-4 w-4 flex-shrink-0 {announcement.priority === 'high' 
-					? 'text-destructive' 
-					: announcement.priority === 'medium' 
-						? 'text-primary' 
-						: 'text-muted-foreground'}" />
-				<div class="flex-1 min-w-0">
-					{#if announcement.title}
-						<span class="font-ui text-xs font-semibold tracking-wider {announcement.priority === 'high' 
-							? 'text-destructive' 
-							: announcement.priority === 'medium' 
-								? 'text-primary' 
-								: 'text-foreground'}">{announcement.title}</span>
-						<span class="mx-2 text-muted-foreground">—</span>
-					{/if}
-					<span class="font-body text-sm text-muted-foreground">{announcement.message}</span>
-				</div>
-				<button
-					type="button"
-					onclick={() => dismissAnnouncement(announcement.id)}
-					class="flex h-6 w-6 flex-shrink-0 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
-				>
-					<X class="h-4 w-4" />
-				</button>
+			<div class="border-b border-border">
+				{#each visibleAnnouncements as announcement (announcement.id)}
+					{@const typeStyles: Record<string, { bg: string; text: string }> = {
+						warning: { bg: 'border-yellow-500/30 bg-yellow-500/10', text: 'text-yellow-600 dark:text-yellow-400' },
+						success: { bg: 'border-green-500/30 bg-green-500/10', text: 'text-green-600 dark:text-green-400' },
+						error: { bg: 'border-destructive/30 bg-destructive/10', text: 'text-destructive' },
+						info: { bg: 'border-blue-500/30 bg-blue-500/10', text: 'text-blue-600 dark:text-blue-400' }
+					}}
+					{@const style = typeStyles[announcement.type] || typeStyles.info}
+					<div class="flex items-center gap-4 border-b last:border-b-0 px-4 py-2 {style.bg}">
+						<Megaphone class="h-4 w-4 flex-shrink-0 {style.text}" />
+						<div class="flex-1 min-w-0">
+							<span class="font-ui text-xs font-semibold tracking-wider {style.text}">{announcement.title}</span>
+							{#if announcement.message}
+								<span class="mx-2 text-muted-foreground/50">—</span>
+								<span class="font-body text-sm text-muted-foreground">{announcement.message}</span>
+							{/if}
+						</div>
+						{#if announcement.dismissible}
+							<button
+								type="button"
+								onclick={() => dismissAnnouncement(announcement.id)}
+								class="flex h-6 w-6 flex-shrink-0 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
+							>
+								<X class="h-4 w-4" />
+							</button>
+						{/if}
+					</div>
+				{/each}
 			</div>
 		{/if}
 

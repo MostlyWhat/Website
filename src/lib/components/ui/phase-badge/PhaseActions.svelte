@@ -15,12 +15,15 @@
 		HeadphonesIcon,
 		XCircle,
 		Pause,
-		ArrowRight
+		ArrowRight,
+		ArrowLeft,
+		RotateCcw
 	} from '@lucide/svelte';
 
 	interface Props {
 		currentPhase: ProjectPhase;
 		proposalStatus?: ProposalConfirmationStatus | null;
+		projectStatus?: string;
 		onAction: (action: string, data?: Record<string, unknown>) => void;
 		loading?: boolean;
 		class?: string;
@@ -29,6 +32,7 @@
 	let {
 		currentPhase,
 		proposalStatus = null,
+		projectStatus = 'active',
 		onAction,
 		loading = false,
 		class: className = ''
@@ -43,6 +47,29 @@
 			variant: 'default' | 'destructive' | 'outline' | 'secondary';
 			description?: string;
 		}> = [];
+
+		// If project is on hold or cancelled, show reactivate options
+		if (projectStatus === 'on_hold') {
+			result.push({
+				action: 'resume',
+				label: 'Resume Project',
+				icon: Play,
+				variant: 'default',
+				description: 'Resume this project from hold'
+			});
+			return result;
+		}
+
+		if (projectStatus === 'cancelled') {
+			result.push({
+				action: 'reactivate',
+				label: 'Reactivate Project',
+				icon: RotateCcw,
+				variant: 'default',
+				description: 'Reactivate this cancelled project'
+			});
+			return result;
+		}
 
 		switch (currentPhase) {
 			case 'request':
@@ -71,11 +98,11 @@
 					description: 'Create and send a proposal to the client'
 				});
 				result.push({
-					action: 'request_info',
-					label: 'Request More Info',
-					icon: ArrowRight,
+					action: 'unreview',
+					label: 'Back to Request',
+					icon: ArrowLeft,
 					variant: 'outline',
-					description: 'Ask client for more details'
+					description: 'Move back to request phase'
 				});
 				result.push({
 					action: 'decline',
@@ -104,10 +131,11 @@
 					});
 				}
 				result.push({
-					action: 'revise_proposal',
-					label: 'Revise Proposal',
-					icon: ArrowRight,
-					variant: 'outline'
+					action: 'back_to_review',
+					label: 'Back to Review',
+					icon: ArrowLeft,
+					variant: 'outline',
+					description: 'Return to review phase'
 				});
 				break;
 
@@ -118,6 +146,13 @@
 					icon: Hammer,
 					variant: 'default',
 					description: 'Begin active development'
+				});
+				result.push({
+					action: 'back_to_proposal',
+					label: 'Back to Proposal',
+					icon: ArrowLeft,
+					variant: 'outline',
+					description: 'Return to proposal phase'
 				});
 				break;
 
@@ -135,6 +170,12 @@
 					icon: Pause,
 					variant: 'outline'
 				});
+				result.push({
+					action: 'back_to_confirmed',
+					label: 'Back to Confirmed',
+					icon: ArrowLeft,
+					variant: 'outline'
+				});
 				break;
 
 			case 'completed':
@@ -144,6 +185,13 @@
 					icon: HeadphonesIcon,
 					variant: 'default',
 					description: 'Start ongoing support phase'
+				});
+				result.push({
+					action: 'back_to_building',
+					label: 'Reopen Project',
+					icon: RotateCcw,
+					variant: 'outline',
+					description: 'Return to building phase'
 				});
 				break;
 

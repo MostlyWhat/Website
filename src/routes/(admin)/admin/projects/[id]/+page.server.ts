@@ -383,9 +383,19 @@ export const actions: Actions = {
             case 'start_review':
                 newPhase = 'review';
                 break;
+            case 'unreview':
+                // Move back to request phase
+                newPhase = 'request';
+                updateData.proposalStatus = null;
+                break;
             case 'create_proposal':
                 newPhase = 'proposal';
                 updateData.proposalStatus = 'draft';
+                break;
+            case 'back_to_review':
+                // Move back from proposal to review
+                newPhase = 'review';
+                updateData.proposalStatus = null;
                 break;
             case 'send_proposal':
                 updateData.proposalStatus = 'sent';
@@ -395,13 +405,28 @@ export const actions: Actions = {
                 updateData.proposalStatus = 'admin_confirmed';
                 updateData.adminConfirmedAt = new Date();
                 break;
+            case 'back_to_proposal':
+                // Move back from confirmed to proposal
+                newPhase = 'proposal';
+                updateData.adminConfirmedAt = null;
+                break;
             case 'start_building':
                 newPhase = 'building';
                 updateData.startDate = new Date();
                 break;
+            case 'back_to_confirmed':
+                // Move back from building to confirmed
+                newPhase = 'confirmed';
+                updateData.startDate = null;
+                break;
             case 'mark_complete':
                 newPhase = 'completed';
                 updateData.completedAt = new Date();
+                break;
+            case 'back_to_building':
+                // Reopen project to building phase
+                newPhase = 'building';
+                updateData.completedAt = null;
                 break;
             case 'enable_support':
                 newPhase = 'support';
@@ -414,8 +439,14 @@ export const actions: Actions = {
             case 'decline':
                 updateData.status = 'cancelled';
                 break;
+            case 'reactivate':
+                updateData.status = 'active';
+                break;
             case 'put_on_hold':
                 updateData.status = 'on_hold';
+                break;
+            case 'resume':
+                updateData.status = 'active';
                 break;
         }
 

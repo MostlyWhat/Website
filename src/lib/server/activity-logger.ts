@@ -8,7 +8,7 @@ import { activityLog } from '$lib/server/db/schema';
 import type { ActivityType } from '$lib/server/db/schema';
 
 // Extended entity types for logging (not all are in the DB enum)
-type EntityType = 'ticket' | 'project' | 'proposal' | 'invoice' | 'organization' | 'user' | 'announcement' | 'sla_policy' | 'canned_response' | 'settings';
+type EntityType = 'ticket' | 'project' | 'proposal' | 'invoice' | 'organization' | 'user' | 'announcement' | 'sla_policy' | 'canned_response' | 'settings' | 'staff_group';
 
 export interface LogActivityOptions {
     entityType: EntityType;

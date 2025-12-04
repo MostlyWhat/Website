@@ -895,6 +895,7 @@
 						<PhaseActions
 							currentPhase={data.project.phase}
 							proposalStatus={data.project.proposalStatus}
+							projectStatus={data.project.status}
 							onAction={handlePhaseAction}
 							loading={phaseActionLoading}
 						/>
