@@ -7,7 +7,11 @@ import {
     tickets,
     invoices,
     projectRevisions,
-    activityLog
+    projectMilestones,
+    activityLog,
+    type RevisionStatus,
+    type TicketPriority,
+    type MilestoneStatus
 } from '$lib/server/db/schema';
 import { eq, desc, and, or } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
@@ -155,8 +159,8 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         version: string | null;
         title: string;
         description: string | null;
-        status: string;
-        priority: string;
+        status: RevisionStatus;
+        priority: TicketPriority;
         requestedById: string | null;
         requestedByName: string | null;
         assignedToId: string | null;
@@ -189,6 +193,54 @@ export const load: PageServerLoad = async ({ params, locals }) => {
             .orderBy(desc(projectRevisions.createdAt));
     } catch (error) {
         console.warn('Error fetching revisions:', error);
+    }
+
+    // Fetch project milestones
+    const milestoneCreatorProfile = alias(profiles, 'milestone_creator');
+    const milestoneCompleterProfile = alias(profiles, 'milestone_completer');
+    let milestones: Array<{
+        id: string;
+        title: string;
+        description: string | null;
+        sortOrder: number;
+        status: MilestoneStatus;
+        dueDate: Date | null;
+        completedAt: Date | null;
+        weight: number;
+        invoiceId: string | null;
+        createdById: string | null;
+        createdByName: string | null;
+        completedById: string | null;
+        completedByName: string | null;
+        deliverables: Array<{ name: string; type: 'file' | 'link'; url: string; addedAt: string }> | null;
+        createdAt: Date;
+    }> = [];
+    try {
+        milestones = await db
+            .select({
+                id: projectMilestones.id,
+                title: projectMilestones.title,
+                description: projectMilestones.description,
+                sortOrder: projectMilestones.sortOrder,
+                status: projectMilestones.status,
+                dueDate: projectMilestones.dueDate,
+                completedAt: projectMilestones.completedAt,
+                weight: projectMilestones.weight,
+                invoiceId: projectMilestones.invoiceId,
+                createdById: projectMilestones.createdById,
+                createdByName: milestoneCreatorProfile.displayName,
+                completedById: projectMilestones.completedById,
+                completedByName: milestoneCompleterProfile.displayName,
+                deliverables: projectMilestones.deliverables,
+                createdAt: projectMilestones.createdAt
+            })
+            .from(projectMilestones)
+            .leftJoin(milestoneCreatorProfile, eq(projectMilestones.createdById, milestoneCreatorProfile.id))
+            .leftJoin(milestoneCompleterProfile, eq(projectMilestones.completedById, milestoneCompleterProfile.id))
+            .where(eq(projectMilestones.projectId, projectId))
+            .orderBy(projectMilestones.sortOrder);
+    } catch (error) {
+        console.warn('Error fetching milestones:', error);
     }
 
     // Fetch recent activity for this project
@@ -258,6 +310,11 @@ export const load: PageServerLoad = async ({ params, locals }) => {
             ...r,
             requestedBy: r.requestedById ? { name: r.requestedByName ?? 'Unknown' } : null,
             assignedTo: r.assignedToId ? { name: r.assignedToName ?? 'Unknown' } : null
+        })),
+        milestones: milestones.map((m) => ({
+            ...m,
+            createdBy: m.createdById ? { id: m.createdById, name: m.createdByName ?? 'Unknown' } : null,
+            completedBy: m.completedById ? { id: m.completedById, name: m.completedByName ?? 'Unknown' } : null
         })),
         activity: recentActivity,
         staffMembers
@@ -481,5 +538,99 @@ export const actions: Actions = {
         await db.update(projectRevisions).set(updateData).where(eq(projectRevisions.id, revisionId));
 
         return { success: true, message: 'Revision updated successfully' };
+    },
+
+    // Milestone actions
+    createMilestone: async ({ request, params, locals }) => {
+        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+            return fail(403, { error: 'Access denied' });
+        }
+
+        const formData = await request.formData();
+        const title = formData.get('title') as string;
+        const description = formData.get('description') as string;
+        const dueDate = formData.get('dueDate') as string;
+        const weight = parseInt(formData.get('weight') as string) || 10;
+        const sortOrder = parseInt(formData.get('sortOrder') as string) || 0;
+
+        if (!title?.trim()) {
+            return fail(400, { error: 'Milestone title is required' });
+        }
+
+        const projectId = params.id;
+
+        await db.insert(projectMilestones).values({
+            projectId,
+            title: title.trim(),
+            description: description?.trim() || null,
+            dueDate: dueDate ? new Date(dueDate) : null,
+            weight,
+            sortOrder,
+            status: 'pending',
+            createdById: locals.profile.id
+        });
+
+        return { success: true, message: 'Milestone created successfully' };
+    },
+
+    updateMilestone: async ({ request, params, locals }) => {
+        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+            return fail(403, { error: 'Access denied' });
+        }
+
+        const formData = await request.formData();
+        const milestoneId = formData.get('milestoneId') as string;
+        const status = formData.get('status') as MilestoneStatus | undefined;
+        const title = formData.get('title') as string;
+        const description = formData.get('description') as string;
+        const dueDate = formData.get('dueDate') as string;
+        const weight = formData.get('weight') as string;
+
+        if (!milestoneId) {
+            return fail(400, { error: 'Milestone ID is required' });
+        }
+
+        const updateData: Record<string, unknown> = { updatedAt: new Date() };
+
+        if (status) {
+            updateData.status = status;
+            if (status === 'completed') {
+                updateData.completedAt = new Date();
+                updateData.completedById = locals.profile.id;
+            }
+        }
+        if (title !== undefined) {
+            updateData.title = title.trim();
+        }
+        if (description !== undefined) {
+            updateData.description = description?.trim() || null;
+        }
+        if (dueDate !== undefined) {
+            updateData.dueDate = dueDate ? new Date(dueDate) : null;
+        }
+        if (weight !== undefined) {
+            updateData.weight = parseInt(weight) || 10;
+        }
+
+        await db.update(projectMilestones).set(updateData).where(eq(projectMilestones.id, milestoneId));
+
+        return { success: true, message: 'Milestone updated successfully' };
+    },
+
+    deleteMilestone: async ({ request, locals }) => {
+        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+            return fail(403, { error: 'Access denied' });
+        }
+
+        const formData = await request.formData();
+        const milestoneId = formData.get('milestoneId') as string;
+
+        if (!milestoneId) {
+            return fail(400, { error: 'Milestone ID is required' });
+        }
+
+        await db.delete(projectMilestones).where(eq(projectMilestones.id, milestoneId));
+
+        return { success: true, message: 'Milestone deleted successfully' };
     }
 };

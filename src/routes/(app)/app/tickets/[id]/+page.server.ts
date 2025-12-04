@@ -7,8 +7,10 @@
 import { fail, redirect, error } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
-import { tickets, ticketComments, profiles, organizations, projects } from '$lib/server/db/schema';
-import { eq, and } from 'drizzle-orm';
+import { tickets, ticketComments, profiles, organizations, projects, organizationMembers } from '$lib/server/db/schema';
+import { eq, and, or } from 'drizzle-orm';
+import { sendTicketReplyEmail, sendTicketStatusChangeEmail } from '$lib/server/email';
+import { env } from '$env/dynamic/private';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
     // Verify user is authenticated
@@ -172,9 +174,6 @@ export const load: PageServerLoad = async ({ locals, params }) => {
     };
 };
 
-// Import for the organization members check above
-import { organizationMembers } from '$lib/server/db/schema';
-
 export const actions: Actions = {
     sendMessage: async ({ request, locals, params }) => {
         // Verify user is authenticated
@@ -205,7 +204,8 @@ export const actions: Actions = {
                     organizationId: tickets.organizationId,
                     createdById: tickets.createdById,
                     status: tickets.status,
-                    firstResponseAt: tickets.firstResponseAt
+                    firstResponseAt: tickets.firstResponseAt,
+                    assignedToId: tickets.assignedToId
                 })
                 .from(tickets)
                 .where(eq(tickets.id, ticketId))
@@ -271,6 +271,80 @@ export const actions: Actions = {
             await db.update(tickets)
                 .set(updateData)
                 .where(eq(tickets.id, ticketId));
+
+            // Send email notification about new reply (only for non-internal messages)
+            if (!isInternal) {
+                // Get ticket details for notification
+                const ticketDetails = await db
+                    .select({
+                        ticketNumber: tickets.ticketNumber,
+                        subject: tickets.subject,
+                        status: tickets.status,
+                        priority: tickets.priority
+                    })
+                    .from(tickets)
+                    .where(eq(tickets.id, ticketId))
+                    .limit(1);
+
+                const ticketInfo = ticketDetails[0];
+
+                if (isStaff) {
+                    // Staff replied, notify ticket creator and organization members
+                    const creator = await db
+                        .select({ email: profiles.email, name: profiles.displayName })
+                        .from(profiles)
+                        .where(eq(profiles.id, ticket.createdById))
+                        .limit(1);
+
+                    const ticketUrl = `${env.PUBLIC_SITE_URL || 'http://localhost:5173'}/app/tickets/${ticketId}`;
+
+                    if (creator[0]?.email) {
+                        await sendTicketReplyEmail({
+                            recipientName: creator[0].name ?? 'Client',
+                            recipientEmail: creator[0].email,
+                            ticketNumber: ticketInfo.ticketNumber,
+                            subject: ticketInfo.subject,
+                            status: ticketInfo.status,
+                            priority: ticketInfo.priority,
+                            ticketUrl,
+                            replyFrom: locals.profile.displayName ?? 'Support Team',
+                            replyContent: message.trim().substring(0, 200) + (message.length > 200 ? '...' : '')
+                        });
+                    }
+                } else {
+                    // Customer replied, notify assigned staff or all admins
+                    const adminStaff = await db
+                        .select({ email: profiles.email, name: profiles.displayName })
+                        .from(profiles)
+                        .where(
+                            ticket.assignedToId 
+                                ? eq(profiles.id, ticket.assignedToId)
+                                : or(
+                                    eq(profiles.role, 'super_admin'),
+                                    eq(profiles.role, 'admin'),
+                                    eq(profiles.role, 'staff')
+                                )
+                        );
+
+                    const adminTicketUrl = `${env.PUBLIC_SITE_URL || 'http://localhost:5173'}/admin/tickets/${ticketId}`;
+
+                    for (const admin of adminStaff) {
+                        if (admin.email) {
+                            await sendTicketReplyEmail({
+                                recipientName: admin.name ?? 'Admin',
+                                recipientEmail: admin.email,
+                                ticketNumber: ticketInfo.ticketNumber,
+                                subject: ticketInfo.subject,
+                                status: ticketInfo.status,
+                                priority: ticketInfo.priority,
+                                ticketUrl: adminTicketUrl,
+                                replyFrom: locals.profile.displayName ?? 'Client',
+                                replyContent: message.trim().substring(0, 200) + (message.length > 200 ? '...' : '')
+                            });
+                        }
+                    }
+                }
+            }
 
             return { success: true };
         } catch (err) {

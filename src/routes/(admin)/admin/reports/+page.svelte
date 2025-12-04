@@ -7,7 +7,7 @@
 	import { goto } from '$app/navigation';
 	import { 
 		BarChart3, Ticket, FolderKanban, Receipt, Users, Building2,
-		TrendingUp, TrendingDown, Calendar, Filter, ArrowUpRight
+		TrendingUp, TrendingDown, Calendar, Filter, ArrowUpRight, UserCog, MessageSquare
 	} from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
@@ -361,5 +361,123 @@
 				</Card.Content>
 			</Card.Root>
 		</div>
+	</section>
+
+	<!-- Staff Performance Section -->
+	<section class="px-6 pb-8 md:px-12 lg:px-16">
+		<Card.Root class="border-border">
+			<Card.Header class="pb-4">
+				<div class="flex items-center justify-between">
+					<div>
+						<Card.Title class="font-display text-lg uppercase">Staff Performance</Card.Title>
+						<Card.Description>Workload and metrics for team members</Card.Description>
+					</div>
+					<UserCog class="h-5 w-5 text-muted-foreground" />
+				</div>
+			</Card.Header>
+			<Card.Content>
+				{#if data.staffPerformance && data.staffPerformance.length > 0}
+					<div class="overflow-x-auto">
+						<table class="w-full text-sm">
+							<thead>
+								<tr class="border-b border-border">
+									<th class="text-left py-3 px-4 font-mono text-[10px] tracking-widest text-muted-foreground">STAFF MEMBER</th>
+									<th class="text-center py-3 px-4 font-mono text-[10px] tracking-widest text-muted-foreground">ROLE</th>
+									<th class="text-center py-3 px-4 font-mono text-[10px] tracking-widest text-muted-foreground">TICKETS ASSIGNED</th>
+									<th class="text-center py-3 px-4 font-mono text-[10px] tracking-widest text-muted-foreground">RESOLVED</th>
+									<th class="text-center py-3 px-4 font-mono text-[10px] tracking-widest text-muted-foreground">RESOLUTION RATE</th>
+									<th class="text-center py-3 px-4 font-mono text-[10px] tracking-widest text-muted-foreground">PROJECTS</th>
+									<th class="text-center py-3 px-4 font-mono text-[10px] tracking-widest text-muted-foreground">REPLIES</th>
+									<th class="text-center py-3 px-4 font-mono text-[10px] tracking-widest text-muted-foreground">AVG RESPONSE</th>
+								</tr>
+							</thead>
+							<tbody class="divide-y divide-border">
+								{#each data.staffPerformance as staff (staff.id)}
+									{@const resolutionRate = staff.ticketsAssigned > 0 
+										? Math.round((staff.ticketsResolved / staff.ticketsAssigned) * 100) 
+										: 0}
+									{@const resolutionColor = resolutionRate >= 80 ? 'text-green-500' : resolutionRate >= 50 ? 'text-yellow-500' : 'text-red-500'}
+									<tr class="hover:bg-muted/50 transition-colors">
+										<td class="py-4 px-4">
+											<div class="flex items-center gap-3">
+												<div class="h-8 w-8 flex items-center justify-center border border-border bg-muted font-mono text-xs uppercase">
+													{(staff.name ?? 'U').charAt(0)}
+												</div>
+												<span class="font-medium">{staff.name ?? 'Unknown'}</span>
+											</div>
+										</td>
+										<td class="text-center py-4 px-4">
+											<span class="px-2 py-0.5 text-xs font-medium border border-border bg-muted">
+												{staff.role?.replace('_', ' ').toUpperCase()}
+											</span>
+										</td>
+										<td class="text-center py-4 px-4 font-display text-lg">{staff.ticketsAssigned}</td>
+										<td class="text-center py-4 px-4 font-display text-lg text-green-500">{staff.ticketsResolved}</td>
+										<td class="text-center py-4 px-4">
+											<div class="flex items-center justify-center gap-2">
+												<div class="w-16 h-2 bg-muted overflow-hidden">
+													<div 
+														class="h-full transition-all duration-300 {resolutionColor === 'text-green-500' ? 'bg-green-500' : resolutionColor === 'text-yellow-500' ? 'bg-yellow-500' : 'bg-red-500'}"
+														style="width: {resolutionRate}%"
+													></div>
+												</div>
+												<span class="font-mono text-sm {resolutionColor}">{resolutionRate}%</span>
+											</div>
+										</td>
+										<td class="text-center py-4 px-4 font-display text-lg">{staff.projectsAssigned}</td>
+										<td class="text-center py-4 px-4">
+											<div class="flex items-center justify-center gap-1 text-muted-foreground">
+												<MessageSquare class="h-4 w-4" />
+												<span>{staff.ticketReplies}</span>
+											</div>
+										</td>
+										<td class="text-center py-4 px-4">
+											{#if staff.avgResponseTime !== null}
+												<span class="font-mono text-sm {staff.avgResponseTime <= 4 ? 'text-green-500' : staff.avgResponseTime <= 24 ? 'text-yellow-500' : 'text-red-500'}">
+													{staff.avgResponseTime.toFixed(1)}h
+												</span>
+											{:else}
+												<span class="text-muted-foreground">—</span>
+											{/if}
+										</td>
+									</tr>
+								{/each}
+							</tbody>
+						</table>
+					</div>
+
+					<!-- Summary Stats -->
+					{#if data.staffPerformance.length > 0}
+						{@const totalAssigned = data.staffPerformance.reduce((sum: number, s: typeof data.staffPerformance[0]) => sum + s.ticketsAssigned, 0)}
+						{@const totalResolved = data.staffPerformance.reduce((sum: number, s: typeof data.staffPerformance[0]) => sum + s.ticketsResolved, 0)}
+						{@const totalReplies = data.staffPerformance.reduce((sum: number, s: typeof data.staffPerformance[0]) => sum + s.ticketReplies, 0)}
+						{@const avgResolutionRate = totalAssigned > 0 ? Math.round((totalResolved / totalAssigned) * 100) : 0}
+						<div class="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+							<div class="p-4 border border-border">
+								<p class="font-mono text-[10px] tracking-widest text-muted-foreground">TEAM SIZE</p>
+								<p class="font-display text-2xl font-bold">{data.staffPerformance.length}</p>
+							</div>
+							<div class="p-4 border border-border">
+								<p class="font-mono text-[10px] tracking-widest text-muted-foreground">TOTAL TICKETS HANDLED</p>
+								<p class="font-display text-2xl font-bold">{totalAssigned}</p>
+							</div>
+							<div class="p-4 border border-border">
+								<p class="font-mono text-[10px] tracking-widest text-muted-foreground">TEAM RESOLUTION RATE</p>
+								<p class="font-display text-2xl font-bold {avgResolutionRate >= 80 ? 'text-green-500' : avgResolutionRate >= 50 ? 'text-yellow-500' : 'text-red-500'}">{avgResolutionRate}%</p>
+							</div>
+							<div class="p-4 border border-border">
+								<p class="font-mono text-[10px] tracking-widest text-muted-foreground">TOTAL REPLIES</p>
+								<p class="font-display text-2xl font-bold">{totalReplies}</p>
+							</div>
+						</div>
+					{/if}
+				{:else}
+					<div class="py-12 text-center text-muted-foreground">
+						<UserCog class="mx-auto h-12 w-12 opacity-50 mb-4" />
+						<p>No staff members found</p>
+					</div>
+				{/if}
+			</Card.Content>
+		</Card.Root>
 	</section>
 </div>

@@ -7,10 +7,12 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
-import { tickets, organizationMembers, organizations, projects } from '$lib/server/db/schema';
-import { eq, and } from 'drizzle-orm';
+import { tickets, organizationMembers, organizations, projects, supportArticles, profiles } from '$lib/server/db/schema';
+import { eq, and, or, desc } from 'drizzle-orm';
 import crypto from 'node:crypto';
 import { generateOrgNumber } from '$lib/server/id-generator';
+import { sendTicketCreatedEmail } from '$lib/server/email';
+import { env } from '$env/dynamic/private';
 
 export const load: PageServerLoad = async ({ locals }) => {
     // Verify user is authenticated
@@ -46,9 +48,31 @@ export const load: PageServerLoad = async ({ locals }) => {
             )
         );
 
+    // Get suggested help articles for common ticket topics
+    const suggestedArticles = await db
+        .select({
+            id: supportArticles.id,
+            title: supportArticles.title,
+            slug: supportArticles.slug,
+            category: supportArticles.category
+        })
+        .from(supportArticles)
+        .where(
+            and(
+                eq(supportArticles.isPublished, true),
+                or(
+                    eq(supportArticles.audience, 'user'),
+                    eq(supportArticles.audience, 'all')
+                )
+            )
+        )
+        .orderBy(desc(supportArticles.viewCount))
+        .limit(5);
+
     return {
         organizations: userOrgs,
-        projects: userProjects
+        projects: userProjects,
+        suggestedArticles
     };
 };
 
@@ -201,6 +225,45 @@ export const actions: Actions = {
                 createdById: locals.profile.id,
                 dueAt: dueDate
             }).returning({ id: tickets.id, ticketNumber: tickets.ticketNumber });
+
+            // Send confirmation email to ticket creator
+            const ticketUrl = `${env.PUBLIC_SITE_URL || 'http://localhost:5173'}/app/tickets/${newTicket.id}`;
+            await sendTicketCreatedEmail({
+                recipientName: locals.profile.displayName ?? locals.profile.firstName ?? 'Client',
+                recipientEmail: locals.profile.email,
+                ticketNumber: newTicket.ticketNumber,
+                subject: subject.trim(),
+                status: 'Open',
+                priority: priority.charAt(0).toUpperCase() + priority.slice(1),
+                ticketUrl
+            });
+
+            // Notify admins about new ticket
+            const adminStaff = await db
+                .select({ email: profiles.email, name: profiles.displayName })
+                .from(profiles)
+                .where(
+                    or(
+                        eq(profiles.role, 'super_admin'),
+                        eq(profiles.role, 'admin'),
+                        eq(profiles.role, 'staff')
+                    )
+                );
+
+            const adminTicketUrl = `${env.PUBLIC_SITE_URL || 'http://localhost:5173'}/admin/tickets/${newTicket.id}`;
+            for (const admin of adminStaff) {
+                if (admin.email) {
+                    await sendTicketCreatedEmail({
+                        recipientName: admin.name ?? 'Admin',
+                        recipientEmail: admin.email,
+                        ticketNumber: newTicket.ticketNumber,
+                        subject: subject.trim(),
+                        status: 'Open',
+                        priority: priority.charAt(0).toUpperCase() + priority.slice(1),
+                        ticketUrl: adminTicketUrl
+                    });
+                }
+            }
 
             // Redirect to the new ticket
             redirect(303, `/app/tickets/${newTicket.id}`);

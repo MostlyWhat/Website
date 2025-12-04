@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { ArrowLeft, Check, X, Download, Clock, FileText, Calendar, DollarSign } from '@lucide/svelte';
+	import { ArrowLeft, Check, X, Download, Clock, FileText, Calendar, DollarSign, Loader2 } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { generateProposalPDF, downloadPDF, type ProposalPDFData } from '$lib/utils/pdf';
 
 	let { data } = $props();
 
@@ -16,6 +17,7 @@
 
 	let isActionable = $derived(['sent', 'viewed'].includes(proposal.status) && !isExpired);
 	let showRejectForm = $state(false);
+	let pdfLoading = $state(false);
 
 	// Calculate pricing section number based on which sections have content
 	let pricingSectionNum = $derived(
@@ -49,6 +51,47 @@
 				return { bg: 'bg-muted', text: 'text-muted-foreground', label: 'DRAFT' };
 			default:
 				return { bg: 'bg-muted', text: 'text-muted-foreground', label: status.toUpperCase() };
+		}
+	}
+
+	async function handleDownloadPDF() {
+		pdfLoading = true;
+		try {
+			const lineItems = proposal.content?.lineItems ?? [];
+			const sections = proposal.content?.sections ?? [];
+			
+			const pdfData: ProposalPDFData = {
+				proposalNumber: proposal.proposalNumber ?? 'N/A',
+				title: proposal.title,
+				organization: proposal.organization,
+				orgNumber: proposal.orgNumber ?? 'N/A',
+				createdAt: proposal.createdAt,
+				validUntil: proposal.expiresAt,
+				description: proposal.summary,
+				scope: null,
+				timeline: null,
+				deliverables: null,
+				terms: null,
+				subtotal: proposal.subtotal,
+				taxRate: proposal.taxRate,
+				taxAmount: proposal.taxAmount,
+				total: proposal.total,
+				currency: proposal.currency || 'USD',
+				lineItems: lineItems.map(item => ({
+					description: item.description,
+					quantity: item.quantity,
+					unitPrice: item.unitPrice,
+					amount: item.total
+				})),
+				sections: sections
+			};
+			
+			const doc = generateProposalPDF(pdfData);
+			downloadPDF(doc, `${proposal.proposalNumber ?? 'proposal'}.pdf`);
+		} catch (error) {
+			console.error('Failed to generate PDF:', error);
+		} finally {
+			pdfLoading = false;
 		}
 	}
 
@@ -308,9 +351,14 @@
 
 				<!-- Download -->
 				<div class="mt-6">
-					<Button variant="outline" class="font-ui w-full text-xs tracking-wider">
-						<Download class="mr-2 h-4 w-4" />
-						DOWNLOAD PDF
+					<Button onclick={handleDownloadPDF} disabled={pdfLoading} variant="outline" class="font-ui w-full text-xs tracking-wider">
+						{#if pdfLoading}
+							<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+							GENERATING...
+						{:else}
+							<Download class="mr-2 h-4 w-4" />
+							DOWNLOAD PDF
+						{/if}
 					</Button>
 				</div>
 

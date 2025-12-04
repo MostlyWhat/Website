@@ -18,7 +18,13 @@
 		Activity,
 		Hammer,
 		HeadphonesIcon,
-		Plus
+		Plus,
+		Target,
+		CheckCircle2,
+		Circle,
+		Pause,
+		XCircle,
+		Trash2
 	} from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
@@ -35,6 +41,8 @@
 	let editingDetails = $state(false);
 	let description = $state(data.project.description ?? '');
 	let showNewRevisionForm = $state(false);
+	let showNewMilestoneForm = $state(false);
+	let editingMilestoneId = $state<string | null>(null);
 	let phaseActionLoading = $state(false);
 
 	function handlePhaseAction(action: string) {
@@ -130,6 +138,28 @@
 			default: return 'bg-muted text-muted-foreground border-muted';
 		}
 	}
+
+	function getMilestoneStatusColor(status: string) {
+		switch (status) {
+			case 'pending': return 'bg-muted text-muted-foreground border-muted';
+			case 'in_progress': return 'bg-blue-500/10 text-blue-500 border-blue-500/30';
+			case 'completed': return 'bg-green-500/10 text-green-500 border-green-500/30';
+			case 'on_hold': return 'bg-yellow-500/10 text-yellow-500 border-yellow-500/30';
+			case 'cancelled': return 'bg-red-500/10 text-red-500 border-red-500/30';
+			default: return 'bg-muted text-muted-foreground border-muted';
+		}
+	}
+
+	function getMilestoneStatusIcon(status: string) {
+		switch (status) {
+			case 'pending': return Circle;
+			case 'in_progress': return Clock;
+			case 'completed': return CheckCircle2;
+			case 'on_hold': return Pause;
+			case 'cancelled': return XCircle;
+			default: return Circle;
+		}
+	}
 </script>
 
 <svelte:head>
@@ -191,6 +221,9 @@
 						</Tabs.Trigger>
 						<Tabs.Trigger value="proposal" class="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none">
 							Proposal & Scope
+						</Tabs.Trigger>
+						<Tabs.Trigger value="milestones" class="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none">
+							Milestones ({data.milestones.length})
 						</Tabs.Trigger>
 						<Tabs.Trigger value="revisions" class="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none">
 							Revisions ({data.revisions.length})
@@ -423,6 +456,243 @@
 								</div>
 							</div>
 						{/if}
+					</Tabs.Content>
+
+					<!-- Milestones Tab -->
+					<Tabs.Content value="milestones" class="mt-6 space-y-6">
+						<!-- Progress Summary -->
+						{#if data.milestones.length > 0}
+							{@const completedWeight = data.milestones.filter((m: { status: string }) => m.status === 'completed').reduce((sum: number, m: { weight: number }) => sum + m.weight, 0)}
+							{@const totalWeight = data.milestones.reduce((sum: number, m: { weight: number }) => sum + m.weight, 0)}
+							{@const progressPercent = totalWeight > 0 ? Math.round((completedWeight / totalWeight) * 100) : 0}
+							<div class="border border-border bg-background">
+								<div class="border-b border-border px-6 py-4">
+									<h2 class="font-mono text-xs tracking-widest text-muted-foreground">PROGRESS</h2>
+								</div>
+								<div class="p-6">
+									<div class="flex items-center justify-between mb-2">
+										<span class="text-sm text-muted-foreground">{completedWeight} / {totalWeight} weight completed</span>
+										<span class="font-mono text-sm text-foreground">{progressPercent}%</span>
+									</div>
+									<div class="h-2 bg-muted overflow-hidden">
+										<div
+											class="h-full bg-primary transition-all duration-300"
+											style="width: {progressPercent}%"
+										></div>
+									</div>
+								</div>
+							</div>
+						{/if}
+
+						<!-- New Milestone Form -->
+						{#if showNewMilestoneForm}
+							<div class="border border-border bg-background p-6">
+								<h3 class="font-mono text-xs tracking-widest text-muted-foreground mb-4">NEW MILESTONE</h3>
+								<form
+									method="POST"
+									action="?/createMilestone"
+									use:enhance={() => {
+										return async ({ update }) => {
+											await update();
+											showNewMilestoneForm = false;
+										};
+									}}
+									class="space-y-4"
+								>
+									<div class="grid grid-cols-2 gap-4">
+										<div>
+											<label for="milestone-title" class="block text-sm text-muted-foreground mb-1">Title *</label>
+											<Input id="milestone-title" name="title" required placeholder="Milestone title..." />
+										</div>
+										<div>
+											<label for="milestone-dueDate" class="block text-sm text-muted-foreground mb-1">Due Date</label>
+											<Input id="milestone-dueDate" type="date" name="dueDate" />
+										</div>
+									</div>
+									<div>
+										<label for="milestone-description" class="block text-sm text-muted-foreground mb-1">Description</label>
+										<Textarea id="milestone-description" name="description" rows={3} placeholder="Describe the milestone..." />
+									</div>
+									<div>
+										<label for="milestone-weight" class="block text-sm text-muted-foreground mb-1">Weight (for progress calculation)</label>
+										<Input id="milestone-weight" type="number" name="weight" min="1" value="1" class="w-32" />
+									</div>
+									<div class="flex justify-end gap-2">
+										<Button type="button" variant="outline" onclick={() => (showNewMilestoneForm = false)}>Cancel</Button>
+										<Button type="submit">Create Milestone</Button>
+									</div>
+								</form>
+							</div>
+						{/if}
+
+						<!-- Milestones List -->
+						<div class="border border-border bg-background">
+							<div class="border-b border-border px-6 py-4 flex items-center justify-between">
+								<h2 class="font-mono text-xs tracking-widest text-muted-foreground">MILESTONES ({data.milestones.length})</h2>
+								{#if !showNewMilestoneForm}
+									<button
+										onclick={() => (showNewMilestoneForm = true)}
+										class="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
+									>
+										<Plus class="h-3 w-3" />
+										Add Milestone
+									</button>
+								{/if}
+							</div>
+							{#if data.milestones.length === 0}
+								<div class="p-6 text-center text-muted-foreground">
+									<Target class="mx-auto h-8 w-8 opacity-50" />
+									<p class="mt-2">No milestones yet</p>
+									<Button variant="outline" size="sm" class="mt-4" onclick={() => (showNewMilestoneForm = true)}>
+										<Plus class="mr-2 h-4 w-4" />
+										Add First Milestone
+									</Button>
+								</div>
+							{:else}
+								<div class="divide-y divide-border">
+									{#each data.milestones as milestone (milestone.id)}
+										{@const StatusIcon = getMilestoneStatusIcon(milestone.status)}
+										<div class="p-4">
+											{#if editingMilestoneId === milestone.id}
+												<!-- Edit Form -->
+												<form
+													method="POST"
+													action="?/updateMilestone"
+													use:enhance={() => {
+														return async ({ update }) => {
+															await update();
+															editingMilestoneId = null;
+														};
+													}}
+													class="space-y-4"
+												>
+													<input type="hidden" name="milestoneId" value={milestone.id} />
+													<div class="grid grid-cols-2 gap-4">
+														<div>
+															<label for="edit-title-{milestone.id}" class="block text-sm text-muted-foreground mb-1">Title</label>
+															<Input id="edit-title-{milestone.id}" name="title" value={milestone.title} />
+														</div>
+														<div>
+															<label for="edit-status-{milestone.id}" class="block text-sm text-muted-foreground mb-1">Status</label>
+															<select
+																id="edit-status-{milestone.id}"
+																name="status"
+																class="h-10 w-full border border-border bg-background px-3 text-sm"
+																value={milestone.status}
+															>
+																<option value="pending">Pending</option>
+																<option value="in_progress">In Progress</option>
+																<option value="completed">Completed</option>
+																<option value="on_hold">On Hold</option>
+																<option value="cancelled">Cancelled</option>
+															</select>
+														</div>
+													</div>
+													<div class="grid grid-cols-2 gap-4">
+														<div>
+															<label for="edit-dueDate-{milestone.id}" class="block text-sm text-muted-foreground mb-1">Due Date</label>
+															<Input id="edit-dueDate-{milestone.id}" type="date" name="dueDate" value={formatDateInput(milestone.dueDate)} />
+														</div>
+														<div>
+															<label for="edit-weight-{milestone.id}" class="block text-sm text-muted-foreground mb-1">Weight</label>
+															<Input id="edit-weight-{milestone.id}" type="number" name="weight" min="1" value={milestone.weight} class="w-32" />
+														</div>
+													</div>
+													<div>
+														<label for="edit-description-{milestone.id}" class="block text-sm text-muted-foreground mb-1">Description</label>
+														<Textarea id="edit-description-{milestone.id}" name="description" rows={2} value={milestone.description ?? ''} />
+													</div>
+													<div>
+														<label for="edit-deliverables-{milestone.id}" class="block text-sm text-muted-foreground mb-1">Deliverables (JSON array)</label>
+														<Textarea
+															id="edit-deliverables-{milestone.id}"
+															name="deliverables"
+															rows={2}
+															value={milestone.deliverables ? JSON.stringify(milestone.deliverables, null, 2) : '[]'}
+															placeholder='["Deliverable 1", "Deliverable 2"]'
+														/>
+													</div>
+													<div class="flex justify-end gap-2">
+														<Button type="button" variant="outline" size="sm" onclick={() => (editingMilestoneId = null)}>Cancel</Button>
+														<Button type="submit" size="sm">Save</Button>
+													</div>
+												</form>
+											{:else}
+												<!-- Display View -->
+												<div class="flex items-start justify-between gap-4">
+													<div class="flex items-start gap-3 flex-1">
+														<div class={cn('mt-0.5 p-1.5 border', getMilestoneStatusColor(milestone.status))}>
+															<StatusIcon class="h-4 w-4" />
+														</div>
+														<div class="flex-1">
+															<div class="flex items-center gap-2">
+																<h3 class="font-medium text-foreground">{milestone.title}</h3>
+																<span class={cn('px-2 py-0.5 text-xs font-medium border', getMilestoneStatusColor(milestone.status))}>
+																	{formatStatusLabel(milestone.status)}
+																</span>
+															</div>
+															{#if milestone.description}
+																<p class="text-sm text-muted-foreground mt-1">{milestone.description}</p>
+															{/if}
+															<div class="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+																{#if milestone.dueDate}
+																	<span class="flex items-center gap-1">
+																		<Calendar class="h-3 w-3" />
+																		Due: {formatDate(milestone.dueDate)}
+																	</span>
+																{/if}
+																<span>Weight: {milestone.weight}</span>
+																{#if milestone.completedAt}
+																	<span class="text-green-500 flex items-center gap-1">
+																		<CheckCircle2 class="h-3 w-3" />
+																		Completed: {formatDate(milestone.completedAt)}
+																	</span>
+																{/if}
+															</div>
+															{#if milestone.deliverables && Array.isArray(milestone.deliverables) && milestone.deliverables.length > 0}
+																<div class="mt-2">
+																	<span class="text-xs text-muted-foreground">Deliverables:</span>
+																	<ul class="mt-1 space-y-1">
+																		{#each milestone.deliverables as deliverable}
+																			<li class="text-sm text-foreground flex items-center gap-2">
+																				<span class="h-1 w-1 bg-muted-foreground rounded-full"></span>
+																				{deliverable}
+																			</li>
+																		{/each}
+																	</ul>
+																</div>
+															{/if}
+														</div>
+													</div>
+													<div class="flex items-center gap-1">
+														<button
+															onclick={() => (editingMilestoneId = milestone.id)}
+															class="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
+														>
+															<Edit2 class="h-4 w-4" />
+														</button>
+														<form method="POST" action="?/deleteMilestone" use:enhance>
+															<input type="hidden" name="milestoneId" value={milestone.id} />
+															<button
+																type="submit"
+																class="p-1.5 text-muted-foreground hover:text-destructive transition-colors"
+																onclick={(e) => {
+																	if (!confirm('Are you sure you want to delete this milestone?')) {
+																		e.preventDefault();
+																	}
+																}}
+															>
+																<Trash2 class="h-4 w-4" />
+															</button>
+														</form>
+													</div>
+												</div>
+											{/if}
+										</div>
+									{/each}
+								</div>
+							{/if}
+						</div>
 					</Tabs.Content>
 
 					<!-- Revisions Tab -->

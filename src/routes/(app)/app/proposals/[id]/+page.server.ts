@@ -1,8 +1,10 @@
 import { db } from '$lib/server/db';
 import { proposals, projects, organizations, profiles, organizationMembers } from '$lib/server/db/schema';
-import { eq, and, inArray } from 'drizzle-orm';
+import { eq, and, inArray, or } from 'drizzle-orm';
 import { error } from '@sveltejs/kit';
 import { proposalActivity, getClientIp } from '$lib/server/activity-logger';
+import { sendProposalAcceptedEmail, sendProposalRejectedEmail } from '$lib/server/email';
+import { env } from '$env/dynamic/private';
 import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
@@ -26,6 +28,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
     const [proposal] = await db
         .select({
             id: proposals.id,
+            proposalNumber: proposals.proposalNumber,
             title: proposals.title,
             summary: proposals.summary,
             content: proposals.content,
@@ -46,6 +49,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
             projectName: projects.name,
             organizationId: projects.organizationId,
             organizationName: organizations.name,
+            orgNumber: organizations.orgNumber,
             createdById: proposals.createdById,
             createdByName: profiles.displayName,
             createdAt: proposals.createdAt,
@@ -78,6 +82,8 @@ export const load: PageServerLoad = async ({ params, locals }) => {
     return {
         proposal: {
             ...proposal,
+            proposalNumber: proposal.proposalNumber,
+            orgNumber: proposal.orgNumber,
             organization: proposal.organizationName ?? 'Unknown',
             project: proposal.projectName,
             createdBy: proposal.createdByName ?? 'Unknown',
@@ -96,8 +102,19 @@ export const actions: Actions = {
             error(401, 'Unauthorized');
         }
 
-        // Get proposal title for activity log
-        const [proposal] = await db.select({ title: proposals.title, status: proposals.status }).from(proposals).where(eq(proposals.id, params.id));
+        // Get full proposal details for notification
+        const [proposal] = await db
+            .select({
+                title: proposals.title,
+                status: proposals.status,
+                proposalNumber: proposals.proposalNumber,
+                total: proposals.total,
+                currency: proposals.currency,
+                projectId: proposals.projectId,
+                createdById: proposals.createdById
+            })
+            .from(proposals)
+            .where(eq(proposals.id, params.id));
 
         await db
             .update(proposals)
@@ -112,6 +129,53 @@ export const actions: Actions = {
         await proposalActivity.approved(params.id, proposal?.title ?? 'Unknown', locals.profile.id, getClientIp(request));
         await proposalActivity.statusChanged(params.id, proposal?.title ?? 'Unknown', proposal?.status ?? 'viewed', 'accepted', locals.profile.id, getClientIp(request));
 
+        // Send email notification to staff/admins
+        if (proposal?.projectId) {
+            const [project] = await db
+                .select({
+                    organizationId: projects.organizationId,
+                    organizationName: organizations.name
+                })
+                .from(projects)
+                .leftJoin(organizations, eq(projects.organizationId, organizations.id))
+                .where(eq(projects.id, proposal.projectId))
+                .limit(1);
+
+            // Notify staff members (admins and the proposal creator)
+            const staffMembers = await db
+                .select({
+                    id: profiles.id,
+                    name: profiles.displayName,
+                    email: profiles.email
+                })
+                .from(profiles)
+                .where(
+                    or(
+                        eq(profiles.role, 'super_admin'),
+                        eq(profiles.role, 'admin'),
+                        eq(profiles.id, proposal.createdById)
+                    )
+                );
+
+            const proposalUrl = `${env.PUBLIC_SITE_URL || 'http://localhost:5173'}/admin/proposals/${params.id}`;
+
+            for (const staff of staffMembers) {
+                if (staff.email) {
+                    await sendProposalAcceptedEmail({
+                        recipientName: staff.name ?? 'Admin',
+                        recipientEmail: staff.email,
+                        proposalNumber: proposal.proposalNumber,
+                        proposalTitle: proposal.title,
+                        organizationName: project?.organizationName ?? 'Unknown',
+                        total: proposal.total,
+                        currency: proposal.currency ?? 'USD',
+                        proposalUrl,
+                        acceptedBy: locals.profile.displayName ?? locals.profile.email
+                    });
+                }
+            }
+        }
+
         return { success: true };
     },
 
@@ -123,8 +187,19 @@ export const actions: Actions = {
         const formData = await request.formData();
         const reason = formData.get('reason') as string;
 
-        // Get proposal title for activity log
-        const [proposal] = await db.select({ title: proposals.title, status: proposals.status }).from(proposals).where(eq(proposals.id, params.id));
+        // Get full proposal details for notification
+        const [proposal] = await db
+            .select({
+                title: proposals.title,
+                status: proposals.status,
+                proposalNumber: proposals.proposalNumber,
+                total: proposals.total,
+                currency: proposals.currency,
+                projectId: proposals.projectId,
+                createdById: proposals.createdById
+            })
+            .from(proposals)
+            .where(eq(proposals.id, params.id));
 
         await db
             .update(proposals)
@@ -138,6 +213,54 @@ export const actions: Actions = {
         // Log activity
         await proposalActivity.rejected(params.id, proposal?.title ?? 'Unknown', locals.profile.id, getClientIp(request));
         await proposalActivity.statusChanged(params.id, proposal?.title ?? 'Unknown', proposal?.status ?? 'viewed', 'rejected', locals.profile.id, getClientIp(request));
+
+        // Send email notification to staff/admins
+        if (proposal?.projectId) {
+            const [project] = await db
+                .select({
+                    organizationId: projects.organizationId,
+                    organizationName: organizations.name
+                })
+                .from(projects)
+                .leftJoin(organizations, eq(projects.organizationId, organizations.id))
+                .where(eq(projects.id, proposal.projectId))
+                .limit(1);
+
+            // Notify staff members (admins and the proposal creator)
+            const staffMembers = await db
+                .select({
+                    id: profiles.id,
+                    name: profiles.displayName,
+                    email: profiles.email
+                })
+                .from(profiles)
+                .where(
+                    or(
+                        eq(profiles.role, 'super_admin'),
+                        eq(profiles.role, 'admin'),
+                        eq(profiles.id, proposal.createdById)
+                    )
+                );
+
+            const proposalUrl = `${env.PUBLIC_SITE_URL || 'http://localhost:5173'}/admin/proposals/${params.id}`;
+
+            for (const staff of staffMembers) {
+                if (staff.email) {
+                    await sendProposalRejectedEmail({
+                        recipientName: staff.name ?? 'Admin',
+                        recipientEmail: staff.email,
+                        proposalNumber: proposal.proposalNumber,
+                        proposalTitle: proposal.title,
+                        organizationName: project?.organizationName ?? 'Unknown',
+                        total: proposal.total,
+                        currency: proposal.currency ?? 'USD',
+                        proposalUrl,
+                        rejectedBy: locals.profile.displayName ?? locals.profile.email,
+                        reason: reason || undefined
+                    });
+                }
+            }
+        }
 
         return { success: true };
     }

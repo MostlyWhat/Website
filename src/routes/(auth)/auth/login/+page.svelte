@@ -242,6 +242,7 @@
 				</form>
 
 				<!-- Register Link -->
+				</div>
 				<div class="border-t border-border pt-6">
 					<p class="font-body text-center text-sm text-muted-foreground">
 						Don't have an account?

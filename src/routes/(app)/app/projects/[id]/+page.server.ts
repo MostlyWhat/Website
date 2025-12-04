@@ -1,6 +1,6 @@
 import { db } from '$lib/server/db';
-import { projects, organizations, profiles, organizationMembers, activityLog } from '$lib/server/db/schema';
-import { eq, and, inArray, desc } from 'drizzle-orm';
+import { projects, organizations, profiles, organizationMembers, activityLog, projectMilestones } from '$lib/server/db/schema';
+import { eq, and, inArray, desc, asc } from 'drizzle-orm';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
@@ -29,6 +29,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
             slug: projects.slug,
             description: projects.description,
             status: projects.status,
+            phase: projects.phase,
             startDate: projects.startDate,
             endDate: projects.endDate,
             completedAt: projects.completedAt,
@@ -77,6 +78,30 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         .orderBy(desc(activityLog.createdAt))
         .limit(10);
 
+    // Get project milestones
+    const milestones = await db
+        .select({
+            id: projectMilestones.id,
+            title: projectMilestones.title,
+            description: projectMilestones.description,
+            status: projectMilestones.status,
+            dueDate: projectMilestones.dueDate,
+            completedAt: projectMilestones.completedAt,
+            weight: projectMilestones.weight,
+            sortOrder: projectMilestones.sortOrder,
+            deliverables: projectMilestones.deliverables
+        })
+        .from(projectMilestones)
+        .where(eq(projectMilestones.projectId, params.id))
+        .orderBy(asc(projectMilestones.sortOrder), asc(projectMilestones.createdAt));
+
+    // Calculate progress
+    const completedWeight = milestones
+        .filter((m) => m.status === 'completed')
+        .reduce((sum, m) => sum + m.weight, 0);
+    const totalWeight = milestones.reduce((sum, m) => sum + m.weight, 0);
+    const progressPercent = totalWeight > 0 ? Math.round((completedWeight / totalWeight) * 100) : 0;
+
     return {
         project: {
             ...project,
@@ -88,6 +113,12 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         recentActivity: recentActivity.map((a) => ({
             ...a,
             user: a.userName ?? 'System'
-        }))
+        })),
+        milestones,
+        progress: {
+            completedWeight,
+            totalWeight,
+            percent: progressPercent
+        }
     };
 };

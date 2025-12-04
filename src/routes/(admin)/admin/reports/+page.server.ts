@@ -1,9 +1,9 @@
 import { db } from '$lib/server/db';
 import {
     tickets, projects, invoices, organizations, profiles,
-    organizationMembers
+    organizationMembers, ticketComments
 } from '$lib/server/db/schema';
-import { sql, eq, and, gte, lte, count } from 'drizzle-orm';
+import { sql, eq, and, gte, lte, count, desc, isNotNull } from 'drizzle-orm';
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
@@ -207,6 +207,109 @@ export const load: PageServerLoad = async ({ locals, url }) => {
         console.warn('Error fetching organization metrics:', error);
     }
 
+    // === STAFF PERFORMANCE METRICS ===
+    let staffPerformance: {
+        id: string;
+        name: string | null;
+        role: string | null;
+        ticketsAssigned: number;
+        ticketsResolved: number;
+        projectsAssigned: number;
+        ticketReplies: number;
+        avgResponseTime: number | null;
+    }[] = [];
+
+    try {
+        // Get staff members (admin, staff, super_admin)
+        const staffMembers = await db
+            .select({
+                id: profiles.id,
+                name: profiles.displayName,
+                role: profiles.role
+            })
+            .from(profiles)
+            .where(sql`${profiles.role} in ('admin', 'staff', 'super_admin')`);
+
+        // For each staff member, get their metrics
+        for (const staff of staffMembers) {
+            // Count tickets assigned to this staff member
+            const ticketsAssignedResult = await db
+                .select({ count: count() })
+                .from(tickets)
+                .where(
+                    and(
+                        eq(tickets.assignedToId, staff.id),
+                        gte(tickets.createdAt, startDateTime),
+                        lte(tickets.createdAt, endDateTime)
+                    )
+                );
+
+            // Count resolved tickets
+            const ticketsResolvedResult = await db
+                .select({ count: count() })
+                .from(tickets)
+                .where(
+                    and(
+                        eq(tickets.assignedToId, staff.id),
+                        sql`${tickets.status} in ('resolved', 'closed')`,
+                        gte(tickets.createdAt, startDateTime),
+                        lte(tickets.createdAt, endDateTime)
+                    )
+                );
+
+            // Count projects assigned
+            const projectsAssignedResult = await db
+                .select({ count: count() })
+                .from(projects)
+                .where(eq(projects.assignedToId, staff.id));
+
+            // Count ticket replies/comments
+            const ticketRepliesResult = await db
+                .select({ count: count() })
+                .from(ticketComments)
+                .where(
+                    and(
+                        eq(ticketComments.authorId, staff.id),
+                        gte(ticketComments.createdAt, startDateTime),
+                        lte(ticketComments.createdAt, endDateTime)
+                    )
+                );
+
+            // Calculate average response time (simplified - time from ticket creation to first staff reply)
+            // This is a simplified calculation - in production you'd want more sophisticated metrics
+            const avgResponseTimeResult = await db
+                .select({
+                    avgTime: sql<number>`avg(extract(epoch from (${ticketComments.createdAt} - ${tickets.createdAt})) / 3600)`
+                })
+                .from(ticketComments)
+                .innerJoin(tickets, eq(ticketComments.ticketId, tickets.id))
+                .where(
+                    and(
+                        eq(ticketComments.authorId, staff.id),
+                        eq(tickets.assignedToId, staff.id),
+                        gte(ticketComments.createdAt, startDateTime),
+                        lte(ticketComments.createdAt, endDateTime)
+                    )
+                );
+
+            staffPerformance.push({
+                id: staff.id,
+                name: staff.name,
+                role: staff.role,
+                ticketsAssigned: ticketsAssignedResult[0]?.count ?? 0,
+                ticketsResolved: ticketsResolvedResult[0]?.count ?? 0,
+                projectsAssigned: projectsAssignedResult[0]?.count ?? 0,
+                ticketReplies: ticketRepliesResult[0]?.count ?? 0,
+                avgResponseTime: avgResponseTimeResult[0]?.avgTime ?? null
+            });
+        }
+
+        // Sort by tickets resolved (performance indicator)
+        staffPerformance.sort((a, b) => b.ticketsResolved - a.ticketsAssigned);
+    } catch (error) {
+        console.warn('Error fetching staff performance metrics:', error);
+    }
+
     return {
         dateRange: { startDate, endDate },
         tickets: {
@@ -228,6 +331,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
             total: orgTotal,
             newInPeriod: newOrgsCount
         },
-        topOrgsByTickets
+        topOrgsByTickets,
+        staffPerformance
     };
 };

@@ -5,12 +5,14 @@
 	 * Provides sidebar navigation for settings sections
 	 */
 	import { page } from '$app/state';
-	import { ArrowLeft, User, KeyRound, Bell, Trash2, ChevronRight } from '@lucide/svelte';
+	import { ArrowLeft, User, KeyRound, Bell, Trash2, ChevronRight, Building2, ShieldCheck } from '@lucide/svelte';
 
 	let { children, data } = $props();
 
 	const sections = [
 		{ href: '/app/settings', label: 'ACCOUNT', icon: User, exact: true },
+		{ href: '/app/settings/organizations', label: 'ORGANIZATIONS', icon: Building2 },
+		{ href: '/app/settings/security', label: 'SECURITY', icon: ShieldCheck },
 		{ href: '/app/settings/password', label: 'PASSWORD', icon: KeyRound },
 		{ href: '/app/settings/notifications', label: 'NOTIFICATIONS', icon: Bell },
 		{ href: '/app/settings/danger', label: 'DANGER ZONE', icon: Trash2, danger: true }

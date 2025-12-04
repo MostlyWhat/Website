@@ -8,13 +8,14 @@
 	import { 
 		ArrowLeft, FileText, Building2, Calendar, DollarSign, 
 		Check, Clock, Send, CreditCard, AlertCircle, Loader2,
-		Banknote, Receipt
+		Banknote, Receipt, Download
 	} from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import * as Card from '$lib/components/ui/card';
+	import { generateInvoicePDF, downloadPDF, type InvoicePDFData } from '$lib/utils/pdf';
 
 	let { data, form } = $props();
 
@@ -23,6 +24,7 @@
 
 	let isUpdating = $state(false);
 	let showPaymentForm = $state(false);
+	let pdfLoading = $state(false);
 
 	function formatCurrency(amount: number): string {
 		return new Intl.NumberFormat('en-US', {
@@ -75,6 +77,45 @@
 			}
 			await update();
 		};
+	}
+
+	async function handleDownloadPDF() {
+		pdfLoading = true;
+		try {
+			const lineItems = (invoice.lineItems ?? []) as Array<{
+				description: string;
+				quantity: number;
+				unitPrice: number;
+				total: number;
+			}>;
+			
+			const pdfData: InvoicePDFData = {
+				invoiceNumber: invoice.invoiceNumber,
+				organizationName: invoice.organization,
+				issuedAt: invoice.issueDate,
+				dueDate: invoice.dueDate,
+				status: invoice.status,
+				subtotal: invoice.subtotal,
+				taxRate: invoice.taxRate,
+				taxAmount: invoice.taxAmount,
+				total: invoice.total,
+				currency: invoice.currency ?? 'USD',
+				notes: invoice.notes,
+				lineItems: lineItems.map(item => ({
+					description: item.description,
+					quantity: item.quantity,
+					unitPrice: item.unitPrice,
+					amount: item.total
+				}))
+			};
+			
+			const doc = generateInvoicePDF(pdfData);
+			downloadPDF(doc, `Invoice-${invoice.invoiceNumber}.pdf`);
+		} catch (error) {
+			console.error('Failed to generate PDF:', error);
+		} finally {
+			pdfLoading = false;
+		}
 	}
 </script>
 
@@ -397,6 +438,19 @@
 					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CREATED BY</span>
 					<p class="font-body mt-2 text-sm">{invoice.createdBy}</p>
 					<p class="font-mono mt-1 text-[10px] text-muted-foreground">{formatDate(invoice.createdAt)}</p>
+				</div>
+
+				<!-- Download PDF -->
+				<div class="mt-6">
+					<Button onclick={handleDownloadPDF} disabled={pdfLoading} variant="outline" class="font-ui w-full text-xs tracking-wider">
+						{#if pdfLoading}
+							<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+							GENERATING...
+						{:else}
+							<Download class="mr-2 h-4 w-4" />
+							DOWNLOAD PDF
+						{/if}
+					</Button>
 				</div>
 			</div>
 		</div>

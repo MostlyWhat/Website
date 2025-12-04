@@ -15,6 +15,13 @@
       "when": 1764800094310,
       "tag": "0001_abandoned_slipstream",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1764831503511,
+      "tag": "0002_curly_vengeance",
+      "breakpoints": true
     }
   ]
 }

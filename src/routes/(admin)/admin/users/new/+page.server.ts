@@ -106,7 +106,8 @@ export const actions: Actions = {
                     theme: 'system',
                     language: 'en',
                     timezone: 'UTC',
-                    magicLinkEnabled: true
+                    magicLinkEnabled: true,
+                    accountType: 'personal'
                 }
             });
 

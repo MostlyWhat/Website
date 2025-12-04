@@ -23,6 +23,7 @@ This document tracks the implementation of features and fixes for the MostlyWhat
 ### 3. Onboarding System
 - [x] **Profile Onboarding**: Collect user profile info and preferences after registration
 - [x] **Onboarding Form Centering**: Fixed form centering in right panel
+- [x] **Tutorial Walkthrough**: Interactive tutorial overlay after onboarding
 - [ ] **Organization Setup Flow**: 
   - Business option: Create organization, invite members
   - Personal option: Solo account setup
@@ -37,7 +38,7 @@ This document tracks the implementation of features and fixes for the MostlyWhat
 - [x] **Member Roles**: Owner, Admin, Member permissions in schema
 - [x] **Invite Codes**: Generate, share, and manage invite codes
 - [x] **Pending Members**: Approval workflow for pending members
-- [ ] **Organization Dashboard for Owners**: Enhanced dashboard for org owners to manage team
+- [x] **Organization Dashboard for Owners**: Enhanced dashboard for org owners to manage team
 
 ### 5. Proposal System
 - [x] **Create Proposal**: Admin can create proposals for organizations
@@ -45,9 +46,9 @@ This document tracks the implementation of features and fixes for the MostlyWhat
 - [x] **Proposal to Project**: Convert accepted proposals to projects
 - [x] **Proposal Detail Grid**: Fixed box grid layout to match add proposal form
 - [x] **Assignment**: Assign staff to proposals
-- [ ] **Edit Proposal**: Allow editing draft proposals
-- [ ] **Proposal PDF Generation**: Generate PDF version for download/email
-- [ ] **Email Notifications**: Send email when proposal is sent/accepted/rejected
+- [x] **Edit Proposal**: Allow editing draft proposals
+- [x] **Proposal PDF Generation**: Generate PDF version for download (client-side jsPDF)
+- [x] **Email Notifications**: Send email when proposal is sent/accepted/rejected
 
 ### 6. Project Management
 - [x] **Project Assignment**: Assign staff members to projects
@@ -59,10 +60,17 @@ This document tracks the implementation of features and fixes for the MostlyWhat
   - [x] Request status tracking: pending → under_review → approved/rejected → converted
   - [x] Admin can review requests at `/admin/project-requests/[id]`
   - [x] Requests tab integrated into admin projects page
-- [ ] **Project Milestones**: Track project milestones and deliverables
+- [x] **Project Stages**: Visual stage progression (request → proposal → active → completed)
+  - Phase timeline component in admin & client views
+  - Phase badges with icons and colors
+  - Phase actions for advancing workflow
+- [x] **Project Milestones**: Track project milestones and deliverables
+  - Database schema with weight-based progress tracking
+  - Admin CRUD interface for managing milestones
+  - Client view to see milestone progress
+  - Status: pending, in_progress, completed, on_hold, cancelled
 - [ ] **Project Timeline View**: Visual timeline/Gantt view
 - [ ] **Project Notes**: Internal notes for staff
-- [ ] **Project Stages**: Visual stage progression (request → proposal → active → completed)
 
 ### 7. Ticket System Improvements
 - [x] **Ticket Assignment**: Assign staff to tickets
@@ -103,7 +111,12 @@ This document tracks the implementation of features and fixes for the MostlyWhat
 - [x] **Admin Settings**: System-wide settings with category tabs (`/admin/settings`)
 - [x] **Client Settings Layout**: Tab/sidebar navigation for user settings
 - [x] **Settings Sections**: Account, Password, Organizations, Notifications, Danger Zone
-- [ ] **Two-Factor Authentication**: Add 2FA option in security settings
+- [x] **Two-Factor Authentication**: TOTP-based 2FA with authenticator app
+  - `/app/settings/security` page for 2FA management
+  - QR code generation for easy authenticator app setup
+  - Manual secret key entry option
+  - Verification flow before enabling
+  - Disable option with verification code confirmation
 
 ### 10. Announcement System
 - [x] **Admin Announcement Setting**: Super admin can set portal-wide announcements
@@ -116,28 +129,36 @@ This document tracks the implementation of features and fixes for the MostlyWhat
 - [x] **Ticket Reports**: Volume, status distribution, priority breakdown
 - [x] **Project Reports**: Status counts, recent activity
 - [x] **Invoice Reports**: Revenue tracking, collection rates
-- [ ] **Staff Performance**: Staff workload and performance metrics
+- [x] **Staff Performance**: Staff workload and performance metrics
+  - Tickets assigned/resolved per staff member
+  - Resolution rate with visual indicators
+  - Project assignments
+  - Ticket reply counts
+  - Average response time calculation
 - [ ] **Export Reports**: Export to CSV/PDF
 
 ### 12. Knowledge Base (New)
-- [ ] **Article Management**: Create/edit knowledge base articles
-- [ ] **Categories**: Organize articles by category
-- [ ] **Search**: Full-text search for articles
-- [ ] **Article Suggestions**: Suggest relevant articles when creating tickets
-- [ ] **Public/Private Articles**: Control visibility
+- [x] **Article Management**: Create/edit knowledge base articles
+- [x] **Categories**: Organize articles by category
+- [x] **Search**: Full-text search for articles
+- [x] **Article Suggestions**: Suggest relevant articles when creating tickets
+- [x] **Public/Private Articles**: Control visibility (audience: user/admin/all)
 
 ### 13. Notifications System (New)
-- [ ] **Email Notifications**: Email alerts for important events
+- [x] **Email Notifications**: Email alerts for important events
+  - Proposal sent/accepted/rejected notifications
+  - Ticket created notifications
+  - Ticket reply notifications
 - [ ] **In-App Notifications**: Real-time notification bell
 - [ ] **Notification Preferences**: User-configurable notification settings
 - [ ] **Digest Emails**: Daily/weekly summary emails
 
 ### 14. Invoice System Improvements
 - [x] **Invoice Management**: Admin invoices page with list view
+- [x] **Invoice PDF**: Generate PDF invoices (client-side jsPDF)
 - [ ] **Invoice Generation**: Generate invoices from proposals/projects
 - [ ] **Payment Tracking**: Track payment status
 - [ ] **Payment Reminders**: Auto-send payment reminders
-- [ ] **Invoice PDF**: Generate PDF invoices
 - [ ] **Recurring Invoices**: Support for recurring invoices
 
 ---
@@ -165,15 +186,19 @@ This document tracks the implementation of features and fixes for the MostlyWhat
 ### Phase 4: Advanced Features (In Progress)
 1. ~~SLA Management~~ ✅
 2. ~~Canned Responses~~ ✅
-3. Knowledge Base
-4. Advanced Notifications
-5. PDF Generation
+3. ~~Knowledge Base~~ ✅
+4. ~~Project Stages~~ ✅
+5. ~~PDF Generation~~ ✅
+6. ~~Email Notifications~~ ✅
+7. ~~Project Milestones~~ ✅
+8. ~~Staff Performance Reports~~ ✅
+9. ~~Two-Factor Authentication~~ ✅
 
 ---
 
 ## Database Schema
 
-### Tables (18 total, all with RLS enabled)
+### Tables (19 total, all with RLS enabled)
 - [x] `profiles` - User profiles linked to Supabase Auth
 - [x] `organizations` - Client organizations/companies
 - [x] `organization_members` - M:N relationship profiles↔organizations
@@ -192,6 +217,7 @@ This document tracks the implementation of features and fixes for the MostlyWhat
 - [x] `sla_policies` - SLA definitions
 - [x] `canned_responses` - Ticket response templates
 - [x] `system_settings` - Key-value system configuration
+- [x] `support_articles` - Knowledge base articles (NEW)
 
 ### Security
 - RLS enabled on all tables (no policies = service role only access)
@@ -215,16 +241,19 @@ src/routes/
 │   ├── activity-log/      # Activity audit log
 │   ├── canned-responses/  # Response templates
 │   ├── invoices/          # Invoice management
+│   ├── knowledge-base/    # Knowledge base articles (NEW)
 │   ├── organizations/     # Organization management
 │   ├── projects/          # Project management (includes requests tab)
 │   ├── project-requests/  # Project request detail pages
 │   ├── proposals/         # Proposal management
+│   │   └── [id]/edit/     # Edit proposal (NEW)
 │   ├── reports/           # Analytics dashboard
 │   ├── settings/          # System settings
 │   ├── sla-policies/      # SLA management
 │   ├── tickets/           # Ticket management
 │   └── users/             # User management
 ├── (app)/app/             # Client portal routes
+│   ├── help/              # Client help center (NEW)
 │   ├── invoices/          # Client invoices
 │   ├── projects/          # Client projects
 │   │   ├── new/           # Submit new project request
@@ -234,10 +263,11 @@ src/routes/
 │   ├── settings/          # User settings
 │   │   ├── danger/        # Account deletion
 │   │   ├── notifications/ # Notification prefs
-│   │   ├── organizations/ # Org membership + create
-│   │   │   └── new/       # Create organization
+│   │   ├── organizations/ # Org membership + create (ENHANCED)
+│   │   │   ├── new/       # Create organization
+│   │   │   └── [id]/      # Organization management (NEW)
 │   │   └── password/      # Password change
-│   └── tickets/           # Client tickets
+│   └── tickets/           # Client tickets (with article suggestions)
 ├── (auth)/auth/           # Authentication routes
 ├── (marketing)/           # Public marketing pages
 ├── join/[code]/           # Organization invite links
@@ -248,16 +278,55 @@ src/routes/
 
 ## Next Steps (Priority Order)
 
-1. **Project Stages UI**: Visual stage progression showing request → proposal → development → completed
-2. **Entity Activity Integration**: Wire up activity logging to ticket, project, proposal operations  
-3. **Organization Owner Dashboard**: Enhanced management for org owners
-4. **PDF Generation**: Proposal and invoice PDF export
-5. **Email Notifications**: Basic email notifications for key events
-6. **Knowledge Base**: Article management system
+1. **In-App Notifications**: Real-time notification bell
+2. **Invoice Generation**: Generate invoices from proposals/projects
+3. **Ticket Advanced Features**: Merging, splitting, linking tickets
+4. **Export Reports**: Export to CSV/PDF
+5. **Scheduled Announcements**: Schedule start/end dates for announcements
 
 ---
 
 ## Recent Changes (December 2024)
+
+### Two-Factor Authentication (2FA)
+- Added `/app/settings/security` page for 2FA management
+- Uses Supabase Auth MFA with TOTP (Time-based One-Time Password)
+- Features: QR code setup, manual secret key entry, verification flow
+- Authenticator apps supported: Google Authenticator, Authy, 1Password, etc.
+- Added Security link to settings navigation sidebar
+
+### Staff Performance Reports
+- Added staff performance metrics to `/admin/reports` page
+- Tracks: tickets assigned, tickets resolved, resolution rate, projects assigned, ticket replies, avg response time
+- Team summary stats: team size, total tickets handled, team resolution rate
+- Color-coded indicators for performance (green 80%+, yellow 50%+, red below)
+- Average response time in hours with color coding (green ≤4h, yellow ≤24h, red >24h)
+
+### Project Milestones System
+- Added `project_milestones` table with status enum (pending, in_progress, completed, on_hold, cancelled)
+- Weight-based progress tracking (each milestone has a weight, progress = completed weight / total weight)
+- Admin CRUD interface in project detail page (Milestones tab)
+- Client view showing milestone progress and status
+- Deliverables array for each milestone
+- Migration: `0003_add_project_milestones.sql`
+
+### Email Notifications System
+- Created `$lib/server/email.ts` email service using Resend API
+- Proposal notifications: sent, accepted, rejected emails
+- Ticket notifications: created, reply emails
+- Professional HTML email templates with MostlyWhat branding
+- Added `RESEND_API_KEY` and `PUBLIC_SITE_URL` environment variables
+
+### PDF Generation (Client-Side)
+- Created `$lib/utils/pdf.ts` using jsPDF + jspdf-autotable
+- Proposal PDF generation with line items, totals, terms
+- Invoice PDF generation with payment details
+- Download buttons added to admin and client proposal/invoice pages
+
+### Project Stages UI
+- Added PhaseTimeline component to client project views
+- Visual stage progression from request to completion
+- Phase badges with icons and status colors
 
 ### Project Request System
 - Added `project_requests` table for client-submitted project requests

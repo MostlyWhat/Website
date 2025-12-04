@@ -7,7 +7,8 @@
 
 
 
-<h1>{m.hello_world({ name: 'SvelteKit User' })}</h1>
+<h1>{m.site_name()}</h1>
+<p>{m.site_tagline()}</p>
 <div>
 	<button onclick={() => setLocale('en')}>en</button>
 	<button onclick={() => setLocale('th')}>th</button>

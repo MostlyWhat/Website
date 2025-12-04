@@ -7,13 +7,15 @@
 	import { enhance } from '$app/forms';
 	import { 
 		ArrowLeft, FileText, Send, Eye, CheckCircle, X, Clock,
-		Building2, FolderKanban, Calendar, User, Download, Trash2, Loader2, RotateCcw
+		Building2, FolderKanban, Calendar, User, Download, Trash2, Loader2, RotateCcw, Pencil
 	} from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { generateProposalPDF, downloadPDF, type ProposalPDFData } from '$lib/utils/pdf';
 
 	let { data, form } = $props();
 
 	let loading = $state(false);
+	let pdfLoading = $state(false);
 
 	const proposal = data.proposal;
 
@@ -58,6 +60,44 @@
 	} | null;
 	const sections = content?.sections ?? [];
 	const lineItems = content?.lineItems ?? [];
+
+	async function handleDownloadPDF() {
+		pdfLoading = true;
+		try {
+			const pdfData: ProposalPDFData = {
+				proposalNumber: proposal.proposalNumber,
+				title: proposal.title,
+				organization: proposal.organization,
+				orgNumber: proposal.orgNumber ?? 'N/A',
+				createdAt: proposal.createdAt,
+				validUntil: proposal.expiresAt,
+				description: proposal.summary,
+				scope: null,
+				timeline: null,
+				deliverables: null,
+				terms: null,
+				subtotal: proposal.subtotal,
+				taxRate: proposal.taxRate,
+				taxAmount: proposal.taxAmount,
+				total: proposal.total,
+				currency: proposal.currency || 'USD',
+				lineItems: lineItems.map(item => ({
+					description: item.description,
+					quantity: item.quantity,
+					unitPrice: item.unitPrice,
+					amount: item.total
+				})),
+				sections: sections
+			};
+			
+			const doc = generateProposalPDF(pdfData);
+			downloadPDF(doc, `${proposal.proposalNumber}.pdf`);
+		} catch (error) {
+			console.error('Failed to generate PDF:', error);
+		} finally {
+			pdfLoading = false;
+		}
+	}
 </script>
 
 <svelte:head>
@@ -316,7 +356,8 @@
 								{/if}
 							</Button>
 						</form>
-						<Button href="/admin/proposals/new" variant="outline" class="font-ui w-full text-xs tracking-wider">
+						<Button href="/admin/proposals/{proposal.id}/edit" variant="outline" class="font-ui w-full text-xs tracking-wider">
+							<Pencil class="mr-2 h-4 w-4" />
 							EDIT PROPOSAL
 						</Button>
 					{:else if proposal.status === 'sent' || proposal.status === 'viewed'}
@@ -333,12 +374,15 @@
 						</Button>
 					{/if}
 
-					{#if proposal.pdfUrl}
-						<Button href={proposal.pdfUrl} target="_blank" variant="outline" class="font-ui w-full text-xs tracking-wider">
+					<Button onclick={handleDownloadPDF} disabled={pdfLoading} variant="outline" class="font-ui w-full text-xs tracking-wider">
+						{#if pdfLoading}
+							<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+							GENERATING...
+						{:else}
 							<Download class="mr-2 h-4 w-4" />
 							DOWNLOAD PDF
-						</Button>
-					{/if}
+						{/if}
+					</Button>
 
 					{#if proposal.status === 'draft'}
 						<form method="POST" action="?/delete" use:enhance>

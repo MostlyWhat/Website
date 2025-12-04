@@ -2,7 +2,7 @@
 	/**
 	 * Create New Ticket Page
 	 */
-	import { ArrowLeft, Send, Loader2, Paperclip, AlertTriangle, AlertCircle } from '@lucide/svelte';
+	import { ArrowLeft, Send, Loader2, Paperclip, AlertTriangle, AlertCircle, BookOpen, ChevronRight } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { enhance } from '$app/forms';
 
@@ -14,7 +14,14 @@
 		category?: string;
 	} | null;
 
-	let { data, form }: { data: Record<string, unknown>; form: FormReturn } = $props();
+	type SuggestedArticle = {
+		id: string;
+		title: string;
+		slug: string;
+		category: string | null;
+	};
+
+	let { data, form }: { data: { organizations: unknown[]; projects: unknown[]; suggestedArticles: SuggestedArticle[] }; form: FormReturn } = $props();
 	
 	let loading = $state(false);
 	let subject = $state(form?.subject || '');
@@ -196,6 +203,36 @@
 						{/each}
 					</div>
 				</div>
+
+				<!-- Suggested Articles -->
+				{#if data.suggestedArticles && data.suggestedArticles.length > 0}
+					<div class="mt-8">
+						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">BEFORE YOU SUBMIT</span>
+						<div class="mt-4 border border-blue-500/30 bg-blue-500/5 p-4">
+							<div class="flex items-center gap-2">
+								<BookOpen class="h-4 w-4 text-blue-500" />
+								<span class="font-ui text-xs font-semibold tracking-wider text-blue-500">CHECK OUR HELP CENTER</span>
+							</div>
+							<p class="font-body mt-2 text-xs text-muted-foreground">
+								Your question might already be answered in our help articles.
+							</p>
+							<div class="mt-3 space-y-1">
+								{#each data.suggestedArticles as article}
+									<a
+										href="/app/help/{article.slug}"
+										class="group flex items-center justify-between py-2 text-sm transition-colors hover:text-primary"
+									>
+										<span class="font-body truncate">{article.title}</span>
+										<ChevronRight class="h-3 w-3 flex-shrink-0 text-muted-foreground transition-transform group-hover:translate-x-1" />
+									</a>
+								{/each}
+							</div>
+							<a href="/app/help" class="font-ui mt-3 inline-block text-xs tracking-wider text-blue-500 hover:underline">
+								BROWSE ALL ARTICLES →
+							</a>
+						</div>
+					</div>
+				{/if}
 			</div>
 
 			<!-- Form Actions -->

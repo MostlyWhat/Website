@@ -426,6 +426,64 @@ export const projectRevisions = pgTable('project_revisions', {
 }).enableRLS();
 
 // =============================================================================
+// PROJECT MILESTONES TABLE
+// =============================================================================
+// Track project milestones and deliverables
+
+export const milestoneStatusEnum = pgEnum('milestone_status', [
+	'pending',      // Not started
+	'in_progress',  // Being worked on
+	'completed',    // Finished
+	'on_hold',      // Paused
+	'cancelled'     // Cancelled
+]);
+
+export const projectMilestones = pgTable('project_milestones', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	projectId: uuid('project_id')
+		.notNull()
+		.references(() => projects.id, { onDelete: 'cascade' }),
+
+	// Milestone details
+	title: text('title').notNull(),
+	description: text('description'),
+
+	// Position in timeline (1 = first milestone)
+	sortOrder: integer('sort_order').default(0).notNull(),
+
+	// Status tracking
+	status: milestoneStatusEnum('status').default('pending').notNull(),
+
+	// Due date and completion
+	dueDate: timestamp('due_date', { withTimezone: true }),
+	completedAt: timestamp('completed_at', { withTimezone: true }),
+
+	// Percentage weight (for progress calculation, should sum to 100 per project)
+	weight: integer('weight').default(10).notNull(),
+
+	// Optional invoice ID for milestone payments (linked after invoice creation)
+	invoiceId: uuid('invoice_id'),
+
+	// Who created/completed
+	createdById: uuid('created_by_id').references(() => profiles.id, { onDelete: 'set null' }),
+	completedById: uuid('completed_by_id').references(() => profiles.id, { onDelete: 'set null' }),
+
+	// Deliverables - files or links associated with this milestone
+	deliverables: jsonb('deliverables').$type<
+		Array<{
+			name: string;
+			type: 'file' | 'link';
+			url: string;
+			addedAt: string;
+		}>
+	>(),
+
+	// Timestamps
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+}).enableRLS();
+
+// =============================================================================
 // INVOICES TABLE
 // =============================================================================
 
@@ -1293,6 +1351,9 @@ export type NewSupportArticle = typeof supportArticles.$inferInsert;
 export type ProjectRevision = typeof projectRevisions.$inferSelect;
 export type NewProjectRevision = typeof projectRevisions.$inferInsert;
 
+export type ProjectMilestone = typeof projectMilestones.$inferSelect;
+export type NewProjectMilestone = typeof projectMilestones.$inferInsert;
+
 export type UserRole = 'super_admin' | 'admin' | 'staff' | 'customer';
 export type CustomerType = typeof customerTypeEnum.enumValues[number];
 export type TicketScope = typeof ticketScopeEnum.enumValues[number];
@@ -1300,6 +1361,7 @@ export type ProjectStatus = typeof projectStatusEnum.enumValues[number];
 export type ProjectPhase = typeof projectPhaseEnum.enumValues[number];
 export type ProposalConfirmationStatus = typeof proposalConfirmationStatusEnum.enumValues[number];
 export type RevisionStatus = typeof revisionStatusEnum.enumValues[number];
+export type MilestoneStatus = typeof milestoneStatusEnum.enumValues[number];
 export type ProposalStatus = typeof proposalStatusEnum.enumValues[number];
 export type InvoiceStatus = typeof invoiceStatusEnum.enumValues[number];
 export type TicketStatus = typeof ticketStatusEnum.enumValues[number];

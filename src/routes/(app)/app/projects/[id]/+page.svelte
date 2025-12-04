@@ -1,12 +1,16 @@
 <script lang="ts">
-	import { ArrowLeft, Calendar, Users, FileText, MessageSquare, CheckCircle2, Clock, AlertCircle } from '@lucide/svelte';
+	import { ArrowLeft, Calendar, Users, FileText, MessageSquare, CheckCircle2, Clock, AlertCircle, Target, Circle, Pause, XCircle } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { PhaseBadge, PhaseTimeline } from '$lib/components/ui/phase-badge';
+	import { cn } from '$lib/utils';
 
 	let { data } = $props();
 
 	// Get project from server data
 	const project = $derived(data.project);
 	const recentActivity = $derived(data.recentActivity ?? []);
+	const milestones = $derived(data.milestones ?? []);
+	const progress = $derived(data.progress ?? { completedWeight: 0, totalWeight: 0, percent: 0 });
 
 	function formatCurrency(amount: number): string {
 		return new Intl.NumberFormat('en-US', { style: 'currency', currency: project.currency ?? 'USD' }).format(amount);
@@ -41,6 +45,32 @@
 		}
 	}
 
+	function getMilestoneStatusColor(status: string) {
+		switch (status) {
+			case 'pending': return 'bg-muted text-muted-foreground border-muted';
+			case 'in_progress': return 'bg-blue-500/10 text-blue-500 border-blue-500/30';
+			case 'completed': return 'bg-green-500/10 text-green-500 border-green-500/30';
+			case 'on_hold': return 'bg-yellow-500/10 text-yellow-500 border-yellow-500/30';
+			case 'cancelled': return 'bg-red-500/10 text-red-500 border-red-500/30';
+			default: return 'bg-muted text-muted-foreground border-muted';
+		}
+	}
+
+	function getMilestoneStatusIcon(status: string) {
+		switch (status) {
+			case 'pending': return Circle;
+			case 'in_progress': return Clock;
+			case 'completed': return CheckCircle2;
+			case 'on_hold': return Pause;
+			case 'cancelled': return XCircle;
+			default: return Circle;
+		}
+	}
+
+	function formatStatusLabel(status: string) {
+		return status.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+	}
+
 	let status = $derived(getStatusBadge(project.status));
 </script>
 
@@ -64,9 +94,12 @@
 				<p class="font-mono mt-2 text-xs tracking-widest text-muted-foreground">{project.organization}</p>
 			</div>
 
-			<span class="font-mono text-[10px] tracking-widest px-3 py-1 {status.bg} {status.text}">
-				{status.label}
-			</span>
+			<PhaseBadge phase={project.phase} size="lg" />
+		</div>
+		
+		<!-- Phase Timeline -->
+		<div class="mt-8">
+			<PhaseTimeline currentPhase={project.phase} />
 		</div>
 	</section>
 
@@ -106,6 +139,82 @@
 					<div class="mt-12">
 						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">02 — RECENT ACTIVITY</span>
 						<p class="font-body mt-4 text-sm text-muted-foreground">No recent activity.</p>
+					</div>
+				{/if}
+
+				<!-- Milestones Section -->
+				{#if milestones.length > 0}
+					<div class="mt-12">
+						<span class="font-mono text-[10px] tracking-widest text-muted-foreground">03 — MILESTONES</span>
+
+						<!-- Progress Bar -->
+						<div class="mt-6 border border-border p-4">
+							<div class="flex items-center justify-between mb-2">
+								<span class="font-mono text-xs text-muted-foreground">Progress</span>
+								<span class="font-mono text-sm text-foreground">{progress.percent}%</span>
+							</div>
+							<div class="h-2 bg-muted overflow-hidden">
+								<div
+									class="h-full bg-primary transition-all duration-300"
+									style="width: {progress.percent}%"
+								></div>
+							</div>
+							<p class="font-mono mt-2 text-[10px] tracking-widest text-muted-foreground">
+								{progress.completedWeight} / {progress.totalWeight} weight completed
+							</p>
+						</div>
+
+						<!-- Milestone List -->
+						<div class="mt-4 border border-border divide-y divide-border">
+							{#each milestones as milestone (milestone.id)}
+								{@const StatusIcon = getMilestoneStatusIcon(milestone.status)}
+								<div class="p-4">
+									<div class="flex items-start gap-3">
+										<div class={cn('mt-0.5 p-1.5 border', getMilestoneStatusColor(milestone.status))}>
+											<StatusIcon class="h-4 w-4" />
+										</div>
+										<div class="flex-1">
+											<div class="flex items-center gap-2 flex-wrap">
+												<h3 class="font-body font-medium text-foreground">{milestone.title}</h3>
+												<span class={cn('px-2 py-0.5 text-[10px] font-medium border', getMilestoneStatusColor(milestone.status))}>
+													{formatStatusLabel(milestone.status).toUpperCase()}
+												</span>
+											</div>
+											{#if milestone.description}
+												<p class="font-body mt-1 text-sm text-muted-foreground">{milestone.description}</p>
+											{/if}
+											<div class="flex items-center gap-4 mt-2 font-mono text-[10px] tracking-widest text-muted-foreground">
+												{#if milestone.dueDate}
+													<span class="flex items-center gap-1">
+														<Calendar class="h-3 w-3" />
+														DUE: {formatDate(milestone.dueDate)}
+													</span>
+												{/if}
+												{#if milestone.completedAt}
+													<span class="text-green-500 flex items-center gap-1">
+														<CheckCircle2 class="h-3 w-3" />
+														COMPLETED: {formatDate(milestone.completedAt)}
+													</span>
+												{/if}
+											</div>
+											{#if milestone.deliverables && Array.isArray(milestone.deliverables) && milestone.deliverables.length > 0}
+												<div class="mt-3 pl-4 border-l-2 border-border">
+													<span class="font-mono text-[10px] tracking-widest text-muted-foreground">DELIVERABLES</span>
+													<ul class="mt-1 space-y-1">
+														{#each milestone.deliverables as deliverable}
+															<li class="font-body text-sm text-foreground flex items-center gap-2">
+																<span class="h-1 w-1 bg-muted-foreground rounded-full"></span>
+																{deliverable}
+															</li>
+														{/each}
+													</ul>
+												</div>
+											{/if}
+										</div>
+									</div>
+								</div>
+							{/each}
+						</div>
 					</div>
 				{/if}
 			</div>

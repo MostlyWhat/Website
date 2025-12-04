@@ -74,6 +74,8 @@
 		"@supabase/ssr": "^0.8.0",
 		"@supabase/supabase-js": "^2.86.0",
 		"@types/marked": "^6.0.0",
+		"jspdf": "^3.0.4",
+		"jspdf-autotable": "^5.0.2",
 		"marked": "^17.0.1",
 		"postgres": "^3.4.7",
 		"zod-form-data": "^3.0.1"
