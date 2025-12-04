@@ -172,6 +172,59 @@ export const userActivity = {
         });
     },
 
+    async deleted(userId: string, email: string, performedById: string, ipAddress?: string) {
+        await logActivity({
+            entityType: 'user',
+            entityId: userId,
+            activityType: 'status_changed',
+            description: `User account "${email}" was deleted`,
+            previousValues: { status: 'active' },
+            newValues: { status: 'deleted' },
+            performedById,
+            ipAddress
+        });
+    },
+
+    async statusChanged(
+        userId: string,
+        email: string,
+        oldStatus: string,
+        newStatus: string,
+        performedById: string,
+        ipAddress?: string
+    ) {
+        await logActivity({
+            entityType: 'user',
+            entityId: userId,
+            activityType: 'status_changed',
+            description: `User "${email}" status changed from ${oldStatus} to ${newStatus}`,
+            previousValues: { status: oldStatus },
+            newValues: { status: newStatus },
+            performedById,
+            ipAddress
+        });
+    },
+
+    async roleChanged(
+        userId: string,
+        email: string,
+        oldRole: string,
+        newRole: string,
+        performedById: string,
+        ipAddress?: string
+    ) {
+        await logActivity({
+            entityType: 'user',
+            entityId: userId,
+            activityType: 'status_changed',
+            description: `User "${email}" role changed from ${oldRole} to ${newRole}`,
+            previousValues: { role: oldRole },
+            newValues: { role: newRole },
+            performedById,
+            ipAddress
+        });
+    },
+
     async updated(
         userId: string,
         email: string,
@@ -188,6 +241,28 @@ export const userActivity = {
             previousValues: Object.fromEntries(Object.entries(changes).map(([k, v]) => [k, v.old])),
             newValues: Object.fromEntries(Object.entries(changes).map(([k, v]) => [k, v.new])),
             performedById,
+            ipAddress
+        });
+    },
+
+    async login(userId: string, email: string, ipAddress?: string) {
+        await logActivity({
+            entityType: 'user',
+            entityId: userId,
+            activityType: 'updated',
+            description: `User "${email}" logged in`,
+            performedById: userId,
+            ipAddress
+        });
+    },
+
+    async logout(userId: string, email: string, ipAddress?: string) {
+        await logActivity({
+            entityType: 'user',
+            entityId: userId,
+            activityType: 'updated',
+            description: `User "${email}" logged out`,
+            performedById: userId,
             ipAddress
         });
     }
@@ -736,6 +811,60 @@ export const settingsActivity = {
             description: `Setting "${settingKey}" was updated`,
             previousValues: { value: oldValue },
             newValues: { value: newValue },
+            performedById,
+            ipAddress
+        });
+    }
+};
+
+// Extended entity type for file logging
+type FileEntityType = 'ticket' | 'project' | 'proposal' | 'invoice' | 'organization' | 'user';
+
+/**
+ * Log file-related activities
+ */
+export const fileActivity = {
+    async uploaded(
+        entityType: FileEntityType,
+        entityId: string,
+        entityName: string,
+        fileName: string,
+        fileSize: number,
+        mimeType: string,
+        performedById: string,
+        ipAddress?: string
+    ) {
+        const sizeStr = fileSize < 1024 
+            ? `${fileSize} B` 
+            : fileSize < 1024 * 1024 
+                ? `${(fileSize / 1024).toFixed(1)} KB` 
+                : `${(fileSize / (1024 * 1024)).toFixed(1)} MB`;
+        
+        await logActivity({
+            entityType,
+            entityId,
+            activityType: 'file_uploaded',
+            description: `File "${fileName}" (${sizeStr}) uploaded to ${entityType} "${entityName}"`,
+            newValues: { fileName, fileSize, mimeType },
+            performedById,
+            ipAddress
+        });
+    },
+
+    async deleted(
+        entityType: FileEntityType,
+        entityId: string,
+        entityName: string,
+        fileName: string,
+        performedById: string,
+        ipAddress?: string
+    ) {
+        await logActivity({
+            entityType,
+            entityId,
+            activityType: 'updated',
+            description: `File "${fileName}" deleted from ${entityType} "${entityName}"`,
+            previousValues: { fileName },
             performedById,
             ipAddress
         });

@@ -18,8 +18,9 @@
 	} | null;
 
 	type User = { id: string; displayName: string | null; email: string; role: string | null };
+	type Project = { id: string; name: string; organizationId: string };
 
-	let { data, form }: { data: PageData; form: FormReturn } = $props();
+	let { data, form }: { data: PageData & { allProjects?: Project[] }; form: FormReturn } = $props();
 	
 	let loading = $state(false);
 	let subject = $state(form?.subject || '');
@@ -30,7 +31,18 @@
 	let createdById = $state('');
 	let assignedToId = $state('');
 	let projectId = $state('');
-	let projects = $state<Array<{ id: string; name: string }>>(form?.projects || []);
+
+	// Filter projects based on selected organization
+	const filteredProjects = $derived(
+		(data.allProjects || []).filter((p: Project) => p.organizationId === organizationId)
+	);
+
+	// Reset project when organization changes
+	$effect(() => {
+		if (organizationId) {
+			projectId = '';
+		}
+	});
 </script>
 
 <svelte:head>
@@ -117,23 +129,6 @@
 						name="organizationId"
 						bind:value={organizationId}
 						required
-						onchange={async () => {
-							if (organizationId) {
-								const formData = new FormData();
-								formData.set('organizationId', organizationId);
-								const response = await fetch('?/searchProjects', {
-									method: 'POST',
-									body: formData
-								});
-								const result = await response.json() as { data?: { projects?: Array<{ id: string; name: string }> } };
-								if (result.data?.projects) {
-									projects = result.data.projects;
-								}
-							} else {
-								projects = [];
-							}
-							projectId = '';
-						}}
 						class="font-body w-full border-b border-border bg-transparent py-3 text-foreground focus:border-primary focus:outline-none"
 					>
 						<option value="">Select an organization</option>
@@ -155,7 +150,7 @@
 						class="font-body w-full border-b border-border bg-transparent py-3 text-foreground focus:border-primary focus:outline-none disabled:opacity-50"
 					>
 						<option value="">No project</option>
-						{#each projects as project}
+						{#each filteredProjects as project}
 							<option value={project.id}>{project.name}</option>
 						{/each}
 					</select>

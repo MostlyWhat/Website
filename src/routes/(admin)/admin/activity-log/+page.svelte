@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { Activity, Search, Filter, ChevronLeft, ChevronRight, Calendar, User, FileText, Clock, ArrowRight, ExternalLink, Users } from '@lucide/svelte';
+	import { Activity, Search, Filter, ChevronLeft, ChevronRight, Calendar, User, FileText, Clock, ArrowRight, ExternalLink, Users, ChevronDown, ChevronUp, Upload, Trash2, Check, X, Edit, UserPlus } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 
 	let { data } = $props();
@@ -12,6 +12,7 @@
 	let startDate = $state(data.filters.startDate);
 	let endDate = $state(data.filters.endDate);
 	let performerId = $state(data.filters.performerId);
+	let expandedIds = $state<Set<string>>(new Set());
 
 	const activityTypes = [
 		{ value: '', label: 'All Activities' },
@@ -27,6 +28,16 @@
 		{ value: 'approved', label: 'Approved' },
 		{ value: 'rejected', label: 'Rejected' }
 	];
+
+	function toggleExpanded(id: string) {
+		const newSet = new Set(expandedIds);
+		if (newSet.has(id)) {
+			newSet.delete(id);
+		} else {
+			newSet.add(id);
+		}
+		expandedIds = newSet;
+	}
 
 	function applyFilters() {
 		const params = new URLSearchParams();
@@ -55,12 +66,39 @@
 		goto(`?${params.toString()}`);
 	}
 
+	function getActivityIcon(type: string) {
+		switch (type) {
+			case 'created':
+				return { icon: FileText, color: 'text-green-500' };
+			case 'updated':
+				return { icon: Edit, color: 'text-blue-500' };
+			case 'deleted':
+				return { icon: Trash2, color: 'text-red-500' };
+			case 'status_changed':
+				return { icon: ArrowRight, color: 'text-yellow-500' };
+			case 'comment_added':
+				return { icon: FileText, color: 'text-purple-500' };
+			case 'assigned':
+				return { icon: UserPlus, color: 'text-indigo-500' };
+			case 'file_uploaded':
+				return { icon: Upload, color: 'text-cyan-500' };
+			case 'approved':
+				return { icon: Check, color: 'text-emerald-500' };
+			case 'rejected':
+				return { icon: X, color: 'text-red-500' };
+			default:
+				return { icon: Activity, color: 'text-muted-foreground' };
+		}
+	}
+
 	function getActivityTypeColor(type: string) {
 		switch (type) {
 			case 'created':
 				return 'bg-green-500/10 text-green-500 border-green-500/30';
 			case 'updated':
 				return 'bg-blue-500/10 text-blue-500 border-blue-500/30';
+			case 'deleted':
+				return 'bg-red-500/10 text-red-500 border-red-500/30';
 			case 'status_changed':
 				return 'bg-yellow-500/10 text-yellow-500 border-yellow-500/30';
 			case 'comment_added':
@@ -121,6 +159,10 @@
 		if (diffHours < 24) return `${diffHours}h ago`;
 		if (diffDays < 7) return `${diffDays}d ago`;
 		return formatTimestamp(date);
+	}
+
+	function hasDetails(activity: { previousValues?: Record<string, unknown> | null; newValues?: Record<string, unknown> | null; ipAddress?: string | null }) {
+		return activity.previousValues || activity.newValues || activity.ipAddress;
 	}
 
 	$effect(() => {
@@ -274,102 +316,112 @@
 			<div class="divide-y divide-border">
 				{#each data.activities as activity}
 					{@const entityLink = getEntityLink(activity.entityType, activity.entityId)}
-					<div class="px-6 py-6 transition-colors hover:bg-card/50 md:px-12 lg:px-16">
-						<div class="flex items-start gap-4">
-							<!-- Activity Icon -->
-							<div class="flex-shrink-0">
-								<div class="flex h-10 w-10 items-center justify-center border border-border bg-card">
-								{#if activity.activityType === 'created'}
-									<FileText class="h-4 w-4 text-green-500" />
-								{:else if activity.activityType === 'status_changed'}
-									<ArrowRight class="h-4 w-4 text-yellow-500" />
-								{:else if activity.activityType === 'assigned'}
-									<User class="h-4 w-4 text-indigo-500" />
-								{:else if activity.activityType === 'comment_added'}
-									<FileText class="h-4 w-4 text-purple-500" />
-								{:else}
-									<Activity class="h-4 w-4 text-muted-foreground" />
-								{/if}
+					{@const activityIcon = getActivityIcon(activity.activityType)}
+					{@const isExpanded = expandedIds.has(activity.id)}
+					{@const showExpandButton = hasDetails(activity as {previousValues?: Record<string, unknown> | null, newValues?: Record<string, unknown> | null, ipAddress?: string | null})}
+					<div class="group">
+						<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+						<!-- Compact Row - use a wrapper div with click handler -->
+						<div 
+							class="flex items-center gap-3 px-6 py-3 transition-colors hover:bg-card/50 md:px-12 lg:px-16 {showExpandButton ? 'cursor-pointer' : ''}"
+							onclick={() => { if (showExpandButton) toggleExpanded(activity.id); }}
+							onkeydown={(e) => { if (e.key === 'Enter' && showExpandButton) toggleExpanded(activity.id); }}
+							role={showExpandButton ? 'button' : 'presentation'}
+							tabindex={showExpandButton ? 0 : -1}
+						>
+							<!-- Icon -->
+							<div class="flex h-8 w-8 flex-shrink-0 items-center justify-center border border-border bg-card">
+								<activityIcon.icon class="h-4 w-4 {activityIcon.color}" />
+							</div>
+
+							<!-- Content -->
+							<div class="min-w-0 flex-1">
+								<p class="font-body text-sm text-foreground line-clamp-1">
+									{activity.description}
+								</p>
+								<div class="mt-0.5 flex items-center gap-3 text-xs text-muted-foreground">
+									{#if activity.performerName}
+										<span class="font-mono">{activity.performerName}</span>
+									{/if}
+									<span class="font-mono uppercase">{activity.entityType.replace('_', ' ')}</span>
+									<span class="font-mono" title={formatTimestamp(activity.createdAt)}>{formatRelativeTime(activity.createdAt)}</span>
 								</div>
 							</div>
 
-							<!-- Activity Content -->
-							<div class="min-w-0 flex-1">
-								<div class="flex items-start justify-between gap-4">
-									<div>
-										<p class="font-body text-foreground">
-											{activity.description}
-										</p>
-										<div class="mt-2 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-											<!-- Performer -->
-											{#if activity.performerName}
-												<span class="flex items-center gap-1">
-													<User class="h-3 w-3" />
-													<span class="font-mono text-xs">{activity.performerName}</span>
-												</span>
-											{/if}
-
-											<!-- Entity Type -->
-											<span class="flex items-center gap-1">
-												<FileText class="h-3 w-3" />
-												<span class="font-mono text-xs uppercase">{activity.entityType.replace('_', ' ')}</span>
-											</span>
-
-											<!-- Timestamp -->
-											<span class="flex items-center gap-1" title={formatTimestamp(activity.createdAt)}>
-												<Clock class="h-3 w-3" />
-												<span class="font-mono text-xs">{formatRelativeTime(activity.createdAt)}</span>
-											</span>
-
-											<!-- IP Address -->
-											{#if activity.ipAddress}
-												<span class="font-mono text-xs text-muted-foreground/60">
-													{activity.ipAddress}
-												</span>
-											{/if}
-										</div>
-									</div>
-
-									<div class="flex flex-shrink-0 items-center gap-2">
-										<!-- Activity Type Badge -->
-										<span class="border px-2 py-1 font-mono text-[10px] tracking-widest {getActivityTypeColor(activity.activityType)}">
-											{activity.activityType.replace('_', ' ').toUpperCase()}
-										</span>
-
-										<!-- Link to Entity -->
-										{#if entityLink}
-											<a
-												href={entityLink}
-												class="p-1.5 text-muted-foreground transition-colors hover:text-primary"
-												title="View {activity.entityType}"
-											>
-												<ExternalLink class="h-4 w-4" />
-											</a>
+							<!-- Actions -->
+							<div class="flex flex-shrink-0 items-center gap-2">
+								<span class="hidden border px-1.5 py-0.5 font-mono text-[9px] tracking-wider sm:inline-flex {getActivityTypeColor(activity.activityType)}">
+									{activity.activityType.replace('_', ' ').toUpperCase()}
+								</span>
+								{#if entityLink}
+									<a
+										href={entityLink}
+										class="p-1 text-muted-foreground transition-colors hover:text-primary"
+										title="View {activity.entityType}"
+										onclick={(e) => e.stopPropagation()}
+									>
+										<ExternalLink class="h-3.5 w-3.5" />
+									</a>
+								{/if}
+								{#if showExpandButton}
+									<span class="p-1 text-muted-foreground transition-colors hover:text-foreground">
+										{#if isExpanded}
+											<ChevronUp class="h-4 w-4" />
+										{:else}
+											<ChevronDown class="h-4 w-4" />
 										{/if}
-									</div>
-								</div>
-
-								<!-- Changes (if any) -->
-								{#if activity.previousValues || activity.newValues}
-									<div class="mt-4 border border-border bg-card/50 p-4">
-										<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-											{#if activity.previousValues}
-												<div>
-													<span class="font-mono text-[10px] tracking-widest text-muted-foreground">BEFORE</span>
-													<pre class="mt-2 overflow-x-auto font-mono text-xs text-muted-foreground">{JSON.stringify(activity.previousValues, null, 2)}</pre>
-												</div>
-											{/if}
-											{#if activity.newValues}
-												<div>
-													<span class="font-mono text-[10px] tracking-widest text-muted-foreground">AFTER</span>
-													<pre class="mt-2 overflow-x-auto font-mono text-xs text-foreground">{JSON.stringify(activity.newValues, null, 2)}</pre>
-												</div>
-											{/if}
-										</div>
-									</div>
+									</span>
 								{/if}
 							</div>
 						</div>
+
+						<!-- Expanded Details -->
+						{#if isExpanded && showExpandButton}
+							<div class="border-t border-border bg-card/30 px-6 py-4 md:px-12 lg:px-16">
+								<div class="ml-11 grid gap-4 text-sm md:grid-cols-2 lg:grid-cols-3">
+									<!-- Timestamp -->
+									<div>
+										<span class="font-mono text-[10px] tracking-widest text-muted-foreground">TIMESTAMP</span>
+										<p class="mt-1 font-mono text-xs">{formatTimestamp(activity.createdAt)}</p>
+									</div>
+
+									<!-- IP Address -->
+									{#if activity.ipAddress}
+										<div>
+											<span class="font-mono text-[10px] tracking-widest text-muted-foreground">IP ADDRESS</span>
+											<p class="mt-1 font-mono text-xs">{activity.ipAddress}</p>
+										</div>
+									{/if}
+
+									<!-- Entity ID -->
+									<div>
+										<span class="font-mono text-[10px] tracking-widest text-muted-foreground">ENTITY ID</span>
+										<p class="mt-1 font-mono text-xs truncate" title={activity.entityId}>{activity.entityId}</p>
+									</div>
+
+									<!-- Changes -->
+									{#if activity.previousValues || activity.newValues}
+										<div class="col-span-full">
+											<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CHANGES</span>
+											<div class="mt-2 grid gap-4 md:grid-cols-2">
+												{#if activity.previousValues}
+													<div class="border border-border bg-background p-3">
+														<span class="font-mono text-[9px] tracking-widest text-red-400">BEFORE</span>
+														<pre class="mt-1 overflow-x-auto font-mono text-xs text-muted-foreground">{JSON.stringify(activity.previousValues, null, 2)}</pre>
+													</div>
+												{/if}
+												{#if activity.newValues}
+													<div class="border border-border bg-background p-3">
+														<span class="font-mono text-[9px] tracking-widest text-green-400">AFTER</span>
+														<pre class="mt-1 overflow-x-auto font-mono text-xs text-foreground">{JSON.stringify(activity.newValues, null, 2)}</pre>
+													</div>
+												{/if}
+											</div>
+										</div>
+									{/if}
+								</div>
+							</div>
+						{/if}
 					</div>
 				{/each}
 			</div>

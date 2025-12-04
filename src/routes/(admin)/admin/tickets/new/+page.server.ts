@@ -42,9 +42,20 @@ export const load: PageServerLoad = async ({ locals }) => {
         .from(profiles)
         .orderBy(profiles.displayName);
 
+    // Get all projects for selection (we'll filter client-side based on org)
+    const allProjects = await db
+        .select({
+            id: projects.id,
+            name: projects.name,
+            organizationId: projects.organizationId
+        })
+        .from(projects)
+        .orderBy(projects.name);
+
     return {
         organizations: orgs,
         users,
+        allProjects,
         profile: locals.profile
     };
 };
@@ -148,29 +159,5 @@ export const actions: Actions = {
                 category
             });
         }
-    },
-
-    searchProjects: async ({ request, locals }) => {
-        if (!locals.user || !locals.profile) {
-            throw redirect(302, '/auth/login');
-        }
-
-        const formData = await request.formData();
-        const organizationId = formData.get('organizationId')?.toString();
-
-        if (!organizationId) {
-            return { projects: [] };
-        }
-
-        const projectList = await db
-            .select({
-                id: projects.id,
-                name: projects.name
-            })
-            .from(projects)
-            .where(eq(projects.organizationId, organizationId))
-            .orderBy(projects.name);
-
-        return { projects: projectList };
     }
 };
