@@ -834,12 +834,12 @@ export const fileActivity = {
         performedById: string,
         ipAddress?: string
     ) {
-        const sizeStr = fileSize < 1024 
-            ? `${fileSize} B` 
-            : fileSize < 1024 * 1024 
-                ? `${(fileSize / 1024).toFixed(1)} KB` 
+        const sizeStr = fileSize < 1024
+            ? `${fileSize} B`
+            : fileSize < 1024 * 1024
+                ? `${(fileSize / 1024).toFixed(1)} KB`
                 : `${(fileSize / (1024 * 1024)).toFixed(1)} MB`;
-        
+
         await logActivity({
             entityType,
             entityId,

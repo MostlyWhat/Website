@@ -14,12 +14,12 @@ import { ticketActivity, getClientIp } from '$lib/server/activity-logger';
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user || !locals.profile) {
-        throw redirect(302, '/auth/login');
+        return redirect(302, '/auth/login');
     }
 
     // Verify admin/staff role
     if (!['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
-        throw error(403, 'Access denied');
+        return error(403, 'Access denied');
     }
 
     // Get organizations for selection
@@ -68,13 +68,13 @@ function generateTicketNumber(): string {
 }
 
 export const actions: Actions = {
-    default: async ({ request, locals }) => {
+    createTicket: async ({ request, locals }) => {
         if (!locals.user || !locals.profile) {
-            throw redirect(302, '/auth/login');
+            return redirect(302, '/auth/login');
         }
 
         if (!['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
-            throw error(403, 'Access denied');
+            return fail(403, { error: 'Access denied' });
         }
 
         const formData = await request.formData();
@@ -147,9 +147,6 @@ export const actions: Actions = {
 
             return redirect(303, `/admin/tickets/${newTicket.id}`);
         } catch (err) {
-            // Re-throw redirect errors
-            if (err && typeof err === 'object' && 'status' in err && 'location' in err) throw err;
-
             console.error('Error creating ticket:', err);
             return fail(500, {
                 error: 'Failed to create ticket. Please try again.',

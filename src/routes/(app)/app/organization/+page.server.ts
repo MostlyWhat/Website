@@ -92,7 +92,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
                 usedCount: number;
                 createdAt: Date;
             }> = [];
-            
+
             if (['owner', 'admin'].includes(org.memberRole)) {
                 invites = await db
                     .select({
@@ -122,8 +122,8 @@ export const load: PageServerLoad = async ({ locals, url }) => {
     );
 
     // Determine selected organization
-    const selectedOrg = selectedOrgId 
-        ? orgsWithDetails.find(o => o.id === selectedOrgId) 
+    const selectedOrg = selectedOrgId
+        ? orgsWithDetails.find(o => o.id === selectedOrgId)
         : orgsWithDetails[0] || null;
 
     return {
