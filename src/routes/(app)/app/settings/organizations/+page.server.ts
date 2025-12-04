@@ -12,7 +12,7 @@ import { eq, and, count, inArray } from 'drizzle-orm';
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.session || !locals.profile) {
-        redirect(303, '/auth/login');
+        throw redirect(303, '/auth/login');
     }
 
     // Get user's organizations with their role

@@ -342,6 +342,58 @@ export const actions: Actions = {
         await organizationActivity.roleUpdated(params.id, org?.name ?? 'Unknown', user?.email ?? 'Unknown', currentMember?.role ?? 'Unknown', role, locals.profile.id, getClientIp(request));
 
         return { success: true, message: 'Role updated' };
+    },
+
+    addMember: async ({ request, params, locals }) => {
+        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+            return fail(403, { error: 'Access denied' });
+        }
+
+        const formData = await request.formData();
+        const email = formData.get('email') as string;
+        const role = (formData.get('role') as string) || 'member';
+
+        if (!email || !email.includes('@')) {
+            return fail(400, { error: 'Please provide a valid email address' });
+        }
+
+        // Find the user by email
+        const [user] = await db
+            .select({ id: profiles.id, email: profiles.email })
+            .from(profiles)
+            .where(eq(profiles.email, email.trim().toLowerCase()));
+
+        if (!user) {
+            return fail(404, { error: 'No user found with this email. They must have an account first.' });
+        }
+
+        // Check if already a member
+        const [existing] = await db
+            .select()
+            .from(organizationMembers)
+            .where(
+                and(
+                    eq(organizationMembers.profileId, user.id),
+                    eq(organizationMembers.organizationId, params.id)
+                )
+            );
+
+        if (existing) {
+            return fail(400, { error: 'This user is already a member of this organization' });
+        }
+
+        // Add the member
+        await db.insert(organizationMembers).values({
+            organizationId: params.id,
+            profileId: user.id,
+            role
+        });
+
+        // Log activity
+        const [org] = await db.select({ name: organizations.name }).from(organizations).where(eq(organizations.id, params.id));
+        await organizationActivity.memberAdded(params.id, org?.name ?? 'Unknown', user.email, role, locals.profile.id, getClientIp(request));
+
+        return { success: true, message: `${user.email} has been added to the organization` };
     }
 };
 

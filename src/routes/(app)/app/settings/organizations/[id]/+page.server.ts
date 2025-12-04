@@ -20,7 +20,7 @@ import crypto from 'node:crypto';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
     if (!locals.session || !locals.profile) {
-        redirect(303, '/auth/login');
+        throw redirect(303, '/auth/login');
     }
 
     // Check if user is member of this organization with admin/owner role

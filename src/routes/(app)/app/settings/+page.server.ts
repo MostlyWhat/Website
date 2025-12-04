@@ -1,4 +1,4 @@
-import { fail, redirect, isRedirect } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { createServiceRoleClient } from '$lib/server/supabase';
 
@@ -103,11 +103,10 @@ export const actions: Actions = {
             cookies.delete('sb-refresh-token', { path: '/' });
 
             // Redirect to home page
-            redirect(303, '/?accountDeleted=true');
+            return redirect(303, '/?accountDeleted=true');
         } catch (err) {
-            if (isRedirect(err)) {
-                throw err;
-            }
+            // Re-throw redirect errors
+            if (err && typeof err === 'object' && 'status' in err && 'location' in err) throw err;
             console.error('Account deletion exception:', err);
             return fail(500, { error: 'An unexpected error occurred. Please contact support.' });
         }

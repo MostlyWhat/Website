@@ -13,7 +13,7 @@ import crypto from 'node:crypto';
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.session || !locals.profile) {
-        redirect(303, '/auth/login');
+        throw redirect(303, '/auth/login');
     }
 
     return {};
@@ -79,13 +79,10 @@ export const actions: Actions = {
                 role: 'owner'
             });
 
-            redirect(303, '/app/settings/organizations');
+            return redirect(303, '/app/settings/organizations');
         } catch (err) {
-            // Handle redirect
-            const { isRedirect } = await import('@sveltejs/kit');
-            if (isRedirect(err)) {
-                throw err;
-            }
+            // Re-throw redirect errors
+            if (err && typeof err === 'object' && 'status' in err && 'location' in err) throw err;
 
             console.error('Create organization error:', err);
             return fail(500, { error: 'Failed to create organization', name, email, phone, website });

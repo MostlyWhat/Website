@@ -33,11 +33,11 @@ export const actions: Actions = {
 
             // If user hasn't completed onboarding, redirect there
             if (!profile.onboardingCompleted) {
-                redirect(303, '/onboarding');
+                return redirect(303, '/onboarding');
             }
         }
 
-        redirect(303, redirectTo);
+        return redirect(303, redirectTo);
     },
 
     /**

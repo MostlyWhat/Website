@@ -8,7 +8,7 @@ import { logActivity } from '$lib/server/activity-logger';
 export const load: PageServerLoad = async ({ locals }) => {
     // Only super_admin can manage announcements
     if (locals.profile?.role !== 'super_admin' && locals.profile?.role !== 'admin') {
-        redirect(303, '/admin');
+        throw redirect(303, '/admin');
     }
 
     const [allAnnouncements, allProfiles, allStaffGroups, allOrganizations] = await Promise.all([

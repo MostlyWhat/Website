@@ -58,7 +58,7 @@ export const actions: Actions = {
                 console.error('Failed to create profile:', profileError);
                 return fail(500, { error: 'Account created but profile setup failed. Please try logging in.' });
             }
-            redirect(303, '/onboarding');
+            return redirect(303, '/onboarding');
         }
 
         return {

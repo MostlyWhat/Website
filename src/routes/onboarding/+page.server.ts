@@ -19,7 +19,7 @@ function generateSlug(name: string): string {
 export const actions = {
     default: async ({ request, locals }: RequestEvent) => {
         if (!locals.user) {
-            redirect(303, '/auth/login');
+            return fail(401, { error: 'You must be logged in' });
         }
 
         const formData = await request.formData();
@@ -88,7 +88,7 @@ export const actions = {
                 ? '/admin'
                 : '/app';
 
-            redirect(303, redirectTo);
+            return redirect(303, redirectTo);
         } catch (error) {
             // Re-throw redirects - they're not errors
             if (isRedirect(error)) {

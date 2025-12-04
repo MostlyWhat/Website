@@ -59,7 +59,7 @@ async function createPersonalOrganization(profileId: string, userEmail: string, 
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user || !locals.profile) {
-        redirect(302, '/auth/login?redirectTo=/app/projects/new');
+        throw redirect(302, '/auth/login?redirectTo=/app/projects/new');
     }
 
     // Get user's organizations

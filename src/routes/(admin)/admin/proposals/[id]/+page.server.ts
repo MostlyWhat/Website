@@ -17,7 +17,7 @@ import { env } from '$env/dynamic/private';
 export const load: PageServerLoad = async ({ params, locals }) => {
     // Verify admin/staff role
     if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
-        redirect(303, '/admin');
+        throw redirect(303, '/admin');
     }
 
     // Aliases for profiles
@@ -293,9 +293,9 @@ export const actions: Actions = {
                 .delete(proposals)
                 .where(eq(proposals.id, params.id));
 
-            redirect(303, '/admin/proposals');
+            return redirect(303, '/admin/proposals');
         } catch (err) {
-            if ((err as { status?: number }).status === 303) throw err;
+            if (err && typeof err === 'object' && 'status' in err && 'location' in err) throw err;
             console.error('Delete proposal error:', err);
             return fail(500, { error: 'Failed to delete proposal' });
         }

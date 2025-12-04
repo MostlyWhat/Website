@@ -18,7 +18,7 @@ function generateSlug(name: string): string {
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user) {
-        redirect(303, '/auth/login?redirectTo=/app/organization');
+        throw redirect(303, '/auth/login?redirectTo=/app/organization');
     }
 
     // Fetch user's organizations with member details
@@ -74,7 +74,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 export const actions: Actions = {
     createOrganization: async ({ request, locals }) => {
         if (!locals.user) {
-            redirect(303, '/auth/login');
+            return fail(401, { error: 'You must be logged in' });
         }
 
         const formData = await request.formData();

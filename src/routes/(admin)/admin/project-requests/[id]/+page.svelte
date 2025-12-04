@@ -98,7 +98,7 @@
 		<div class="flex flex-wrap items-start justify-between gap-4">
 			<div>
 				<a
-					href="/admin/project-requests"
+					href="/admin/projects?tab=requests"
 					class="group inline-flex items-center gap-2 text-muted-foreground transition-colors hover:text-foreground"
 				>
 					<ArrowLeft class="h-4 w-4 transition-transform group-hover:-translate-x-1" />

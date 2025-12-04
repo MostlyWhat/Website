@@ -272,13 +272,10 @@ export const actions: Actions = {
             }
 
             // Redirect to the new ticket
-            redirect(303, `/app/tickets/${newTicket.id}`);
+            return redirect(303, `/app/tickets/${newTicket.id}`);
         } catch (err) {
-            // Handle redirect - use isRedirect pattern
-            const { isRedirect } = await import('@sveltejs/kit');
-            if (isRedirect(err)) {
-                throw err;
-            }
+            // Re-throw redirect errors
+            if (err && typeof err === 'object' && 'status' in err && 'location' in err) throw err;
 
             console.error('Ticket creation exception:', err);
             return fail(500, {

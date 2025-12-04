@@ -4,7 +4,7 @@ import type { LayoutServerLoad } from './$types';
 export const load: LayoutServerLoad = async ({ locals }) => {
     // Require authentication
     if (!locals.user) {
-        redirect(303, '/auth/login?redirectTo=/onboarding');
+        throw redirect(303, '/auth/login?redirectTo=/onboarding');
     }
 
     // If onboarding is already complete, redirect to app
@@ -12,7 +12,7 @@ export const load: LayoutServerLoad = async ({ locals }) => {
         const redirectTo = locals.profile.role === 'super_admin' || locals.profile.role === 'admin' || locals.profile.role === 'staff'
             ? '/admin'
             : '/app';
-        redirect(303, redirectTo);
+        throw redirect(303, redirectTo);
     }
 
     return {

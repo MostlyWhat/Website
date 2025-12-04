@@ -2,6 +2,7 @@ import { db } from '$lib/server/db';
 import { projectRequests, profiles, organizations, projects } from '$lib/server/db/schema';
 import { eq, desc, sql } from 'drizzle-orm';
 import { fail, redirect, error } from '@sveltejs/kit';
+import { projectRequestActivity, getClientIp } from '$lib/server/activity-logger';
 import type { PageServerLoad, Actions } from './$types';
 
 // Generate project number like PRJ-YYYY-XXXXX
@@ -29,7 +30,7 @@ async function generateProjectNumber(): Promise<string> {
 
 export const load: PageServerLoad = async ({ params, locals }) => {
     if (!locals.user || !locals.profile || !['super_admin', 'admin', 'staff'].includes(locals.profile.role ?? '')) {
-        redirect(302, '/auth/login');
+        throw redirect(302, '/auth/login');
     }
 
     const requestId = params.id;
@@ -131,6 +132,12 @@ export const actions: Actions = {
         }
 
         try {
+            // Get current status for logging
+            const [currentRequest] = await db
+                .select({ status: projectRequests.status, title: projectRequests.title })
+                .from(projectRequests)
+                .where(eq(projectRequests.id, params.id));
+
             await db
                 .update(projectRequests)
                 .set({
@@ -142,9 +149,19 @@ export const actions: Actions = {
                 })
                 .where(eq(projectRequests.id, params.id));
 
+            // Log activity
+            await projectRequestActivity.statusChanged(
+                params.id,
+                currentRequest?.title ?? 'Unknown',
+                currentRequest?.status ?? 'unknown',
+                status,
+                locals.profile.id,
+                getClientIp(request)
+            );
+
             return { success: true, message: `Request status updated to ${status}` };
-        } catch (error) {
-            console.error('Failed to update request status:', error);
+        } catch (err) {
+            console.error('Failed to update request status:', err);
             return fail(500, { error: 'Failed to update request status' });
         }
     },
@@ -209,9 +226,20 @@ export const actions: Actions = {
                 })
                 .where(eq(projectRequests.id, params.id));
 
-            redirect(303, `/admin/projects/${newProject.id}`);
+            // Log activity
+            await projectRequestActivity.converted(
+                params.id,
+                projectRequest.title,
+                newProject.id,
+                name,
+                locals.profile.id,
+                getClientIp(request)
+            );
+
+            return redirect(303, `/admin/projects/${newProject.id}`);
         } catch (err) {
-            if (err instanceof Response) throw err; // Re-throw redirects
+            // Re-throw redirect errors
+            if (err && typeof err === 'object' && 'status' in err && 'location' in err) throw err;
             console.error('Failed to convert request to project:', err);
             return fail(500, { error: 'Failed to convert request to project' });
         }

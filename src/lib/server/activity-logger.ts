@@ -8,7 +8,7 @@ import { activityLog } from '$lib/server/db/schema';
 import type { ActivityType } from '$lib/server/db/schema';
 
 // Extended entity types for logging (not all are in the DB enum)
-type EntityType = 'ticket' | 'project' | 'proposal' | 'invoice' | 'organization' | 'user' | 'announcement' | 'sla_policy' | 'canned_response' | 'settings' | 'staff_group';
+type EntityType = 'ticket' | 'project' | 'project_request' | 'proposal' | 'invoice' | 'organization' | 'user' | 'announcement' | 'sla_policy' | 'canned_response' | 'settings' | 'staff_group';
 
 export interface LogActivityOptions {
     entityType: EntityType;
@@ -400,6 +400,79 @@ export const projectActivity = {
             description: `Project "${name}" updated: ${changedFields}`,
             previousValues: Object.fromEntries(Object.entries(changes).map(([k, v]) => [k, v.old])),
             newValues: Object.fromEntries(Object.entries(changes).map(([k, v]) => [k, v.new])),
+            performedById,
+            ipAddress
+        });
+    }
+};
+
+/**
+ * Log project request-related activities
+ */
+export const projectRequestActivity = {
+    async created(requestId: string, title: string, performedById: string, ipAddress?: string) {
+        await logActivity({
+            entityType: 'project_request',
+            entityId: requestId,
+            activityType: 'created',
+            description: `Project request "${title}" was submitted`,
+            performedById,
+            ipAddress
+        });
+    },
+
+    async statusChanged(
+        requestId: string,
+        title: string,
+        oldStatus: string,
+        newStatus: string,
+        performedById: string,
+        ipAddress?: string
+    ) {
+        await logActivity({
+            entityType: 'project_request',
+            entityId: requestId,
+            activityType: 'status_changed',
+            description: `Project request "${title}" status changed from ${oldStatus} to ${newStatus}`,
+            previousValues: { status: oldStatus },
+            newValues: { status: newStatus },
+            performedById,
+            ipAddress
+        });
+    },
+
+    async converted(
+        requestId: string,
+        title: string,
+        projectId: string,
+        projectName: string,
+        performedById: string,
+        ipAddress?: string
+    ) {
+        await logActivity({
+            entityType: 'project_request',
+            entityId: requestId,
+            activityType: 'approved',
+            description: `Project request "${title}" was converted to project "${projectName}"`,
+            newValues: { projectId, projectName },
+            performedById,
+            ipAddress
+        });
+    },
+
+    async reviewed(
+        requestId: string,
+        title: string,
+        notes: string | null,
+        performedById: string,
+        ipAddress?: string
+    ) {
+        await logActivity({
+            entityType: 'project_request',
+            entityId: requestId,
+            activityType: 'updated',
+            description: `Project request "${title}" was reviewed`,
+            newValues: { reviewNotes: notes },
             performedById,
             ipAddress
         });

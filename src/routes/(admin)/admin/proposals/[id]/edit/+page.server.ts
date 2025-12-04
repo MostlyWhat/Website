@@ -15,7 +15,7 @@ import { proposalActivity, getClientIp } from '$lib/server/activity-logger';
 export const load: PageServerLoad = async ({ params, locals }) => {
     // Verify admin/staff role
     if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
-        redirect(303, '/admin');
+        throw redirect(303, '/admin');
     }
 
     // Fetch the proposal
@@ -181,9 +181,10 @@ export const actions: Actions = {
                 getClientIp(request)
             );
 
-            redirect(303, `/admin/proposals/${params.id}`);
+            return redirect(303, `/admin/proposals/${params.id}`);
         } catch (err) {
-            if ((err as { status?: number }).status === 303) throw err; // Re-throw redirect
+            // Re-throw redirect errors
+            if (err && typeof err === 'object' && 'status' in err && 'location' in err) throw err;
             console.error('Update proposal error:', err);
             return fail(500, { error: 'Failed to update proposal' });
         }
