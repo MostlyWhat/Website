@@ -159,8 +159,12 @@ export const actions: Actions = {
                 })
                 .returning({ id: projectRequests.id });
 
-            redirect(303, `/app/projects/requests/${newRequest.id}?success=true`);
+            return redirect(303, `/app/projects/requests/${newRequest.id}?success=true`);
         } catch (error) {
+            // Re-throw redirect errors
+            if (error && typeof error === 'object' && 'status' in error && 'location' in error) {
+                throw error;
+            }
             console.error('Failed to create project request:', error);
             return fail(500, { error: 'Failed to submit project request. Please try again.' });
         }

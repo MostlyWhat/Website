@@ -38,7 +38,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
         const ticketStatsResult = await db
             .select({
                 total: count(),
-                open: sql<number>`count(*) filter (where ${tickets.status} in ('open', 'pending'))`,
+                open: sql<number>`count(*) filter (where ${tickets.status} in ('open', 'in_progress', 'awaiting_customer', 'awaiting_staff'))`,
                 resolved: sql<number>`count(*) filter (where ${tickets.status} = 'resolved')`,
                 closed: sql<number>`count(*) filter (where ${tickets.status} = 'closed')`
             })

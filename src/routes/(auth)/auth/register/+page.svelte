@@ -15,7 +15,6 @@
 
 	let { form } = $props();
 
-	let fullName = $state('');
 	let email = $state('');
 	let password = $state('');
 	let confirmPassword = $state('');
@@ -161,22 +160,6 @@
 					class="space-y-6"
 				>
 					<input type="hidden" name="redirectTo" value={redirectTo} />
-
-					<div class="space-y-2">
-						<Label for="fullName" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-							FULL NAME
-						</Label>
-						<Input
-							id="fullName"
-							name="fullName"
-							type="text"
-							autocomplete="name"
-							required
-							bind:value={fullName}
-							placeholder="John Doe"
-							class="h-12 border-border bg-card px-4 font-body placeholder:text-muted-foreground/50"
-						/>
-					</div>
 
 					<div class="space-y-2">
 						<Label for="email" class="font-mono text-[10px] tracking-widest text-muted-foreground">
