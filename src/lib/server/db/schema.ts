@@ -1176,6 +1176,57 @@ export const systemSettingsRelations = relations(systemSettings, ({ one }) => ({
 }));
 
 // =============================================================================
+// SUPPORT ARTICLES TABLE
+// =============================================================================
+// Knowledge base articles for users and admins
+
+export const supportArticleAudienceEnum = pgEnum('support_article_audience', ['user', 'admin', 'all']);
+
+export const supportArticles = pgTable('support_articles', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	
+	// URL-friendly identifier
+	slug: text('slug').notNull().unique(),
+	
+	// Content
+	title: text('title').notNull(),
+	excerpt: text('excerpt'), // Short summary for listings
+	content: text('content').notNull(), // Markdown content
+	
+	// Categorization
+	category: text('category').notNull(), // e.g., 'getting-started', 'account', 'projects', 'billing'
+	tags: jsonb('tags').$type<string[]>().default([]),
+	
+	// Access control
+	audience: supportArticleAudienceEnum('audience').default('user').notNull(),
+	isPublished: boolean('is_published').default(false).notNull(),
+	isFeatured: boolean('is_featured').default(false).notNull(),
+	
+	// Search & ranking
+	sortOrder: integer('sort_order').default(0).notNull(),
+	viewCount: integer('view_count').default(0).notNull(),
+	helpfulCount: integer('helpful_count').default(0).notNull(),
+	notHelpfulCount: integer('not_helpful_count').default(0).notNull(),
+	
+	// Author
+	authorId: uuid('author_id')
+		.notNull()
+		.references(() => profiles.id, { onDelete: 'cascade' }),
+	
+	// Metadata
+	publishedAt: timestamp('published_at', { withTimezone: true }),
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+}).enableRLS();
+
+export const supportArticlesRelations = relations(supportArticles, ({ one }) => ({
+	author: one(profiles, {
+		fields: [supportArticles.authorId],
+		references: [profiles.id]
+	})
+}));
+
+// =============================================================================
 // TYPES EXPORT
 // =============================================================================
 
@@ -1236,6 +1287,9 @@ export type NewSlaOrganizationAssignment = typeof slaOrganizationAssignments.$in
 export type SystemSetting = typeof systemSettings.$inferSelect;
 export type NewSystemSetting = typeof systemSettings.$inferInsert;
 
+export type SupportArticle = typeof supportArticles.$inferSelect;
+export type NewSupportArticle = typeof supportArticles.$inferInsert;
+
 export type ProjectRevision = typeof projectRevisions.$inferSelect;
 export type NewProjectRevision = typeof projectRevisions.$inferInsert;
 
@@ -1251,4 +1305,4 @@ export type InvoiceStatus = typeof invoiceStatusEnum.enumValues[number];
 export type TicketStatus = typeof ticketStatusEnum.enumValues[number];
 export type TicketPriority = typeof ticketPriorityEnum.enumValues[number];
 export type ActivityType = typeof activityTypeEnum.enumValues[number];
-
+export type SupportArticleAudience = typeof supportArticleAudienceEnum.enumValues[number];

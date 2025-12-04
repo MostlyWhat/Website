@@ -1,7 +1,8 @@
 import { db } from '$lib/server/db';
-import { projectRequests, organizationMembers, organizations } from '$lib/server/db/schema';
+import { projectRequests, organizationMembers, organizations, profiles } from '$lib/server/db/schema';
 import { eq, desc, sql } from 'drizzle-orm';
 import { fail, redirect } from '@sveltejs/kit';
+import { generateOrgNumber } from '$lib/server/id-generator';
 import type { PageServerLoad, Actions } from './$types';
 
 // Generate request number like REQ-YYYY-XXXXX
@@ -28,13 +29,41 @@ async function generateRequestNumber(): Promise<string> {
     return `${prefix}${String(nextNum).padStart(5, '0')}`;
 }
 
+// Create a personal organization for the user
+async function createPersonalOrganization(profileId: string, userEmail: string, displayName: string): Promise<string> {
+    const orgNumber = await generateOrgNumber();
+    const personalOrgName = `${displayName}'s Workspace`;
+    const slug = `personal-${profileId.slice(0, 8)}-${Date.now().toString(36)}`;
+
+    const [newOrg] = await db
+        .insert(organizations)
+        .values({
+            orgNumber,
+            name: personalOrgName,
+            slug,
+            description: 'Personal workspace for individual projects',
+            customerType: 'personal',
+            email: userEmail
+        })
+        .returning();
+
+    // Add user as owner
+    await db.insert(organizationMembers).values({
+        organizationId: newOrg.id,
+        profileId,
+        role: 'owner'
+    });
+
+    return newOrg.id;
+}
+
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user || !locals.profile) {
         redirect(302, '/auth/login?redirectTo=/app/projects/new');
     }
 
     // Get user's organizations
-    const userOrgs = await db
+    let userOrgs = await db
         .select({
             id: organizations.id,
             name: organizations.name
@@ -43,8 +72,27 @@ export const load: PageServerLoad = async ({ locals }) => {
         .innerJoin(organizations, eq(organizationMembers.organizationId, organizations.id))
         .where(eq(organizationMembers.profileId, locals.profile.id));
 
+    // For personal accounts with no organization, auto-create one
+    const isPersonalAccount = locals.profile.preferences?.accountType === 'personal';
+    
+    if (userOrgs.length === 0 && isPersonalAccount) {
+        const displayName = locals.profile.displayName || `${locals.profile.firstName} ${locals.profile.lastName}`.trim() || 'User';
+        const newOrgId = await createPersonalOrganization(locals.profile.id, locals.user.email ?? '', displayName);
+        
+        // Refetch organizations
+        userOrgs = await db
+            .select({
+                id: organizations.id,
+                name: organizations.name
+            })
+            .from(organizationMembers)
+            .innerJoin(organizations, eq(organizationMembers.organizationId, organizations.id))
+            .where(eq(organizationMembers.profileId, locals.profile.id));
+    }
+
     return {
-        organizations: userOrgs
+        organizations: userOrgs,
+        isPersonalAccount
     };
 };
 

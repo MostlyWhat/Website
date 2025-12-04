@@ -6,6 +6,7 @@
 	 */
 	import { page } from '$app/state';
 	import { localizeHref } from '$lib/paraglide/runtime';
+	import { onMount } from 'svelte';
 	import {
 		LayoutDashboard,
 		FolderKanban,
@@ -21,9 +22,13 @@
 		ChevronRight,
 		Shield,
 		Megaphone,
-		Building2
+		Building2,
+		HelpCircle,
+		Sparkles
 	} from '@lucide/svelte';
 	import * as Sheet from '$lib/components/ui/sheet';
+	import TutorialOverlay from '$lib/components/layout/TutorialOverlay.svelte';
+	import { tutorialStore } from '$lib/stores/tutorial.svelte';
 
 	let { children, data } = $props();
 	let mobileMenuOpen = $state(false);
@@ -39,6 +44,7 @@
 	// Check if user has organizations
 	const hasOrganizations = $derived((data.userOrganizations ?? []).length > 0);
 	const isOrganizationAccount = $derived(data.profile?.preferences?.accountType === 'organization');
+	const isPersonalAccount = $derived(data.profile?.preferences?.accountType === 'personal');
 
 	// Active announcements (filter out dismissed ones)
 	const visibleAnnouncements = $derived(
@@ -51,14 +57,30 @@
 
 	// Build navigation dynamically based on account type
 	const navigation = $derived([
-		{ href: '/app', label: 'DASHBOARD', icon: LayoutDashboard, exact: true },
-		{ href: '/app/projects', label: 'PROJECTS', icon: FolderKanban },
-		...(hasOrganizations || isOrganizationAccount ? [{ href: '/app/organization', label: 'ORGANIZATION', icon: Building2 }] : []),
-		{ href: '/app/proposals', label: 'PROPOSALS', icon: FileText },
-		{ href: '/app/invoices', label: 'INVOICES', icon: Receipt },
-		{ href: '/app/tickets', label: 'TICKETS', icon: Ticket },
-		{ href: '/app/settings', label: 'SETTINGS', icon: Settings }
+		{ href: '/app', label: 'DASHBOARD', icon: LayoutDashboard, exact: true, tutorialId: 'dashboard-link' },
+		{ href: '/app/projects', label: 'PROJECTS', icon: FolderKanban, tutorialId: 'projects-link' },
+		{ href: '/app/organization', label: isPersonalAccount ? 'WORKSPACE' : 'ORGANIZATION', icon: Building2, tutorialId: 'org-link' },
+		{ href: '/app/proposals', label: 'PROPOSALS', icon: FileText, tutorialId: 'proposals-link' },
+		{ href: '/app/invoices', label: 'INVOICES', icon: Receipt, tutorialId: 'invoices-link' },
+		{ href: '/app/tickets', label: 'TICKETS', icon: Ticket, tutorialId: 'tickets-link' },
+		{ href: '/app/help', label: 'HELP CENTER', icon: HelpCircle, tutorialId: 'help-link' },
+		{ href: '/app/settings', label: 'SETTINGS', icon: Settings, tutorialId: 'settings-link' }
 	]);
+
+	// Start tutorial for new users
+	onMount(() => {
+		// Check if user has completed onboarding recently and hasn't seen the tutorial
+		if (data.profile?.onboardingCompleted && !tutorialStore.isCompleted('app-intro')) {
+			// Small delay to let the page render first
+			setTimeout(() => {
+				tutorialStore.start('app-intro');
+			}, 500);
+		}
+	});
+
+	function startTutorial() {
+		tutorialStore.start('app-intro');
+	}
 
 	function isActive(href: string, exact?: boolean): boolean {
 		if (exact) {
@@ -68,22 +90,34 @@
 	}
 </script>
 
+<!-- Tutorial Overlay -->
+<TutorialOverlay />
+
 <div class="flex h-screen overflow-hidden bg-background">
 	<!-- Desktop Sidebar -->
-	<aside class="hidden w-72 flex-shrink-0 border-r border-border bg-card lg:flex lg:flex-col overflow-hidden">
+	<aside class="hidden w-72 flex-shrink-0 border-r border-border bg-card lg:flex lg:flex-col overflow-hidden" data-tutorial="sidebar">
 		<!-- Logo -->
-		<div class="flex h-16 items-center border-b border-border px-6">
+		<div class="flex h-16 items-center justify-between border-b border-border px-6">
 			<a href={localizeHref('/')} class="group flex items-center gap-2">
 				<span class="font-display text-sm font-black uppercase tracking-wider text-primary">MOSTLYWHAT</span>
 				<span class="font-mono text-[10px] tracking-wider text-muted-foreground">// PORTAL</span>
 			</a>
+			<!-- Tutorial Button -->
+			<button
+				onclick={startTutorial}
+				class="flex h-8 w-8 items-center justify-center border border-border bg-background transition-colors hover:bg-card hover:border-primary"
+				title="Start tutorial"
+			>
+				<Sparkles class="h-3.5 w-3.5 text-muted-foreground hover:text-primary" />
+			</button>
 		</div>
 
 		<!-- Navigation -->
 		<nav class="flex-1 overflow-y-auto border-b border-border">
-			{#each navigation as { href, label, icon: Icon, exact }}
+			{#each navigation as { href, label, icon: Icon, exact, tutorialId }}
 				<a
 					{href}
+					data-tutorial={tutorialId}
 					class="group flex items-center gap-4 border-b border-border px-6 py-4 transition-colors {isActive(href, exact)
 						? 'bg-primary/10 text-primary'
 						: 'text-muted-foreground hover:bg-card hover:text-foreground'}"

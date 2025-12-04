@@ -25,7 +25,8 @@
 		Shield,
 		MessageSquareText,
 		Clock,
-		Activity
+		Activity,
+		BookOpen
 	} from '@lucide/svelte';
 	import * as Sheet from '$lib/components/ui/sheet';
 
@@ -48,6 +49,7 @@
 		{ href: '/admin/users', label: 'USERS', icon: Users },
 		{ href: '/admin/sla-policies', label: 'SLA POLICIES', icon: Clock },
 		{ href: '/admin/canned-responses', label: 'TEMPLATES', icon: MessageSquareText },
+		{ href: '/admin/knowledge-base', label: 'KNOWLEDGE BASE', icon: BookOpen },
 		{ href: '/admin/activity-log', label: 'ACTIVITY', icon: Activity, adminOnly: true },
 		{ href: '/admin/settings', label: 'SYSTEM', icon: Settings, adminOnly: true }
 	];

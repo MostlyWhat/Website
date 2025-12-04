@@ -127,14 +127,16 @@
 							<div class="flex items-center gap-3 border border-border bg-card/50 p-4">
 								<Building2 class="h-5 w-5 text-muted-foreground" />
 								<div>
-									<p class="font-mono text-[10px] tracking-widest text-muted-foreground">ORGANIZATION</p>
+									<p class="font-mono text-[10px] tracking-widest text-muted-foreground">
+										{data.isPersonalAccount ? 'PERSONAL WORKSPACE' : 'ORGANIZATION'}
+									</p>
 									<p class="font-body text-sm">{data.organizations[0].name}</p>
 								</div>
 							</div>
 						{:else}
-							<div class="border border-destructive/30 bg-destructive/5 p-6">
-								<p class="font-body text-sm text-destructive">
-									You must belong to an organization to submit a project request.
+							<div class="border border-amber-500/30 bg-amber-500/5 p-6">
+								<p class="font-body text-sm text-amber-600">
+									Setting up your workspace... Please refresh the page or <a href="/app/organization" class="underline">create an organization</a>.
 								</p>
 							</div>
 						{/if}
