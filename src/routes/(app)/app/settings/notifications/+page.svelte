@@ -5,7 +5,7 @@
 	 * Manage notification preferences
 	 */
 	import { enhance } from '$app/forms';
-	import { Bell, Mail, Loader2, Check, AlertTriangle } from '@lucide/svelte';
+	import { Bell, Mail, Loader2, Check, AlertTriangle, Ticket, FolderKanban, Receipt, Megaphone } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Switch } from '$lib/components/ui/switch';
 
@@ -69,14 +69,14 @@
 			loading = true;
 			return handleSubmit();
 		}}
-		class="mt-8 max-w-xl space-y-6"
+		class="mt-8 max-w-2xl space-y-6"
 	>
 		<!-- Email Notifications Master Toggle -->
-		<div class="border border-border p-6">
-			<div class="flex items-center justify-between gap-4">
+		<div class="border border-border bg-card">
+			<div class="flex items-center justify-between gap-4 p-6">
 				<div class="flex items-center gap-4">
-					<div class="flex h-10 w-10 items-center justify-center border border-border bg-card">
-						<Mail class="h-4 w-4 text-muted-foreground" />
+					<div class="flex h-12 w-12 items-center justify-center border border-border bg-background">
+						<Mail class="h-5 w-5 text-muted-foreground" />
 					</div>
 					<div>
 						<p class="font-ui text-sm font-semibold tracking-wider">Email Notifications</p>
@@ -90,38 +90,62 @@
 
 		<!-- Individual Notification Types -->
 		{#if emailNotifications}
-			<div class="space-y-4 pl-6 border-l border-border ml-5">
-				<div class="flex items-center justify-between gap-4">
-					<div>
-						<p class="font-ui text-sm tracking-wider">Ticket Updates</p>
-						<p class="font-body text-xs text-muted-foreground">New replies and status changes</p>
+			<div class="border border-border bg-card divide-y divide-border">
+				<div class="px-4 py-3 bg-muted/30">
+					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">NOTIFICATION TYPES</span>
+				</div>
+				
+				<div class="flex items-center justify-between gap-4 p-4">
+					<div class="flex items-center gap-3">
+						<div class="flex h-8 w-8 items-center justify-center border border-border bg-background">
+							<Ticket class="h-4 w-4 text-muted-foreground" />
+						</div>
+						<div>
+							<p class="font-ui text-sm tracking-wider">Ticket Updates</p>
+							<p class="font-body text-xs text-muted-foreground">New replies and status changes</p>
+						</div>
 					</div>
 					<Switch bind:checked={ticketUpdates} />
 					<input type="hidden" name="ticketUpdates" value={ticketUpdates ? 'true' : 'false'} />
 				</div>
 
-				<div class="flex items-center justify-between gap-4">
-					<div>
-						<p class="font-ui text-sm tracking-wider">Project Updates</p>
-						<p class="font-body text-xs text-muted-foreground">Progress and milestone notifications</p>
+				<div class="flex items-center justify-between gap-4 p-4">
+					<div class="flex items-center gap-3">
+						<div class="flex h-8 w-8 items-center justify-center border border-border bg-background">
+							<FolderKanban class="h-4 w-4 text-muted-foreground" />
+						</div>
+						<div>
+							<p class="font-ui text-sm tracking-wider">Project Updates</p>
+							<p class="font-body text-xs text-muted-foreground">Progress and milestone notifications</p>
+						</div>
 					</div>
 					<Switch bind:checked={projectUpdates} />
 					<input type="hidden" name="projectUpdates" value={projectUpdates ? 'true' : 'false'} />
 				</div>
 
-				<div class="flex items-center justify-between gap-4">
-					<div>
-						<p class="font-ui text-sm tracking-wider">Invoice Reminders</p>
-						<p class="font-body text-xs text-muted-foreground">Payment due dates and receipts</p>
+				<div class="flex items-center justify-between gap-4 p-4">
+					<div class="flex items-center gap-3">
+						<div class="flex h-8 w-8 items-center justify-center border border-border bg-background">
+							<Receipt class="h-4 w-4 text-muted-foreground" />
+						</div>
+						<div>
+							<p class="font-ui text-sm tracking-wider">Invoice Reminders</p>
+							<p class="font-body text-xs text-muted-foreground">Payment due dates and receipts</p>
+						</div>
 					</div>
 					<Switch bind:checked={invoiceReminders} />
 					<input type="hidden" name="invoiceReminders" value={invoiceReminders ? 'true' : 'false'} />
 				</div>
 
-				<div class="flex items-center justify-between gap-4">
-					<div>
-						<p class="font-ui text-sm tracking-wider">Marketing</p>
-						<p class="font-body text-xs text-muted-foreground">News and promotional content</p>
+				<div class="flex items-center justify-between gap-4 p-4">
+					<div class="flex items-center gap-3">
+						<div class="flex h-8 w-8 items-center justify-center border border-border bg-background">
+							<Megaphone class="h-4 w-4 text-muted-foreground" />
+						</div>
+						<div>
+							<p class="font-ui text-sm tracking-wider">Marketing</p>
+							<p class="font-body text-xs text-muted-foreground">News and promotional content</p>
+						</div>
 					</div>
 					<Switch bind:checked={marketingEmails} />
 					<input type="hidden" name="marketingEmails" value={marketingEmails ? 'true' : 'false'} />

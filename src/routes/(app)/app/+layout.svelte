@@ -24,7 +24,10 @@
 		Megaphone,
 		Building2,
 		HelpCircle,
-		Sparkles
+		Sparkles,
+		Bell,
+		ArrowLeft,
+		ExternalLink
 	} from '@lucide/svelte';
 	import * as Sheet from '$lib/components/ui/sheet';
 	import TutorialOverlay from '$lib/components/layout/TutorialOverlay.svelte';
@@ -55,17 +58,37 @@
 		dismissedAnnouncements = [...dismissedAnnouncements, id];
 	}
 
-	// Build navigation dynamically based on account type
+	// Build navigation dynamically based on account type (Settings removed - accessible via profile section)
 	const navigation = $derived([
 		{ href: '/app', label: 'DASHBOARD', icon: LayoutDashboard, exact: true, tutorialId: 'dashboard-link' },
 		{ href: '/app/projects', label: 'PROJECTS', icon: FolderKanban, tutorialId: 'projects-link' },
 		{ href: '/app/organization', label: 'ORGANIZATION', icon: Building2, tutorialId: 'org-link' },
-		{ href: '/app/proposals', label: 'PROPOSALS', icon: FileText, tutorialId: 'proposals-link' },
 		{ href: '/app/invoices', label: 'INVOICES', icon: Receipt, tutorialId: 'invoices-link' },
 		{ href: '/app/tickets', label: 'TICKETS', icon: Ticket, tutorialId: 'tickets-link' },
-		{ href: '/app/help', label: 'HELP CENTER', icon: HelpCircle, tutorialId: 'help-link' },
-		{ href: '/app/settings', label: 'SETTINGS', icon: Settings, tutorialId: 'settings-link' }
+		{ href: '/app/help', label: 'HELP CENTER', icon: HelpCircle, tutorialId: 'help-link' }
 	]);
+
+	// Build breadcrumbs from URL
+	const breadcrumbs = $derived(() => {
+		const path = page.url.pathname;
+		const segments = path.split('/').filter(Boolean);
+		const crumbs: { href: string; label: string }[] = [];
+		
+		let currentPath = '';
+		for (const segment of segments) {
+			currentPath += '/' + segment;
+			const label = segment
+				.split('-')
+				.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+				.join(' ');
+			crumbs.push({ href: currentPath, label });
+		}
+		
+		return crumbs;
+	});
+
+	// Notifications popup state
+	let notificationsOpen = $state(false);
 
 	// Start tutorial for new users
 	onMount(() => {
@@ -286,15 +309,89 @@
 			</Sheet.Root>
 		</header>
 
-		<!-- Back to Main Site (Desktop) -->
-		<div class="hidden border-b border-border bg-card/50 px-6 py-2 lg:block">
-			<a href={localizeHref('/')} class="font-mono flex items-center gap-2 text-[10px] tracking-wider text-muted-foreground transition-colors hover:text-foreground">
-				<Home class="h-3 w-3" />
-				BACK TO MAIN SITE
-			</a>
+		<!-- Top Navigation Bar (Desktop) -->
+		<div class="hidden border-b border-border bg-card lg:block">
+			<div class="flex items-center justify-between px-6 py-2">
+				<!-- Left: Back + Breadcrumbs -->
+				<div class="flex items-center gap-4">
+					<a href={localizeHref('/')} class="flex items-center gap-2 text-muted-foreground transition-colors hover:text-foreground border border-border px-2 py-1 bg-background hover:bg-card">
+						<ArrowLeft class="h-3 w-3" />
+						<span class="font-mono text-[10px] tracking-wider">MAIN SITE</span>
+					</a>
+					<div class="h-4 w-px bg-border"></div>
+					<nav class="flex items-center gap-2">
+						{#each breadcrumbs() as crumb, i}
+							{#if i > 0}
+								<ChevronRight class="h-3 w-3 text-muted-foreground/50" />
+							{/if}
+							{#if i === breadcrumbs().length - 1}
+								<span class="font-mono text-[10px] tracking-wider text-foreground">{crumb.label}</span>
+							{:else}
+								<a 
+									href={crumb.href} 
+									class="font-mono text-[10px] tracking-wider text-muted-foreground hover:text-foreground transition-colors"
+								>
+									{crumb.label}
+								</a>
+							{/if}
+						{/each}
+					</nav>
+				</div>
+
+				<!-- Right: Notifications + Announcements indicator -->
+				<div class="flex items-center gap-2">
+					<!-- Announcements Badge -->
+					{#if visibleAnnouncements.length > 0}
+						<div class="flex items-center gap-2 border border-yellow-500/30 bg-yellow-500/10 px-2 py-1">
+							<Megaphone class="h-3 w-3 text-yellow-600 dark:text-yellow-400" />
+							<span class="font-mono text-[10px] tracking-wider text-yellow-600 dark:text-yellow-400">
+								{visibleAnnouncements.length} ANNOUNCEMENT{visibleAnnouncements.length > 1 ? 'S' : ''}
+							</span>
+						</div>
+					{/if}
+
+					<!-- Notifications Button -->
+					<div class="relative">
+						<button
+							onclick={() => notificationsOpen = !notificationsOpen}
+							class="flex h-8 w-8 items-center justify-center border border-border bg-background hover:bg-card transition-colors relative"
+						>
+							<Bell class="h-4 w-4 text-muted-foreground" />
+							<!-- Notification dot -->
+							<span class="absolute -top-1 -right-1 h-2 w-2 bg-primary rounded-full"></span>
+						</button>
+
+						<!-- Notifications Dropdown -->
+						{#if notificationsOpen}
+							<div class="absolute right-0 top-full mt-2 w-80 border border-border bg-card shadow-lg z-50">
+								<div class="flex items-center justify-between border-b border-border px-4 py-3">
+									<span class="font-mono text-[10px] tracking-widest text-muted-foreground">NOTIFICATIONS</span>
+									<button 
+										onclick={() => notificationsOpen = false}
+										class="text-muted-foreground hover:text-foreground"
+									>
+										<X class="h-4 w-4" />
+									</button>
+								</div>
+								<div class="max-h-80 overflow-auto">
+									<!-- Sample notifications - replace with real data -->
+									<div class="border-b border-border px-4 py-3 hover:bg-muted/50 transition-colors">
+										<p class="font-ui text-sm">No new notifications</p>
+										<p class="font-body text-xs text-muted-foreground mt-1">You're all caught up!</p>
+									</div>
+								</div>
+								<a href="/app/settings/notifications" class="flex items-center justify-center gap-2 border-t border-border px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors">
+									<span class="font-mono text-[10px] tracking-wider">NOTIFICATION SETTINGS</span>
+									<ExternalLink class="h-3 w-3" />
+								</a>
+							</div>
+						{/if}
+					</div>
+				</div>
+			</div>
 		</div>
 
-		<!-- Announcement Bar -->
+		<!-- Announcement Bar (below top nav) -->
 		{#if visibleAnnouncements.length > 0}
 			<div class="border-b border-border">
 				{#each visibleAnnouncements as announcement (announcement.id)}
