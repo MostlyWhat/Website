@@ -2,7 +2,7 @@
 	/**
 	 * Create New Ticket Page
 	 */
-	import { ArrowLeft, Send, Loader2, Paperclip, AlertTriangle, AlertCircle, BookOpen, ChevronRight } from '@lucide/svelte';
+	import { ArrowLeft, Send, Loader2, Paperclip, AlertTriangle, AlertCircle, BookOpen, ChevronRight, X, Upload, File as FileIcon, Image } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { enhance } from '$app/forms';
 	import { RichTextEditor } from '$lib/components/ui/rich-text-editor';
@@ -22,6 +22,13 @@
 		category: string | null;
 	};
 
+	interface SelectedFile {
+		file: File;
+		name: string;
+		size: number;
+		type: string;
+	}
+
 	let { data, form }: { data: { organizations: unknown[]; projects: unknown[]; suggestedArticles: SuggestedArticle[] }; form: FormReturn } = $props();
 	
 	let loading = $state(false);
@@ -29,6 +36,63 @@
 	let description = $state(form?.description || '');
 	let priority = $state(form?.priority || 'medium');
 	let category = $state(form?.category || 'general');
+	
+	// File handling
+	let selectedFiles = $state<SelectedFile[]>([]);
+	let dragActive = $state(false);
+	let fileInputRef: HTMLInputElement;
+
+	function formatFileSize(bytes: number): string {
+		if (bytes < 1024) return `${bytes} B`;
+		if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+		return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+	}
+
+	function getFileIcon(type: string) {
+		if (type.startsWith('image/')) return Image;
+		return FileIcon;
+	}
+
+	function handleFileSelect(e: Event) {
+		const input = e.target as HTMLInputElement;
+		if (input.files) {
+			addFiles(Array.from(input.files));
+		}
+	}
+
+	function addFiles(files: File[]) {
+		const maxSize = 10 * 1024 * 1024; // 10MB
+		const newFiles = files
+			.filter(f => f.size <= maxSize)
+			.map(f => ({
+				file: f,
+				name: f.name,
+				size: f.size,
+				type: f.type
+			}));
+		selectedFiles = [...selectedFiles, ...newFiles].slice(0, 5); // Max 5 files
+	}
+
+	function removeFile(index: number) {
+		selectedFiles = selectedFiles.filter((_, i) => i !== index);
+	}
+
+	function handleDrop(e: DragEvent) {
+		e.preventDefault();
+		dragActive = false;
+		if (e.dataTransfer?.files) {
+			addFiles(Array.from(e.dataTransfer.files));
+		}
+	}
+
+	function handleDragOver(e: DragEvent) {
+		e.preventDefault();
+		dragActive = true;
+	}
+
+	function handleDragLeave() {
+		dragActive = false;
+	}
 </script>
 
 <svelte:head>
@@ -117,17 +181,72 @@
 						<span class="font-ui text-xs font-medium tracking-wider text-foreground">
 							ATTACHMENTS <span class="text-muted-foreground">(OPTIONAL)</span>
 						</span>
-						<div class="mt-2 flex items-center justify-center border border-dashed border-border bg-card p-8 transition-colors hover:border-primary/50">
-							<div class="text-center">
-								<Paperclip class="mx-auto h-8 w-8 text-muted-foreground/50" />
-								<p class="font-body mt-2 text-sm text-muted-foreground">
-									Drag and drop files here or <button type="button" class="text-primary underline">browse</button>
-								</p>
-								<p class="font-mono mt-1 text-[10px] tracking-wider text-muted-foreground/70">
-									Max 10MB per file. Supported: PNG, JPG, PDF, ZIP
-								</p>
-							</div>
+						
+						<!-- Hidden file input -->
+						<input
+							bind:this={fileInputRef}
+							type="file"
+							multiple
+							accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.zip"
+							class="hidden"
+							onchange={handleFileSelect}
+						/>
+						
+						<!-- Drop zone -->
+						<div 
+							class="mt-2 border-2 border-dashed transition-colors {dragActive ? 'border-primary bg-primary/5' : 'border-border bg-card hover:border-primary/50'}"
+							role="button"
+							tabindex="0"
+							ondrop={handleDrop}
+							ondragover={handleDragOver}
+							ondragleave={handleDragLeave}
+							onclick={() => fileInputRef?.click()}
+							onkeydown={(e) => e.key === 'Enter' && fileInputRef?.click()}
+						>
+							{#if selectedFiles.length === 0}
+								<div class="flex flex-col items-center justify-center p-8">
+									<Upload class="h-8 w-8 text-muted-foreground/50" />
+									<p class="font-body mt-2 text-sm text-muted-foreground">
+										Drag and drop files here or <span class="text-primary underline">browse</span>
+									</p>
+									<p class="font-mono mt-1 text-[10px] tracking-wider text-muted-foreground/70">
+										Max 10MB per file • Up to 5 files • PNG, JPG, PDF, ZIP
+									</p>
+								</div>
+							{:else}
+								<div class="p-4">
+									<div class="space-y-2">
+										{#each selectedFiles as file, index}
+											{@const Icon = getFileIcon(file.type)}
+											<div class="flex items-center gap-3 border border-border bg-background p-3">
+												<div class="flex h-10 w-10 items-center justify-center border border-border bg-card">
+													<Icon class="h-5 w-5 text-muted-foreground" />
+												</div>
+												<div class="flex-1 min-w-0">
+													<p class="font-ui text-sm truncate">{file.name}</p>
+													<p class="font-mono text-[10px] text-muted-foreground">{formatFileSize(file.size)}</p>
+												</div>
+												<button
+													type="button"
+													onclick={(e) => { e.stopPropagation(); removeFile(index); }}
+													class="flex h-8 w-8 items-center justify-center text-muted-foreground hover:text-destructive transition-colors"
+												>
+													<X class="h-4 w-4" />
+												</button>
+											</div>
+										{/each}
+									</div>
+									{#if selectedFiles.length < 5}
+										<p class="font-body mt-3 text-center text-xs text-muted-foreground">
+											Click or drag to add more files ({5 - selectedFiles.length} remaining)
+										</p>
+									{/if}
+								</div>
+							{/if}
 						</div>
+						<p class="font-mono mt-2 text-[10px] tracking-wider text-muted-foreground">
+							Files will be uploaded after ticket is created
+						</p>
 					</div>
 				</div>
 			</div>

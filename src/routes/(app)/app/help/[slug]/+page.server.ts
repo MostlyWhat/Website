@@ -1,8 +1,8 @@
 import { db } from '$lib/server/db';
 import { supportArticles, profiles } from '$lib/server/db/schema';
 import { eq, and, sql } from 'drizzle-orm';
-import { error } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
+import { error, fail } from '@sveltejs/kit';
+import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
     if (!locals.user || !locals.profile) {
@@ -102,5 +102,44 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         // Table may not exist yet
         console.warn('Error loading article:', err);
         throw error(404, 'Article not found');
+    }
+};
+
+export const actions: Actions = {
+    feedback: async ({ request, params }) => {
+        const formData = await request.formData();
+        const helpful = formData.get('helpful') === 'true';
+        const { slug } = params;
+
+        try {
+            // Get the article ID first
+            const [article] = await db
+                .select({ id: supportArticles.id })
+                .from(supportArticles)
+                .where(eq(supportArticles.slug, slug))
+                .limit(1);
+
+            if (!article) {
+                return fail(404, { error: 'Article not found' });
+            }
+
+            // Update the feedback count
+            if (helpful) {
+                await db
+                    .update(supportArticles)
+                    .set({ helpfulCount: sql`${supportArticles.helpfulCount} + 1` })
+                    .where(eq(supportArticles.id, article.id));
+            } else {
+                await db
+                    .update(supportArticles)
+                    .set({ notHelpfulCount: sql`${supportArticles.notHelpfulCount} + 1` })
+                    .where(eq(supportArticles.id, article.id));
+            }
+
+            return { success: true, helpful };
+        } catch (err) {
+            console.error('Error submitting feedback:', err);
+            return fail(500, { error: 'Failed to submit feedback' });
+        }
     }
 };

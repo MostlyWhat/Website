@@ -310,8 +310,8 @@
 		</header>
 
 		<!-- Top Navigation Bar (Desktop) -->
-		<div class="hidden border-b border-border bg-card lg:block">
-			<div class="flex items-center justify-between px-6 py-2">
+		<div class="hidden h-16 border-b border-border bg-card lg:flex lg:items-center">
+			<div class="flex w-full items-center justify-between px-6">
 				<!-- Left: Back + Breadcrumbs -->
 				<div class="flex items-center gap-4">
 					<a href={localizeHref('/')} class="flex items-center gap-2 text-muted-foreground transition-colors hover:text-foreground border border-border px-2 py-1 bg-background hover:bg-card">

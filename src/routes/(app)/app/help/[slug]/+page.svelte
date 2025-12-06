@@ -4,11 +4,12 @@
 	 * 
 	 * Displays a single support article with markdown content.
 	 */
+	import { enhance } from '$app/forms';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import { renderStyledMarkdown } from '$lib/utils/markdown';
 	import { ArrowLeft, ThumbsUp, ThumbsDown, Clock, FileText, ArrowRight, Tag } from '@lucide/svelte';
 
-	let { data } = $props();
+	let { data, form } = $props();
 
 	// Format date
 	function formatDate(dateStr: string | Date | null): string {
@@ -30,13 +31,14 @@
 
 	// Feedback state
 	let feedbackGiven = $state<'helpful' | 'not-helpful' | null>(null);
+	let isSubmitting = $state(false);
 
-	async function submitFeedback(helpful: boolean) {
-		if (feedbackGiven) return;
-		
-		// In a real app, this would call an API endpoint
-		feedbackGiven = helpful ? 'helpful' : 'not-helpful';
-	}
+	// Check if form submission was successful
+	$effect(() => {
+		if (form?.success) {
+			feedbackGiven = form.helpful ? 'helpful' : 'not-helpful';
+		}
+	});
 </script>
 
 <svelte:head>
@@ -112,22 +114,48 @@
 					<div class="mt-12 border-t border-border pt-8">
 						<p class="font-ui text-sm">Was this article helpful?</p>
 						<div class="mt-4 flex items-center gap-4">
-							<button
-								onclick={() => submitFeedback(true)}
-								disabled={feedbackGiven !== null}
-								class="inline-flex items-center gap-2 border border-border px-4 py-2 text-sm transition-colors hover:bg-card disabled:cursor-not-allowed disabled:opacity-50 {feedbackGiven === 'helpful' ? 'border-green-500 bg-green-500/10 text-green-500' : ''}"
+							<form 
+								method="POST" 
+								action="?/feedback" 
+								use:enhance={() => {
+									isSubmitting = true;
+									return async ({ update }) => {
+										await update();
+										isSubmitting = false;
+									};
+								}}
 							>
-								<ThumbsUp class="h-4 w-4" />
-								<span class="font-mono text-xs tracking-wider">YES</span>
-							</button>
-							<button
-								onclick={() => submitFeedback(false)}
-								disabled={feedbackGiven !== null}
-								class="inline-flex items-center gap-2 border border-border px-4 py-2 text-sm transition-colors hover:bg-card disabled:cursor-not-allowed disabled:opacity-50 {feedbackGiven === 'not-helpful' ? 'border-red-500 bg-red-500/10 text-red-500' : ''}"
+								<input type="hidden" name="helpful" value="true" />
+								<button
+									type="submit"
+									disabled={feedbackGiven !== null || isSubmitting}
+									class="inline-flex items-center gap-2 border border-border px-4 py-2 text-sm transition-colors hover:bg-card disabled:cursor-not-allowed disabled:opacity-50 {feedbackGiven === 'helpful' ? 'border-green-500 bg-green-500/10 text-green-500' : ''}"
+								>
+									<ThumbsUp class="h-4 w-4" />
+									<span class="font-mono text-xs tracking-wider">YES</span>
+								</button>
+							</form>
+							<form 
+								method="POST" 
+								action="?/feedback" 
+								use:enhance={() => {
+									isSubmitting = true;
+									return async ({ update }) => {
+										await update();
+										isSubmitting = false;
+									};
+								}}
 							>
-								<ThumbsDown class="h-4 w-4" />
-								<span class="font-mono text-xs tracking-wider">NO</span>
-							</button>
+								<input type="hidden" name="helpful" value="false" />
+								<button
+									type="submit"
+									disabled={feedbackGiven !== null || isSubmitting}
+									class="inline-flex items-center gap-2 border border-border px-4 py-2 text-sm transition-colors hover:bg-card disabled:cursor-not-allowed disabled:opacity-50 {feedbackGiven === 'not-helpful' ? 'border-red-500 bg-red-500/10 text-red-500' : ''}"
+								>
+									<ThumbsDown class="h-4 w-4" />
+									<span class="font-mono text-xs tracking-wider">NO</span>
+								</button>
+							</form>
 						</div>
 						{#if feedbackGiven}
 							<p class="font-body mt-4 text-sm text-muted-foreground">

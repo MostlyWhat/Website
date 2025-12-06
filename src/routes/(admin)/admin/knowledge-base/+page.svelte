@@ -30,7 +30,7 @@
 	let selectedCategory = $state(data.filters?.category ?? '');
 
 	// Filter articles by search
-	const filteredArticles = $derived(() => {
+	const filteredArticles = $derived.by(() => {
 		let articles = data.articles ?? [];
 		
 		if (searchQuery.trim()) {
@@ -168,9 +168,9 @@
 
 	<!-- Articles List -->
 	<section>
-		{#if filteredArticles().length > 0}
+		{#if filteredArticles.length > 0}
 			<div class="divide-y divide-border">
-				{#each filteredArticles() as article}
+				{#each filteredArticles as article}
 					<div class="flex items-center gap-4 bg-background px-6 py-4 transition-colors hover:bg-card">
 						<!-- Icon -->
 						<div class="flex h-10 w-10 shrink-0 items-center justify-center border border-border bg-card">

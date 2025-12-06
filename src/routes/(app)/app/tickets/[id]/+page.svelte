@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { ArrowLeft, Send, Loader2, Clock, CheckCircle2, AlertTriangle, Paperclip, AlertCircle, RefreshCcw } from '@lucide/svelte';
+	import { ArrowLeft, Send, Loader2, Clock, CheckCircle2, AlertTriangle, Paperclip, AlertCircle, RefreshCcw, Upload, X, FileText, Image as ImageIcon, File as FileIcon } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { enhance } from '$app/forms';
 
@@ -11,9 +11,66 @@
 
 	let newMessage = $state('');
 	let sending = $state(false);
+	
+	// File attachment state
+	let selectedFiles = $state<File[]>([]);
+	let fileInputRef = $state<HTMLInputElement | null>(null);
+	let dragActive = $state(false);
+
+	// File handling functions
+	function getFileIcon(type: string) {
+		if (type.startsWith('image/')) return ImageIcon;
+		if (type === 'application/pdf') return FileText;
+		return FileIcon;
+	}
+
+	function formatFileSize(bytes: number): string {
+		if (bytes < 1024) return bytes + ' B';
+		if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+		return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+	}
+
+	function handleFiles(files: FileList | null) {
+		if (!files) return;
+		const maxFiles = 5;
+		const maxSize = 10 * 1024 * 1024; // 10MB
+		
+		for (const file of Array.from(files)) {
+			if (selectedFiles.length >= maxFiles) break;
+			if (file.size > maxSize) continue;
+			if (selectedFiles.some(f => f.name === file.name)) continue;
+			selectedFiles = [...selectedFiles, file];
+		}
+	}
+
+	function handleFileSelect(e: Event) {
+		const target = e.target as HTMLInputElement;
+		handleFiles(target.files);
+		target.value = ''; // Reset input
+	}
+
+	function handleDrop(e: DragEvent) {
+		e.preventDefault();
+		dragActive = false;
+		handleFiles(e.dataTransfer?.files ?? null);
+	}
+
+	function handleDragOver(e: DragEvent) {
+		e.preventDefault();
+		dragActive = true;
+	}
+
+	function handleDragLeave(e: DragEvent) {
+		e.preventDefault();
+		dragActive = false;
+	}
+
+	function removeFile(index: number) {
+		selectedFiles = selectedFiles.filter((_, i) => i !== index);
+	}
 
 	// Calculate if ticket can be reopened (within 7 days of closing)
-	const canReopen = $derived(() => {
+	const canReopen = $derived.by(() => {
 		if (ticket.status !== 'closed' && ticket.status !== 'resolved') {
 			return false;
 		}
@@ -29,7 +86,7 @@
 		return daysSinceClosed <= 7;
 	});
 
-	const daysUntilCantReopen = $derived(() => {
+	const daysUntilCantReopen = $derived.by(() => {
 		if (!ticket.closed_at) return 7;
 		const daysSinceClosed = Math.floor(
 			(Date.now() - new Date(ticket.closed_at).getTime()) / (1000 * 60 * 60 * 24)
@@ -210,6 +267,7 @@
 						<form 
 							method="POST" 
 							action="?/sendMessage"
+							enctype="multipart/form-data"
 							use:enhance={() => {
 								sending = true;
 								return async ({ update, result }) => {
@@ -217,6 +275,7 @@
 									sending = false;
 									if (result.type === 'success') {
 										newMessage = '';
+										selectedFiles = [];
 									}
 								};
 							}}
@@ -229,10 +288,50 @@
 								rows="4"
 								class="font-body w-full resize-none border border-border bg-card p-4 text-sm focus:border-primary focus:outline-none"
 							></textarea>
+							
+							<!-- File Attachments -->
+							<input
+								bind:this={fileInputRef}
+								type="file"
+								name="attachments"
+								multiple
+								accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.zip,.txt"
+								class="hidden"
+								onchange={handleFileSelect}
+							/>
+							
+							{#if selectedFiles.length > 0}
+								<div class="mt-3 space-y-2">
+									{#each selectedFiles as file, index}
+										{@const Icon = getFileIcon(file.type)}
+										<div class="flex items-center gap-3 border border-border bg-card p-2">
+											<div class="flex h-8 w-8 items-center justify-center border border-border bg-background">
+												<Icon class="h-4 w-4 text-muted-foreground" />
+											</div>
+											<div class="flex-1 min-w-0">
+												<p class="font-ui text-xs truncate">{file.name}</p>
+												<p class="font-mono text-[10px] text-muted-foreground">{formatFileSize(file.size)}</p>
+											</div>
+											<button
+												type="button"
+												onclick={() => removeFile(index)}
+												class="flex h-6 w-6 items-center justify-center text-muted-foreground hover:text-destructive transition-colors"
+											>
+												<X class="h-3 w-3" />
+											</button>
+										</div>
+									{/each}
+								</div>
+							{/if}
+							
 							<div class="mt-4 flex items-center justify-between">
-								<button type="button" class="font-mono text-[10px] tracking-widest text-muted-foreground hover:text-foreground">
-									<Paperclip class="mr-1 inline h-4 w-4" />
-									ATTACH FILE
+								<button 
+									type="button" 
+									onclick={() => fileInputRef?.click()}
+									class="font-mono text-[10px] tracking-widest text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1"
+								>
+									<Paperclip class="h-4 w-4" />
+									{selectedFiles.length > 0 ? `${selectedFiles.length} FILE${selectedFiles.length > 1 ? 'S' : ''}` : 'ATTACH FILE'}
 								</button>
 								<Button type="submit" disabled={sending || !newMessage.trim()} class="font-ui text-xs tracking-wider">
 									{#if sending}
@@ -252,9 +351,9 @@
 							<CheckCircle2 class="h-5 w-5 flex-shrink-0 text-muted-foreground" />
 							<div>
 								<p class="font-ui text-sm font-semibold">Ticket Closed</p>
-								{#if canReopen()}
+								{#if canReopen}
 									<p class="font-body mt-1 text-sm text-muted-foreground">
-										This ticket has been closed. You can reopen it within {daysUntilCantReopen()} day{daysUntilCantReopen() === 1 ? '' : 's'}.
+										This ticket has been closed. You can reopen it within {daysUntilCantReopen} day{daysUntilCantReopen === 1 ? '' : 's'}.
 									</p>
 									<form method="POST" action="?/reopenTicket" class="mt-3">
 										<Button type="submit" variant="outline" size="sm" class="font-ui text-xs tracking-wider">
@@ -344,7 +443,7 @@
 								CLOSE TICKET
 							</Button>
 						</form>
-						{#if canReopen()}
+						{#if canReopen}
 							<form method="POST" action="?/reopenTicket">
 								<Button type="submit" variant="outline" class="font-ui w-full text-xs tracking-wider">
 									<RefreshCcw class="mr-2 h-4 w-4" />
@@ -353,7 +452,7 @@
 							</form>
 						{/if}
 					{:else if ticket.status === 'closed'}
-						{#if canReopen()}
+						{#if canReopen}
 							<form method="POST" action="?/reopenTicket">
 								<Button type="submit" variant="outline" class="font-ui w-full text-xs tracking-wider">
 									<RefreshCcw class="mr-2 h-4 w-4" />

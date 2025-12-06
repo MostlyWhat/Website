@@ -40,7 +40,7 @@
 	];
 
 	// Get unique categories from articles or use defaults
-	const categories = $derived(() => {
+	const categories = $derived.by(() => {
 		if (data.categories && data.categories.length > 0) {
 			return data.categories.map((cat: { name: string; articles: unknown[] }) => {
 				const defaultCat = defaultCategories.find(d => d.name === cat.name);
@@ -56,7 +56,7 @@
 	});
 
 	// Filter articles by search
-	const filteredArticles = $derived(() => {
+	const filteredArticles = $derived.by(() => {
 		if (!searchQuery.trim()) return data.articles ?? [];
 		const query = searchQuery.toLowerCase();
 		return (data.articles ?? []).filter((article: { title: string; excerpt: string | null }) => 
@@ -101,13 +101,13 @@
 		<section class="border-b border-border">
 			<div class="px-6 py-4 md:px-12 lg:px-16">
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">
-					SEARCH RESULTS ({filteredArticles().length})
+					SEARCH RESULTS ({filteredArticles.length})
 				</span>
 			</div>
 			<div class="px-6 pb-8 md:px-12 lg:px-16">
-				{#if filteredArticles().length > 0}
+				{#if filteredArticles.length > 0}
 					<div class="grid gap-4 md:grid-cols-2">
-						{#each filteredArticles() as article}
+						{#each filteredArticles as article}
 							<a
 								href={localizeHref(`/app/help/${article.slug}`)}
 								class="group border border-border bg-card p-6 transition-colors hover:bg-card/80"
@@ -141,7 +141,7 @@
 		<!-- Categories Grid -->
 		<section class="border-b border-border">
 			<div class="grid grid-cols-12 gap-px bg-border">
-				{#each categories() as category}
+				{#each categories as category}
 					{@const Icon = category.icon}
 					<a
 						href={localizeHref(`/app/help?category=${category.name}`)}
