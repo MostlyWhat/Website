@@ -66,10 +66,10 @@
 	 * Routes
 	 * https://developers.cloudflare.com/workers/wrangler/configuration/#routes
 	 */
-	"routes": [
-		{
-			"pattern": "mostlywhat.com/*",
-			"zone_name": "mostlywhat.com"
-		}
-	]
+	// "routes": [
+	// 	{
+	// 		"pattern": "mostlywhat.com/*",
+	// 		"zone_name": "mostlywhat.com"
+	// 	}
+	// ]
 }
