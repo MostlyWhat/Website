@@ -394,7 +394,7 @@ export async function handleRecurringInvoiceCron(): Promise<{
     reminders: ProcessingResult;
 }> {
     console.log('[Cron] Starting recurring invoice processing...');
-    
+
     const recurringResult = await processRecurringInvoices();
     console.log(`[Cron] Processed ${recurringResult.processedInvoices} recurring invoices, created ${recurringResult.createdInvoices.length} new invoices`);
 

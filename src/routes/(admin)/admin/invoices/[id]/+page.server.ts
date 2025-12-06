@@ -300,7 +300,7 @@ export const actions: Actions = {
             // Check if we need to generate next recurring invoice
             if (invoice.isRecurring && invoice.recurringInterval) {
                 // Check if we've reached the end date
-                const shouldGenerateNext = !invoice.recurringEndDate || 
+                const shouldGenerateNext = !invoice.recurringEndDate ||
                     new Date() < new Date(invoice.recurringEndDate);
 
                 if (shouldGenerateNext) {
@@ -311,7 +311,7 @@ export const actions: Actions = {
                     );
 
                     // Check if next due date is before end date
-                    const isWithinEndDate = !invoice.recurringEndDate || 
+                    const isWithinEndDate = !invoice.recurringEndDate ||
                         nextDueDate <= new Date(invoice.recurringEndDate);
 
                     if (isWithinEndDate) {
@@ -365,16 +365,16 @@ export const actions: Actions = {
                                 getClientIp(request)
                             );
 
-                            return { 
-                                success: true, 
+                            return {
+                                success: true,
                                 message: `Payment recorded. New recurring invoice ${newInvoiceNumber} has been created.`,
                                 newInvoiceId: newInvoice.id
                             };
                         } catch (err) {
                             console.error('Error creating recurring invoice:', err);
                             // Payment was still recorded, just failed to create next invoice
-                            return { 
-                                success: true, 
+                            return {
+                                success: true,
                                 message: 'Payment recorded, but failed to create next recurring invoice. Please create it manually.',
                                 warning: true
                             };

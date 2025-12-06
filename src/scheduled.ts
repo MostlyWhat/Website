@@ -24,7 +24,7 @@ export const scheduled = async (
 ): Promise<void> => {
     const baseUrl = env.PUBLIC_BASE_URL || 'https://mostlywhat.com';
     const cronUrl = `${baseUrl}/api/cron/invoices`;
-    
+
     console.log(`[Scheduled] Cron trigger at ${new Date().toISOString()}`);
     console.log(`[Scheduled] Cron: ${controller.cron}`);
     console.log(`[Scheduled] Calling ${cronUrl}`);
