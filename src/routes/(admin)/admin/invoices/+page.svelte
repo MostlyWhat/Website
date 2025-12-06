@@ -4,7 +4,7 @@
 	 */
 	import { 
 		Receipt, Search, Plus, Building2, Calendar, 
-		ChevronRight, Filter, Clock, CheckCircle, AlertCircle, Send, DollarSign
+		ChevronRight, Filter, Clock, CheckCircle, AlertCircle, Send, DollarSign, RefreshCw
 	} from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 
@@ -57,8 +57,20 @@
 		}
 	}
 
+	function getRecurringLabel(interval: string | null): string {
+		switch (interval) {
+			case 'weekly': return 'Weekly';
+			case 'bi_weekly': return 'Bi-Weekly';
+			case 'monthly': return 'Monthly';
+			case 'quarterly': return 'Quarterly';
+			case 'yearly': return 'Yearly';
+			default: return 'Recurring';
+		}
+	}
+
 	const totalOutstanding = $derived(invoices.filter(i => i.status !== 'paid' && i.status !== 'cancelled').reduce((sum, i) => sum + i.amountDue, 0));
 	const totalPaid = $derived(invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + i.total, 0));
+	const totalRecurring = $derived(invoices.filter(i => i.isRecurring).length);
 </script>
 
 <svelte:head>
@@ -116,20 +128,24 @@
 
 	<!-- Stats Bar -->
 	<section class="border-b border-border">
-		<div class="grid grid-cols-12 gap-px bg-border">
-			<div class="col-span-3 bg-background px-6 py-4 md:px-12 lg:px-16">
+		<div class="grid grid-cols-10 gap-px bg-border">
+			<div class="col-span-2 bg-background px-6 py-4 md:px-12 lg:px-16">
 				<span class="font-display text-xl font-bold text-primary">{invoices.length}</span>
 				<p class="font-mono text-[10px] tracking-wider text-muted-foreground">TOTAL</p>
 			</div>
-			<div class="col-span-3 bg-background px-6 py-4">
+			<div class="col-span-2 bg-background px-6 py-4">
 				<span class="font-display text-xl font-bold text-red-500">{invoices.filter(i => i.status === 'overdue').length}</span>
 				<p class="font-mono text-[10px] tracking-wider text-muted-foreground">OVERDUE</p>
 			</div>
-			<div class="col-span-3 bg-background px-6 py-4">
+			<div class="col-span-2 bg-background px-6 py-4">
+				<span class="font-display text-xl font-bold text-primary">{totalRecurring}</span>
+				<p class="font-mono text-[10px] tracking-wider text-muted-foreground">RECURRING</p>
+			</div>
+			<div class="col-span-2 bg-background px-6 py-4">
 				<span class="font-display text-xl font-bold text-yellow-500">{formatCurrency(totalOutstanding)}</span>
 				<p class="font-mono text-[10px] tracking-wider text-muted-foreground">OUTSTANDING</p>
 			</div>
-			<div class="col-span-3 bg-background px-6 py-4 md:px-12 lg:px-16">
+			<div class="col-span-2 bg-background px-6 py-4 md:px-12 lg:px-16">
 				<span class="font-display text-xl font-bold text-green-500">{formatCurrency(totalPaid)}</span>
 				<p class="font-mono text-[10px] tracking-wider text-muted-foreground">COLLECTED</p>
 			</div>
@@ -154,12 +170,18 @@
 
 						<!-- Invoice Info -->
 						<div class="min-w-0 flex-1">
-							<div class="flex items-center gap-3">
+							<div class="flex items-center gap-3 flex-wrap">
 								<h3 class="font-mono text-sm font-bold tracking-wider">{invoice.invoiceNumber}</h3>
 								<span class="inline-flex items-center gap-1 px-2 py-0.5 {statusConfig.class}">
 									<StatusIcon class="h-3 w-3" />
 									<span class="font-mono text-[10px] tracking-wider uppercase">{statusConfig.label}</span>
 								</span>
+								{#if invoice.isRecurring}
+									<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-primary/10 text-primary">
+										<RefreshCw class="h-3 w-3" />
+										<span class="font-mono text-[10px] tracking-wider uppercase">{getRecurringLabel(invoice.recurringInterval)}</span>
+									</span>
+								{/if}
 							</div>
 							<p class="font-ui mt-0.5 text-xs tracking-wider truncate">{invoice.title}</p>
 							<div class="mt-1 flex items-center gap-4 text-xs text-muted-foreground">
@@ -167,6 +189,11 @@
 									<Building2 class="h-3 w-3" />
 									{invoice.organization}
 								</span>
+								{#if invoice.isRecurring && invoice.recurringCount && invoice.recurringCount > 1}
+									<span class="flex items-center gap-1 text-primary">
+										<span class="font-mono text-[10px]">#{invoice.recurringCount}</span>
+									</span>
+								{/if}
 							</div>
 						</div>
 

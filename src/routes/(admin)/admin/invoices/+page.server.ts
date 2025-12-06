@@ -32,7 +32,11 @@ export const load: PageServerLoad = async ({ locals }) => {
             createdById: invoices.createdById,
             createdByName: profiles.displayName,
             createdAt: invoices.createdAt,
-            updatedAt: invoices.updatedAt
+            updatedAt: invoices.updatedAt,
+            // Recurring fields
+            isRecurring: invoices.isRecurring,
+            recurringInterval: invoices.recurringInterval,
+            recurringCount: invoices.recurringCount
         })
         .from(invoices)
         .leftJoin(organizations, eq(invoices.organizationId, organizations.id))

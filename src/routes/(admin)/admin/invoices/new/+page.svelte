@@ -3,14 +3,16 @@
 	 * Create New Invoice Page
 	 * 
 	 * Admin form to create new invoices with line items.
+	 * Supports one-time and recurring invoices.
 	 */
 	import { enhance } from '$app/forms';
-	import { ArrowLeft, Plus, Trash2, Receipt, Loader2 } from '@lucide/svelte';
+	import { ArrowLeft, Plus, Trash2, Receipt, Loader2, RefreshCw } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import * as Select from '$lib/components/ui/select';
+	import { Checkbox } from '$lib/components/ui/checkbox';
 
 	let { data, form } = $props();
 
@@ -31,6 +33,11 @@
 	let taxRate = $state(0);
 	let discount = $state(0);
 
+	// Recurring invoice settings
+	let isRecurring = $state(false);
+	let recurringInterval = $state<string>('monthly');
+	let recurringEndDate = $state<string>('');
+
 	// Computed values
 	let subtotal = $derived(lineItems.reduce((sum, item) => sum + item.total, 0));
 	let taxAmount = $derived(subtotal * (taxRate / 100));
@@ -41,6 +48,19 @@
 		selectedOrgId 
 			? data.projects.filter(p => p.organizationId === selectedOrgId)
 			: data.projects
+	);
+
+	// Recurring interval display names
+	const intervalOptions = [
+		{ value: 'weekly', label: 'Weekly' },
+		{ value: 'bi_weekly', label: 'Bi-Weekly' },
+		{ value: 'monthly', label: 'Monthly' },
+		{ value: 'quarterly', label: 'Quarterly' },
+		{ value: 'yearly', label: 'Yearly' }
+	];
+
+	let selectedIntervalLabel = $derived(
+		intervalOptions.find(i => i.value === recurringInterval)?.label ?? 'Monthly'
 	);
 
 	function addLineItem() {
@@ -120,6 +140,9 @@
 
 		<form method="POST" use:enhance={handleSubmit} class="max-w-4xl space-y-8">
 			<input type="hidden" name="lineItems" value={JSON.stringify(lineItems.filter(i => i.description))} />
+			<input type="hidden" name="isRecurring" value={isRecurring.toString()} />
+			<input type="hidden" name="recurringInterval" value={isRecurring ? recurringInterval : ''} />
+			<input type="hidden" name="recurringEndDate" value={isRecurring ? recurringEndDate : ''} />
 
 			<!-- Client & Project -->
 			<div class="space-y-6">
@@ -204,6 +227,74 @@
 							class="h-12 border-border bg-card px-4 font-body"
 						/>
 					</div>
+				</div>
+			</div>
+
+			<!-- Recurring Invoice Options -->
+			<div class="space-y-6 border-t border-border pt-8">
+				<div class="flex items-center gap-3">
+					<div class="flex h-10 w-10 items-center justify-center border border-border bg-card">
+						<RefreshCw class="h-5 w-5 text-primary" />
+					</div>
+					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">RECURRING INVOICE</span>
+				</div>
+
+				<div class="space-y-4">
+					<div class="flex items-center gap-3">
+						<Checkbox 
+							id="isRecurring" 
+							bind:checked={isRecurring}
+							class="h-5 w-5"
+						/>
+						<Label for="isRecurring" class="font-body text-sm cursor-pointer">
+							Make this a recurring invoice
+						</Label>
+					</div>
+
+					{#if isRecurring}
+						<div class="ml-8 grid gap-6 md:grid-cols-2 border-l-2 border-primary/20 pl-6">
+							<div class="space-y-2">
+								<Label for="recurringInterval" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+									BILLING CYCLE *
+								</Label>
+								<Select.Root type="single" bind:value={recurringInterval}>
+									<Select.Trigger class="h-12 border-border bg-card px-4 font-body">
+										{selectedIntervalLabel}
+									</Select.Trigger>
+									<Select.Content>
+										{#each intervalOptions as option}
+											<Select.Item value={option.value}>{option.label}</Select.Item>
+										{/each}
+									</Select.Content>
+								</Select.Root>
+							</div>
+
+							<div class="space-y-2">
+								<Label for="recurringEndDate" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+									END DATE (OPTIONAL)
+								</Label>
+								<Input
+									id="recurringEndDate"
+									type="date"
+									bind:value={recurringEndDate}
+									class="h-12 border-border bg-card px-4 font-body"
+								/>
+								<p class="font-body text-xs text-muted-foreground">
+									Leave empty for indefinite recurring invoices
+								</p>
+							</div>
+
+							<div class="md:col-span-2">
+								<div class="border border-border bg-card/50 p-4">
+									<p class="font-body text-sm text-muted-foreground">
+										<strong class="text-foreground">How it works:</strong> When this invoice is fully paid, 
+										a new invoice will automatically be generated for the next billing cycle. You'll be 
+										notified when each new invoice is created.
+									</p>
+								</div>
+							</div>
+						</div>
+					{/if}
 				</div>
 			</div>
 

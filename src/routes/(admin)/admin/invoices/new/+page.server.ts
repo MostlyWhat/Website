@@ -84,6 +84,11 @@ export const actions: Actions = {
         const dueDate = formData.get('dueDate') as string;
         const notes = formData.get('notes') as string;
 
+        // Recurring invoice fields
+        const isRecurring = formData.get('isRecurring') === 'true';
+        const recurringInterval = formData.get('recurringInterval') as string;
+        const recurringEndDateStr = formData.get('recurringEndDate') as string;
+
         // Parse line items
         const lineItemsJson = formData.get('lineItems') as string;
         let lineItems: Array<{ description: string; quantity: number; unitPrice: number; total: number }> = [];
@@ -111,6 +116,30 @@ export const actions: Actions = {
 
         try {
             const invoiceNumber = await generateInvoiceNumber();
+            const dueDateObj = new Date(dueDate);
+
+            // Calculate recurring next date based on interval
+            let recurringNextDate: Date | null = null;
+            if (isRecurring && recurringInterval) {
+                recurringNextDate = new Date(dueDateObj);
+                switch (recurringInterval) {
+                    case 'weekly':
+                        recurringNextDate.setDate(recurringNextDate.getDate() + 7);
+                        break;
+                    case 'bi_weekly':
+                        recurringNextDate.setDate(recurringNextDate.getDate() + 14);
+                        break;
+                    case 'monthly':
+                        recurringNextDate.setMonth(recurringNextDate.getMonth() + 1);
+                        break;
+                    case 'quarterly':
+                        recurringNextDate.setMonth(recurringNextDate.getMonth() + 3);
+                        break;
+                    case 'yearly':
+                        recurringNextDate.setFullYear(recurringNextDate.getFullYear() + 1);
+                        break;
+                }
+            }
 
             const [newInvoice] = await db
                 .insert(invoices)
@@ -127,9 +156,17 @@ export const actions: Actions = {
                     discount: discount.toString(),
                     total: total.toString(),
                     amountDue: total.toString(),
-                    dueDate: new Date(dueDate),
+                    dueDate: dueDateObj,
                     notes: notes?.trim() || null,
-                    createdById: locals.profile.id
+                    createdById: locals.profile.id,
+                    // Recurring invoice fields
+                    invoiceType: isRecurring ? 'recurring' : 'one_time',
+                    isRecurring,
+                    recurringInterval: isRecurring && recurringInterval ? recurringInterval as 'weekly' | 'bi_weekly' | 'monthly' | 'quarterly' | 'yearly' : null,
+                    recurringStartDate: isRecurring ? dueDateObj : null,
+                    recurringEndDate: isRecurring && recurringEndDateStr ? new Date(recurringEndDateStr) : null,
+                    recurringNextDate: recurringNextDate,
+                    recurringCount: isRecurring ? 1 : 0
                 })
                 .returning({ id: invoices.id });
 

@@ -8,7 +8,7 @@
 	import { 
 		ArrowLeft, FileText, Building2, Calendar, DollarSign, 
 		Check, Clock, Send, CreditCard, AlertCircle, Loader2,
-		Banknote, Receipt, Download
+		Banknote, Receipt, Download, RefreshCw
 	} from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
@@ -57,6 +57,17 @@
 			case 'draft':
 			default:
 				return { bg: 'bg-muted', text: 'text-muted-foreground', icon: Clock, label: 'DRAFT' };
+		}
+	}
+
+	function getRecurringLabel(interval: string | null): string {
+		switch (interval) {
+			case 'weekly': return 'Weekly';
+			case 'bi_weekly': return 'Bi-Weekly';
+			case 'monthly': return 'Monthly';
+			case 'quarterly': return 'Quarterly';
+			case 'yearly': return 'Yearly';
+			default: return 'Recurring';
 		}
 	}
 
@@ -149,6 +160,15 @@
 					<span class="font-mono text-[10px] tracking-widest px-3 py-2 {statusInfo.bg} {statusInfo.text} flex items-center gap-2">
 						<StatusIcon class="h-4 w-4" />
 						{statusInfo.label}
+					</span>
+				{/if}
+				{#if invoice.isRecurring}
+					<span class="font-mono text-[10px] tracking-widest px-3 py-2 bg-primary/10 text-primary flex items-center gap-2">
+						<RefreshCw class="h-4 w-4" />
+						{getRecurringLabel(invoice.recurringInterval)}
+						{#if invoice.recurringCount && invoice.recurringCount > 1}
+							<span class="text-primary/60">#{invoice.recurringCount}</span>
+						{/if}
 					</span>
 				{/if}
 			</div>
@@ -315,6 +335,64 @@
 						{/if}
 					</div>
 				</div>
+
+				<!-- Recurring Invoice Info -->
+				{#if invoice.isRecurring}
+					<div class="mt-6 border border-primary/20 bg-primary/5 p-6">
+						<div class="flex items-center gap-2">
+							<RefreshCw class="h-4 w-4 text-primary" />
+							<span class="font-mono text-[10px] tracking-widest text-primary">RECURRING INVOICE</span>
+						</div>
+						
+						<div class="mt-4 space-y-3">
+							<div class="flex justify-between">
+								<span class="font-mono text-[10px] text-muted-foreground">BILLING CYCLE</span>
+								<span class="font-body text-sm font-medium">{getRecurringLabel(invoice.recurringInterval)}</span>
+							</div>
+							
+							{#if invoice.recurringCount}
+								<div class="flex justify-between">
+									<span class="font-mono text-[10px] text-muted-foreground">INVOICE #</span>
+									<span class="font-body text-sm">#{invoice.recurringCount} in series</span>
+								</div>
+							{/if}
+							
+							{#if invoice.recurringStartDate}
+								<div class="flex justify-between">
+									<span class="font-mono text-[10px] text-muted-foreground">STARTED</span>
+									<span class="font-body text-sm">{formatDate(invoice.recurringStartDate)}</span>
+								</div>
+							{/if}
+							
+							{#if invoice.recurringEndDate}
+								<div class="flex justify-between">
+									<span class="font-mono text-[10px] text-muted-foreground">ENDS</span>
+									<span class="font-body text-sm">{formatDate(invoice.recurringEndDate)}</span>
+								</div>
+							{:else}
+								<div class="flex justify-between">
+									<span class="font-mono text-[10px] text-muted-foreground">ENDS</span>
+									<span class="font-body text-sm text-muted-foreground">Indefinite</span>
+								</div>
+							{/if}
+							
+							{#if invoice.recurringNextDate && invoice.status !== 'paid'}
+								<div class="flex justify-between">
+									<span class="font-mono text-[10px] text-muted-foreground">NEXT INVOICE</span>
+									<span class="font-body text-sm">{formatDate(invoice.recurringNextDate)}</span>
+								</div>
+							{/if}
+						</div>
+						
+						{#if invoice.status === 'paid'}
+							<div class="mt-4 border-t border-primary/20 pt-4">
+								<p class="font-body text-xs text-muted-foreground">
+									✓ Next invoice will be automatically generated for the next billing cycle.
+								</p>
+							</div>
+						{/if}
+					</div>
+				{/if}
 
 				<!-- Actions -->
 				{#if invoice.status !== 'paid' && invoice.status !== 'cancelled'}

@@ -1,9 +1,57 @@
 import { db } from '$lib/server/db';
 import { invoices, organizations, projects, profiles, payments } from '$lib/server/db/schema';
-import { eq, desc } from 'drizzle-orm';
+import { eq, desc, sql } from 'drizzle-orm';
 import { error, fail, redirect } from '@sveltejs/kit';
 import { invoiceActivity, getClientIp } from '$lib/server/activity-logger';
 import type { PageServerLoad, Actions } from './$types';
+
+// Helper function to generate next invoice number
+async function generateInvoiceNumber(): Promise<string> {
+    const year = new Date().getFullYear();
+    const prefix = `INV-${year}-`;
+
+    const [lastInvoice] = await db
+        .select({ invoiceNumber: invoices.invoiceNumber })
+        .from(invoices)
+        .where(sql`${invoices.invoiceNumber} LIKE ${prefix + '%'}`)
+        .orderBy(desc(invoices.invoiceNumber))
+        .limit(1);
+
+    let nextNum = 1;
+    if (lastInvoice) {
+        const match = lastInvoice.invoiceNumber.match(/INV-\d{4}-(\d+)/);
+        if (match) {
+            nextNum = parseInt(match[1], 10) + 1;
+        }
+    }
+
+    return `${prefix}${nextNum.toString().padStart(5, '0')}`;
+}
+
+// Helper function to calculate next due date based on interval
+function calculateNextDueDate(currentDueDate: Date, interval: string): Date {
+    const nextDate = new Date(currentDueDate);
+    switch (interval) {
+        case 'weekly':
+            nextDate.setDate(nextDate.getDate() + 7);
+            break;
+        case 'bi_weekly':
+            nextDate.setDate(nextDate.getDate() + 14);
+            break;
+        case 'monthly':
+            nextDate.setMonth(nextDate.getMonth() + 1);
+            break;
+        case 'quarterly':
+            nextDate.setMonth(nextDate.getMonth() + 3);
+            break;
+        case 'yearly':
+            nextDate.setFullYear(nextDate.getFullYear() + 1);
+            break;
+        default:
+            nextDate.setMonth(nextDate.getMonth() + 1);
+    }
+    return nextDate;
+}
 
 export const load: PageServerLoad = async ({ params, locals }) => {
     if (!locals.user || !locals.profile) {
@@ -49,7 +97,16 @@ export const load: PageServerLoad = async ({ params, locals }) => {
             createdById: invoices.createdById,
             createdByName: profiles.displayName,
             createdAt: invoices.createdAt,
-            updatedAt: invoices.updatedAt
+            updatedAt: invoices.updatedAt,
+            // Recurring invoice fields
+            invoiceType: invoices.invoiceType,
+            isRecurring: invoices.isRecurring,
+            recurringInterval: invoices.recurringInterval,
+            recurringStartDate: invoices.recurringStartDate,
+            recurringEndDate: invoices.recurringEndDate,
+            recurringNextDate: invoices.recurringNextDate,
+            recurringParentId: invoices.recurringParentId,
+            recurringCount: invoices.recurringCount
         })
         .from(invoices)
         .leftJoin(organizations, eq(invoices.organizationId, organizations.id))
@@ -155,14 +212,34 @@ export const actions: Actions = {
             return fail(400, { error: 'Invalid payment amount' });
         }
 
-        // Get current invoice data
+        // Get current invoice data including recurring fields
         const [invoice] = await db
             .select({
                 invoiceNumber: invoices.invoiceNumber,
                 amountPaid: invoices.amountPaid,
                 amountDue: invoices.amountDue,
                 total: invoices.total,
-                organizationId: invoices.organizationId
+                organizationId: invoices.organizationId,
+                projectId: invoices.projectId,
+                title: invoices.title,
+                description: invoices.description,
+                lineItems: invoices.lineItems,
+                subtotal: invoices.subtotal,
+                taxRate: invoices.taxRate,
+                taxAmount: invoices.taxAmount,
+                discount: invoices.discount,
+                currency: invoices.currency,
+                dueDate: invoices.dueDate,
+                notes: invoices.notes,
+                createdById: invoices.createdById,
+                // Recurring fields
+                isRecurring: invoices.isRecurring,
+                recurringInterval: invoices.recurringInterval,
+                recurringStartDate: invoices.recurringStartDate,
+                recurringEndDate: invoices.recurringEndDate,
+                recurringNextDate: invoices.recurringNextDate,
+                recurringParentId: invoices.recurringParentId,
+                recurringCount: invoices.recurringCount
             })
             .from(invoices)
             .where(eq(invoices.id, params.id));
@@ -175,6 +252,7 @@ export const actions: Actions = {
         const total = parseFloat(invoice.total) || 0;
         const newPaid = currentPaid + amount;
         const newDue = Math.max(0, total - newPaid);
+        const isFullyPaid = newDue === 0;
 
         // Record the payment
         await db.insert(payments).values({
@@ -193,8 +271,8 @@ export const actions: Actions = {
             .set({
                 amountPaid: newPaid.toString(),
                 amountDue: newDue.toString(),
-                status: newDue === 0 ? 'paid' : 'sent',
-                paidAt: newDue === 0 ? new Date() : null,
+                status: isFullyPaid ? 'paid' : 'sent',
+                paidAt: isFullyPaid ? new Date() : null,
                 paymentMethod: method || null,
                 paymentReference: reference || null,
                 updatedAt: new Date()
@@ -209,7 +287,7 @@ export const actions: Actions = {
             getClientIp(request)
         );
 
-        if (newDue === 0) {
+        if (isFullyPaid) {
             await invoiceActivity.statusChanged(
                 params.id,
                 invoice.invoiceNumber,
@@ -218,6 +296,92 @@ export const actions: Actions = {
                 locals.profile.id,
                 getClientIp(request)
             );
+
+            // Check if we need to generate next recurring invoice
+            if (invoice.isRecurring && invoice.recurringInterval) {
+                // Check if we've reached the end date
+                const shouldGenerateNext = !invoice.recurringEndDate || 
+                    new Date() < new Date(invoice.recurringEndDate);
+
+                if (shouldGenerateNext) {
+                    // Calculate the next due date
+                    const nextDueDate = calculateNextDueDate(
+                        invoice.dueDate,
+                        invoice.recurringInterval
+                    );
+
+                    // Check if next due date is before end date
+                    const isWithinEndDate = !invoice.recurringEndDate || 
+                        nextDueDate <= new Date(invoice.recurringEndDate);
+
+                    if (isWithinEndDate) {
+                        try {
+                            // Generate new invoice number
+                            const newInvoiceNumber = await generateInvoiceNumber();
+                            const parentId = invoice.recurringParentId || params.id;
+                            const newCount = (invoice.recurringCount || 1) + 1;
+
+                            // Calculate next recurring date
+                            const nextRecurringDate = calculateNextDueDate(nextDueDate, invoice.recurringInterval);
+
+                            // Create the next recurring invoice
+                            const [newInvoice] = await db
+                                .insert(invoices)
+                                .values({
+                                    invoiceNumber: newInvoiceNumber,
+                                    organizationId: invoice.organizationId,
+                                    projectId: invoice.projectId,
+                                    title: invoice.title,
+                                    description: invoice.description,
+                                    lineItems: invoice.lineItems,
+                                    subtotal: invoice.subtotal,
+                                    taxRate: invoice.taxRate ?? '0',
+                                    taxAmount: invoice.taxAmount ?? '0',
+                                    discount: invoice.discount ?? '0',
+                                    total: invoice.total,
+                                    amountDue: invoice.total,
+                                    currency: invoice.currency,
+                                    dueDate: nextDueDate,
+                                    notes: invoice.notes,
+                                    createdById: invoice.createdById,
+                                    status: 'draft',
+                                    // Recurring fields
+                                    invoiceType: 'recurring',
+                                    isRecurring: true,
+                                    recurringInterval: invoice.recurringInterval,
+                                    recurringStartDate: invoice.recurringStartDate,
+                                    recurringEndDate: invoice.recurringEndDate,
+                                    recurringNextDate: nextRecurringDate,
+                                    recurringParentId: parentId,
+                                    recurringCount: newCount
+                                })
+                                .returning({ id: invoices.id });
+
+                            // Log the creation of the new recurring invoice
+                            await invoiceActivity.created(
+                                newInvoice.id,
+                                newInvoiceNumber,
+                                locals.profile.id,
+                                getClientIp(request)
+                            );
+
+                            return { 
+                                success: true, 
+                                message: `Payment recorded. New recurring invoice ${newInvoiceNumber} has been created.`,
+                                newInvoiceId: newInvoice.id
+                            };
+                        } catch (err) {
+                            console.error('Error creating recurring invoice:', err);
+                            // Payment was still recorded, just failed to create next invoice
+                            return { 
+                                success: true, 
+                                message: 'Payment recorded, but failed to create next recurring invoice. Please create it manually.',
+                                warning: true
+                            };
+                        }
+                    }
+                }
+            }
         }
 
         return { success: true, message: 'Payment recorded successfully' };

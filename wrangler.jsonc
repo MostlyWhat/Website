@@ -16,6 +16,16 @@
 	},
 	"observability": {
 		"enabled": true
+	},
+	/**
+	 * Cron Triggers
+	 * Scheduled tasks for recurring invoice processing and payment reminders
+	 * https://developers.cloudflare.com/workers/configuration/cron-triggers/
+	 */
+	"triggers": {
+		"crons": [
+			"0 0 * * *"
+		]
 	}
 	/**
 	 * Smart Placement
