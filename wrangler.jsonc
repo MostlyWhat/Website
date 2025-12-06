@@ -26,7 +26,7 @@
 		"crons": [
 			"0 0 * * *"
 		]
-	}
+	},
 	/**
 	 * Smart Placement
 	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
@@ -42,7 +42,12 @@
 	 * Environment Variables
 	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
 	 */
-	// "vars": { "MY_VARIABLE": "production_value" }
+	"vars": {
+		"PUBLIC_SUPABASE_URL": "https://ssszlgiuqueistbwcdzt.supabase.co",
+		"PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_Th6ZYzORWpdUhuGLPHKdxQ_nmQ3arBG",
+		// "PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY": "sb_publishable_Th6ZYzORWpdUhuGLPHKdxQ_nmQ3arBG",
+		"PUBLIC_SITE_URL": "https://www.mostlywhat.com"
+	},
 	/**
 	 * Note: Use secrets to store sensitive data.
 	 * https://developers.cloudflare.com/workers/configuration/secrets/
@@ -57,4 +62,14 @@
 	 * https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings
 	 */
 	// "services": [{ "binding": "MY_SERVICE", "service": "my-service" }]
+	/**
+	 * Routes
+	 * https://developers.cloudflare.com/workers/wrangler/configuration/#routes
+	 */
+	"routes": [
+		{
+			"pattern": "mostlywhat.com/*",
+			"zone_name": "mostlywhat.com"
+		}
+	]
 }
