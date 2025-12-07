@@ -15,11 +15,11 @@ export const load: PageServerLoad = async ({ url, locals }) => {
     try {
         // Build where conditions
         const conditions = [];
-        
+
         if (status !== 'all') {
             conditions.push(eq(blogPosts.status, status as 'draft' | 'published' | 'archived'));
         }
-        
+
         if (category) {
             conditions.push(eq(blogPosts.category, category));
         }
@@ -50,7 +50,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
         const allPosts = await db
             .selectDistinct({ category: blogPosts.category })
             .from(blogPosts);
-        
+
         const categories = allPosts.map(p => p.category).filter(Boolean);
 
         return {
@@ -131,10 +131,10 @@ export const actions: Actions = {
         try {
             await db
                 .update(blogPosts)
-                .set({ 
-                    status: newStatus, 
+                .set({
+                    status: newStatus,
                     publishedAt,
-                    updatedAt: new Date() 
+                    updatedAt: new Date()
                 })
                 .where(eq(blogPosts.id, id));
             return { success: true };

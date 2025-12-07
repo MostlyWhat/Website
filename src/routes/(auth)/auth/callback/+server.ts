@@ -14,7 +14,7 @@ export const GET = async ({ url, request, locals: { supabase } }: RequestEvent) 
     const token_hash = url.searchParams.get('token_hash');
     const type = url.searchParams.get('type');
     const redirectTo = url.searchParams.get('redirectTo') ?? '/app';
-    
+
     const ipAddress = getClientIp(request);
     const userAgent = request.headers.get('user-agent') ?? undefined;
 

@@ -900,27 +900,27 @@ export function getClientIp(request: Request): string | undefined {
  */
 export function parseUserAgent(userAgent: string | null): { browser?: string; os?: string; device?: string } | undefined {
     if (!userAgent) return undefined;
-    
+
     const info: { browser?: string; os?: string; device?: string } = {};
-    
+
     // Basic browser detection
     if (userAgent.includes('Chrome')) info.browser = 'Chrome';
     else if (userAgent.includes('Firefox')) info.browser = 'Firefox';
     else if (userAgent.includes('Safari')) info.browser = 'Safari';
     else if (userAgent.includes('Edge')) info.browser = 'Edge';
-    
+
     // Basic OS detection
     if (userAgent.includes('Windows')) info.os = 'Windows';
     else if (userAgent.includes('Mac OS')) info.os = 'macOS';
     else if (userAgent.includes('Linux')) info.os = 'Linux';
     else if (userAgent.includes('Android')) info.os = 'Android';
     else if (userAgent.includes('iOS') || userAgent.includes('iPhone')) info.os = 'iOS';
-    
+
     // Basic device detection
     if (userAgent.includes('Mobile')) info.device = 'Mobile';
     else if (userAgent.includes('Tablet')) info.device = 'Tablet';
     else info.device = 'Desktop';
-    
+
     return info;
 }
 
@@ -951,7 +951,7 @@ export interface LogLoginOptions {
 export async function logLoginEvent(options: LogLoginOptions): Promise<void> {
     try {
         const deviceInfo = parseUserAgent(options.userAgent ?? null);
-        
+
         await db.insert(loginLogs).values({
             profileId: options.profileId,
             eventType: options.eventType,
@@ -960,8 +960,8 @@ export async function logLoginEvent(options: LogLoginOptions): Promise<void> {
             country: options.geolocation?.country,
             region: options.geolocation?.region,
             city: options.geolocation?.city,
-            geolocation: options.geolocation?.lat && options.geolocation?.lng 
-                ? `${options.geolocation.lat},${options.geolocation.lng}` 
+            geolocation: options.geolocation?.lat && options.geolocation?.lng
+                ? `${options.geolocation.lat},${options.geolocation.lng}`
                 : undefined,
             loginMethod: options.loginMethod,
             deviceInfo,

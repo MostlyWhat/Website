@@ -70,7 +70,7 @@ export const actions: Actions = {
         }
 
         const formData = await request.formData();
-        
+
         const title = formData.get('title') as string;
         const slug = formData.get('slug') as string;
         const excerpt = formData.get('excerpt') as string;
@@ -132,12 +132,12 @@ export const actions: Actions = {
             return { success: true };
         } catch (error) {
             console.error('Failed to update blog post:', error);
-            
+
             // Check for unique constraint violation
             if (error instanceof Error && error.message.includes('duplicate')) {
                 return fail(400, { error: 'A post with this slug already exists' });
             }
-            
+
             return fail(500, { error: 'Failed to update blog post' });
         }
     },

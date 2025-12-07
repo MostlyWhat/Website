@@ -13,7 +13,7 @@ export const actions: Actions = {
         const email = formData.get('email') as string;
         const password = formData.get('password') as string;
         const redirectTo = formData.get('redirectTo') as string ?? '/app';
-        
+
         const ipAddress = getClientIp(request);
         const userAgent = request.headers.get('user-agent') ?? undefined;
 
@@ -28,7 +28,7 @@ export const actions: Actions = {
 
         if (error) {
             console.error('Login error:', error.message);
-            
+
             // Log failed login attempt if we can identify the user
             // Note: We'd need to look up the user by email, but for now just log the attempt
             return fail(400, { error: 'Invalid email or password' });

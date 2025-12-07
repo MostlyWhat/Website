@@ -259,7 +259,7 @@ export const actions: Actions = {
             const files = formData.getAll('files') as File[];
             if (files.length > 0) {
                 const supabase = createSupabaseAdminClient();
-                
+
                 for (const file of files.slice(0, MAX_FILES)) {
                     // Skip empty files or invalid types
                     if (!file.size || file.size > MAX_FILE_SIZE || !ALLOWED_TYPES.includes(file.type)) {

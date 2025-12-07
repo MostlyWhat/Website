@@ -19,7 +19,7 @@ export const GET: RequestHandler = async ({ request, locals: { supabase, session
             success: true
         });
     }
-    
+
     await supabase.auth.signOut();
     redirect(303, '/');
 };
@@ -36,7 +36,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, sessio
             success: true
         });
     }
-    
+
     await supabase.auth.signOut();
     redirect(303, '/');
 };

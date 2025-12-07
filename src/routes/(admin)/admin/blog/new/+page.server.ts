@@ -31,7 +31,7 @@ export const actions: Actions = {
         }
 
         const formData = await request.formData();
-        
+
         const title = formData.get('title') as string;
         const slug = formData.get('slug') as string;
         const excerpt = formData.get('excerpt') as string;
@@ -83,14 +83,14 @@ export const actions: Actions = {
             throw redirect(303, `/admin/blog/${newPost.id}`);
         } catch (error) {
             if (error instanceof Response) throw error; // Re-throw redirects
-            
+
             console.error('Failed to create blog post:', error);
-            
+
             // Check for unique constraint violation
             if (error instanceof Error && error.message.includes('duplicate')) {
                 return fail(400, { error: 'A post with this slug already exists' });
             }
-            
+
             return fail(500, { error: 'Failed to create blog post' });
         }
     }
