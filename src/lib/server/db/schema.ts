@@ -1071,6 +1071,65 @@ export const announcementDismissals = pgTable(
 ).enableRLS();
 
 // =============================================================================
+// CONTACT SUBMISSIONS TABLE
+// =============================================================================
+// Store contact form submissions from marketing pages
+
+export const contactSubmissionTopicEnum = pgEnum('contact_submission_topic', [
+	'quote',
+	'support',
+	'general',
+	'partnership',
+	'feedback'
+]);
+
+export const contactSubmissionStatusEnum = pgEnum('contact_submission_status', [
+	'new',
+	'read',
+	'replied',
+	'archived',
+	'spam'
+]);
+
+export const contactSubmissions = pgTable('contact_submissions', {
+	id: uuid('id').primaryKey().defaultRandom(),
+
+	// Contact info
+	name: text('name').notNull(),
+	email: text('email').notNull(),
+	company: text('company'),
+	phone: text('phone'),
+
+	// Message
+	topic: contactSubmissionTopicEnum('topic').default('general').notNull(),
+	subject: text('subject'),
+	message: text('message').notNull(),
+
+	// Additional quote fields
+	projectType: text('project_type'),
+	budget: text('budget'),
+	timeline: text('timeline'),
+
+	// Additional support fields
+	orderId: text('order_id'),
+	urgency: text('urgency'),
+
+	// Status tracking
+	status: contactSubmissionStatusEnum('status').default('new').notNull(),
+
+	// Metadata
+	source: text('source').default('website'),
+	ipAddress: text('ip_address'),
+	userAgent: text('user_agent'),
+	referrer: text('referrer'),
+
+	// Timestamps
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	readAt: timestamp('read_at', { withTimezone: true }),
+	repliedAt: timestamp('replied_at', { withTimezone: true })
+}).enableRLS();
+
+// =============================================================================
 // ORGANIZATION INVITES TABLE
 // =============================================================================
 // Invite codes for joining organizations
@@ -1551,6 +1610,9 @@ export type NewUserNotification = typeof userNotifications.$inferInsert;
 
 export type AnnouncementDismissal = typeof announcementDismissals.$inferSelect;
 export type NewAnnouncementDismissal = typeof announcementDismissals.$inferInsert;
+
+export type ContactSubmission = typeof contactSubmissions.$inferSelect;
+export type NewContactSubmission = typeof contactSubmissions.$inferInsert;
 
 export type UserRole = 'super_admin' | 'admin' | 'staff' | 'customer';
 export type CustomerType = typeof customerTypeEnum.enumValues[number];

@@ -150,14 +150,31 @@
 			const response = await fetch('/api/contact', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ name, email, company, message, topic: selectedTopic })
+				body: JSON.stringify({ 
+					name, 
+					email, 
+					company, 
+					message, 
+					topic: selectedTopic,
+					// Include topic-specific fields
+					...(selectedTopic === 'quote' && { projectType, budget, timeline }),
+					...(selectedTopic === 'support' && { orderId, urgency })
+				})
 			});
 
-			if (!response.ok) throw new Error('Failed to send message');
+			const data = await response.json();
+			
+			if (!response.ok) {
+				throw new Error(data.error || 'Failed to send message');
+			}
+			
 			isSubmitted = true;
+			// Reset all form fields
 			name = ''; email = ''; company = ''; message = '';
+			projectType = ''; budget = ''; timeline = '';
+			orderId = ''; urgency = '';
 		} catch (err) {
-			error = 'Something went wrong. Please try again.';
+			error = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
 		} finally {
 			isSubmitting = false;
 		}

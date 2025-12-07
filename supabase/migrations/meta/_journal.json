@@ -15,6 +15,13 @@
       "when": 1764869177455,
       "tag": "0001_uneven_blob",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1765115866919,
+      "tag": "0002_lazy_dracula",
+      "breakpoints": true
     }
   ]
 }
