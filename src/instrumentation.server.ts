@@ -9,5 +9,5 @@ Sentry.init({
   enableLogs: true,
 
   // uncomment the line below to enable Spotlight (https://spotlightjs.com)
-  // spotlight: import.meta.env.DEV,
+  spotlight: import.meta.env.DEV,
 });
