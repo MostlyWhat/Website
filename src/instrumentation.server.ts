@@ -8,6 +8,7 @@ Sentry.init({
   // Enable logs to be sent to Sentry
   enableLogs: true,
 
-  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
-  spotlight: import.meta.env.DEV,
+  // Spotlight is disabled in production (Cloudflare Workers)
+  // Only enable locally when DEV environment is available
+  spotlight: false,
 });

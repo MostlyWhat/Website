@@ -5,7 +5,7 @@
 	 * Knowledge base for users with articles organized by category.
 	 */
 	import { localizeHref } from '$lib/paraglide/runtime';
-	import { BookOpen, Search, HelpCircle, FileText, Rocket, CreditCard, Settings, MessageCircle, ArrowRight, ExternalLink } from '@lucide/svelte';
+	import { BookOpen, Search, HelpCircle, FileText, Rocket, CreditCard, Settings, MessageCircle, ArrowRight, ExternalLink, Wrench } from '@lucide/svelte';
 
 	let { data } = $props();
 
@@ -93,6 +93,42 @@
 				placeholder="Search articles..."
 				class="font-ui w-full border border-border bg-card py-3 pl-12 pr-4 text-sm placeholder:text-muted-foreground focus:border-primary focus:outline-none"
 			/>
+		</div>
+	</section>
+
+	<!-- Quick Actions - Troubleshooter -->
+	<section class="border-b border-border">
+		<div class="grid grid-cols-12 gap-px bg-border">
+			<a
+				href={localizeHref('/app/help/troubleshooter')}
+				class="col-span-12 flex items-center justify-between bg-primary/5 px-6 py-6 transition-colors hover:bg-primary/10 md:col-span-6 md:px-12 lg:px-16"
+			>
+				<div class="flex items-center gap-4">
+					<div class="flex h-12 w-12 items-center justify-center border border-primary/30 bg-primary/10">
+						<Wrench class="h-5 w-5 text-primary" />
+					</div>
+					<div>
+						<h3 class="font-ui text-sm font-semibold tracking-wider">GUIDED TROUBLESHOOTER</h3>
+						<p class="font-body mt-1 text-xs text-muted-foreground">Diagnose issues step-by-step</p>
+					</div>
+				</div>
+				<ArrowRight class="h-5 w-5 text-primary" />
+			</a>
+			<a
+				href={localizeHref('/app/tickets/new')}
+				class="col-span-12 flex items-center justify-between bg-background px-6 py-6 transition-colors hover:bg-card md:col-span-6 md:px-12 lg:px-16"
+			>
+				<div class="flex items-center gap-4">
+					<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">
+						<MessageCircle class="h-5 w-5 text-primary" />
+					</div>
+					<div>
+						<h3 class="font-ui text-sm font-semibold tracking-wider">SUBMIT A TICKET</h3>
+						<p class="font-body mt-1 text-xs text-muted-foreground">Get help from our support team</p>
+					</div>
+				</div>
+				<ArrowRight class="h-5 w-5 text-muted-foreground" />
+			</a>
 		</div>
 	</section>
 

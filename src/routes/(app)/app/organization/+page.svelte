@@ -7,10 +7,11 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import * as Dialog from '$lib/components/ui/dialog';
+	import * as AlertDialog from '$lib/components/ui/alert-dialog';
 	import {
 		Building2, Users, FolderKanban, Ticket, Settings, UserPlus, Link2, Plus,
 		Crown, Shield, User, Loader2, AlertCircle, Check, RefreshCw, ChevronRight,
-		Copy, Trash2, Mail, Phone, Globe, LogOut
+		Copy, Trash2, Mail, Phone, Globe, LogOut, AlertTriangle
 	} from '@lucide/svelte';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
@@ -21,6 +22,7 @@
 	let showInviteDialog = $state(false);
 	let showMembersDialog = $state(false);
 	let showSettingsDialog = $state(false);
+	let showDeleteDialog = $state(false);
 
 	// Form states
 	let isCreating = $state(false);
@@ -42,6 +44,10 @@
 	let editPhone = $state('');
 	let editWebsite = $state('');
 	let loadingAction = $state<string | null>(null);
+
+	// Delete confirmation
+	let deleteConfirmName = $state('');
+	let isDeleting = $state(false);
 
 	// Copied state
 	let copiedCode = $state<string | null>(null);
@@ -669,7 +675,7 @@
 
 <!-- Settings Dialog -->
 <Dialog.Root bind:open={showSettingsDialog}>
-	<Dialog.Content class="sm:max-w-md">
+	<Dialog.Content class="sm:max-w-md max-h-[80vh] overflow-y-auto">
 		<Dialog.Header>
 			<Dialog.Title class="font-display uppercase">Organization Settings</Dialog.Title>
 			<Dialog.Description>Update your organization's information.</Dialog.Description>
@@ -709,5 +715,75 @@
 				</Button>
 			</Dialog.Footer>
 		</form>
+
+		<!-- Danger Zone -->
+		<div class="mt-6 border-t border-destructive/20 pt-6">
+			<div class="flex items-start gap-3">
+				<AlertTriangle class="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+				<div class="flex-1">
+					<h4 class="font-ui text-sm font-semibold text-destructive">DANGER ZONE</h4>
+					<p class="font-body mt-1 text-xs text-muted-foreground">
+						Permanently delete this organization and all associated data.
+					</p>
+					<Button 
+						variant="outline" 
+						size="sm" 
+						class="mt-3 border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
+						onclick={() => { showSettingsDialog = false; showDeleteDialog = true; deleteConfirmName = ''; }}
+					>
+						<Trash2 class="mr-2 h-4 w-4" />
+						DELETE ORGANIZATION
+					</Button>
+				</div>
+			</div>
+		</div>
 	</Dialog.Content>
 </Dialog.Root>
+
+<!-- Delete Organization Dialog -->
+<AlertDialog.Root bind:open={showDeleteDialog}>
+	<AlertDialog.Content class="sm:max-w-md">
+		<AlertDialog.Header>
+			<AlertDialog.Title class="font-display uppercase text-destructive">Delete Organization</AlertDialog.Title>
+			<AlertDialog.Description>
+				This action cannot be undone. This will permanently delete <strong class="text-foreground">{selectedOrg?.name}</strong> and remove all associated data including members, invites, and settings.
+			</AlertDialog.Description>
+		</AlertDialog.Header>
+		<form method="POST" action="?/deleteOrganization" use:enhance={() => {
+			isDeleting = true;
+			return async ({ result, update }) => {
+				if (result.type === 'success') {
+					showDeleteDialog = false;
+					deleteConfirmName = '';
+				}
+				isDeleting = false;
+				await update();
+			};
+		}} class="space-y-4">
+			<input type="hidden" name="orgId" value={selectedOrg?.id} />
+			<div class="space-y-2">
+				<Label class="font-mono text-[10px] tracking-widest text-muted-foreground">
+					TYPE "{selectedOrg?.name}" TO CONFIRM
+				</Label>
+				<Input 
+					name="confirmName" 
+					type="text" 
+					bind:value={deleteConfirmName} 
+					placeholder={selectedOrg?.name} 
+					class="h-10 border-destructive/50 focus:border-destructive" 
+				/>
+			</div>
+			<AlertDialog.Footer>
+				<AlertDialog.Cancel onclick={() => { deleteConfirmName = ''; }}>CANCEL</AlertDialog.Cancel>
+				<Button 
+					type="submit" 
+					variant="destructive" 
+					disabled={isDeleting || deleteConfirmName.toLowerCase() !== selectedOrg?.name.toLowerCase()}
+				>
+					{#if isDeleting}<Loader2 class="mr-2 h-4 w-4 animate-spin" />{/if}
+					DELETE ORGANIZATION
+				</Button>
+			</AlertDialog.Footer>
+		</form>
+	</AlertDialog.Content>
+</AlertDialog.Root>

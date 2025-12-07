@@ -5,6 +5,8 @@
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import * as Select from '$lib/components/ui/select';
 	import { loadDocsByCategory } from '$lib/content';
+	import Header from '$lib/components/layout/Header.svelte';
+	import Footer from '$lib/components/layout/Footer.svelte';
 	import { 
 		Palette, 
 		Type, 
@@ -233,6 +235,8 @@
 	<meta name="description" content="Design system documentation for MostlyWhat Systems. Grid system, colors, typography, components, and patterns." />
 </svelte:head>
 
+<Header />
+
 <!-- Docs Layout with Sidebar -->
 <div class="flex min-h-[calc(100vh-theme(spacing.16))] flex-col border-b border-border lg:flex-row">
 	<!-- Prevent layout shift by ensuring consistent structure -->
@@ -364,3 +368,5 @@
 		{@render children()}
 	</main>
 </div>
+
+<Footer />

@@ -447,5 +447,98 @@ export const actions: Actions = {
             console.error('Remove member error:', err);
             return fail(500, { error: 'Failed to remove member' });
         }
+    },
+
+    deleteOrganization: async ({ request, locals }) => {
+        if (!locals.user) {
+            return fail(401, { error: 'You must be logged in' });
+        }
+
+        const formData = await request.formData();
+        const orgId = formData.get('orgId') as string;
+        const confirmName = formData.get('confirmName') as string;
+
+        // Verify ownership
+        const [membership] = await db
+            .select({ role: organizationMembers.role })
+            .from(organizationMembers)
+            .where(
+                and(
+                    eq(organizationMembers.organizationId, orgId),
+                    eq(organizationMembers.profileId, locals.user.id)
+                )
+            );
+
+        if (!membership || membership.role !== 'owner') {
+            return fail(403, { error: 'Only the organization owner can delete the organization' });
+        }
+
+        // Get organization to verify name
+        const [org] = await db
+            .select({ name: organizations.name })
+            .from(organizations)
+            .where(eq(organizations.id, orgId));
+
+        if (!org) {
+            return fail(404, { error: 'Organization not found' });
+        }
+
+        if (confirmName?.trim().toLowerCase() !== org.name.toLowerCase()) {
+            return fail(400, { error: 'Organization name does not match. Please type the exact organization name to confirm deletion.' });
+        }
+
+        try {
+            // Delete organization (cascade will handle members, invites, etc.)
+            await db.delete(organizations).where(eq(organizations.id, orgId));
+
+            return { success: true, message: 'Organization deleted successfully' };
+        } catch (err) {
+            console.error('Delete organization error:', err);
+            return fail(500, { error: 'Failed to delete organization' });
+        }
+    },
+
+    leaveOrganization: async ({ request, locals }) => {
+        if (!locals.user) {
+            return fail(401, { error: 'You must be logged in' });
+        }
+
+        const formData = await request.formData();
+        const orgId = formData.get('orgId') as string;
+
+        // Verify membership
+        const [membership] = await db
+            .select({ role: organizationMembers.role })
+            .from(organizationMembers)
+            .where(
+                and(
+                    eq(organizationMembers.organizationId, orgId),
+                    eq(organizationMembers.profileId, locals.user.id)
+                )
+            );
+
+        if (!membership) {
+            return fail(404, { error: 'You are not a member of this organization' });
+        }
+
+        if (membership.role === 'owner') {
+            return fail(400, { error: 'Organization owners cannot leave. Transfer ownership or delete the organization instead.' });
+        }
+
+        try {
+            await db
+                .delete(organizationMembers)
+                .where(
+                    and(
+                        eq(organizationMembers.profileId, locals.user.id),
+                        eq(organizationMembers.organizationId, orgId)
+                    )
+                );
+
+            return { success: true, message: 'You have left the organization' };
+        } catch (err) {
+            console.error('Leave organization error:', err);
+            return fail(500, { error: 'Failed to leave organization' });
+        }
     }
 };
