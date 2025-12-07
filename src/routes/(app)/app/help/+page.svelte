@@ -5,11 +5,15 @@
 	 * Knowledge base for users with articles organized by category.
 	 */
 	import { localizeHref } from '$lib/paraglide/runtime';
-	import { BookOpen, Search, HelpCircle, FileText, Rocket, CreditCard, Settings, MessageCircle, ArrowRight, ExternalLink, Wrench } from '@lucide/svelte';
+	import { page } from '$app/stores';
+	import { BookOpen, Search, HelpCircle, FileText, Rocket, CreditCard, Settings, MessageCircle, ArrowRight, ExternalLink, Wrench, ChevronLeft, X } from '@lucide/svelte';
 
 	let { data } = $props();
 
 	let searchQuery = $state('');
+
+	// Get active category from URL params
+	const activeCategory = $derived($page.url.searchParams.get('category'));
 
 	// Default categories with icons if no articles exist yet
 	const defaultCategories = [
@@ -55,17 +59,34 @@
 		return defaultCategories.map(cat => ({ ...cat, articles: [] }));
 	});
 
-	// Filter articles by search
+	// Get the active category object
+	const activeCategoryData = $derived(
+		activeCategory ? categories.find((c: { name: string }) => c.name === activeCategory) : null
+	);
+
+	// Filter articles by search and/or category
 	const filteredArticles = $derived.by(() => {
-		if (!searchQuery.trim()) return data.articles ?? [];
-		const query = searchQuery.toLowerCase();
-		return (data.articles ?? []).filter((article: { title: string; excerpt: string | null }) => 
-			article.title.toLowerCase().includes(query) ||
-			(article.excerpt?.toLowerCase().includes(query))
-		);
+		let articles = data.articles ?? [];
+		
+		// Filter by category if active
+		if (activeCategory) {
+			articles = articles.filter((article: { category: string }) => article.category === activeCategory);
+		}
+		
+		// Filter by search query
+		if (searchQuery.trim()) {
+			const query = searchQuery.toLowerCase();
+			articles = articles.filter((article: { title: string; excerpt: string | null }) => 
+				article.title.toLowerCase().includes(query) ||
+				(article.excerpt?.toLowerCase().includes(query))
+			);
+		}
+		
+		return articles;
 	});
 
 	const hasArticles = $derived((data.articles?.length ?? 0) > 0);
+	const showingFiltered = $derived(searchQuery.trim() || activeCategory);
 </script>
 
 <svelte:head>
@@ -169,6 +190,80 @@
 							<Search class="h-5 w-5 text-muted-foreground" />
 						</div>
 						<p class="font-body mt-4 text-sm text-muted-foreground">No articles found matching "{searchQuery}"</p>
+					</div>
+				{/if}
+			</div>
+		</section>
+	{:else if activeCategory}
+		<!-- Category View -->
+		<section class="border-b border-border">
+			<div class="flex items-center justify-between px-6 py-4 md:px-12 lg:px-16">
+				<div class="flex items-center gap-3">
+					<a
+						href={localizeHref('/app/help')}
+						class="flex items-center gap-1 font-mono text-[10px] tracking-widest text-muted-foreground hover:text-primary transition-colors"
+					>
+						<ChevronLeft class="h-3 w-3" />
+						ALL CATEGORIES
+					</a>
+					<span class="text-muted-foreground">/</span>
+					<span class="font-mono text-[10px] tracking-widest text-primary uppercase">
+						{activeCategoryData?.label ?? activeCategory}
+					</span>
+				</div>
+				<a
+					href={localizeHref('/app/help')}
+					class="flex items-center gap-1 font-mono text-[10px] tracking-widest text-muted-foreground hover:text-foreground transition-colors"
+				>
+					<X class="h-3 w-3" />
+					CLEAR
+				</a>
+			</div>
+			<div class="px-6 pb-8 md:px-12 lg:px-16">
+				{#if filteredArticles.length > 0}
+					<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+						{#each filteredArticles as article}
+							<a
+								href={localizeHref(`/app/help/${article.slug}`)}
+								class="group border border-border bg-card p-6 transition-colors hover:bg-card/80"
+							>
+								<div class="flex items-start gap-4">
+									<div class="flex h-10 w-10 shrink-0 items-center justify-center border border-border bg-background">
+										<FileText class="h-4 w-4 text-primary" />
+									</div>
+									<div class="flex-1 min-w-0">
+										<h3 class="font-ui text-sm font-semibold tracking-wider group-hover:text-primary">{article.title}</h3>
+										{#if article.excerpt}
+											<p class="font-body mt-2 text-sm text-muted-foreground line-clamp-2">{article.excerpt}</p>
+										{/if}
+										<div class="mt-4 flex items-center gap-2 text-muted-foreground">
+											<ArrowRight class="h-3 w-3 transition-transform group-hover:translate-x-1" />
+											<span class="font-mono text-[10px] tracking-wider">READ MORE</span>
+										</div>
+									</div>
+								</div>
+							</a>
+						{/each}
+					</div>
+				{:else}
+					<div class="flex flex-col items-center justify-center py-12 text-center">
+						<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">
+							{#if activeCategoryData}
+								{@const Icon = activeCategoryData.icon}
+								<Icon class="h-5 w-5 text-muted-foreground" />
+							{:else}
+								<FileText class="h-5 w-5 text-muted-foreground" />
+							{/if}
+						</div>
+						<p class="font-body mt-4 text-sm text-muted-foreground">
+							No articles in this category yet
+						</p>
+						<a
+							href={localizeHref('/app/tickets/new')}
+							class="font-mono mt-4 text-[10px] tracking-wider text-primary hover:underline"
+						>
+							SUBMIT A SUPPORT TICKET →
+						</a>
 					</div>
 				{/if}
 			</div>

@@ -1,19 +1,41 @@
 /**
  * Ticket Creation Server Actions
  * 
- * Creates new support tickets with organization association.
+ * Creates new support tickets with organization association and file attachments.
  */
 
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
-import { tickets, organizationMembers, organizations, projects, supportArticles, profiles } from '$lib/server/db/schema';
+import { tickets, organizationMembers, organizations, projects, supportArticles, profiles, fileUploads } from '$lib/server/db/schema';
 import { eq, and, or, desc } from 'drizzle-orm';
 import crypto from 'node:crypto';
 import { generateOrgNumber } from '$lib/server/id-generator';
 import { sendTicketCreatedEmail } from '$lib/server/email';
 import { env } from '$env/dynamic/private';
 import { ticketActivity, organizationActivity, getClientIp } from '$lib/server/activity-logger';
+import { createSupabaseAdminClient } from '$lib/server/supabase';
+
+// File size limit: 10MB
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const MAX_FILES = 5;
+
+// Allowed MIME types
+const ALLOWED_TYPES = [
+    'image/jpeg',
+    'image/png',
+    'image/gif',
+    'image/webp',
+    'application/pdf',
+    'text/plain',
+    'text/csv',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'application/zip',
+    'application/x-zip-compressed'
+];
 
 export const load: PageServerLoad = async ({ locals }) => {
     // Verify user is authenticated
@@ -232,6 +254,64 @@ export const actions: Actions = {
                 createdById: locals.profile.id,
                 dueAt: dueDate
             }).returning({ id: tickets.id, ticketNumber: tickets.ticketNumber });
+
+            // Handle file attachments
+            const files = formData.getAll('files') as File[];
+            if (files.length > 0) {
+                const supabase = createSupabaseAdminClient();
+                
+                for (const file of files.slice(0, MAX_FILES)) {
+                    // Skip empty files or invalid types
+                    if (!file.size || file.size > MAX_FILE_SIZE || !ALLOWED_TYPES.includes(file.type)) {
+                        continue;
+                    }
+
+                    try {
+                        // Create unique file path
+                        const timestamp = Date.now();
+                        const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+                        const storagePath = `ticket/${newTicket.id}/${timestamp}_${sanitizedFileName}`;
+
+                        // Get file buffer
+                        const arrayBuffer = await file.arrayBuffer();
+                        const buffer = new Uint8Array(arrayBuffer);
+
+                        // Upload to Supabase Storage
+                        const { error: uploadError } = await supabase
+                            .storage
+                            .from('attachments')
+                            .upload(storagePath, buffer, {
+                                contentType: file.type,
+                                upsert: false
+                            });
+
+                        if (uploadError) {
+                            console.error('File upload error:', uploadError);
+                            continue;
+                        }
+
+                        // Get public URL
+                        const { data: urlData } = supabase
+                            .storage
+                            .from('attachments')
+                            .getPublicUrl(storagePath);
+
+                        // Save file record to database
+                        await db.insert(fileUploads).values({
+                            entityType: 'ticket',
+                            entityId: newTicket.id,
+                            fileName: file.name,
+                            fileType: file.type,
+                            fileSize: file.size,
+                            fileUrl: urlData.publicUrl,
+                            storagePath,
+                            uploadedById: locals.profile.id
+                        });
+                    } catch (fileErr) {
+                        console.error('Error processing file:', file.name, fileErr);
+                    }
+                }
+            }
 
             // Log activity
             await ticketActivity.created(

@@ -212,7 +212,7 @@ This document tracks the implementation of features and fixes for the MostlyWhat
 
 ## Database Schema
 
-### Tables (22 total, all with RLS enabled)
+### Tables (26 total, all with RLS enabled)
 - [x] `profiles` - User profiles linked to Supabase Auth
 - [x] `organizations` - Client organizations/companies
 - [x] `organization_members` - M:N relationship profiles↔organizations
@@ -227,6 +227,7 @@ This document tracks the implementation of features and fixes for the MostlyWhat
 - [x] `tickets` - Support tickets
 - [x] `ticket_comments` - Ticket conversation threads
 - [x] `activity_log` - Audit trail
+- [x] `login_logs` - User login/logout events (NEW)
 - [x] `file_uploads` - File attachment metadata
 - [x] `announcements` - Portal announcements with targeting
 - [x] `announcement_dismissals` - Track dismissed announcements per user
@@ -236,6 +237,8 @@ This document tracks the implementation of features and fixes for the MostlyWhat
 - [x] `support_articles` - Knowledge base articles
 - [x] `staff_groups` - Admin/support team groups
 - [x] `staff_group_members` - M:N relationship profiles↔staff_groups
+- [x] `blog_posts` - Blog content management (NEW)
+- [x] `portfolio_projects` - Portfolio/case studies content (NEW)
 
 ### Security
 - RLS enabled on all tables (no policies = service role only access)
@@ -257,11 +260,17 @@ This document tracks the implementation of features and fixes for the MostlyWhat
 src/routes/
 ├── (admin)/admin/         # Admin panel routes
 │   ├── activity-log/      # Activity audit log
-│   ├── announcements/     # Announcement management (NEW)
+│   ├── announcements/     # Announcement management
+│   ├── blog/              # Blog content management (NEW)
+│   │   ├── new/           # Create new blog post
+│   │   └── [id]/          # Edit/delete blog post
 │   ├── canned-responses/  # Response templates
 │   ├── invoices/          # Invoice management
 │   ├── knowledge-base/    # Knowledge base articles
 │   ├── organizations/     # Organization management
+│   ├── portfolio/         # Portfolio content management (NEW)
+│   │   ├── new/           # Create new portfolio project
+│   │   └── [id]/          # Edit/delete portfolio project
 │   ├── projects/          # Project management (includes requests tab)
 │   ├── project-requests/  # Project request detail pages
 │   ├── proposals/         # Proposal management
@@ -269,12 +278,12 @@ src/routes/
 │   ├── reports/           # Analytics dashboard
 │   ├── settings/          # System settings
 │   ├── sla-policies/      # SLA management
-│   ├── staff-groups/      # Staff group management (NEW)
-│   │   └── [id]/          # Staff group detail (NEW)
+│   ├── staff-groups/      # Staff group management
+│   │   └── [id]/          # Staff group detail
 │   ├── tickets/           # Ticket management
 │   └── users/             # User management
 ├── (app)/app/             # Client portal routes
-│   ├── help/              # Client help center
+│   ├── help/              # Client help center (with category filtering)
 │   ├── invoices/          # Client invoices
 │   ├── projects/          # Client projects
 │   │   ├── new/           # Submit new project request
@@ -288,9 +297,9 @@ src/routes/
 │   │   │   ├── new/       # Create organization
 │   │   │   └── [id]/      # Organization management
 │   │   ├── password/      # Password change
-│   │   └── security/      # 2FA settings (NEW)
-│   └── tickets/           # Client tickets (with article suggestions)
-├── (auth)/auth/           # Authentication routes
+│   │   └── security/      # 2FA settings
+│   └── tickets/           # Client tickets (with attachments)
+├── (auth)/auth/           # Authentication routes (with login logging)
 ├── (marketing)/           # Public marketing pages
 ├── join/[code]/           # Organization invite links
 └── onboarding/            # Profile setup flow
@@ -304,7 +313,64 @@ src/routes/
 2. **Invoice Generation**: Generate invoices from proposals/projects
 3. **Ticket Advanced Features**: Merging, splitting, linking tickets
 4. **Export Reports**: Export to CSV/PDF
-5. **Scheduled Announcements**: Schedule start/end dates for announcements
+5. **Phase Out MD Files**: Migrate static content to Supabase database
+
+---
+
+## Recent Changes (January 2025)
+
+### Login Logging System (Latest)
+- Created `login_logs` table for tracking user authentication events
+- Captures: login method, IP address, user agent, geolocation (city, region, country)
+- Added `logLoginEvent` function in `activity-logger.ts`
+- Integrated logging for all authentication methods:
+  - OAuth providers (Google, GitHub, etc.) via `/auth/callback`
+  - Magic link logins via `/auth/callback`
+  - Password-based logins via `/auth/login`
+  - Logout events via `/auth/logout`
+
+### Blog & Portfolio CMS
+- Created `blogPosts` table: slug, title, content, excerpt, category, tags, featured, published
+- Created `portfolioProjects` table: slug, title, client, category, year, description, tags, content
+- Full admin CRUD for blog posts at `/admin/blog`:
+  - List view with search, category/status filters
+  - Create new posts at `/admin/blog/new`
+  - Edit/delete posts at `/admin/blog/[id]`
+- Full admin CRUD for portfolio at `/admin/portfolio`:
+  - List view with search, category filters
+  - Create new projects at `/admin/portfolio/new`
+  - Edit/delete projects at `/admin/portfolio/[id]`
+- Added Blog Posts and Portfolio to admin sidebar navigation
+- Content Management section in admin layout
+
+### Help Center Category Filtering
+- Added category filter to `/app/help` page
+- URL parameter support for category selection
+- Clear filter button to reset to all categories
+- Dynamic category list from available articles
+
+### Organization Page Improvements
+- Fixed dialog padding using Dialog.Body wrapper
+- Updated header section to match projects/invoices pattern
+- Consistent styling across all app pages
+
+### Ticket Attachment Support
+- Updated `/app/tickets/new` to support file attachments
+- Dynamic file input fields with add/remove functionality
+- Server-side file upload to Supabase Storage
+- Automatic attachment linking to ticket on creation
+
+### Email Templates Documentation
+- Created comprehensive `docs/EMAIL_TEMPLATES.md`
+- Documents all transactional email types:
+  - Proposal emails (new, accepted, rejected)
+  - Ticket emails (created, reply, status change)
+  - Organization emails (invite, role change, removal)
+  - Project emails (created, status update, milestone)
+  - Invoice emails (new, reminder, payment received)
+- Supabase auth email templates (confirmation, recovery, magic link)
+- Marketing and system notification templates
+- Variable reference and implementation guide
 
 ---
 

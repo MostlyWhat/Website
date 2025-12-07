@@ -116,15 +116,18 @@
 	<title>Organization — MostlyWhat Portal</title>
 </svelte:head>
 
-<div class="min-h-screen bg-background">
-	<!-- Header -->
-	<section class="border-b border-border">
-		<div class="flex items-center justify-between gap-4 px-6 py-6 md:px-12 lg:px-16">
+<div class="min-h-[calc(100dvh-4rem)]">
+	<!-- Header Section -->
+	<section class="border-b border-border bg-background px-6 py-8 md:px-12 lg:px-16">
+		<div class="flex items-start justify-between gap-4">
 			<div>
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// ORGANIZATION</span>
-				<h1 class="font-display mt-1 text-2xl font-bold uppercase md:text-3xl">
+				<h1 class="font-display mt-2 text-2xl font-bold uppercase md:text-3xl">
 					{selectedOrg?.name ?? 'Your Organization'}
 				</h1>
+				<p class="font-body mt-1 text-sm text-muted-foreground">
+					Manage your organization, team members, and invites.
+				</p>
 			</div>
 			<div class="flex items-center gap-2">
 				<Button variant="outline" size="sm" onclick={() => invalidateAll()}>
@@ -480,19 +483,21 @@
 				isCreating = false;
 				await update();
 			};
-		}} class="space-y-4">
-			<div class="space-y-2">
-				<Label class="font-mono text-[10px] tracking-widest text-muted-foreground">NAME *</Label>
-				<Input name="name" type="text" required bind:value={orgName} placeholder="Acme Inc." class="h-10" />
-			</div>
-			<div class="space-y-2">
-				<Label class="font-mono text-[10px] tracking-widest text-muted-foreground">DESCRIPTION</Label>
-				<Input name="description" type="text" bind:value={orgDescription} placeholder="Brief description" class="h-10" />
-			</div>
-			<div class="space-y-2">
-				<Label class="font-mono text-[10px] tracking-widest text-muted-foreground">WEBSITE</Label>
-				<Input name="website" type="url" bind:value={orgWebsite} placeholder="https://example.com" class="h-10" />
-			</div>
+		}}>
+			<Dialog.Body class="space-y-4">
+				<div class="space-y-2">
+					<Label class="font-mono text-[10px] tracking-widest text-muted-foreground">NAME *</Label>
+					<Input name="name" type="text" required bind:value={orgName} placeholder="Acme Inc." class="h-10" />
+				</div>
+				<div class="space-y-2">
+					<Label class="font-mono text-[10px] tracking-widest text-muted-foreground">DESCRIPTION</Label>
+					<Input name="description" type="text" bind:value={orgDescription} placeholder="Brief description" class="h-10" />
+				</div>
+				<div class="space-y-2">
+					<Label class="font-mono text-[10px] tracking-widest text-muted-foreground">WEBSITE</Label>
+					<Input name="website" type="url" bind:value={orgWebsite} placeholder="https://example.com" class="h-10" />
+				</div>
+			</Dialog.Body>
 			<Dialog.Footer>
 				<Button type="button" variant="outline" onclick={() => showCreateDialog = false}>CANCEL</Button>
 				<Button type="submit" disabled={isCreating || !orgName.trim()}>
@@ -511,19 +516,19 @@
 			<Dialog.Title class="font-display uppercase">Join Organization</Dialog.Title>
 			<Dialog.Description>Enter an invite code to join an existing organization.</Dialog.Description>
 		</Dialog.Header>
-		<div class="space-y-4">
+		<Dialog.Body class="space-y-4">
 			<div class="space-y-2">
 				<Label class="font-mono text-[10px] tracking-widest text-muted-foreground">INVITE CODE</Label>
 				<Input type="text" bind:value={inviteCode} placeholder="Enter invite code" class="h-10" />
 			</div>
-			<Dialog.Footer>
-				<Button variant="outline" onclick={() => { showJoinDialog = false; inviteCode = ''; }}>CANCEL</Button>
-				<Button onclick={handleJoinWithCode} disabled={isJoining || !inviteCode.trim()}>
-					{#if isJoining}<Loader2 class="mr-2 h-4 w-4 animate-spin" />{/if}
-					JOIN
-				</Button>
-			</Dialog.Footer>
-		</div>
+		</Dialog.Body>
+		<Dialog.Footer>
+			<Button variant="outline" onclick={() => { showJoinDialog = false; inviteCode = ''; }}>CANCEL</Button>
+			<Button onclick={handleJoinWithCode} disabled={isJoining || !inviteCode.trim()}>
+				{#if isJoining}<Loader2 class="mr-2 h-4 w-4 animate-spin" />{/if}
+				JOIN
+			</Button>
+		</Dialog.Footer>
 	</Dialog.Content>
 </Dialog.Root>
 
@@ -534,20 +539,21 @@
 			<Dialog.Title class="font-display uppercase">Team Members</Dialog.Title>
 			<Dialog.Description>{selectedOrg?.memberCount ?? 0} members in {selectedOrg?.name}</Dialog.Description>
 		</Dialog.Header>
-		<div class="divide-y divide-border -mx-6">
-			{#each selectedOrg?.members ?? [] as member (member.id)}
-				{@const RoleIcon = getRoleIcon(member.role)}
-				<div class="flex items-center justify-between px-6 py-4">
-					<div class="flex items-center gap-3">
-						<div class="flex h-10 w-10 items-center justify-center border border-border bg-background flex-shrink-0">
-							{#if member.avatarUrl}
-								<img src={member.avatarUrl} alt="" class="h-10 w-10 object-cover" />
-							{:else}
-								<User class="h-5 w-5 text-muted-foreground" />
-							{/if}
-						</div>
-						<div class="min-w-0">
-							<p class="font-ui text-sm font-medium truncate">
+		<Dialog.Body class="p-0">
+			<div class="divide-y divide-border">
+				{#each selectedOrg?.members ?? [] as member (member.id)}
+					{@const RoleIcon = getRoleIcon(member.role)}
+					<div class="flex items-center justify-between px-4 py-4">
+						<div class="flex items-center gap-3">
+							<div class="flex h-10 w-10 items-center justify-center border border-border bg-background flex-shrink-0">
+								{#if member.avatarUrl}
+									<img src={member.avatarUrl} alt="" class="h-10 w-10 object-cover" />
+								{:else}
+									<User class="h-5 w-5 text-muted-foreground" />
+								{/if}
+							</div>
+							<div class="min-w-0">
+								<p class="font-ui text-sm font-medium truncate">
 								{member.displayName || `${member.firstName} ${member.lastName}`}
 							</p>
 							<p class="font-mono text-xs text-muted-foreground truncate">{member.email}</p>
@@ -577,7 +583,8 @@
 					</div>
 				</div>
 			{/each}
-		</div>
+			</div>
+		</Dialog.Body>
 		<Dialog.Footer>
 			<Button variant="outline" onclick={() => showMembersDialog = false}>CLOSE</Button>
 		</Dialog.Footer>
@@ -591,82 +598,82 @@
 			<Dialog.Title class="font-display uppercase">Manage Invites</Dialog.Title>
 			<Dialog.Description>Create invite codes and manage pending invitations.</Dialog.Description>
 		</Dialog.Header>
-		
-		<!-- Create Invite Form -->
-		<form method="POST" action="?/createInvite" use:enhance={() => {
-			inviteLoading = true;
-			return async ({ result, update }) => {
-				if (result.type === 'success') {
-					inviteEmail = ''; inviteRole = 'member'; inviteMaxUses = 1;
-				}
-				inviteLoading = false;
-				await update();
-			};
-		}} class="border border-border bg-background p-4 space-y-4">
-			<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CREATE NEW INVITE</span>
-			<input type="hidden" name="orgId" value={selectedOrg?.id} />
-			<div class="grid gap-4 sm:grid-cols-3">
-				<div class="space-y-1">
-					<Label class="font-mono text-[9px] tracking-widest text-muted-foreground">EMAIL (OPTIONAL)</Label>
-					<Input name="email" type="email" bind:value={inviteEmail} placeholder="user@example.com" class="h-9 text-sm" />
-				</div>
-				<div class="space-y-1">
-					<Label class="font-mono text-[9px] tracking-widest text-muted-foreground">ROLE</Label>
-					<select name="role" bind:value={inviteRole} class="h-9 w-full border border-border bg-background px-3 text-sm">
-						<option value="member">Member</option>
-						<option value="admin">Admin</option>
-					</select>
-				</div>
-				<div class="space-y-1">
-					<Label class="font-mono text-[9px] tracking-widest text-muted-foreground">MAX USES</Label>
-					<Input name="maxUses" type="number" min="1" bind:value={inviteMaxUses} class="h-9 text-sm" />
-				</div>
-			</div>
-			<Button type="submit" size="sm" disabled={inviteLoading}>
-				{#if inviteLoading}<Loader2 class="mr-2 h-4 w-4 animate-spin" />{/if}
-				<UserPlus class="mr-2 h-4 w-4" />
-				CREATE INVITE
-			</Button>
-		</form>
-
-		<!-- Invite List -->
-		{#if !selectedOrg?.invites || selectedOrg.invites.length === 0}
-			<p class="text-center font-body text-sm text-muted-foreground py-8">No active invites</p>
-		{:else}
-			<div class="divide-y divide-border border border-border">
-				{#each selectedOrg.invites as invite (invite.id)}
-					<div class="flex items-center justify-between px-4 py-3">
-						<div class="space-y-1 min-w-0">
-							<div class="flex flex-wrap items-center gap-2">
-								<code class="font-mono text-sm font-bold">{invite.code}</code>
-								<span class="border px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider {invite.role === 'admin' ? 'bg-blue-500/10 text-blue-500 border-blue-500/30' : 'bg-muted text-muted-foreground border-border'}">{invite.role}</span>
-							</div>
-							<p class="font-mono text-xs text-muted-foreground">
-								{invite.usedCount}/{invite.maxUses ?? '∞'} uses • Expires {formatDate(invite.expiresAt)}
-								{#if invite.email} • {invite.email}{/if}
-							</p>
-						</div>
-						<div class="flex items-center gap-2 flex-shrink-0">
-							<Button variant="ghost" size="sm" onclick={() => copyToClipboard(invite.code)}>
-								{#if copiedCode === invite.code}
-									<Check class="h-4 w-4 text-green-500" />
-								{:else}
-									<Copy class="h-4 w-4" />
-								{/if}
-							</Button>
-							<form method="POST" action="?/deleteInvite" use:enhance>
-								<input type="hidden" name="orgId" value={selectedOrg?.id} />
-								<input type="hidden" name="inviteId" value={invite.id} />
-								<Button type="submit" variant="ghost" size="sm" class="text-destructive hover:text-destructive">
-									<Trash2 class="h-4 w-4" />
-								</Button>
-							</form>
-						</div>
+		<Dialog.Body class="space-y-4">
+			<!-- Create Invite Form -->
+			<form method="POST" action="?/createInvite" use:enhance={() => {
+				inviteLoading = true;
+				return async ({ result, update }) => {
+					if (result.type === 'success') {
+						inviteEmail = ''; inviteRole = 'member'; inviteMaxUses = 1;
+					}
+					inviteLoading = false;
+					await update();
+				};
+			}} class="border border-border bg-background p-4 space-y-4">
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CREATE NEW INVITE</span>
+				<input type="hidden" name="orgId" value={selectedOrg?.id} />
+				<div class="grid gap-4 sm:grid-cols-3">
+					<div class="space-y-1">
+						<Label class="font-mono text-[9px] tracking-widest text-muted-foreground">EMAIL (OPTIONAL)</Label>
+						<Input name="email" type="email" bind:value={inviteEmail} placeholder="user@example.com" class="h-9 text-sm" />
 					</div>
-				{/each}
-			</div>
-		{/if}
-		
+					<div class="space-y-1">
+						<Label class="font-mono text-[9px] tracking-widest text-muted-foreground">ROLE</Label>
+						<select name="role" bind:value={inviteRole} class="h-9 w-full border border-border bg-background px-3 text-sm">
+							<option value="member">Member</option>
+							<option value="admin">Admin</option>
+						</select>
+					</div>
+					<div class="space-y-1">
+						<Label class="font-mono text-[9px] tracking-widest text-muted-foreground">MAX USES</Label>
+						<Input name="maxUses" type="number" min="1" bind:value={inviteMaxUses} class="h-9 text-sm" />
+					</div>
+				</div>
+				<Button type="submit" size="sm" disabled={inviteLoading}>
+					{#if inviteLoading}<Loader2 class="mr-2 h-4 w-4 animate-spin" />{/if}
+					<UserPlus class="mr-2 h-4 w-4" />
+					CREATE INVITE
+				</Button>
+			</form>
+
+			<!-- Invite List -->
+			{#if !selectedOrg?.invites || selectedOrg.invites.length === 0}
+				<p class="text-center font-body text-sm text-muted-foreground py-8">No active invites</p>
+			{:else}
+				<div class="divide-y divide-border border border-border">
+					{#each selectedOrg.invites as invite (invite.id)}
+						<div class="flex items-center justify-between px-4 py-3">
+							<div class="space-y-1 min-w-0">
+								<div class="flex flex-wrap items-center gap-2">
+									<code class="font-mono text-sm font-bold">{invite.code}</code>
+									<span class="border px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider {invite.role === 'admin' ? 'bg-blue-500/10 text-blue-500 border-blue-500/30' : 'bg-muted text-muted-foreground border-border'}">{invite.role}</span>
+								</div>
+								<p class="font-mono text-xs text-muted-foreground">
+									{invite.usedCount}/{invite.maxUses ?? '∞'} uses • Expires {formatDate(invite.expiresAt)}
+									{#if invite.email} • {invite.email}{/if}
+								</p>
+							</div>
+							<div class="flex items-center gap-2 flex-shrink-0">
+								<Button variant="ghost" size="sm" onclick={() => copyToClipboard(invite.code)}>
+									{#if copiedCode === invite.code}
+										<Check class="h-4 w-4 text-green-500" />
+									{:else}
+										<Copy class="h-4 w-4" />
+									{/if}
+								</Button>
+								<form method="POST" action="?/deleteInvite" use:enhance>
+									<input type="hidden" name="orgId" value={selectedOrg?.id} />
+									<input type="hidden" name="inviteId" value={invite.id} />
+									<Button type="submit" variant="ghost" size="sm" class="text-destructive hover:text-destructive">
+										<Trash2 class="h-4 w-4" />
+									</Button>
+								</form>
+							</div>
+						</div>
+					{/each}
+				</div>
+			{/if}
+		</Dialog.Body>
 		<Dialog.Footer>
 			<Button variant="outline" onclick={() => showInviteDialog = false}>CLOSE</Button>
 		</Dialog.Footer>
@@ -689,24 +696,49 @@
 				loadingAction = null;
 				await update();
 			};
-		}} class="space-y-4">
-			<input type="hidden" name="orgId" value={selectedOrg?.id} />
-			<div class="space-y-2">
-				<Label class="font-mono text-[10px] tracking-widest text-muted-foreground">NAME *</Label>
-				<Input name="name" type="text" required bind:value={editName} class="h-10" />
-			</div>
-			<div class="space-y-2">
-				<Label class="font-mono text-[10px] tracking-widest text-muted-foreground">EMAIL</Label>
-				<Input name="email" type="email" bind:value={editEmail} class="h-10" />
-			</div>
-			<div class="space-y-2">
-				<Label class="font-mono text-[10px] tracking-widest text-muted-foreground">PHONE</Label>
-				<Input name="phone" type="tel" bind:value={editPhone} class="h-10" />
-			</div>
-			<div class="space-y-2">
-				<Label class="font-mono text-[10px] tracking-widest text-muted-foreground">WEBSITE</Label>
-				<Input name="website" type="url" bind:value={editWebsite} class="h-10" />
-			</div>
+		}}>
+			<Dialog.Body class="space-y-4">
+				<input type="hidden" name="orgId" value={selectedOrg?.id} />
+				<div class="space-y-2">
+					<Label class="font-mono text-[10px] tracking-widest text-muted-foreground">NAME *</Label>
+					<Input name="name" type="text" required bind:value={editName} class="h-10" />
+				</div>
+				<div class="space-y-2">
+					<Label class="font-mono text-[10px] tracking-widest text-muted-foreground">EMAIL</Label>
+					<Input name="email" type="email" bind:value={editEmail} class="h-10" />
+				</div>
+				<div class="space-y-2">
+					<Label class="font-mono text-[10px] tracking-widest text-muted-foreground">PHONE</Label>
+					<Input name="phone" type="tel" bind:value={editPhone} class="h-10" />
+				</div>
+				<div class="space-y-2">
+					<Label class="font-mono text-[10px] tracking-widest text-muted-foreground">WEBSITE</Label>
+					<Input name="website" type="url" bind:value={editWebsite} class="h-10" />
+				</div>
+
+				<!-- Danger Zone -->
+				<div class="mt-2 border-t border-destructive/20 pt-4">
+					<div class="flex items-start gap-3">
+						<AlertTriangle class="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+						<div class="flex-1">
+							<h4 class="font-ui text-sm font-semibold text-destructive">DANGER ZONE</h4>
+							<p class="font-body mt-1 text-xs text-muted-foreground">
+								Permanently delete this organization and all associated data.
+							</p>
+							<Button 
+								type="button"
+								variant="outline" 
+								size="sm" 
+								class="mt-3 border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
+								onclick={() => { showSettingsDialog = false; showDeleteDialog = true; deleteConfirmName = ''; }}
+							>
+								<Trash2 class="mr-2 h-4 w-4" />
+								DELETE ORGANIZATION
+							</Button>
+						</div>
+					</div>
+				</div>
+			</Dialog.Body>
 			<Dialog.Footer>
 				<Button type="button" variant="outline" onclick={() => showSettingsDialog = false}>CANCEL</Button>
 				<Button type="submit" disabled={loadingAction === 'update-org'}>
@@ -715,28 +747,6 @@
 				</Button>
 			</Dialog.Footer>
 		</form>
-
-		<!-- Danger Zone -->
-		<div class="mt-6 border-t border-destructive/20 pt-6">
-			<div class="flex items-start gap-3">
-				<AlertTriangle class="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
-				<div class="flex-1">
-					<h4 class="font-ui text-sm font-semibold text-destructive">DANGER ZONE</h4>
-					<p class="font-body mt-1 text-xs text-muted-foreground">
-						Permanently delete this organization and all associated data.
-					</p>
-					<Button 
-						variant="outline" 
-						size="sm" 
-						class="mt-3 border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
-						onclick={() => { showSettingsDialog = false; showDeleteDialog = true; deleteConfirmName = ''; }}
-					>
-						<Trash2 class="mr-2 h-4 w-4" />
-						DELETE ORGANIZATION
-					</Button>
-				</div>
-			</div>
-		</div>
 	</Dialog.Content>
 </Dialog.Root>
 
@@ -759,19 +769,21 @@
 				isDeleting = false;
 				await update();
 			};
-		}} class="space-y-4">
-			<input type="hidden" name="orgId" value={selectedOrg?.id} />
-			<div class="space-y-2">
-				<Label class="font-mono text-[10px] tracking-widest text-muted-foreground">
-					TYPE "{selectedOrg?.name}" TO CONFIRM
-				</Label>
-				<Input 
-					name="confirmName" 
-					type="text" 
-					bind:value={deleteConfirmName} 
-					placeholder={selectedOrg?.name} 
-					class="h-10 border-destructive/50 focus:border-destructive" 
-				/>
+		}}>
+			<div class="space-y-4 px-4 py-4">
+				<input type="hidden" name="orgId" value={selectedOrg?.id} />
+				<div class="space-y-2">
+					<Label class="font-mono text-[10px] tracking-widest text-muted-foreground">
+						TYPE "{selectedOrg?.name}" TO CONFIRM
+					</Label>
+					<Input 
+						name="confirmName" 
+						type="text" 
+						bind:value={deleteConfirmName} 
+						placeholder={selectedOrg?.name} 
+						class="h-10 border-destructive/50 focus:border-destructive" 
+					/>
+				</div>
 			</div>
 			<AlertDialog.Footer>
 				<AlertDialog.Cancel onclick={() => { deleteConfirmName = ''; }}>CANCEL</AlertDialog.Cancel>

@@ -730,6 +730,50 @@ export const activityLog = pgTable('activity_log', {
 }).enableRLS();
 
 // =============================================================================
+// LOGIN LOGS TABLE
+// =============================================================================
+// Track user login events for security auditing and compliance
+
+export const loginLogs = pgTable('login_logs', {
+	id: uuid('id').primaryKey().defaultRandom(),
+
+	// User who logged in
+	profileId: uuid('profile_id')
+		.notNull()
+		.references(() => profiles.id, { onDelete: 'cascade' }),
+
+	// Login event details
+	eventType: text('event_type').notNull(), // 'login', 'logout', 'failed_login', 'token_refresh', 'password_reset'
+
+	// Request information
+	ipAddress: text('ip_address'),
+	userAgent: text('user_agent'),
+
+	// Geolocation (if available) - stored as text for simplicity
+	country: text('country'),
+	region: text('region'),
+	city: text('city'),
+	geolocation: text('geolocation'), // Format: "lat,lng"
+
+	// Additional metadata
+	loginMethod: text('login_method'), // 'password', 'magic_link', 'oauth', '2fa'
+	deviceInfo: jsonb('device_info').$type<{
+		browser?: string;
+		os?: string;
+		device?: string;
+	}>(),
+
+	// Success/failure tracking
+	success: boolean('success').default(true).notNull(),
+	failureReason: text('failure_reason'),
+
+	// Session info
+	sessionId: text('session_id'),
+
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
+}).enableRLS();
+
+// =============================================================================
 // FILE UPLOADS TABLE
 // =============================================================================
 
@@ -1530,6 +1574,119 @@ export const supportArticlesRelations = relations(supportArticles, ({ one }) => 
 }));
 
 // =============================================================================
+// BLOG POSTS TABLE
+// =============================================================================
+// Blog posts for the marketing site (admin-managed)
+
+export const blogPostStatusEnum = pgEnum('blog_post_status', ['draft', 'published', 'archived']);
+
+export const blogPosts = pgTable('blog_posts', {
+	id: uuid('id').primaryKey().defaultRandom(),
+
+	// URL-friendly identifier
+	slug: text('slug').notNull().unique(),
+
+	// Content
+	title: text('title').notNull(),
+	excerpt: text('excerpt'), // Short summary for listings
+	content: text('content').notNull(), // Markdown content
+	featuredImage: text('featured_image'), // URL to featured image
+
+	// Categorization
+	category: text('category').notNull(), // e.g., 'development', 'design', 'technology'
+	tags: jsonb('tags').$type<string[]>().default([]),
+
+	// Publishing
+	status: blogPostStatusEnum('status').default('draft').notNull(),
+	isFeatured: boolean('is_featured').default(false).notNull(),
+	publishedAt: timestamp('published_at', { withTimezone: true }),
+
+	// SEO
+	metaTitle: text('meta_title'),
+	metaDescription: text('meta_description'),
+
+	// Reading
+	readTime: text('read_time').default('5 min read'),
+	viewCount: integer('view_count').default(0).notNull(),
+
+	// Author
+	authorId: uuid('author_id')
+		.notNull()
+		.references(() => profiles.id, { onDelete: 'cascade' }),
+
+	// Metadata
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+}).enableRLS();
+
+export const blogPostsRelations = relations(blogPosts, ({ one }) => ({
+	author: one(profiles, {
+		fields: [blogPosts.authorId],
+		references: [profiles.id]
+	})
+}));
+
+// =============================================================================
+// PORTFOLIO PROJECTS TABLE
+// =============================================================================
+// Portfolio showcase projects for the marketing site (admin-managed)
+
+export const portfolioProjectStatusEnum = pgEnum('portfolio_project_status', ['draft', 'published', 'archived']);
+
+export const portfolioProjects = pgTable('portfolio_projects', {
+	id: uuid('id').primaryKey().defaultRandom(),
+
+	// URL-friendly identifier
+	slug: text('slug').notNull().unique(),
+
+	// Basic Info
+	title: text('title').notNull(),
+	client: text('client').notNull(),
+	description: text('description'), // Short description for cards
+	content: text('content').notNull(), // Full markdown content
+
+	// Categorization
+	category: text('category').notNull(), // e.g., 'web-app', 'mobile', 'design', 'branding'
+	tags: jsonb('tags').$type<string[]>().default([]),
+	year: text('year'),
+
+	// Media
+	featuredImage: text('featured_image'),
+	gallery: jsonb('gallery').$type<string[]>().default([]),
+	videoUrl: text('video_url'),
+
+	// Publishing
+	status: portfolioProjectStatusEnum('status').default('draft').notNull(),
+	isFeatured: boolean('is_featured').default(false).notNull(),
+	publishedAt: timestamp('published_at', { withTimezone: true }),
+	sortOrder: integer('sort_order').default(0).notNull(),
+
+	// SEO
+	metaTitle: text('meta_title'),
+	metaDescription: text('meta_description'),
+
+	// External links
+	liveUrl: text('live_url'),
+	caseStudyUrl: text('case_study_url'),
+
+	// Author/Creator
+	createdById: uuid('created_by_id')
+		.notNull()
+		.references(() => profiles.id, { onDelete: 'cascade' }),
+
+	// Metadata
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+}).enableRLS();
+
+export const portfolioProjectsRelations = relations(portfolioProjects, ({ one }) => ({
+	createdBy: one(profiles, {
+		fields: [portfolioProjects.createdById],
+		references: [profiles.id]
+	})
+}));
+
+// =============================================================================
 // TYPES EXPORT
 // =============================================================================
 
@@ -1593,6 +1750,12 @@ export type NewSystemSetting = typeof systemSettings.$inferInsert;
 export type SupportArticle = typeof supportArticles.$inferSelect;
 export type NewSupportArticle = typeof supportArticles.$inferInsert;
 
+export type BlogPost = typeof blogPosts.$inferSelect;
+export type NewBlogPost = typeof blogPosts.$inferInsert;
+
+export type PortfolioProject = typeof portfolioProjects.$inferSelect;
+export type NewPortfolioProject = typeof portfolioProjects.$inferInsert;
+
 export type ProjectRevision = typeof projectRevisions.$inferSelect;
 export type NewProjectRevision = typeof projectRevisions.$inferInsert;
 
@@ -1613,6 +1776,9 @@ export type NewAnnouncementDismissal = typeof announcementDismissals.$inferInser
 
 export type ContactSubmission = typeof contactSubmissions.$inferSelect;
 export type NewContactSubmission = typeof contactSubmissions.$inferInsert;
+
+export type LoginLog = typeof loginLogs.$inferSelect;
+export type NewLoginLog = typeof loginLogs.$inferInsert;
 
 export type UserRole = 'super_admin' | 'admin' | 'staff' | 'customer';
 export type CustomerType = typeof customerTypeEnum.enumValues[number];

@@ -82,6 +82,7 @@ export async function logConsent(userId: string, type: string, granted: boolean)
 
 2. **Audit Controls**
    - [ ] Activity logging - ✅ Implemented (`activity-logger.ts`)
+   - [ ] Login/logout logging - ✅ Implemented (`login_logs` table)
    - [ ] Log all PHI access
    - [ ] Maintain logs for 6 years
    - [ ] Tamper-evident audit logs
@@ -135,10 +136,11 @@ SOC 2 focuses on five Trust Service Criteria: Security, Availability, Processing
 |-------------|--------|----------------|
 | Access Controls | ✅ | Role-based access (admin, staff, customer) |
 | Authentication | ✅ | Supabase Auth with email/magic link |
-| MFA | ⚠️ | Available via Supabase, not enforced |
+| MFA | ✅ | TOTP-based 2FA available via `/app/settings/security` |
 | Encryption in Transit | ✅ | TLS via Cloudflare |
 | Encryption at Rest | ✅ | Supabase/PostgreSQL |
 | Activity Logging | ✅ | `activity-logger.ts` |
+| Login Logging | ✅ | `login_logs` table with IP, location, device |
 | Vulnerability Management | ⚠️ | Manual, needs automation |
 
 #### Security Improvements
@@ -337,5 +339,5 @@ For compliance questions or concerns:
 
 ---
 
-*Last Updated: December 2024*
+*Last Updated: January 2025*
 *Review Schedule: Quarterly*

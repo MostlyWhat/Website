@@ -1,6 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 import type { RequestEvent } from '@sveltejs/kit';
 import { getOrCreateProfile } from '$lib/server/auth';
+import { logLoginEvent, getClientIp } from '$lib/server/activity-logger';
 
 /**
  * Auth Callback Handler
@@ -8,11 +9,14 @@ import { getOrCreateProfile } from '$lib/server/auth';
  * Handles the redirect from OAuth providers and magic links.
  * Exchanges the code for a session and redirects to the appropriate page.
  */
-export const GET = async ({ url, locals: { supabase } }: RequestEvent) => {
+export const GET = async ({ url, request, locals: { supabase } }: RequestEvent) => {
     const code = url.searchParams.get('code');
     const token_hash = url.searchParams.get('token_hash');
     const type = url.searchParams.get('type');
     const redirectTo = url.searchParams.get('redirectTo') ?? '/app';
+    
+    const ipAddress = getClientIp(request);
+    const userAgent = request.headers.get('user-agent') ?? undefined;
 
     // Handle code exchange (OAuth)
     if (code) {
@@ -26,6 +30,17 @@ export const GET = async ({ url, locals: { supabase } }: RequestEvent) => {
         if (data.user) {
             try {
                 const profile = await getOrCreateProfile(data.user);
+
+                // Log successful login
+                await logLoginEvent({
+                    profileId: data.user.id,
+                    eventType: 'login',
+                    ipAddress,
+                    userAgent,
+                    loginMethod: 'oauth',
+                    success: true,
+                    sessionId: data.session?.access_token?.slice(-16)
+                });
 
                 // Redirect to onboarding if not completed
                 if (!profile.onboardingCompleted) {
@@ -55,6 +70,17 @@ export const GET = async ({ url, locals: { supabase } }: RequestEvent) => {
         if (data.user) {
             try {
                 const profile = await getOrCreateProfile(data.user);
+
+                // Log successful login/verification
+                await logLoginEvent({
+                    profileId: data.user.id,
+                    eventType: type === 'recovery' ? 'password_reset' : 'login',
+                    ipAddress,
+                    userAgent,
+                    loginMethod: 'magic_link',
+                    success: true,
+                    sessionId: data.session?.access_token?.slice(-16)
+                });
 
                 // For password reset, redirect to reset page
                 if (type === 'recovery') {

@@ -129,8 +129,13 @@
 	<section class="border-b border-border bg-background">
 		<form 
 			method="POST" 
-			use:enhance={() => {
+			enctype="multipart/form-data"
+			use:enhance={({ formData }) => {
 				loading = true;
+				// Append all selected files to the form data
+				for (const selectedFile of selectedFiles) {
+					formData.append('files', selectedFile.file);
+				}
 				return async ({ update }) => {
 					await update();
 					loading = false;
@@ -245,7 +250,7 @@
 							{/if}
 						</div>
 						<p class="font-mono mt-2 text-[10px] tracking-wider text-muted-foreground">
-							Files will be uploaded after ticket is created
+							Attachments will be uploaded when you submit the ticket
 						</p>
 					</div>
 				</div>

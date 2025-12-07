@@ -36,7 +36,9 @@
 		CheckCircle,
 		XCircle,
 		ArrowLeft,
-		ExternalLink
+		ExternalLink,
+		PenLine,
+		Briefcase
 	} from '@lucide/svelte';
 	import * as Sheet from '$lib/components/ui/sheet';
 	import { Button } from '$lib/components/ui/button';
@@ -102,6 +104,12 @@
 		{ href: '/admin/reports', label: 'REPORTS', icon: BarChart3 }
 	];
 
+	// Content Management Section
+	const contentNav = [
+		{ href: '/admin/blog', label: 'BLOG POSTS', icon: PenLine },
+		{ href: '/admin/portfolio', label: 'PORTFOLIO', icon: Briefcase }
+	];
+
 	// Add notifications popup state
 	let notificationsOpen = $state(false);
 
@@ -157,6 +165,24 @@
 					</div>
 					<span class="font-ui flex-1 text-[11px] tracking-wider">{label}</span>
 					<ChevronRight class="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100 {isActive(href, exact) ? 'opacity-100' : ''}" />
+				</a>
+			{/each}
+
+			<!-- Content Management Section -->
+			<div class="px-4 py-2 mt-2">
+				<span class="font-mono text-[9px] tracking-widest text-muted-foreground/50">CONTENT</span>
+			</div>
+			{#each contentNav as { href, label, icon: Icon }}
+				<a
+					{href}
+					class="group flex items-center gap-3 border-b border-border px-4 py-2 transition-colors {isActive(href)
+						? 'bg-primary/10 text-primary'
+						: 'text-muted-foreground/70 hover:bg-card hover:text-foreground'}"
+				>
+					<div class="flex h-6 w-6 items-center justify-center border transition-colors {isActive(href) ? 'border-primary bg-primary/10' : 'border-border/50 bg-background'}">
+						<Icon class="h-3 w-3 {isActive(href) ? 'text-primary' : ''}" />
+					</div>
+					<span class="font-ui flex-1 text-[10px] tracking-wider">{label}</span>
 				</a>
 			{/each}
 
@@ -280,6 +306,26 @@
 								>
 									<div class="flex h-10 w-10 items-center justify-center border {isActive(href, exact) ? 'border-primary bg-primary/10' : 'border-border bg-card'}">
 										<Icon class="h-4 w-4" />
+									</div>
+									<span class="font-ui flex-1 text-xs tracking-wider">{label}</span>
+									<ChevronRight class="h-4 w-4" />
+								</a>
+							{/each}
+
+							<!-- Content Section -->
+							<div class="px-6 py-2 mt-2">
+								<span class="font-mono text-[9px] tracking-widest text-muted-foreground/50">CONTENT</span>
+							</div>
+							{#each contentNav as { href, label, icon: Icon }}
+								<a
+									{href}
+									onclick={() => (mobileMenuOpen = false)}
+									class="flex items-center gap-4 border-b border-border px-6 py-3 transition-colors {isActive(href)
+										? 'bg-primary/10 text-primary'
+										: 'text-muted-foreground hover:bg-card hover:text-foreground'}"
+								>
+									<div class="flex h-8 w-8 items-center justify-center border {isActive(href) ? 'border-primary bg-primary/10' : 'border-border bg-card'}">
+										<Icon class="h-3.5 w-3.5" />
 									</div>
 									<span class="font-ui flex-1 text-xs tracking-wider">{label}</span>
 									<ChevronRight class="h-4 w-4" />

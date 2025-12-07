@@ -2,6 +2,7 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { getOrCreateProfile } from '$lib/server/auth';
 import { env } from '$env/dynamic/public';
+import { logLoginEvent, getClientIp } from '$lib/server/activity-logger';
 
 export const actions: Actions = {
     /**
@@ -12,6 +13,9 @@ export const actions: Actions = {
         const email = formData.get('email') as string;
         const password = formData.get('password') as string;
         const redirectTo = formData.get('redirectTo') as string ?? '/app';
+        
+        const ipAddress = getClientIp(request);
+        const userAgent = request.headers.get('user-agent') ?? undefined;
 
         if (!email || !password) {
             return fail(400, { error: 'Email and password are required' });
@@ -24,12 +28,26 @@ export const actions: Actions = {
 
         if (error) {
             console.error('Login error:', error.message);
+            
+            // Log failed login attempt if we can identify the user
+            // Note: We'd need to look up the user by email, but for now just log the attempt
             return fail(400, { error: 'Invalid email or password' });
         }
 
         // Get or create profile for the user
         if (data.user) {
             const profile = await getOrCreateProfile(data.user);
+
+            // Log successful login
+            await logLoginEvent({
+                profileId: data.user.id,
+                eventType: 'login',
+                ipAddress,
+                userAgent,
+                loginMethod: 'password',
+                success: true,
+                sessionId: data.session?.access_token?.slice(-16)
+            });
 
             // If user hasn't completed onboarding, redirect there
             if (!profile.onboardingCompleted) {
