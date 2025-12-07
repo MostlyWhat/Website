@@ -3,15 +3,8 @@ import { profiles, organizations, projects, proposals, invoices, tickets } from 
 import { eq, sql, or, and, desc } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ locals }) => {
-    if (!locals.user || !locals.profile) {
-        return {
-            stats: { totalUsers: 0, organizations: 0, activeProjects: 0, openTickets: 0 },
-            pendingItems: [],
-            recentActivity: []
-        };
-    }
-
+// Async function to load admin dashboard data
+async function loadAdminDashboardData() {
     // Get counts in parallel
     const [
         usersCount,
@@ -133,5 +126,26 @@ export const load: PageServerLoad = async ({ locals }) => {
             { type: 'ticket', label: 'Tickets awaiting response', count: awaitingTickets[0]?.count ?? 0, href: '/admin/tickets?status=awaiting_staff' }
         ],
         recentActivity: allActivity
+    };
+}
+
+export const load: PageServerLoad = async ({ locals }) => {
+    if (!locals.user || !locals.profile) {
+        return {
+            streamed: {
+                dashboardData: Promise.resolve({
+                    stats: { totalUsers: 0, organizations: 0, activeProjects: 0, openTickets: 0 },
+                    pendingItems: [],
+                    recentActivity: []
+                })
+            }
+        };
+    }
+
+    // Return streamed data for progressive loading
+    return {
+        streamed: {
+            dashboardData: loadAdminDashboardData()
+        }
     };
 };

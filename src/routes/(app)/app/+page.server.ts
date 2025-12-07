@@ -3,24 +3,13 @@ import { projects, proposals, invoices, tickets, organizationMembers } from '$li
 import { eq, and, inArray, desc, sql, or, ne } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ locals }) => {
-    if (!locals.user || !locals.profile) {
-        return {
-            stats: {
-                activeProjects: 0,
-                pendingProposals: 0,
-                unpaidInvoices: 0,
-                openTickets: 0
-            },
-            recentActivity: []
-        };
-    }
-
+// Async function to load dashboard data
+async function loadDashboardData(profileId: string) {
     // Get user's organization IDs
     const userOrgs = await db
         .select({ organizationId: organizationMembers.organizationId })
         .from(organizationMembers)
-        .where(eq(organizationMembers.profileId, locals.profile.id));
+        .where(eq(organizationMembers.profileId, profileId));
 
     const orgIds = userOrgs.map((o) => o.organizationId);
 
@@ -173,5 +162,30 @@ export const load: PageServerLoad = async ({ locals }) => {
             time: a.updatedAt,
             icon: a.icon
         }))
+    };
+}
+
+export const load: PageServerLoad = async ({ locals }) => {
+    if (!locals.user || !locals.profile) {
+        return {
+            streamed: {
+                dashboardData: Promise.resolve({
+                    stats: {
+                        activeProjects: 0,
+                        pendingProposals: 0,
+                        unpaidInvoices: 0,
+                        openTickets: 0
+                    },
+                    recentActivity: []
+                })
+            }
+        };
+    }
+
+    // Return streamed data for progressive loading
+    return {
+        streamed: {
+            dashboardData: loadDashboardData(locals.profile.id)
+        }
     };
 };

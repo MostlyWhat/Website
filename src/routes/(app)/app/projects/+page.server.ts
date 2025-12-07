@@ -3,16 +3,13 @@ import { projects, organizationMembers, profiles, projectRequests } from '$lib/s
 import { eq, inArray, desc, and, ne } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ locals }) => {
-    if (!locals.user || !locals.profile) {
-        return { projects: [], requests: [] };
-    }
-
+// Async function to load projects data
+async function loadProjectsData(profileId: string) {
     // Get user's organization IDs
     const userOrgs = await db
         .select({ organizationId: organizationMembers.organizationId })
         .from(organizationMembers)
-        .where(eq(organizationMembers.profileId, locals.profile.id));
+        .where(eq(organizationMembers.profileId, profileId));
 
     const orgIds = userOrgs.map((o) => o.organizationId);
 
@@ -80,5 +77,22 @@ export const load: PageServerLoad = async ({ locals }) => {
             assignedTo: p.assignedToName ?? 'Unassigned'
         })),
         requests: userRequests
+    };
+}
+
+export const load: PageServerLoad = async ({ locals }) => {
+    if (!locals.user || !locals.profile) {
+        return {
+            streamed: {
+                projectsData: Promise.resolve({ projects: [], requests: [] })
+            }
+        };
+    }
+
+    // Return streamed data for progressive loading
+    return {
+        streamed: {
+            projectsData: loadProjectsData(locals.profile.id)
+        }
     };
 };

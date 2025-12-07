@@ -11,7 +11,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
-	import { Github, Loader2, UserPlus, ArrowRight, Shield, Zap, Headphones } from '@lucide/svelte';
+	import { Github, Loader2, UserPlus, ArrowRight, Shield, Zap, Headphones, Mail, CheckCircle } from '@lucide/svelte';
 
 	let { form } = $props();
 
@@ -21,6 +21,9 @@
 	let isLoading = $state(false);
 	let timeoutError = $state('');
 	let loadingTimeout: ReturnType<typeof setTimeout> | null = null;
+
+	// Show verification screen when form returns success
+	let showVerificationScreen = $derived(form?.success === true);
 
 	const redirectTo = $derived(page.url.searchParams.get('redirectTo') ?? '/onboarding');
 
@@ -65,7 +68,60 @@
 
 <!-- Full height section with grid layout -->
 <section class="h-full">
-	<div class="grid h-full grid-cols-12 gap-px bg-border">
+	{#if showVerificationScreen}
+		<!-- Email Verification Screen -->
+		<div class="flex h-full items-center justify-center bg-background px-6 py-12">
+			<div class="max-w-md text-center">
+				<div class="mx-auto flex h-20 w-20 items-center justify-center border border-primary bg-primary/10">
+					<Mail class="h-10 w-10 text-primary" />
+				</div>
+				
+				<h1 class="font-display mt-8 text-3xl font-bold uppercase">Check Your Email</h1>
+				
+				<p class="font-body mt-4 text-muted-foreground">
+					We've sent a verification link to <strong class="text-foreground">{email || 'your email'}</strong>. 
+					Please click the link to verify your account before signing in.
+				</p>
+				
+				<div class="mt-8 space-y-4 border border-border bg-card p-6 text-left">
+					<div class="flex items-start gap-3">
+						<CheckCircle class="mt-0.5 h-5 w-5 flex-shrink-0 text-green-500" />
+						<div>
+							<p class="font-ui text-sm font-semibold tracking-wider">Account Created</p>
+							<p class="font-body text-xs text-muted-foreground">Your account has been created successfully</p>
+						</div>
+					</div>
+					<div class="flex items-start gap-3">
+						<Mail class="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
+						<div>
+							<p class="font-ui text-sm font-semibold tracking-wider">Verify Email</p>
+							<p class="font-body text-xs text-muted-foreground">Click the link in your email to verify</p>
+						</div>
+					</div>
+					<div class="flex items-start gap-3 opacity-50">
+						<UserPlus class="mt-0.5 h-5 w-5 flex-shrink-0 text-muted-foreground" />
+						<div>
+							<p class="font-ui text-sm font-semibold tracking-wider">Sign In</p>
+							<p class="font-body text-xs text-muted-foreground">After verification, sign in to continue</p>
+						</div>
+					</div>
+				</div>
+				
+				<div class="mt-8 space-y-3">
+					<Button href={localizeHref('/auth/login')} class="font-ui w-full tracking-wider">
+						<ArrowRight class="mr-2 h-4 w-4" />
+						GO TO SIGN IN
+					</Button>
+					
+					<p class="font-body text-xs text-muted-foreground">
+						Didn't receive the email? Check your spam folder or 
+						<a href={localizeHref('/auth/register')} class="text-primary hover:underline">try again</a>.
+					</p>
+				</div>
+			</div>
+		</div>
+	{:else}
+		<div class="grid h-full grid-cols-12 gap-px bg-border">
 		<!-- Left Panel - Branding -->
 		<div class="col-span-12 hidden flex-col justify-between bg-background px-6 py-12 md:px-12 lg:col-span-6 lg:flex lg:px-16">
 			<div>
@@ -242,4 +298,5 @@
 			</div>
 		</div>
 	</div>
+	{/if}
 </section>
