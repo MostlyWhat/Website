@@ -47,10 +47,10 @@ async function loadAdminDashboardData() {
     ]);
 
     // Get recent activity from various tables with error handling
-    let recentUsers: Array<{id: string; title: string | null; subtitle: string | null; time: Date | null; type: string}> = [];
-    let recentProjects: Array<{id: string; title: string | null; subtitle: string | null; time: Date | null; type: string}> = [];
-    let recentInvoices: Array<{id: string; title: string; subtitle: string | null; time: Date | null; type: string}> = [];
-    let recentTickets: Array<{id: string; title: string; subtitle: string | null; time: Date | null; type: string}> = [];
+    let recentUsers: Array<{ id: string; title: string | null; subtitle: string | null; time: Date | null; type: string }> = [];
+    let recentProjects: Array<{ id: string; title: string | null; subtitle: string | null; time: Date | null; type: string }> = [];
+    let recentInvoices: Array<{ id: string; title: string; subtitle: string | null; time: Date | null; type: string }> = [];
+    let recentTickets: Array<{ id: string; title: string; subtitle: string | null; time: Date | null; type: string }> = [];
 
     try {
         [recentUsers, recentProjects, recentInvoices, recentTickets] = await Promise.all([

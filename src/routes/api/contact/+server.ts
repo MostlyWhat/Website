@@ -22,12 +22,12 @@ interface ContactFormData {
 export const POST: RequestHandler = async ({ request, getClientAddress }) => {
     try {
         const body = await request.json() as ContactFormData;
-        const { 
-            name, 
-            email, 
-            company, 
+        const {
+            name,
+            email,
+            company,
             phone,
-            message, 
+            message,
             topic = 'general',
             subject,
             projectType,
