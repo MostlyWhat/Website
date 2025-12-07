@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/sveltekit';
 import type { Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import { paraglideMiddleware } from '$lib/paraglide/server';
@@ -50,9 +51,9 @@ const handleSupabase: Handle = async ({ event, resolve }) => {
 	});
 
 	/**
-	 * Safe session getter that validates JWT
-	 * Unlike `supabase.auth.getSession()`, this validates the JWT before returning.
-	 */
+		* Safe session getter that validates JWT
+		* Unlike `supabase.auth.getSession()`, this validates the JWT before returning.
+		*/
 	event.locals.safeGetSession = async () => {
 		const {
 			data: { session }
@@ -177,5 +178,5 @@ const handleRouteProtection: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
-// Combine all handlers in sequence
-export const handle: Handle = sequence(handleParaglide, handleSupabase, handleRouteProtection);
+export const handle: Handle = sequence(Sentry.sentryHandle(), handleParaglide, handleSupabase, handleRouteProtection);
+export const handleError = Sentry.handleErrorWithSentry();

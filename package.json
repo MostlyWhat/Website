@@ -71,6 +71,7 @@
 		"@fontsource-variable/jetbrains-mono": "^5.2.8",
 		"@fontsource/chakra-petch": "^5.2.7",
 		"@fontsource/tourney": "^5.2.8",
+		"@sentry/sveltekit": "10",
 		"@supabase/ssr": "^0.8.0",
 		"@supabase/supabase-js": "^2.86.0",
 		"@types/marked": "^6.0.0",

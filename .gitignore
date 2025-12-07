@@ -28,3 +28,6 @@ src/lib/paraglide
 
 .dev.vars*
 !.dev.vars.example
+
+# Sentry Config File
+.env.sentry-build-plugin
