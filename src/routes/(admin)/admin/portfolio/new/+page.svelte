@@ -5,6 +5,7 @@
 	import { enhance } from '$app/forms';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import { ChevronLeft, Save, Briefcase, Image, Tag, Settings, Link } from '@lucide/svelte';
+	import { RichTextEditor } from '$lib/components/ui/rich-text-editor';
 
 	let { data, form } = $props();
 
@@ -150,15 +151,14 @@
 					<label for="content" class="font-mono text-[10px] tracking-widest text-muted-foreground">
 						PROJECT DETAILS (MARKDOWN) *
 					</label>
-					<textarea
-						id="content"
-						name="content"
+					<RichTextEditor
 						bind:value={content}
-						required
-						rows="16"
-						class="font-body w-full resize-y border border-border bg-card px-4 py-3 font-mono text-sm focus:border-primary focus:outline-none"
+						name="content"
+						id="content"
 						placeholder="Full project description, challenges, solutions, results..."
-					></textarea>
+						rows={16}
+						required
+					/>
 				</div>
 			</div>
 

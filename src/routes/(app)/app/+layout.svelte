@@ -32,6 +32,7 @@
 	import * as Sheet from '$lib/components/ui/sheet';
 	import TutorialOverlay from '$lib/components/layout/TutorialOverlay.svelte';
 	import { tutorialStore } from '$lib/stores/tutorial.svelte';
+	import { InactivityTimeout } from '$lib/components/ui/inactivity-timeout';
 
 	let { children, data } = $props();
 	let mobileMenuOpen = $state(false);
@@ -431,3 +432,9 @@
 		</main>
 	</div>
 </div>
+
+<!-- Inactivity Timeout (15 min warning, 2 min countdown) -->
+<InactivityTimeout 
+	warningTime={15 * 60 * 1000} 
+	logoutTime={2 * 60 * 1000} 
+/>

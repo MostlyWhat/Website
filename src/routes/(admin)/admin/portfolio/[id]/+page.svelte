@@ -4,7 +4,8 @@
 	 */
 	import { enhance } from '$app/forms';
 	import { localizeHref } from '$lib/paraglide/runtime';
-	import { ChevronLeft, Save, Trash2, Eye, ExternalLink, Briefcase, Image, Tag, Settings, Link } from '@lucide/svelte';
+	import { ChevronLeft, Save, Trash2, Eye, ExternalLink, Briefcase, Image, Tag, Settings, Link, Upload } from '@lucide/svelte';
+	import { RichTextEditor } from '$lib/components/ui/rich-text-editor';
 
 	let { data, form } = $props();
 
@@ -179,15 +180,14 @@
 					<label for="content" class="font-mono text-[10px] tracking-widest text-muted-foreground">
 						PROJECT DETAILS (MARKDOWN) *
 					</label>
-					<textarea
-						id="content"
-						name="content"
+					<RichTextEditor
 						bind:value={content}
-						required
-						rows="16"
-						class="font-body w-full resize-y border border-border bg-card px-4 py-3 font-mono text-sm focus:border-primary focus:outline-none"
+						name="content"
+						id="content"
 						placeholder="Full project description, challenges, solutions, results..."
-					></textarea>
+						rows={16}
+						required
+					/>
 				</div>
 			</div>
 
@@ -378,15 +378,20 @@
 					</button>
 
 					{#if showDeleteConfirm}
-						<form method="POST" action="?/delete" use:enhance>
-							<button
-								type="submit"
-								class="inline-flex w-full items-center justify-center gap-2 border border-red-500 bg-red-500 px-4 py-3 text-sm text-white transition-colors hover:bg-red-600"
-							>
-								<Trash2 class="h-4 w-4" />
-								<span class="font-mono text-xs tracking-wider">CONFIRM DELETE</span>
-							</button>
-						</form>
+						<button
+							type="button"
+							onclick={async () => {
+								const form = document.createElement('form');
+								form.method = 'POST';
+								form.action = '?/delete';
+								document.body.appendChild(form);
+								form.submit();
+							}}
+							class="inline-flex w-full items-center justify-center gap-2 border border-red-500 bg-red-500 px-4 py-3 text-sm text-white transition-colors hover:bg-red-600"
+						>
+							<Trash2 class="h-4 w-4" />
+							<span class="font-mono text-xs tracking-wider">CONFIRM DELETE</span>
+						</button>
 						<button
 							type="button"
 							onclick={() => showDeleteConfirm = false}

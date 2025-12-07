@@ -42,6 +42,7 @@
 	} from '@lucide/svelte';
 	import * as Sheet from '$lib/components/ui/sheet';
 	import { Button } from '$lib/components/ui/button';
+	import { InactivityTimeout } from '$lib/components/ui/inactivity-timeout';
 
 	let { children, data } = $props();
 	let mobileMenuOpen = $state(false);
@@ -505,3 +506,9 @@
 		</main>
 	</div>
 </div>
+
+<!-- Inactivity Timeout (15 min warning, 2 min countdown) -->
+<InactivityTimeout 
+	warningTime={15 * 60 * 1000} 
+	logoutTime={2 * 60 * 1000} 
+/>

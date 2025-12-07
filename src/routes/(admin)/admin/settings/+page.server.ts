@@ -3,6 +3,7 @@ import { systemSettings, profiles } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
+import { ActivityLogger } from '$lib/server/activity-logger';
 
 // Default settings if none exist
 const defaultSettings = [
@@ -121,6 +122,11 @@ export const actions: Actions = {
             return fail(400, { error: 'Failed to parse value' });
         }
 
+        // Get current value for logging
+        const currentSetting = await db.query.systemSettings.findFirst({
+            where: eq(systemSettings.key, key)
+        });
+
         await db
             .update(systemSettings)
             .set({
@@ -129,6 +135,21 @@ export const actions: Actions = {
                 updatedAt: new Date()
             })
             .where(eq(systemSettings.key, key));
+
+        // Log the setting change
+        await ActivityLogger.log({
+            type: 'setting.updated',
+            action: 'update',
+            description: `Updated system setting: ${key}`,
+            userId: locals.profile.id,
+            metadata: {
+                key,
+                previousValue: currentSetting?.value,
+                newValue: parsedValue,
+                category: currentSetting?.category,
+                label: currentSetting?.label
+            }
+        });
 
         return { success: true, message: 'Setting updated successfully' };
     },
@@ -155,6 +176,17 @@ export const actions: Actions = {
                 // Ignore - setting already exists
             }
         }
+
+        // Log the initialization
+        await ActivityLogger.log({
+            type: 'setting.initialized',
+            action: 'create',
+            description: 'Initialized system settings with defaults',
+            userId: locals.profile.id,
+            metadata: {
+                settingsCount: defaultSettings.length
+            }
+        });
 
         return { success: true, message: 'Settings initialized' };
     }

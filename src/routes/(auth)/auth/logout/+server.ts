@@ -15,7 +15,6 @@ export const GET: RequestHandler = async ({ request, locals: { supabase, session
             eventType: 'logout',
             ipAddress: getClientIp(request),
             userAgent: request.headers.get('user-agent') ?? undefined,
-            loginMethod: 'session',
             success: true
         });
     }
@@ -32,7 +31,6 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, sessio
             eventType: 'logout',
             ipAddress: getClientIp(request),
             userAgent: request.headers.get('user-agent') ?? undefined,
-            loginMethod: 'session',
             success: true
         });
     }
