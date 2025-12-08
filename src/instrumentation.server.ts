@@ -12,7 +12,7 @@ if (typeof globalThis.process !== 'undefined' || typeof globalThis.caches !== 'u
       // Disable features not supported in Cloudflare Workers
       enableLogs: false,
       spotlight: false,
-      
+
       // Use basic transport for Workers
       beforeSend(event) {
         return event;
