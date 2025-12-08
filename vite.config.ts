@@ -7,13 +7,14 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
 	plugins: [sentrySvelteKit({
-        org: "mostlywhat",
-        project: "website"
-    }), tailwindcss(), sveltekit(), devtoolsJson(), paraglideVitePlugin({
-        project: './project.inlang',
-        outdir: './src/lib/paraglide',
-        strategy: ['url', 'cookie', 'baseLocale']
-    })],
+		org: "mostlywhat",
+		project: "website",
+		authToken: process.env.SENTRY_AUTH_TOKEN,
+	}), tailwindcss(), sveltekit(), devtoolsJson(), paraglideVitePlugin({
+		project: './project.inlang',
+		outdir: './src/lib/paraglide',
+		strategy: ['url', 'cookie', 'baseLocale']
+	})],
 	// Optimization settings for faster compile times
 	optimizeDeps: {
 		// Pre-bundle heavy dependencies

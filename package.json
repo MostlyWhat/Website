@@ -43,6 +43,7 @@
 		"eslint-plugin-svelte": "^3.12.4",
 		"formsnap": "^2.0.1",
 		"globals": "^16.4.0",
+		"gray-matter": "^4.0.3",
 		"layerchart": "2.0.0-next.27",
 		"mdsvex": "^0.12.6",
 		"mode-watcher": "^1.1.0",

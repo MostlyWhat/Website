@@ -1,5 +1,5 @@
-import * as Sentry from '@sentry/sveltekit';
-import type { Handle } from '@sveltejs/kit';
+import { initCloudflareSentryHandle, sentryHandle, handleErrorWithSentry } from '@sentry/sveltekit';
+import type { Handle, HandleServerError } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import { paraglideMiddleware } from '$lib/paraglide/server';
 import { createServerClient } from '@supabase/ssr';
@@ -178,5 +178,11 @@ const handleRouteProtection: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
-export const handle: Handle = sequence(Sentry.sentryHandle(), handleParaglide, handleSupabase, handleRouteProtection);
-export const handleError = Sentry.handleErrorWithSentry();
+// Initialize Sentry for Cloudflare Workers
+const initSentry = initCloudflareSentryHandle({
+	dsn: env.PUBLIC_SENTRY_DSN,
+	tracesSampleRate: 1.0
+});
+
+export const handle: Handle = sequence(initSentry, sentryHandle(), handleParaglide, handleSupabase, handleRouteProtection);
+export const handleError: HandleServerError = handleErrorWithSentry();

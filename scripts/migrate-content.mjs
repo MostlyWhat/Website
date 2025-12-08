@@ -4,7 +4,13 @@
  * This script migrates existing markdown content (blog posts and portfolio projects)
  * from static MD files to the database. Run this once after applying migrations.
  *
- * Usage: node --loader ts-node/esm scripts/migrate-content.mjs
+ * Prerequisites:
+ *   - Install gray-matter: pnpm add -D gray-matter
+ *   - Set environment variables:
+ *     - PUBLIC_SUPABASE_URL
+ *     - SUPABASE_SERVICE_ROLE_KEY
+ *
+ * Usage: node scripts/migrate-content.mjs
  */
 
 import fs from 'fs';

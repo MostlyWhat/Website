@@ -1,24 +1,14 @@
-import * as Sentry from '@sentry/sveltekit';
+/**
+ * Server Instrumentation
+ * 
+ * For Cloudflare Workers deployment, Sentry is initialized via the
+ * initCloudflareSentryHandle() in hooks.server.ts, not here.
+ * 
+ * This file is kept for SvelteKit's experimental instrumentation feature
+ * but the actual Sentry initialization happens in the server hooks.
+ * 
+ * @see https://docs.sentry.io/platforms/javascript/guides/sveltekit/deployment/cloudflare/
+ */
 
-// Only initialize Sentry in environments where it's supported
-// Cloudflare Workers has limited support for some Sentry features
-if (typeof globalThis.process !== 'undefined' || typeof globalThis.caches !== 'undefined') {
-  try {
-    Sentry.init({
-      dsn: 'https://94b5bd458e7585f90bbf695ad5306b1f@o4504852968570880.ingest.us.sentry.io/4510488795152384',
-
-      tracesSampleRate: 1.0,
-
-      // Disable features not supported in Cloudflare Workers
-      enableLogs: false,
-      spotlight: false,
-
-      // Use basic transport for Workers
-      beforeSend(event) {
-        return event;
-      }
-    });
-  } catch (e) {
-    console.warn('Sentry initialization failed:', e);
-  }
-}
+// No-op for Cloudflare Workers - initialization happens in hooks.server.ts
+export {};

@@ -8,11 +8,19 @@
 	"main": ".svelte-kit/cloudflare/_worker.js",
 	"compatibility_date": "2025-11-28",
 	"compatibility_flags": [
-		"nodejs_compat"
+		"nodejs_compat",
+		"nodejs_als"
 	],
 	"assets": {
 		"binding": "ASSETS",
 		"directory": ".svelte-kit/cloudflare"
+	},
+	/**
+	 * Version Metadata binding for Sentry release tracking
+	 * https://developers.cloudflare.com/workers/runtime-apis/bindings/version-metadata/
+	 */
+	"version_metadata": {
+		"binding": "CF_VERSION_METADATA"
 	},
 	"observability": {
 		"enabled": true
@@ -46,7 +54,8 @@
 		"PUBLIC_SUPABASE_URL": "https://ssszlgiuqueistbwcdzt.supabase.co",
 		"PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_Th6ZYzORWpdUhuGLPHKdxQ_nmQ3arBG",
 		// "PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY": "sb_publishable_Th6ZYzORWpdUhuGLPHKdxQ_nmQ3arBG",
-		"PUBLIC_SITE_URL": "https://www.mostlywhat.com"
+		"PUBLIC_SITE_URL": "https://www.mostlywhat.com",
+		"PUBLIC_SENTRY_DSN": "https://94b5bd458e7585f90bbf695ad5306b1f@o4504852968570880.ingest.us.sentry.io/4510488795152384"
 	},
 	/**
 	 * Note: Use secrets to store sensitive data.
