@@ -23,6 +23,54 @@ export interface LogActivityOptions {
 }
 
 /**
+ * Simple log options for the ActivityLogger class
+ */
+export interface SimpleLogOptions {
+    type: string;
+    action: string;
+    description: string;
+    userId?: string;
+    metadata?: Record<string, unknown>;
+}
+
+/**
+ * ActivityLogger class for simplified logging interface
+ * Used by admin pages for quick activity logging
+ */
+export class ActivityLogger {
+    /**
+     * Log an activity with a simplified interface
+     */
+    static async log(options: SimpleLogOptions): Promise<void> {
+        try {
+            // Parse type into entityType (e.g., 'setting.updated' -> 'settings')
+            const entityType = options.type.split('.')[0] as EntityType;
+            
+            // Map action to ActivityType
+            const actionMap: Record<string, ActivityType> = {
+                'create': 'created',
+                'update': 'updated',
+                'delete': 'deleted',
+                'view': 'viewed'
+            };
+            const activityType = actionMap[options.action] || 'updated';
+
+            await db.insert(activityLog).values({
+                entityType: entityType === 'setting' ? 'settings' : entityType,
+                entityId: options.metadata?.key as string || 'system',
+                activityType,
+                description: options.description,
+                newValues: options.metadata,
+                performedById: options.userId
+            });
+        } catch (error) {
+            // Log error but don't throw - activity logging should not break main flow
+            console.error('Failed to log activity:', error);
+        }
+    }
+}
+
+/**
  * Log an activity to the activity log table
  */
 export async function logActivity(options: LogActivityOptions): Promise<void> {

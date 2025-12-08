@@ -11,4 +11,4 @@
  */
 
 // No-op for Cloudflare Workers - initialization happens in hooks.server.ts
-export {};
+export { };

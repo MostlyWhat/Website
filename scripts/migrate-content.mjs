@@ -6,11 +6,11 @@
  *
  * Prerequisites:
  *   - Install gray-matter: pnpm add -D gray-matter
- *   - Set environment variables:
- *     - PUBLIC_SUPABASE_URL
- *     - SUPABASE_SERVICE_ROLE_KEY
  *
- * Usage: node scripts/migrate-content.mjs
+ * Usage:
+ *   node scripts/migrate-content.mjs              # Interactive mode (prompts for environment)
+ *   node scripts/migrate-content.mjs --local      # Use local Supabase
+ *   node scripts/migrate-content.mjs --production # Use production Supabase (requires env vars)
  */
 
 import fs from 'fs';
@@ -18,20 +18,122 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { createClient } from '@supabase/supabase-js';
 import matter from 'gray-matter';
+import readline from 'readline';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables
-const SUPABASE_URL = process.env.PUBLIC_SUPABASE_URL;
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+// Local Supabase defaults (from `supabase start`)
+const LOCAL_SUPABASE_URL = 'http://127.0.0.1:54321';
+const LOCAL_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0';
+const LOCAL_SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU';
 
-if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
-    console.error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY environment variables');
-    process.exit(1);
+/**
+ * Parse command line arguments
+ */
+function parseArgs() {
+    const args = process.argv.slice(2);
+    return {
+        local: args.includes('--local') || args.includes('-l'),
+        production: args.includes('--production') || args.includes('-p'),
+        help: args.includes('--help') || args.includes('-h')
+    };
 }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+/**
+ * Prompt user for environment selection
+ */
+async function promptEnvironment() {
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+
+    return new Promise((resolve) => {
+        console.log('\n📦 Content Migration Script\n');
+        console.log('Select target environment:');
+        console.log('  1. Local Supabase (http://127.0.0.1:54321)');
+        console.log('  2. Production Supabase (requires environment variables)\n');
+        
+        rl.question('Enter choice [1/2]: ', (answer) => {
+            rl.close();
+            resolve(answer.trim() === '2' ? 'production' : 'local');
+        });
+    });
+}
+
+/**
+ * Get Supabase configuration based on environment
+ */
+function getSupabaseConfig(environment) {
+    if (environment === 'local') {
+        console.log('\n🏠 Using LOCAL Supabase instance');
+        console.log(`   URL: ${LOCAL_SUPABASE_URL}\n`);
+        return {
+            url: LOCAL_SUPABASE_URL,
+            serviceKey: LOCAL_SUPABASE_SERVICE_KEY
+        };
+    }
+
+    // Production - use environment variables
+    const url = process.env.PUBLIC_SUPABASE_URL;
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!url || !serviceKey) {
+        console.error('\n❌ Production mode requires environment variables:');
+        console.error('   - PUBLIC_SUPABASE_URL');
+        console.error('   - SUPABASE_SERVICE_ROLE_KEY\n');
+        console.error('Example:');
+        console.error('   $env:PUBLIC_SUPABASE_URL="https://your-project.supabase.co"');
+        console.error('   $env:SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"');
+        console.error('   node scripts/migrate-content.mjs --production\n');
+        process.exit(1);
+    }
+
+    console.log('\n🌐 Using PRODUCTION Supabase instance');
+    console.log(`   URL: ${url}\n`);
+    return { url, serviceKey };
+}
+
+/**
+ * Initialize Supabase client
+ */
+async function initSupabase() {
+    const args = parseArgs();
+
+    if (args.help) {
+        console.log(`
+Content Migration Script
+
+Usage:
+  node scripts/migrate-content.mjs [options]
+
+Options:
+  --local, -l       Use local Supabase instance (http://127.0.0.1:54321)
+  --production, -p  Use production Supabase (requires env vars)
+  --help, -h        Show this help message
+
+Environment Variables (for production):
+  PUBLIC_SUPABASE_URL         Your Supabase project URL
+  SUPABASE_SERVICE_ROLE_KEY   Service role key (admin access)
+`);
+        process.exit(0);
+    }
+
+    let environment;
+    if (args.local) {
+        environment = 'local';
+    } else if (args.production) {
+        environment = 'production';
+    } else {
+        environment = await promptEnvironment();
+    }
+
+    const config = getSupabaseConfig(environment);
+    return createClient(config.url, config.serviceKey);
+}
+
+let supabase;
 
 /**
  * Parse frontmatter from markdown file
@@ -175,6 +277,9 @@ async function migratePortfolioProjects() {
  * Main migration function
  */
 async function main() {
+    // Initialize Supabase client with environment selection
+    supabase = await initSupabase();
+
     console.log('🚀 Starting content migration...\n');
     console.log('Source: src/lib/content/');
     console.log('Destination: Supabase database\n');
