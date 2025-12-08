@@ -2,7 +2,7 @@
 	import type { PageData, ActionData } from './$types';
 	import { enhance } from '$app/forms';
 	import { invalidateAll, goto } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
@@ -96,7 +96,7 @@
 	}
 
 	function selectOrganization(orgId: string) {
-		const url = new URL($page.url);
+		const url = new URL(page.url);
 		url.searchParams.set('org', orgId);
 		goto(url.toString(), { replaceState: true, invalidateAll: true });
 	}

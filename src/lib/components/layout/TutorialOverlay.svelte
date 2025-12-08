@@ -115,7 +115,7 @@
 	}
 </script>
 
-<svelte:window on:keydown={handleKeydown} />
+<svelte:window onkeydown={handleKeydown} />
 
 {#if tutorialStore.isActive && tutorialStore.currentStep}
 	<!-- Overlay backdrop -->

@@ -5,7 +5,7 @@
 	 * Knowledge base for users with articles organized by category.
 	 */
 	import { localizeHref } from '$lib/paraglide/runtime';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { BookOpen, Search, HelpCircle, FileText, Rocket, CreditCard, Settings, MessageCircle, ArrowRight, ExternalLink, Wrench, ChevronLeft, X } from '@lucide/svelte';
 
 	let { data } = $props();
@@ -13,7 +13,7 @@
 	let searchQuery = $state('');
 
 	// Get active category from URL params
-	const activeCategory = $derived($page.url.searchParams.get('category'));
+	const activeCategory = $derived(page.url.searchParams.get('category'));
 
 	// Default categories with icons if no articles exist yet
 	const defaultCategories = [

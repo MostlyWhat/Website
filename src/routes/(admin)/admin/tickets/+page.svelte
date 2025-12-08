@@ -3,7 +3,7 @@
 	 * Admin Tickets List Page
 	 */
 	import { goto, invalidateAll } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { enhance } from '$app/forms';
 	import { 
 		Ticket, Search, Plus, Building2, User, Calendar, 

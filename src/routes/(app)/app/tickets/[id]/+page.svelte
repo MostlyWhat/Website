@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { ArrowLeft, Send, Loader2, Clock, CheckCircle2, AlertTriangle, Paperclip, AlertCircle, RefreshCcw, Upload, X, FileText, Image as ImageIcon, File as FileIcon } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { enhance } from '$app/forms';
