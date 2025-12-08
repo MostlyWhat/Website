@@ -62,7 +62,7 @@ async function createPersonalOrganization(profileId: string, userEmail: string, 
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user || !locals.profile) {
-        throw redirect(302, '/auth/login?redirectTo=/app/projects/new');
+        redirect(302, '/auth/login?redirectTo=/app/projects/new');
     }
 
     // Create per-request database connection
@@ -178,9 +178,9 @@ export const actions: Actions = {
 
             return redirect(303, `/app/projects/requests/${newRequest.id}?success=true`);
         } catch (error) {
-            // Re-throw redirect errors
+            // Re-redirect errors
             if (error && typeof error === 'object' && 'status' in error && 'location' in error) {
-                throw error;
+                error;
             }
             console.error('Failed to create project request:', error);
             return fail(500, { error: 'Failed to submit project request. Please try again.' });

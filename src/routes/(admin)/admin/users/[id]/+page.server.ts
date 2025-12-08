@@ -23,7 +23,7 @@ export const load: PageServerLoad = async ({ params }) => {
         .where(eq(profiles.id, userId));
 
     if (!user) {
-        throw error(404, 'User not found');
+        error(404, 'User not found');
     }
 
     // Fetch organization memberships
@@ -104,7 +104,7 @@ export const actions: Actions = {
     updateRole: async ({ request, params, locals }) => {
         // Create per-request database connection
         const db = createDb();
-const formData = await request.formData();
+        const formData = await request.formData();
         const newRole = formData.get('role') as string;
 
         if (!newRole || !['super_admin', 'admin', 'staff', 'customer'].includes(newRole)) {
@@ -139,7 +139,7 @@ const formData = await request.formData();
     updateProfile: async ({ request, params, locals }) => {
         // Create per-request database connection
         const db = createDb();
-const formData = await request.formData();
+        const formData = await request.formData();
         const firstName = formData.get('firstName') as string;
         const lastName = formData.get('lastName') as string;
         const phone = formData.get('phone') as string;
@@ -183,7 +183,7 @@ const formData = await request.formData();
     removeFromOrganization: async ({ request, params, locals }) => {
         // Create per-request database connection
         const db = createDb();
-const formData = await request.formData();
+        const formData = await request.formData();
         const organizationId = formData.get('organizationId') as string;
 
         if (!organizationId) {

@@ -5,13 +5,13 @@ import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user || !locals.profile) {
-        throw redirect(302, '/auth/login');
+        redirect(302, '/auth/login');
     }
 
     // Only admin and staff can access
     const allowedRoles = ['super_admin', 'admin', 'staff'];
     if (!allowedRoles.includes(locals.profile.role)) {
-        throw redirect(302, '/app');
+        redirect(302, '/app');
     }
 
     // Create per-request database connection
@@ -100,10 +100,10 @@ export const actions: Actions = {
                 })
                 .returning({ id: supportArticles.id });
 
-            throw redirect(302, `/admin/knowledge-base`);
+            redirect(302, `/admin/knowledge-base`);
         } catch (error) {
             if ((error as { status?: number }).status === 302) {
-                throw error;
+                error;
             }
             console.error('Error creating article:', error);
             return fail(500, { error: 'Failed to create article', values: { title, slug, excerpt, content, category, audience, tagsInput } });

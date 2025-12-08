@@ -185,9 +185,9 @@ export const actions = {
 
             return redirect(303, redirectTo);
         } catch (error) {
-            // Re-throw redirects - they're not errors
+            // Re-redirects - they're not errors
             if (isRedirect(error)) {
-                throw error;
+                error;
             }
             console.error('Onboarding error:', error);
             return fail(500, { error: 'Failed to complete onboarding. Please try again.' });

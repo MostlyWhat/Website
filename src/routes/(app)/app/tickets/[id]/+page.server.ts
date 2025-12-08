@@ -17,7 +17,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
     const db = createDb();
     // Verify user is authenticated
     if (!locals.session || !locals.profile) {
-        throw redirect(303, '/auth/login');
+        redirect(303, '/auth/login');
     }
 
     const ticketId = params.id;
@@ -52,7 +52,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
         .limit(1);
 
     if (ticketData.length === 0) {
-        throw error(404, 'Ticket not found');
+        error(404, 'Ticket not found');
     }
 
     const ticket = ticketData[0];
@@ -75,7 +75,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
             .limit(1);
 
         if (membership.length === 0) {
-            throw error(403, 'You do not have access to this ticket');
+            error(403, 'You do not have access to this ticket');
         }
     }
 

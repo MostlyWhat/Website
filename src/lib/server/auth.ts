@@ -92,7 +92,7 @@ export async function getOrCreateProfile(user: User): Promise<Profile> {
     } catch (err: unknown) {
         const errorMessage = err instanceof Error ? err.message : String(err);
         console.error('Database error saving new user:', errorMessage, err);
-        throw error(500, `Database error saving new user: ${errorMessage}`);
+        error(500, `Database error saving new user: ${errorMessage}`);
     }
 }
 

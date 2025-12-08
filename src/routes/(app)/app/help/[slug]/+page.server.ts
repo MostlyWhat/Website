@@ -7,7 +7,7 @@ import type { PageServerLoad, Actions } from './$types';
 export const load: PageServerLoad = async ({ params, locals }) => {
     const db = createDb();
     if (!locals.user || !locals.profile) {
-        throw error(401, 'Unauthorized');
+        error(401, 'Unauthorized');
     }
 
     const { slug } = params;
@@ -42,7 +42,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
             .limit(1);
 
         if (!article) {
-            throw error(404, 'Article not found');
+            error(404, 'Article not found');
         }
 
         // Increment view count
@@ -102,7 +102,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         }
         // Table may not exist yet
         console.warn('Error loading article:', err);
-        throw error(404, 'Article not found');
+        error(404, 'Article not found');
     }
 };
 

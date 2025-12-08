@@ -6,7 +6,7 @@ export const load: PageLoad = ({ params }) => {
     const doc = loadLegalDoc(params.slug);
 
     if (!doc) {
-        throw error(404, 'Legal document not found');
+        error(404, 'Legal document not found');
     }
 
     return {

@@ -5,7 +5,7 @@ import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.profile || !['super_admin', 'admin'].includes(locals.profile.role)) {
-        throw redirect(303, '/admin');
+        redirect(303, '/admin');
     }
 
     // Default categories for portfolio projects
@@ -28,7 +28,7 @@ export const actions: Actions = {
     default: async ({ request, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.profile || !['super_admin', 'admin'].includes(locals.profile.role)) {
+        if (!locals.profile || !['super_admin', 'admin'].includes(locals.profile.role)) {
             return fail(403, { error: 'Unauthorized' });
         }
 
@@ -89,9 +89,9 @@ if (!locals.profile || !['super_admin', 'admin'].includes(locals.profile.role)) 
                 createdById: locals.profile.id
             }).returning({ id: portfolioProjects.id });
 
-            throw redirect(303, `/admin/portfolio/${newProject.id}`);
+            redirect(303, `/admin/portfolio/${newProject.id}`);
         } catch (error) {
-            if (error instanceof Response) throw error; // Re-throw redirects
+            if (error instanceof Response) error; // Re-redirects
 
             console.error('Failed to create portfolio project:', error);
 

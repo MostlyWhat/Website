@@ -6,7 +6,7 @@ export const load: PageLoad = ({ params }) => {
     const project = loadProject(params.slug);
 
     if (!project) {
-        throw error(404, 'Project not found');
+        error(404, 'Project not found');
     }
 
     return { project };

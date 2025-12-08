@@ -7,7 +7,7 @@ import type { PageServerLoad, Actions } from './$types';
 export const load: PageServerLoad = async ({ params, locals }) => {
     const db = createDb();
     if (!locals.profile || !['super_admin', 'admin'].includes(locals.profile.role)) {
-        throw redirect(303, '/admin');
+        redirect(303, '/admin');
     }
 
     try {
@@ -39,7 +39,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
             .where(eq(blogPosts.id, params.id));
 
         if (!post) {
-            throw error(404, 'Blog post not found');
+            error(404, 'Blog post not found');
         }
 
         // Default categories for blog posts
@@ -60,7 +60,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
     } catch (err) {
         if (err instanceof Response) throw err;
         console.error('Failed to load blog post:', err);
-        throw error(500, 'Failed to load blog post');
+        error(500, 'Failed to load blog post');
     }
 };
 
@@ -154,9 +154,9 @@ export const actions: Actions = {
 
         try {
             await db.delete(blogPosts).where(eq(blogPosts.id, params.id));
-            throw redirect(303, '/admin/blog');
+            redirect(303, '/admin/blog');
         } catch (error) {
-            if (error instanceof Response) throw error;
+            if (error instanceof Response) error;
             console.error('Failed to delete blog post:', error);
             return fail(500, { error: 'Failed to delete blog post' });
         }

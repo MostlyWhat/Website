@@ -6,7 +6,7 @@ export const load: PageLoad = ({ params }) => {
     const post = loadBlogPost(params.slug);
 
     if (!post) {
-        throw error(404, 'Post not found');
+        error(404, 'Post not found');
     }
 
     return { post };

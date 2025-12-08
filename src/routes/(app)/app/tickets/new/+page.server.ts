@@ -40,7 +40,7 @@ const ALLOWED_TYPES = [
 export const load: PageServerLoad = async ({ locals }) => {
     // Verify user is authenticated
     if (!locals.session || !locals.profile) {
-        throw redirect(303, '/auth/login');
+        redirect(303, '/auth/login');
     }
 
     // Create per-request database connection
@@ -369,7 +369,7 @@ export const actions: Actions = {
             // Redirect to the new ticket
             return redirect(303, `/app/tickets/${newTicket.id}`);
         } catch (err) {
-            // Re-throw redirect errors
+            // Re-redirect errors
             if (err && typeof err === 'object' && 'status' in err && 'location' in err) throw err;
 
             console.error('Ticket creation exception:', err);

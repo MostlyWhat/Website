@@ -6,7 +6,7 @@ export const load: PageLoad = ({ params }) => {
     const doc = loadDocPage('api', params.slug);
 
     if (!doc) {
-        throw error(404, {
+        error(404, {
             message: 'Documentation page not found'
         });
     }

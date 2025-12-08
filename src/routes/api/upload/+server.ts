@@ -34,12 +34,12 @@ const ALLOWED_TYPES = [
 export const POST: RequestHandler = async ({ request, locals }) => {
     // Verify authentication
     if (!locals.user || !locals.profile) {
-        throw error(401, 'Authentication required');
+        error(401, 'Authentication required');
     }
 
     // SECURITY: Require onboarding completion for file uploads
     if (!locals.profile.onboardingCompleted) {
-        throw error(403, 'Please complete onboarding first');
+        error(403, 'Please complete onboarding first');
     }
 
     try {
@@ -50,26 +50,26 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
         // Validate required fields
         if (!file) {
-            throw error(400, 'No file provided');
+            error(400, 'No file provided');
         }
         if (!entityType || !entityId) {
-            throw error(400, 'Entity type and ID are required');
+            error(400, 'Entity type and ID are required');
         }
 
         // Validate entity type
         const validEntityTypes = ['ticket', 'project', 'proposal', 'invoice', 'comment'];
         if (!validEntityTypes.includes(entityType)) {
-            throw error(400, 'Invalid entity type');
+            error(400, 'Invalid entity type');
         }
 
         // Validate file size
         if (file.size > MAX_FILE_SIZE) {
-            throw error(400, `File too large. Maximum size is ${MAX_FILE_SIZE / 1024 / 1024}MB`);
+            error(400, `File too large. Maximum size is ${MAX_FILE_SIZE / 1024 / 1024}MB`);
         }
 
         // Validate file type
         if (!ALLOWED_TYPES.includes(file.type)) {
-            throw error(400, 'File type not allowed. Supported types: images, PDF, documents, spreadsheets, ZIP');
+            error(400, 'File type not allowed. Supported types: images, PDF, documents, spreadsheets, ZIP');
         }
 
         // Create unique file path
@@ -93,7 +93,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
         if (uploadError) {
             console.error('Supabase upload error:', uploadError);
-            throw error(500, 'Failed to upload file');
+            error(500, 'Failed to upload file');
         }
 
         // Get public URL
@@ -134,14 +134,14 @@ export const POST: RequestHandler = async ({ request, locals }) => {
         if (err instanceof Response) {
             throw err;
         }
-        throw error(500, 'Upload failed');
+        error(500, 'Upload failed');
     }
 };
 
 export const DELETE: RequestHandler = async ({ request, locals }) => {
     // Verify authentication
     if (!locals.user || !locals.profile) {
-        throw error(401, 'Authentication required');
+        error(401, 'Authentication required');
     }
 
     // Create per-request database connection
@@ -152,7 +152,7 @@ export const DELETE: RequestHandler = async ({ request, locals }) => {
         const { fileId } = body;
 
         if (!fileId) {
-            throw error(400, 'File ID is required');
+            error(400, 'File ID is required');
         }
 
         // Get file record
@@ -163,13 +163,13 @@ export const DELETE: RequestHandler = async ({ request, locals }) => {
             .limit(1);
 
         if (!fileRecord) {
-            throw error(404, 'File not found');
+            error(404, 'File not found');
         }
 
         // Check permissions - only uploader or staff can delete
         const isStaff = ['super_admin', 'admin', 'staff'].includes(locals.profile.role ?? '');
         if (fileRecord.uploadedById !== locals.profile.id && !isStaff) {
-            throw error(403, 'Not authorized to delete this file');
+            error(403, 'Not authorized to delete this file');
         }
 
         // Delete from Supabase Storage
@@ -193,7 +193,7 @@ export const DELETE: RequestHandler = async ({ request, locals }) => {
         if (err instanceof Response) {
             throw err;
         }
-        throw error(500, 'Delete failed');
+        error(500, 'Delete failed');
     }
 };
 

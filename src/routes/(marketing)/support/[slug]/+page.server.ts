@@ -43,7 +43,7 @@ export const load: PageServerLoad = async ({ params }) => {
     const rawContent = articleFiles[filePath] as string | undefined;
 
     if (!rawContent) {
-        throw error(404, 'Article not found');
+        error(404, 'Article not found');
     }
 
     const article = parseArticle(rawContent, slug);

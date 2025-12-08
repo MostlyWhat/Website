@@ -31,12 +31,12 @@ async function generateInvoiceNumber(db: ReturnType<typeof createDb>): Promise<s
 
 export const load: PageServerLoad = async ({ locals, url }) => {
     if (!locals.user || !locals.profile) {
-        throw redirect(302, '/auth/login');
+        redirect(302, '/auth/login');
     }
 
     // Verify admin role
     if (!['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
-        throw redirect(302, '/admin');
+        redirect(302, '/admin');
     }
 
     // Create per-request database connection
@@ -183,7 +183,7 @@ export const actions: Actions = {
                 getClientIp(request)
             );
 
-            throw redirect(302, `/admin/invoices/${newInvoice.id}`);
+            redirect(302, `/admin/invoices/${newInvoice.id}`);
         } catch (err) {
             if ((err as any)?.status === 302) throw err;
             console.error('Error creating invoice:', err);

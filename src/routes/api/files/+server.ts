@@ -13,12 +13,12 @@ import { eq, and, desc } from 'drizzle-orm';
 export const GET: RequestHandler = async ({ url, locals }) => {
     // Verify authentication
     if (!locals.user || !locals.profile) {
-        throw error(401, 'Authentication required');
+        error(401, 'Authentication required');
     }
 
     // SECURITY: Require onboarding completion
     if (!locals.profile.onboardingCompleted) {
-        throw error(403, 'Please complete onboarding first');
+        error(403, 'Please complete onboarding first');
     }
 
     // Create per-request database connection
@@ -28,7 +28,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
     const entityId = url.searchParams.get('entityId');
 
     if (!entityType || !entityId) {
-        throw error(400, 'Entity type and ID are required');
+        error(400, 'Entity type and ID are required');
     }
 
     try {
@@ -66,6 +66,6 @@ export const GET: RequestHandler = async ({ url, locals }) => {
         });
     } catch (err) {
         console.error('List files error:', err);
-        throw error(500, 'Failed to list files');
+        error(500, 'Failed to list files');
     }
 };

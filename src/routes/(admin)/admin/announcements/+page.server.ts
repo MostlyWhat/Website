@@ -9,7 +9,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     const db = createDb();
     // Only super_admin can manage announcements
     if (locals.profile?.role !== 'super_admin' && locals.profile?.role !== 'admin') {
-        throw redirect(303, '/admin');
+        redirect(303, '/admin');
     }
 
     const [allAnnouncements, allProfiles, allStaffGroups, allOrganizations] = await Promise.all([

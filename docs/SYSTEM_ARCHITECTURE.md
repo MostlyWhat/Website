@@ -363,13 +363,13 @@ const handleRouteProtection: Handle = async ({ event, resolve }) => {
 export const load: LayoutServerLoad = async ({ locals }) => {
   // Redundant checks for defense-in-depth
   if (!locals.user) {
-    throw redirect(303, '/auth/login?redirectTo=/app');
+    redirect(303, '/auth/login?redirectTo=/app');
   }
   if (!locals.profile) {
-    throw redirect(303, '/onboarding');
+    redirect(303, '/onboarding');
   }
   if (!locals.profile.onboardingCompleted) {
-    throw redirect(303, '/onboarding');
+    redirect(303, '/onboarding');
   }
 
   // Load layout data...
@@ -791,12 +791,12 @@ import type { RequestHandler } from './$types';
 export const GET: RequestHandler = async ({ locals, url }) => {
   // 1. Auth check
   if (!locals.user || !locals.profile) {
-    throw error(401, 'Authentication required');
+    error(401, 'Authentication required');
   }
 
   // 2. Onboarding check
   if (!locals.profile.onboardingCompleted) {
-    throw error(403, 'Please complete onboarding');
+    error(403, 'Please complete onboarding');
   }
 
   // 3. Business logic
@@ -820,10 +820,10 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
   // Validate file type and size
   if (!ALLOWED_TYPES.includes(file.type)) {
-    throw error(400, 'Invalid file type');
+    error(400, 'Invalid file type');
   }
   if (file.size > MAX_FILE_SIZE) {
-    throw error(400, 'File too large');
+    error(400, 'File too large');
   }
 
   // Upload to Supabase Storage

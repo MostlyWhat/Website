@@ -33,7 +33,7 @@ async function generateProjectNumber(): Promise<string> {
 
 export const load: PageServerLoad = async ({ params, locals }) => {
     if (!locals.user || !locals.profile || !['super_admin', 'admin', 'staff'].includes(locals.profile.role ?? '')) {
-        throw redirect(302, '/auth/login');
+        redirect(302, '/auth/login');
     }
 
     const requestId = params.id;
@@ -250,7 +250,7 @@ export const actions: Actions = {
 
             return redirect(303, `/admin/projects/${newProject.id}`);
         } catch (err) {
-            // Re-throw redirect errors
+            // Re-redirect errors
             if (err && typeof err === 'object' && 'status' in err && 'location' in err) throw err;
             console.error('Failed to convert request to project:', err);
             return fail(500, { error: 'Failed to convert request to project' });

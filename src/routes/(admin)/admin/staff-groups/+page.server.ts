@@ -7,12 +7,12 @@ import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user || !locals.profile) {
-        throw redirect(302, '/auth/login');
+        redirect(302, '/auth/login');
     }
 
     // Only super_admin and admin can manage staff groups
     if (!['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
-        throw error(403, 'Access denied');
+        error(403, 'Access denied');
     }
 
     // Fetch all staff groups with member counts

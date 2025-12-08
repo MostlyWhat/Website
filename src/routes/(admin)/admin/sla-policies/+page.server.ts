@@ -7,12 +7,12 @@ import { slaActivity, getClientIp } from '$lib/server/activity-logger';
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user || !locals.profile) {
-        throw redirect(302, '/auth/login');
+        redirect(302, '/auth/login');
     }
 
     // Require admin/super_admin role
     if (!['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
-        throw redirect(302, '/admin');
+        redirect(302, '/admin');
     }
 
     // Create per-request database connection

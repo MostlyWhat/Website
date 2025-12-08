@@ -6,18 +6,18 @@ import type { LayoutServerLoad } from './$types';
 export const load: LayoutServerLoad = async ({ locals }) => {
     // Require authentication
     if (!locals.user) {
-        throw redirect(303, '/auth/login?redirectTo=/app');
+        redirect(303, '/auth/login?redirectTo=/app');
     }
 
     // SECURITY: Require profile to exist
     // If no profile, redirect to onboarding (it will create one)
     if (!locals.profile) {
-        throw redirect(303, '/onboarding');
+        redirect(303, '/onboarding');
     }
 
     // Require onboarding completion
     if (!locals.profile.onboardingCompleted) {
-        throw redirect(303, '/onboarding');
+        redirect(303, '/onboarding');
     }
 
     // Use the per-request database connection from locals

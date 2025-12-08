@@ -14,7 +14,7 @@ import { userActivity, getClientIp } from '$lib/server/activity-logger';
 export const load: PageServerLoad = async ({ locals }) => {
     // Verify admin access
     if (!locals.profile || !['super_admin', 'admin'].includes(locals.profile.role)) {
-        throw redirect(303, '/admin');
+        redirect(303, '/admin');
     }
 
     return {};
@@ -24,7 +24,7 @@ export const actions: Actions = {
     default: async ({ request, locals }) => {
         // Create per-request database connection
         const db = createDb();
-// Verify admin access
+        // Verify admin access
         if (!locals.profile || !['super_admin', 'admin'].includes(locals.profile.role)) {
             return fail(403, { error: 'Unauthorized' });
         }

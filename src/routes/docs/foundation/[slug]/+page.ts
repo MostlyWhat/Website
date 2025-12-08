@@ -6,7 +6,7 @@ export const load: PageLoad = ({ params }) => {
     const doc = loadDocPage('foundation', params.slug);
 
     if (!doc) {
-        throw error(404, 'Foundation doc not found');
+        error(404, 'Foundation doc not found');
     }
 
     return { doc };

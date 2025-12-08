@@ -7,12 +7,12 @@ import { cannedResponseActivity, getClientIp } from '$lib/server/activity-logger
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user || !locals.profile) {
-        throw redirect(302, '/auth/login');
+        redirect(302, '/auth/login');
     }
 
     // Verify admin/staff role
     if (!['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
-        throw error(403, 'Access denied');
+        error(403, 'Access denied');
     }
 
     // Create per-request database connection

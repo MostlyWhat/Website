@@ -6,24 +6,24 @@ import { eq, and, or, isNull, gt, lte, sql, notInArray } from 'drizzle-orm';
 export const load: LayoutServerLoad = async ({ locals }) => {
     // Require authentication
     if (!locals.user) {
-        throw redirect(303, '/auth/login?redirectTo=/admin');
+        redirect(303, '/auth/login?redirectTo=/admin');
     }
 
     // SECURITY: Require profile to exist
     // If no profile, redirect to onboarding (it will create one)
     if (!locals.profile) {
-        throw redirect(303, '/onboarding');
+        redirect(303, '/onboarding');
     }
 
     // Require onboarding completion
     if (!locals.profile.onboardingCompleted) {
-        throw redirect(303, '/onboarding');
+        redirect(303, '/onboarding');
     }
 
     // Require admin, staff, or super_admin role
     const allowedRoles = ['super_admin', 'admin', 'staff'];
     if (!allowedRoles.includes(locals.profile.role)) {
-        throw redirect(303, '/app');
+        redirect(303, '/app');
     }
 
     // Use the per-request database connection from locals

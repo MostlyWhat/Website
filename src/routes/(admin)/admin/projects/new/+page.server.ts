@@ -31,12 +31,12 @@ async function generateProjectNumber(): Promise<string> {
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user || !locals.profile) {
-        throw redirect(302, '/auth/login');
+        redirect(302, '/auth/login');
     }
 
     // Require admin/staff role
     if (!['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
-        throw redirect(302, '/admin');
+        redirect(302, '/admin');
     }
 
     // Create per-request database connection
@@ -148,7 +148,7 @@ export const actions: Actions = {
             // Log activity
             await projectActivity.created(newProject.id, newProject.name, locals.profile.id, getClientIp(request));
 
-            throw redirect(302, `/admin/projects/${newProject.id}`);
+            redirect(302, `/admin/projects/${newProject.id}`);
         } catch (err) {
             if (err instanceof Response) throw err;
             console.error('Failed to create project:', err);

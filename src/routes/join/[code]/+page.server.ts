@@ -35,17 +35,17 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         .where(eq(organizationInvites.code, code));
 
     if (!invite) {
-        throw error(404, 'Invite not found or has been deleted');
+        error(404, 'Invite not found or has been deleted');
     }
 
     // Check if expired
     if (invite.expiresAt && new Date(invite.expiresAt) < new Date()) {
-        throw error(410, 'This invite has expired');
+        error(410, 'This invite has expired');
     }
 
     // Check if exhausted
     if (invite.maxUses && invite.usedCount >= invite.maxUses) {
-        throw error(410, 'This invite has reached its maximum uses');
+        error(410, 'This invite has reached its maximum uses');
     }
 
     // Check if user is already a member (if logged in)
@@ -97,7 +97,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 export const actions: Actions = {
     join: async ({ request, params, locals }) => {
         if (!locals.user || !locals.profile) {
-            throw redirect(302, `/auth/login?redirect=/join/${params.code}`);
+            redirect(302, `/auth/login?redirect=/join/${params.code}`);
         }
 
         const code = params.code;

@@ -6,7 +6,7 @@ export const load: PageLoad = ({ params }) => {
     const doc = loadDocPage('products', params.slug);
 
     if (!doc) {
-        throw error(404, 'Product documentation not found');
+        error(404, 'Product documentation not found');
     }
 
     return { doc };

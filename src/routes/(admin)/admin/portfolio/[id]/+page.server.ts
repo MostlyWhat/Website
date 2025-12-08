@@ -7,7 +7,7 @@ import type { PageServerLoad, Actions } from './$types';
 export const load: PageServerLoad = async ({ params, locals }) => {
     const db = createDb();
     if (!locals.profile || !['super_admin', 'admin'].includes(locals.profile.role)) {
-        throw redirect(303, '/admin');
+        redirect(303, '/admin');
     }
 
     try {
@@ -42,7 +42,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
             .where(eq(portfolioProjects.id, params.id));
 
         if (!project) {
-            throw error(404, 'Portfolio project not found');
+            error(404, 'Portfolio project not found');
         }
 
         // Default categories for portfolio projects
@@ -63,7 +63,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
     } catch (err) {
         if (err instanceof Response) throw err;
         console.error('Failed to load portfolio project:', err);
-        throw error(500, 'Failed to load portfolio project');
+        error(500, 'Failed to load portfolio project');
     }
 };
 
@@ -164,9 +164,9 @@ export const actions: Actions = {
 
         try {
             await db.delete(portfolioProjects).where(eq(portfolioProjects.id, params.id));
-            throw redirect(303, '/admin/portfolio');
+            redirect(303, '/admin/portfolio');
         } catch (error) {
-            if (error instanceof Response) throw error;
+            if (error instanceof Response) error;
             console.error('Failed to delete portfolio project:', error);
             return fail(500, { error: 'Failed to delete project' });
         }

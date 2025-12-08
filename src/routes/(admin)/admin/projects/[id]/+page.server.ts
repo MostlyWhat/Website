@@ -21,12 +21,12 @@ import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
     if (!locals.user || !locals.profile) {
-        throw redirect(302, '/auth/login');
+        redirect(302, '/auth/login');
     }
 
     // Verify admin/staff role
     if (!['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
-        throw error(403, 'Access denied');
+        error(403, 'Access denied');
     }
 
     const projectId = params.id;
@@ -77,7 +77,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         .limit(1);
 
     if (!projectData.length) {
-        throw error(404, 'Project not found');
+        error(404, 'Project not found');
     }
 
     const project = projectData[0];

@@ -7,7 +7,7 @@ export const load: PageLoad = ({ params }) => {
     let doc = loadDocPage('overview', params.slug);
 
     if (!doc) {
-        throw error(404, 'Page not found');
+        error(404, 'Page not found');
     }
 
     return { doc };

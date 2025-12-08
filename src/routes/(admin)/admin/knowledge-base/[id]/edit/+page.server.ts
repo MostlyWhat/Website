@@ -6,13 +6,13 @@ import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
     if (!locals.user || !locals.profile) {
-        throw redirect(302, '/auth/login');
+        redirect(302, '/auth/login');
     }
 
     // Only admin and staff can access
     const allowedRoles = ['super_admin', 'admin', 'staff'];
     if (!allowedRoles.includes(locals.profile.role)) {
-        throw redirect(302, '/app');
+        redirect(302, '/app');
     }
 
     const { id } = params;
@@ -29,7 +29,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
             .limit(1);
 
         if (!article) {
-            throw error(404, 'Article not found');
+            error(404, 'Article not found');
         }
 
         // Get existing categories for suggestions
@@ -48,7 +48,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
             throw err;
         }
         console.error('Error loading article:', err);
-        throw error(500, 'Failed to load article');
+        error(500, 'Failed to load article');
     }
 };
 
@@ -135,7 +135,7 @@ export const actions: Actions = {
                 })
                 .where(eq(supportArticles.id, id));
 
-            throw redirect(302, '/admin/knowledge-base');
+            redirect(302, '/admin/knowledge-base');
         } catch (err) {
             if ((err as { status?: number }).status === 302) {
                 throw err;

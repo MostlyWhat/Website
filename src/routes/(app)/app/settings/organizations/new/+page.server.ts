@@ -13,7 +13,7 @@ import crypto from 'node:crypto';
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.session || !locals.profile) {
-        throw redirect(303, '/auth/login');
+        redirect(303, '/auth/login');
     }
 
     return {};
@@ -33,7 +33,7 @@ export const actions: Actions = {
     default: async ({ request, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.session || !locals.profile) {
+        if (!locals.session || !locals.profile) {
             return fail(401, { error: 'You must be logged in' });
         }
 
@@ -83,7 +83,7 @@ if (!locals.session || !locals.profile) {
 
             return redirect(303, '/app/settings/organizations');
         } catch (err) {
-            // Re-throw redirect errors
+            // Re-redirect errors
             if (err && typeof err === 'object' && 'status' in err && 'location' in err) throw err;
 
             console.error('Create organization error:', err);

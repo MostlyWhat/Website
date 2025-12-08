@@ -66,33 +66,88 @@
 	stats={supportStats}
 />
 
-<!-- Client Login Banner - Primary CTA -->
+<!-- Client Portal Section - Primary CTA -->
 <section class="border-b border-border">
 	<div class="grid grid-cols-12 gap-px bg-border">
-		<div class="col-span-12 flex flex-col items-center justify-center bg-primary/5 px-6 py-12 text-center md:px-12 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
+		<!-- Header -->
+		<div class="col-span-12 bg-primary/5 px-6 py-12 md:px-12 lg:col-span-5 lg:px-16" use:scrollAnimate={{ animation: 'fade' }}>
 			<div class="flex h-16 w-16 items-center justify-center border border-primary/30 bg-primary/10">
 				<LogIn class="h-8 w-8 text-primary" />
 			</div>
 			<h2 class="font-display mt-6 text-2xl font-bold uppercase md:text-3xl">CLIENT PORTAL</h2>
-			<p class="font-body mt-4 max-w-lg text-muted-foreground">
-				Access your projects, submit support tickets, use our guided troubleshooter, and track your support requests—all in one place.
+			<p class="font-body mt-4 text-muted-foreground">
+				Sign in to access your personalized support experience with faster response times and project context.
 			</p>
-			<div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+			<div class="mt-8 flex flex-wrap items-center gap-4">
 				<a
 					href={localizeHref('/auth/login?redirectTo=/app/help')}
 					class="font-mono inline-flex items-center gap-2 border border-primary bg-primary px-6 py-3 text-xs tracking-wider text-primary-foreground transition-colors hover:bg-primary/90"
 				>
 					<LogIn class="h-4 w-4" />
-					SIGN IN TO PORTAL
+					SIGN IN
 				</a>
 				<a
 					href={localizeHref('/auth/register')}
 					class="font-mono inline-flex items-center gap-2 border border-border bg-background px-6 py-3 text-xs tracking-wider transition-colors hover:bg-card"
 				>
 					CREATE ACCOUNT
-					<ArrowRight class="h-4 w-4" />
 				</a>
 			</div>
+		</div>
+		<!-- Quick Access Cards -->
+		<div class="col-span-12 grid grid-cols-2 gap-px bg-border lg:col-span-7" use:scrollAnimate={{ animation: 'stagger' }}>
+			<a
+				href={localizeHref('/auth/login?redirectTo=/app/help')}
+				class="col-span-2 flex items-center gap-4 bg-background px-6 py-6 transition-colors hover:bg-card sm:col-span-1"
+			>
+				<div class="flex h-12 w-12 shrink-0 items-center justify-center border border-border bg-card">
+					<HelpCircle class="h-5 w-5 text-primary" />
+				</div>
+				<div class="min-w-0">
+					<h3 class="font-ui text-sm font-semibold tracking-wider">KNOWLEDGE BASE</h3>
+					<p class="font-body mt-1 truncate text-xs text-muted-foreground">Browse help articles</p>
+				</div>
+				<ArrowRight class="ml-auto h-4 w-4 shrink-0 text-muted-foreground" />
+			</a>
+			<a
+				href={localizeHref('/auth/login?redirectTo=/app/help/troubleshooter')}
+				class="col-span-2 flex items-center gap-4 bg-card px-6 py-6 transition-colors hover:bg-background sm:col-span-1"
+			>
+				<div class="flex h-12 w-12 shrink-0 items-center justify-center border border-border bg-background">
+					<MessageCircleQuestion class="h-5 w-5 text-primary" />
+				</div>
+				<div class="min-w-0">
+					<h3 class="font-ui text-sm font-semibold tracking-wider">TROUBLESHOOTER</h3>
+					<p class="font-body mt-1 truncate text-xs text-muted-foreground">Guided problem solving</p>
+				</div>
+				<ArrowRight class="ml-auto h-4 w-4 shrink-0 text-muted-foreground" />
+			</a>
+			<a
+				href={localizeHref('/auth/login?redirectTo=/app/tickets')}
+				class="col-span-2 flex items-center gap-4 bg-card px-6 py-6 transition-colors hover:bg-background sm:col-span-1"
+			>
+				<div class="flex h-12 w-12 shrink-0 items-center justify-center border border-border bg-background">
+					<Ticket class="h-5 w-5 text-primary" />
+				</div>
+				<div class="min-w-0">
+					<h3 class="font-ui text-sm font-semibold tracking-wider">SUPPORT TICKETS</h3>
+					<p class="font-body mt-1 truncate text-xs text-muted-foreground">Submit & track requests</p>
+				</div>
+				<ArrowRight class="ml-auto h-4 w-4 shrink-0 text-muted-foreground" />
+			</a>
+			<a
+				href={localizeHref('/auth/login?redirectTo=/app/projects')}
+				class="col-span-2 flex items-center gap-4 bg-background px-6 py-6 transition-colors hover:bg-card sm:col-span-1"
+			>
+				<div class="flex h-12 w-12 shrink-0 items-center justify-center border border-border bg-card">
+					<LifeBuoy class="h-5 w-5 text-primary" />
+				</div>
+				<div class="min-w-0">
+					<h3 class="font-ui text-sm font-semibold tracking-wider">MY PROJECTS</h3>
+					<p class="font-body mt-1 truncate text-xs text-muted-foreground">View project status</p>
+				</div>
+				<ArrowRight class="ml-auto h-4 w-4 shrink-0 text-muted-foreground" />
+			</a>
 		</div>
 	</div>
 </section>

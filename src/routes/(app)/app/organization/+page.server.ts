@@ -19,7 +19,7 @@ function generateSlug(name: string): string {
 
 export const load: PageServerLoad = async ({ locals, url }) => {
     if (!locals.user) {
-        throw redirect(303, '/auth/login?redirectTo=/app/organization');
+        redirect(303, '/auth/login?redirectTo=/app/organization');
     }
 
     // Create per-request database connection for Cloudflare Workers

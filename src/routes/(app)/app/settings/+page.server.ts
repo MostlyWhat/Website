@@ -105,7 +105,7 @@ export const actions: Actions = {
             // Redirect to home page
             return redirect(303, '/?accountDeleted=true');
         } catch (err) {
-            // Re-throw redirect errors
+            // Re-redirect errors
             if (err && typeof err === 'object' && 'status' in err && 'location' in err) throw err;
             console.error('Account deletion exception:', err);
             return fail(500, { error: 'An unexpected error occurred. Please contact support.' });

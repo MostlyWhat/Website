@@ -8,11 +8,11 @@ import type { PageServerLoad, Actions } from './$types';
 export const load: PageServerLoad = async ({ params, locals }) => {
     const db = createDb();
     if (!locals.user || !locals.profile) {
-        throw redirect(302, '/auth/login');
+        redirect(302, '/auth/login');
     }
 
     if (!['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
-        throw error(403, 'Access denied');
+        error(403, 'Access denied');
     }
 
     const groupId = params.id;
@@ -24,7 +24,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         .where(eq(staffGroups.id, groupId));
 
     if (!group) {
-        throw error(404, 'Staff group not found');
+        error(404, 'Staff group not found');
     }
 
     // Fetch group members
@@ -69,7 +69,7 @@ export const actions: Actions = {
     addMember: async ({ request, params, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.user || !locals.profile) {
+        if (!locals.user || !locals.profile) {
             return fail(401, { error: 'Unauthorized' });
         }
 
@@ -116,7 +116,7 @@ if (!locals.user || !locals.profile) {
     removeMember: async ({ request, params, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.user || !locals.profile) {
+        if (!locals.user || !locals.profile) {
             return fail(401, { error: 'Unauthorized' });
         }
 
@@ -151,7 +151,7 @@ if (!locals.user || !locals.profile) {
     updateMemberRole: async ({ request, params, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.user || !locals.profile) {
+        if (!locals.user || !locals.profile) {
             return fail(401, { error: 'Unauthorized' });
         }
 
@@ -188,7 +188,7 @@ if (!locals.user || !locals.profile) {
     updateGroup: async ({ request, params, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.user || !locals.profile) {
+        if (!locals.user || !locals.profile) {
             return fail(401, { error: 'Unauthorized' });
         }
 

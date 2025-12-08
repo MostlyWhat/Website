@@ -25,12 +25,12 @@ function generateInviteCode(length: number = 12): string {
 
 export const load: PageServerLoad = async ({ params, locals }) => {
     if (!locals.user || !locals.profile) {
-        throw redirect(302, '/auth/login');
+        redirect(302, '/auth/login');
     }
 
     // Verify admin role
     if (!['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
-        throw error(403, 'Access denied');
+        error(403, 'Access denied');
     }
 
     const orgId = params.id;
@@ -45,7 +45,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         .where(eq(organizations.id, orgId));
 
     if (!org) {
-        throw error(404, 'Organization not found');
+        error(404, 'Organization not found');
     }
 
     // Fetch members with profile info

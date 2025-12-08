@@ -30,7 +30,7 @@ export const load: PageServerLoad = async ({ params }) => {
     const content = positionFiles[filePath] as string | undefined;
 
     if (!content) {
-        throw error(404, 'Position not found');
+        error(404, 'Position not found');
     }
 
     const { frontmatter, body } = parseFrontmatter(content);

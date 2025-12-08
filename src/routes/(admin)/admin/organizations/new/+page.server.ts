@@ -16,12 +16,12 @@ function generateSlug(name: string): string {
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user || !locals.profile) {
-        throw redirect(302, '/auth/login');
+        redirect(302, '/auth/login');
     }
 
     // Verify admin role
     if (!['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
-        throw redirect(302, '/admin');
+        redirect(302, '/admin');
     }
 
     // Create per-request database connection
@@ -122,9 +122,9 @@ export const actions: Actions = {
                 getClientIp(request)
             );
 
-            throw redirect(302, `/admin/organizations/${newOrg.id}`);
+            redirect(302, `/admin/organizations/${newOrg.id}`);
         } catch (err) {
-            if ((err as any)?.status === 302) throw err; // Re-throw redirect
+            if ((err as any)?.status === 302) throw err; // Re-redirect
             console.error('Error creating organization:', err);
             return fail(500, { error: 'Failed to create organization' });
         }

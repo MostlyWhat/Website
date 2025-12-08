@@ -37,12 +37,12 @@ const defaultSettings = [
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user || !locals.profile) {
-        throw redirect(302, '/auth/login');
+        redirect(302, '/auth/login');
     }
 
     // Only super_admin can access settings
     if (locals.profile.role !== 'super_admin') {
-        throw redirect(302, '/admin');
+        redirect(302, '/admin');
     }
 
     // Create per-request database connection

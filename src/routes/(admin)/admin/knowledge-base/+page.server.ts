@@ -6,13 +6,13 @@ import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ locals, url }) => {
     if (!locals.user || !locals.profile) {
-        throw redirect(302, '/auth/login');
+        redirect(302, '/auth/login');
     }
 
     // Only admin and staff can access
     const allowedRoles = ['super_admin', 'admin', 'staff'];
     if (!allowedRoles.includes(locals.profile.role)) {
-        throw redirect(302, '/app');
+        redirect(302, '/app');
     }
 
     const audienceFilter = url.searchParams.get('audience');

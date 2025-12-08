@@ -12,7 +12,7 @@ import { eq, and, count, inArray } from 'drizzle-orm';
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.session || !locals.profile) {
-        throw redirect(303, '/auth/login');
+        redirect(303, '/auth/login');
     }
 
     // Create per-request database connection
