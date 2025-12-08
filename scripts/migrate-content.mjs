@@ -54,7 +54,7 @@ async function promptEnvironment() {
         console.log('Select target environment:');
         console.log('  1. Local Supabase (http://127.0.0.1:54321)');
         console.log('  2. Production Supabase (requires environment variables)\n');
-        
+
         rl.question('Enter choice [1/2]: ', (answer) => {
             rl.close();
             resolve(answer.trim() === '2' ? 'production' : 'local');

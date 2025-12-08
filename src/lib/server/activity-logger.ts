@@ -45,7 +45,7 @@ export class ActivityLogger {
         try {
             // Parse type into entityType (e.g., 'setting.updated' -> 'settings')
             const entityType = options.type.split('.')[0] as EntityType;
-            
+
             // Map action to ActivityType
             const actionMap: Record<string, ActivityType> = {
                 'create': 'created',
