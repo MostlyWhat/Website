@@ -15,8 +15,8 @@
         body {
             font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             line-height: 1.6;
-            color: #18181b;
-            background-color: #f4f4f5;
+            color: #171717;
+            background-color: #fafafa;
         }
 
         .container {
@@ -27,25 +27,28 @@
 
         .card {
             background-color: #ffffff;
-            border: 1px solid #e4e4e7;
+            border: 1px solid #e5e5e5;
         }
 
         .header {
             padding: 32px 40px;
-            border-bottom: 1px solid #e4e4e7;
-            text-align: center;
+            border-bottom: 1px solid #e5e5e5;
         }
 
         .logo {
             font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-            font-size: 12px;
-            letter-spacing: 0.1em;
-            color: #18181b;
+            font-size: 11px;
+            letter-spacing: 0.15em;
+            color: #171717;
             font-weight: 700;
         }
 
-        .logo-accent {
-            color: #0ea5e9;
+        .section-marker {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            color: #737373;
+            margin-bottom: 16px;
         }
 
         .content {
@@ -53,76 +56,85 @@
         }
 
         .title {
-            font-size: 20px;
+            font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+            font-size: 24px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.025em;
             margin-bottom: 16px;
+            color: #171717;
         }
 
         .text {
-            color: #71717a;
+            color: #525252;
             margin-bottom: 24px;
+            font-size: 15px;
         }
 
         .button {
             display: inline-block;
-            padding: 16px 32px;
-            background-color: #0ea5e9;
+            padding: 14px 28px;
+            background-color: #171717;
             color: #ffffff !important;
             text-decoration: none;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
             font-size: 11px;
-            font-weight: 500;
+            font-weight: 600;
             letter-spacing: 0.1em;
             text-transform: uppercase;
-            border: 1px solid #0ea5e9;
+            border: 1px solid #171717;
         }
 
         .alt-link {
             margin-top: 24px;
             padding-top: 24px;
-            border-top: 1px solid #e4e4e7;
+            border-top: 1px solid #e5e5e5;
         }
 
         .alt-link p {
-            color: #71717a;
+            color: #737373;
             font-size: 12px;
             margin-bottom: 8px;
         }
 
         .alt-link a {
-            color: #0ea5e9;
+            color: #171717;
             font-size: 12px;
             word-break: break-all;
         }
 
         .footer {
             padding: 24px 40px;
-            border-top: 1px solid #e4e4e7;
+            border-top: 1px solid #e5e5e5;
             background-color: #fafafa;
         }
 
         .footer p {
-            color: #a1a1aa;
+            color: #a3a3a3;
             font-size: 11px;
             font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.025em;
         }
 
         .meta {
-            margin-top: 32px;
+            margin-top: 24px;
             text-align: center;
         }
 
         .meta p {
-            color: #a1a1aa;
+            color: #a3a3a3;
             font-size: 11px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        }
+
+        .meta a {
+            color: #737373;
+            text-decoration: none;
         }
 
         .warning {
             background-color: #fef2f2;
-            border: 1px solid #fecaca;
+            border-left: 2px solid #ef4444;
             padding: 16px;
             margin-top: 24px;
         }
@@ -130,6 +142,7 @@
         .warning p {
             color: #b91c1c;
             font-size: 12px;
+            margin: 0;
         }
     </style>
 </head>
@@ -138,13 +151,13 @@
     <div class="container">
         <div class="card">
             <div class="header">
-                <span class="logo">MOSTLY<span class="logo-accent">WHAT</span> SYSTEMS</span>
+                <span class="logo">MOSTLYWHAT SYSTEMS</span>
             </div>
             <div class="content">
+                <p class="section-marker">// PASSWORD RECOVERY</p>
                 <h1 class="title">Reset Your Password</h1>
                 <p class="text">
-                    We received a request to reset your password. Click the button below to choose a new password for
-                    your MostlyWhat Systems account.
+                    We received a request to reset your password. Click the button below to choose a new password for your MostlyWhat Systems account.
                 </p>
                 <a href="{{ .ConfirmationURL }}" class="button">Reset Password</a>
                 <div class="alt-link">
@@ -152,12 +165,21 @@
                     <a href="{{ .ConfirmationURL }}">{{ .ConfirmationURL }}</a>
                 </div>
                 <div class="warning">
-                    <p>⚠️ If you didn't request a password reset, please ignore this email. Your password will remain
-                        unchanged.</p>
+                    <p>If you didn't request a password reset, please ignore this email. Your password will remain unchanged.</p>
                 </div>
             </div>
             <div class="footer">
                 <p>This link expires in 1 hour. For your security, it can only be used once.</p>
+            </div>
+        </div>
+        <div class="meta">
+            <p>© {{ now | date: "%Y" }} MostlyWhat Systems. All rights reserved.</p>
+            <p style="margin-top: 8px;"><a href="https://www.mostlywhat.com">mostlywhat.com</a> · <a href="https://www.mostlywhat.com/legal/privacy">Privacy</a> · <a href="https://www.mostlywhat.com/legal/terms">Terms</a></p>
+        </div>
+    </div>
+</body>
+
+</html>
             </div>
         </div>
         <div class="meta">

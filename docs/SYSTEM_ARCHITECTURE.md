@@ -1050,6 +1050,64 @@ export const actions = {
 </AlertDialog.Root>
 ```
 
+### Streaming Data with Skeleton Loading
+For pages with data that may take time to load, use SvelteKit's streaming pattern to show skeleton UI immediately while data loads in the background.
+
+**Server-side (+page.server.ts):**
+```typescript
+export const load = async ({ locals }) => {
+  const { db } = locals;
+  
+  // Define async function that loads data
+  async function loadUsersData() {
+    const users = await db.query.profiles.findMany({
+      orderBy: (profiles, { desc }) => [desc(profiles.createdAt)],
+      limit: 100
+    });
+    return users;
+  }
+  
+  // Return promise in streamed object - page renders immediately
+  return {
+    streamed: {
+      users: loadUsersData()  // Promise, not awaited
+    }
+  };
+};
+```
+
+**Client-side (+page.svelte):**
+```svelte
+<script lang="ts">
+  import { Skeleton } from '$lib/components/ui/skeleton';
+  
+  let { data } = $props();
+  let streamedUsers = $derived(data.streamed.users);
+</script>
+
+{#await streamedUsers}
+  <!-- Skeleton loading state -->
+  <div class="space-y-4">
+    <Skeleton class="h-10 w-full" />
+    <Skeleton class="h-10 w-full" />
+    <Skeleton class="h-10 w-full" />
+  </div>
+{:then users}
+  <!-- Actual content -->
+  {#each users as user}
+    <UserCard {user} />
+  {/each}
+{:catch error}
+  <!-- Error state -->
+  <p class="text-destructive">Failed to load: {error.message}</p>
+{/await}
+```
+
+**Reference implementations:**
+- `/app/projects` - Full streaming with skeleton cards
+- `/admin/users` - Stats + user list skeletons
+- `/app/tickets` - Ticket list skeletons
+
 ---
 
 ## Quick Start Checklist

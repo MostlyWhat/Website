@@ -9,6 +9,7 @@
 		Mail, Shield, CheckCircle, Clock, ChevronRight, User as UserIcon
 	} from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { Skeleton } from '$lib/components/ui/skeleton';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 
 	let { data } = $props();
@@ -16,18 +17,8 @@
 	let searchQuery = $state('');
 	let roleFilter = $state<string>('all');
 
-	// Get users from server data
-	const users = $derived(data.users ?? []);
-
-	const filteredUsers = $derived(
-		users.filter(user => {
-			const matchesSearch = searchQuery === '' || 
-				(user.email ?? '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-				`${user.firstName ?? ''} ${user.lastName ?? ''}`.toLowerCase().includes(searchQuery.toLowerCase());
-			const matchesRole = roleFilter === 'all' || user.role === roleFilter;
-			return matchesSearch && matchesRole;
-		})
-	);
+	// Access streamed data
+	const streamedUsers = $derived((data as any).streamed?.users as Promise<Array<any>>);
 
 	function formatDate(dateStr: string | Date | null): string {
 		if (!dateStr) return 'Never';
@@ -117,91 +108,137 @@
 	</section>
 
 	<!-- Stats Bar -->
-	<section class="border-b border-border">
-		<div class="grid grid-cols-12 gap-px bg-border">
-			<div class="col-span-3 bg-background px-6 py-4 md:px-12 lg:px-16">
-				<span class="font-display text-xl font-bold text-primary">{users.length}</span>
-				<p class="font-mono text-[10px] tracking-wider text-muted-foreground">TOTAL USERS</p>
-			</div>
-			<div class="col-span-3 bg-background px-6 py-4">
-				<span class="font-display text-xl font-bold text-green-500">{users.filter(u => u.status === 'active').length}</span>
-				<p class="font-mono text-[10px] tracking-wider text-muted-foreground">ACTIVE</p>
-			</div>
-			<div class="col-span-3 bg-background px-6 py-4">
-				<span class="font-display text-xl font-bold text-yellow-500">{users.filter(u => u.status === 'pending').length}</span>
-				<p class="font-mono text-[10px] tracking-wider text-muted-foreground">PENDING</p>
-			</div>
-			<div class="col-span-3 bg-background px-6 py-4 md:px-12 lg:px-16">
-				<span class="font-display text-xl font-bold text-blue-500">{users.filter(u => u.role !== 'customer').length}</span>
-				<p class="font-mono text-[10px] tracking-wider text-muted-foreground">STAFF</p>
-			</div>
-		</div>
-	</section>
-
-	<!-- Users List -->
-	<section class="border-b border-border bg-background">
-		{#if filteredUsers.length > 0}
-			<div class="divide-y divide-border">
-				{#each filteredUsers as user}
-					{@const status = getStatusBadge(user.status)}
-					<a
-						href="/admin/users/{user.id}"
-						class="group flex items-center gap-4 px-6 py-4 transition-colors hover:bg-card md:px-12 lg:px-16"
-					>
-						<!-- Avatar -->
-						<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">
-							<UserIcon class="h-5 w-5 text-primary" />
-						</div>
-
-						<!-- User Info -->
-						<div class="min-w-0 flex-1">
-							<div class="flex items-center gap-3">
-								<h3 class="font-ui text-sm font-semibold tracking-wider truncate">
-									{user.firstName} {user.lastName}
-								</h3>
-								<span class="flex items-center gap-1 border px-2 py-0.5 {getRoleBadgeClass(user.role)}">
-									<Shield class="h-3 w-3" />
-									<span class="font-mono text-[10px] tracking-wider uppercase">{user.role}</span>
-								</span>
-							</div>
-							<p class="font-body mt-1 text-xs text-muted-foreground truncate">{user.email}</p>
-						</div>
-
-						<!-- Status -->
-						<div class="hidden md:block">
-							<span class="inline-flex items-center gap-1 px-2 py-1 {status.class}">
-								<CheckCircle class="h-3 w-3" />
-								<span class="font-mono text-[10px] tracking-wider">{status.label}</span>
-							</span>
-						</div>
-
-						<!-- Last Login -->
-						<div class="hidden text-right lg:block">
-							<p class="font-mono text-[10px] tracking-wider text-muted-foreground">LAST LOGIN</p>
-							<p class="font-body text-xs">{formatDate(user.lastLogin)}</p>
-						</div>
-
-						<!-- Arrow -->
-						<ChevronRight class="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-1" />
-					</a>
+	{#await streamedUsers}
+		<!-- Stats Skeleton -->
+		<section class="border-b border-border">
+			<div class="grid grid-cols-12 gap-px bg-border">
+				{#each Array(4) as _}
+					<div class="col-span-3 bg-background px-6 py-4 md:px-12 lg:px-16">
+						<Skeleton class="h-7 w-12 rounded" />
+						<Skeleton class="mt-1 h-3 w-20 rounded" />
+					</div>
 				{/each}
 			</div>
-		{:else}
-			<div class="flex flex-col items-center justify-center py-16">
-				<div class="flex h-16 w-16 items-center justify-center border border-border bg-card">
-					<Users class="h-8 w-8 text-muted-foreground/50" />
-				</div>
-				<h3 class="font-ui mt-6 text-lg font-semibold tracking-wider">NO USERS FOUND</h3>
-				<p class="font-body mt-2 text-sm text-muted-foreground">
-					{searchQuery || roleFilter !== 'all' ? 'Try adjusting your filters.' : 'Start by adding your first user.'}
-				</p>
-				{#if !searchQuery && roleFilter === 'all'}
-					<Button href="/admin/users/new" class="mt-6 font-ui text-xs tracking-wider">
-						<Plus class="mr-2 h-4 w-4" />
-						ADD USER
-					</Button>
-				{/if}
+		</section>
+
+		<!-- Users List Skeleton -->
+		<section class="border-b border-border bg-background">
+			<div class="divide-y divide-border">
+				{#each Array(8) as _}
+					<div class="flex items-center gap-4 px-6 py-4 md:px-12 lg:px-16">
+						<Skeleton class="h-12 w-12 rounded" />
+						<div class="min-w-0 flex-1 space-y-2">
+							<div class="flex items-center gap-3">
+								<Skeleton class="h-4 w-32 rounded" />
+								<Skeleton class="h-5 w-16 rounded" />
+							</div>
+							<Skeleton class="h-3 w-48 rounded" />
+						</div>
+						<Skeleton class="h-6 w-16 rounded hidden md:block" />
+						<div class="hidden lg:block space-y-1">
+							<Skeleton class="h-2 w-16 rounded" />
+							<Skeleton class="h-3 w-20 rounded" />
+						</div>
+						<Skeleton class="h-5 w-5 rounded" />
+					</div>
+				{/each}
 			</div>
-		{/if}
-	</section>
+		</section>
+	{:then users}
+		{@const filteredUsers = users.filter(user => {
+			const matchesSearch = searchQuery === '' || 
+				(user.email ?? '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+				`${user.firstName ?? ''} ${user.lastName ?? ''}`.toLowerCase().includes(searchQuery.toLowerCase());
+			const matchesRole = roleFilter === 'all' || user.role === roleFilter;
+			return matchesSearch && matchesRole;
+		})}
+		<!-- Stats Bar -->
+		<section class="border-b border-border">
+			<div class="grid grid-cols-12 gap-px bg-border">
+				<div class="col-span-3 bg-background px-6 py-4 md:px-12 lg:px-16">
+					<span class="font-display text-xl font-bold text-primary">{users.length}</span>
+					<p class="font-mono text-[10px] tracking-wider text-muted-foreground">TOTAL USERS</p>
+				</div>
+				<div class="col-span-3 bg-background px-6 py-4">
+					<span class="font-display text-xl font-bold text-green-500">{users.filter(u => u.status === 'active').length}</span>
+					<p class="font-mono text-[10px] tracking-wider text-muted-foreground">ACTIVE</p>
+				</div>
+				<div class="col-span-3 bg-background px-6 py-4">
+					<span class="font-display text-xl font-bold text-yellow-500">{users.filter(u => u.status === 'pending').length}</span>
+					<p class="font-mono text-[10px] tracking-wider text-muted-foreground">PENDING</p>
+				</div>
+				<div class="col-span-3 bg-background px-6 py-4 md:px-12 lg:px-16">
+					<span class="font-display text-xl font-bold text-blue-500">{users.filter(u => u.role !== 'customer').length}</span>
+					<p class="font-mono text-[10px] tracking-wider text-muted-foreground">STAFF</p>
+				</div>
+			</div>
+		</section>
+
+		<!-- Users List -->
+		<section class="border-b border-border bg-background">
+			{#if filteredUsers.length > 0}
+				<div class="divide-y divide-border">
+					{#each filteredUsers as user}
+						{@const status = getStatusBadge(user.status)}
+						<a
+							href="/admin/users/{user.id}"
+							class="group flex items-center gap-4 px-6 py-4 transition-colors hover:bg-card md:px-12 lg:px-16"
+						>
+							<!-- Avatar -->
+							<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">
+								<UserIcon class="h-5 w-5 text-primary" />
+							</div>
+
+							<!-- User Info -->
+							<div class="min-w-0 flex-1">
+								<div class="flex items-center gap-3">
+									<h3 class="font-ui text-sm font-semibold tracking-wider truncate">
+										{user.firstName} {user.lastName}
+									</h3>
+									<span class="flex items-center gap-1 border px-2 py-0.5 {getRoleBadgeClass(user.role)}">
+										<Shield class="h-3 w-3" />
+										<span class="font-mono text-[10px] tracking-wider uppercase">{user.role}</span>
+									</span>
+								</div>
+								<p class="font-body mt-1 text-xs text-muted-foreground truncate">{user.email}</p>
+							</div>
+
+							<!-- Status -->
+							<div class="hidden md:block">
+								<span class="inline-flex items-center gap-1 px-2 py-1 {status.class}">
+									<CheckCircle class="h-3 w-3" />
+									<span class="font-mono text-[10px] tracking-wider">{status.label}</span>
+								</span>
+							</div>
+
+							<!-- Last Login -->
+							<div class="hidden text-right lg:block">
+								<p class="font-mono text-[10px] tracking-wider text-muted-foreground">LAST LOGIN</p>
+								<p class="font-body text-xs">{formatDate(user.lastLogin)}</p>
+							</div>
+
+							<!-- Arrow -->
+							<ChevronRight class="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-1" />
+						</a>
+					{/each}
+				</div>
+			{:else}
+				<div class="flex flex-col items-center justify-center py-16">
+					<div class="flex h-16 w-16 items-center justify-center border border-border bg-card">
+						<Users class="h-8 w-8 text-muted-foreground/50" />
+					</div>
+					<h3 class="font-ui mt-6 text-lg font-semibold tracking-wider">NO USERS FOUND</h3>
+					<p class="font-body mt-2 text-sm text-muted-foreground">
+						{searchQuery || roleFilter !== 'all' ? 'Try adjusting your filters.' : 'Start by adding your first user.'}
+					</p>
+					{#if !searchQuery && roleFilter === 'all'}
+						<Button href="/admin/users/new" class="mt-6 font-ui text-xs tracking-wider">
+							<Plus class="mr-2 h-4 w-4" />
+							ADD USER
+						</Button>
+					{/if}
+				</div>
+			{/if}
+		</section>
+	{/await}
 </div>

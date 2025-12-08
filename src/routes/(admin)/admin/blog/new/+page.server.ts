@@ -82,9 +82,12 @@ export const actions: Actions = {
                 authorId: locals.profile.id
             }).returning({ id: blogPosts.id });
 
-            redirect(303, `/admin/blog/${newPost.id}`);
+            return redirect(303, `/admin/blog/${newPost.id}`);
         } catch (error) {
-            if (error instanceof Response) error; // Re-redirects
+            // Re-throw redirect errors
+            if (error && typeof error === 'object' && 'status' in error && 'location' in error) {
+                throw error;
+            }
 
             console.error('Failed to create blog post:', error);
 

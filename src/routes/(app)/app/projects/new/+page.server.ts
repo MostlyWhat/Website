@@ -178,9 +178,9 @@ export const actions: Actions = {
 
             return redirect(303, `/app/projects/requests/${newRequest.id}?success=true`);
         } catch (error) {
-            // Re-redirect errors
+            // Re-throw redirect errors
             if (error && typeof error === 'object' && 'status' in error && 'location' in error) {
-                error;
+                throw error;
             }
             console.error('Failed to create project request:', error);
             return fail(500, { error: 'Failed to submit project request. Please try again.' });

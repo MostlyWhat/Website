@@ -1,0 +1,3 @@
+ALTER TABLE "contact_submissions" ADD COLUMN "ticket_id" uuid;--> statement-breakpoint
+ALTER TABLE "contact_submissions" ADD COLUMN "converted_to_ticket_at" timestamp with time zone;--> statement-breakpoint
+ALTER TABLE "contact_submissions" ADD CONSTRAINT "contact_submissions_ticket_id_tickets_id_fk" FOREIGN KEY ("ticket_id") REFERENCES "public"."tickets"("id") ON DELETE set null ON UPDATE no action;

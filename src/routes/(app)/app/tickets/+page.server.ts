@@ -3,24 +3,20 @@ import { tickets, ticketComments, profiles, organizations, organizationMembers }
 import { eq, and, desc, sql, inArray } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ locals }) => {
-    if (!locals.user || !locals.profile) {
-        return { tickets: [] };
-    }
-
-    // Create per-request database connection
+// Async function to load tickets data
+async function loadTicketsData(profileId: string) {
     const db = createDb();
 
     // Get all organizations the user belongs to
     const userOrgs = await db
         .select({ organizationId: organizationMembers.organizationId })
         .from(organizationMembers)
-        .where(eq(organizationMembers.profileId, locals.profile.id));
+        .where(eq(organizationMembers.profileId, profileId));
 
     const orgIds = userOrgs.map((o) => o.organizationId);
 
     if (orgIds.length === 0) {
-        return { tickets: [] };
+        return [];
     }
 
     // Fetch tickets for user's organizations
@@ -70,13 +66,22 @@ export const load: PageServerLoad = async ({ locals }) => {
     }
 
     // Combine data
-    const ticketsWithCounts = userTickets.map((ticket) => ({
+    return userTickets.map((ticket) => ({
         ...ticket,
         responseCount: commentCounts[ticket.id] || 0,
         assignedTo: ticket.assignedToName
     }));
+}
 
+export const load: PageServerLoad = async ({ locals }) => {
+    if (!locals.user || !locals.profile) {
+        return { streamed: { tickets: Promise.resolve([]) } };
+    }
+
+    // Return streamed data for progressive loading
     return {
-        tickets: ticketsWithCounts
+        streamed: {
+            tickets: loadTicketsData(locals.profile.id)
+        }
     };
 };

@@ -2,7 +2,7 @@
 	/**
 	 * Admin Layout
 	 * 
-	 * Dashboard layout for admin/staff with full sidebar navigation.
+	 * Dashboard layout for admin/staff with collapsible sidebar navigation.
 	 */
 	import { page } from '$app/state';
 	import { localizeHref } from '$lib/paraglide/runtime';
@@ -23,6 +23,7 @@
 		BarChart3,
 		Home,
 		ChevronRight,
+		ChevronDown,
 		Shield,
 		MessageSquareText,
 		Clock,
@@ -38,7 +39,11 @@
 		ArrowLeft,
 		ExternalLink,
 		PenLine,
-		Briefcase
+		Briefcase,
+		Globe,
+		Wrench,
+		BriefcaseBusiness,
+		Mail
 	} from '@lucide/svelte';
 	import * as Sheet from '$lib/components/ui/sheet';
 	import { Button } from '$lib/components/ui/button';
@@ -47,6 +52,17 @@
 	let { children, data } = $props();
 	let mobileMenuOpen = $state(false);
 	let dismissedAnnouncements = $state<string[]>([]);
+	
+	// Collapsible section states
+	let expandedSections = $state<Record<string, boolean>>({
+		operations: true,
+		content: false,
+		settings: false
+	});
+
+	function toggleSection(section: string) {
+		expandedSections[section] = !expandedSections[section];
+	}
 
 	// Active announcements (not dismissed)
 	const visibleAnnouncements = $derived(
@@ -95,42 +111,81 @@
 		}
 	}
 
-	// Consolidated navigation - no more legacy section
-	const navigation = [
-		{ href: '/admin', label: 'DASHBOARD', icon: LayoutDashboard, exact: true },
-		{ href: '/admin/projects', label: 'PROJECTS', icon: FolderKanban },
-		{ href: '/admin/organizations', label: 'ORGANIZATIONS', icon: Building2 },
-		{ href: '/admin/invoices', label: 'INVOICES', icon: Receipt },
-		{ href: '/admin/tickets', label: 'TICKETS', icon: Ticket },
-		{ href: '/admin/reports', label: 'REPORTS', icon: BarChart3 }
-	];
+	// Nav item type
+	type NavItem = {
+		href: string;
+		label: string;
+		icon: typeof LayoutDashboard;
+		exact?: boolean;
+		adminOnly?: boolean;
+	};
 
-	// Content Management Section
-	const contentNav = [
-		{ href: '/admin/blog', label: 'BLOG POSTS', icon: PenLine },
-		{ href: '/admin/portfolio', label: 'PORTFOLIO', icon: Briefcase }
+	type NavSection = {
+		id: string;
+		label: string;
+		icon: typeof LayoutDashboard;
+		items: NavItem[];
+	};
+
+	// Grouped navigation structure
+	const navSections: NavSection[] = [
+		{
+			id: 'operations',
+			label: 'OPERATIONS',
+			icon: FolderKanban,
+			items: [
+				{ href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
+				{ href: '/admin/projects', label: 'Projects', icon: FolderKanban },
+				{ href: '/admin/organizations', label: 'Organizations', icon: Building2 },
+				{ href: '/admin/invoices', label: 'Invoices', icon: Receipt },
+				{ href: '/admin/tickets', label: 'Tickets', icon: Ticket },
+				{ href: '/admin/messages', label: 'Messages', icon: Mail },
+				{ href: '/admin/reports', label: 'Reports', icon: BarChart3 }
+			]
+		},
+		{
+			id: 'content',
+			label: 'CONTENT',
+			icon: PenLine,
+			items: [
+				{ href: '/admin/blog', label: 'Blog Posts', icon: PenLine },
+				{ href: '/admin/portfolio', label: 'Portfolio', icon: Briefcase },
+				{ href: '/admin/knowledge-base', label: 'Knowledge Base', icon: BookOpen },
+				{ href: '/admin/careers', label: 'Careers', icon: BriefcaseBusiness },
+				{ href: '/admin/status', label: 'Status Page', icon: Globe }
+			]
+		},
+		{
+			id: 'settings',
+			label: 'SETTINGS',
+			icon: Settings,
+			items: [
+				{ href: '/admin/users', label: 'Users', icon: Users },
+				{ href: '/admin/staff-groups', label: 'Staff Groups', icon: UsersRound },
+				{ href: '/admin/announcements', label: 'Announcements', icon: Megaphone, adminOnly: true },
+				{ href: '/admin/sla-policies', label: 'SLA Policies', icon: Clock },
+				{ href: '/admin/canned-responses', label: 'Templates', icon: MessageSquareText },
+				{ href: '/admin/activity-log', label: 'Activity Log', icon: Activity, adminOnly: true },
+				{ href: '/admin/settings', label: 'System', icon: Wrench, adminOnly: true }
+			]
+		}
 	];
 
 	// Add notifications popup state
 	let notificationsOpen = $state(false);
-
-	// Settings submenu items
-	const settingsNav = [
-		{ href: '/admin/users', label: 'USERS', icon: Users },
-		{ href: '/admin/staff-groups', label: 'STAFF GROUPS', icon: UsersRound },
-		{ href: '/admin/announcements', label: 'ANNOUNCEMENTS', icon: Megaphone, adminOnly: true },
-		{ href: '/admin/sla-policies', label: 'SLA POLICIES', icon: Clock },
-		{ href: '/admin/canned-responses', label: 'TEMPLATES', icon: MessageSquareText },
-		{ href: '/admin/knowledge-base', label: 'KNOWLEDGE BASE', icon: BookOpen },
-		{ href: '/admin/activity-log', label: 'ACTIVITY', icon: Activity, adminOnly: true },
-		{ href: '/admin/settings', label: 'SYSTEM', icon: Settings, adminOnly: true }
-	];
 
 	function isActive(href: string, exact?: boolean): boolean {
 		if (exact) {
 			return page.url.pathname === href;
 		}
 		return page.url.pathname.startsWith(href);
+	}
+
+	// Check if any item in a section is active
+	function isSectionActive(sectionId: string): boolean {
+		const section = navSections.find(s => s.id === sectionId);
+		if (!section) return false;
+		return section.items.some((item: NavItem) => isActive(item.href, item.exact));
 	}
 
 	const isAdmin = $derived(data.profile?.role === 'admin' || data.profile?.role === 'super_admin');
@@ -153,57 +208,39 @@
 
 		<!-- Navigation -->
 		<nav class="flex-1 overflow-y-auto border-b border-border">
-			<!-- Main Navigation -->
-			{#each navigation as { href, label, icon: Icon, exact }}
-				<a
-					{href}
-					class="group flex items-center gap-3 border-b border-border px-4 py-2.5 transition-colors {isActive(href, exact)
-						? 'bg-primary/10 text-primary'
-						: 'text-muted-foreground hover:bg-card hover:text-foreground'}"
+			{#each navSections as section}
+				<!-- Section Header (Collapsible) -->
+				<button
+					onclick={() => toggleSection(section.id)}
+					class="flex w-full items-center gap-3 border-b border-border px-4 py-2.5 transition-colors hover:bg-muted/30 {isSectionActive(section.id) ? 'bg-primary/5' : ''}"
 				>
-					<div class="flex h-8 w-8 items-center justify-center border transition-colors {isActive(href, exact) ? 'border-primary bg-primary/10' : 'border-border bg-background'}">
-						<Icon class="h-3.5 w-3.5 {isActive(href, exact) ? 'text-primary' : ''}" />
+					<div class="flex h-8 w-8 items-center justify-center border transition-colors {isSectionActive(section.id) ? 'border-primary/50 bg-primary/10' : 'border-border bg-background'}">
+						<section.icon class="h-3.5 w-3.5 {isSectionActive(section.id) ? 'text-primary' : 'text-muted-foreground'}" />
 					</div>
-					<span class="font-ui flex-1 text-[11px] tracking-wider">{label}</span>
-					<ChevronRight class="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100 {isActive(href, exact) ? 'opacity-100' : ''}" />
-				</a>
-			{/each}
-
-			<!-- Content Management Section -->
-			<div class="px-4 py-2 mt-2">
-				<span class="font-mono text-[9px] tracking-widest text-muted-foreground/50">CONTENT</span>
-			</div>
-			{#each contentNav as { href, label, icon: Icon }}
-				<a
-					{href}
-					class="group flex items-center gap-3 border-b border-border px-4 py-2 transition-colors {isActive(href)
-						? 'bg-primary/10 text-primary'
-						: 'text-muted-foreground/70 hover:bg-card hover:text-foreground'}"
-				>
-					<div class="flex h-6 w-6 items-center justify-center border transition-colors {isActive(href) ? 'border-primary bg-primary/10' : 'border-border/50 bg-background'}">
-						<Icon class="h-3 w-3 {isActive(href) ? 'text-primary' : ''}" />
+					<span class="font-mono flex-1 text-left text-[10px] tracking-widest {isSectionActive(section.id) ? 'text-foreground' : 'text-muted-foreground'}">{section.label}</span>
+					<ChevronDown class="h-3 w-3 text-muted-foreground transition-transform {expandedSections[section.id] ? 'rotate-180' : ''}" />
+				</button>
+				
+				<!-- Section Items -->
+				{#if expandedSections[section.id]}
+					<div class="bg-background/50">
+						{#each section.items as item}
+							{#if !item.adminOnly || isAdmin}
+								<a
+									href={item.href}
+									class="group flex items-center gap-3 border-b border-border/50 px-4 py-2 pl-8 transition-colors {isActive(item.href, item.exact)
+										? 'bg-primary/10 text-primary'
+										: 'text-muted-foreground/80 hover:bg-muted/30 hover:text-foreground'}"
+								>
+									<div class="flex h-6 w-6 items-center justify-center border transition-colors {isActive(item.href, item.exact) ? 'border-primary bg-primary/10' : 'border-border/50 bg-background'}">
+										<item.icon class="h-3 w-3 {isActive(item.href, item.exact) ? 'text-primary' : ''}" />
+									</div>
+									<span class="font-ui flex-1 text-[10px] tracking-wider">{item.label}</span>
+									<ChevronRight class="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100 {isActive(item.href, item.exact) ? 'opacity-100' : ''}" />
+								</a>
+							{/if}
+						{/each}
 					</div>
-					<span class="font-ui flex-1 text-[10px] tracking-wider">{label}</span>
-				</a>
-			{/each}
-
-			<!-- Settings Section -->
-			<div class="px-4 py-2 mt-2">
-				<span class="font-mono text-[9px] tracking-widest text-muted-foreground/50">SETTINGS</span>
-			</div>
-			{#each settingsNav as { href, label, icon: Icon, adminOnly }}
-				{#if !adminOnly || isAdmin}
-				<a
-					{href}
-					class="group flex items-center gap-3 border-b border-border px-4 py-2 transition-colors {isActive(href)
-						? 'bg-primary/10 text-primary'
-						: 'text-muted-foreground/70 hover:bg-card hover:text-foreground'}"
-				>
-					<div class="flex h-6 w-6 items-center justify-center border transition-colors {isActive(href) ? 'border-primary bg-primary/10' : 'border-border/50 bg-background'}">
-						<Icon class="h-3 w-3 {isActive(href) ? 'text-primary' : ''}" />
-					</div>
-					<span class="font-ui flex-1 text-[10px] tracking-wider">{label}</span>
-				</a>
 				{/if}
 			{/each}
 		</nav>
@@ -297,40 +334,38 @@
 
 						<!-- Navigation -->
 						<nav class="flex-1 overflow-auto">
-							{#each navigation as { href, label, icon: Icon, exact }}
-								<a
-									{href}
-									onclick={() => (mobileMenuOpen = false)}
-									class="flex items-center gap-4 border-b border-border px-6 py-4 transition-colors {isActive(href, exact)
-										? 'bg-primary/10 text-primary'
-										: 'text-muted-foreground hover:bg-card hover:text-foreground'}"
+							{#each navSections as section}
+								<!-- Section Header -->
+								<button
+									onclick={() => toggleSection(section.id)}
+									class="flex w-full items-center gap-4 border-b border-border px-6 py-3 transition-colors hover:bg-muted/30"
 								>
-									<div class="flex h-10 w-10 items-center justify-center border {isActive(href, exact) ? 'border-primary bg-primary/10' : 'border-border bg-card'}">
-										<Icon class="h-4 w-4" />
+									<div class="flex h-10 w-10 items-center justify-center border {isSectionActive(section.id) ? 'border-primary/50 bg-primary/10' : 'border-border bg-card'}">
+										<section.icon class="h-4 w-4 {isSectionActive(section.id) ? 'text-primary' : ''}" />
 									</div>
-									<span class="font-ui flex-1 text-xs tracking-wider">{label}</span>
-									<ChevronRight class="h-4 w-4" />
-								</a>
-							{/each}
-
-							<!-- Content Section -->
-							<div class="px-6 py-2 mt-2">
-								<span class="font-mono text-[9px] tracking-widest text-muted-foreground/50">CONTENT</span>
-							</div>
-							{#each contentNav as { href, label, icon: Icon }}
-								<a
-									{href}
-									onclick={() => (mobileMenuOpen = false)}
-									class="flex items-center gap-4 border-b border-border px-6 py-3 transition-colors {isActive(href)
-										? 'bg-primary/10 text-primary'
-										: 'text-muted-foreground hover:bg-card hover:text-foreground'}"
-								>
-									<div class="flex h-8 w-8 items-center justify-center border {isActive(href) ? 'border-primary bg-primary/10' : 'border-border bg-card'}">
-										<Icon class="h-3.5 w-3.5" />
-									</div>
-									<span class="font-ui flex-1 text-xs tracking-wider">{label}</span>
-									<ChevronRight class="h-4 w-4" />
-								</a>
+									<span class="font-mono flex-1 text-left text-[10px] tracking-widest {isSectionActive(section.id) ? 'text-foreground' : 'text-muted-foreground'}">{section.label}</span>
+									<ChevronDown class="h-4 w-4 text-muted-foreground transition-transform {expandedSections[section.id] ? 'rotate-180' : ''}" />
+								</button>
+								
+								{#if expandedSections[section.id]}
+									{#each section.items as item}
+										{#if !item.adminOnly || isAdmin}
+											<a
+												href={item.href}
+												onclick={() => (mobileMenuOpen = false)}
+												class="flex items-center gap-4 border-b border-border/50 px-6 py-3 pl-10 transition-colors {isActive(item.href, item.exact)
+													? 'bg-primary/10 text-primary'
+													: 'text-muted-foreground hover:bg-muted/30 hover:text-foreground'}"
+											>
+												<div class="flex h-8 w-8 items-center justify-center border {isActive(item.href, item.exact) ? 'border-primary bg-primary/10' : 'border-border/50 bg-card'}">
+													<item.icon class="h-3.5 w-3.5" />
+												</div>
+												<span class="font-ui flex-1 text-xs tracking-wider">{item.label}</span>
+												<ChevronRight class="h-4 w-4" />
+											</a>
+										{/if}
+									{/each}
+								{/if}
 							{/each}
 						</nav>
 

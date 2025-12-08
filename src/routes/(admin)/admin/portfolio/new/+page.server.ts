@@ -89,9 +89,12 @@ export const actions: Actions = {
                 createdById: locals.profile.id
             }).returning({ id: portfolioProjects.id });
 
-            redirect(303, `/admin/portfolio/${newProject.id}`);
+            return redirect(303, `/admin/portfolio/${newProject.id}`);
         } catch (error) {
-            if (error instanceof Response) error; // Re-redirects
+            // Re-throw redirect errors
+            if (error && typeof error === 'object' && 'status' in error && 'location' in error) {
+                throw error;
+            }
 
             console.error('Failed to create portfolio project:', error);
 

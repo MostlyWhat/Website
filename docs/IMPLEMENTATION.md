@@ -12,6 +12,7 @@ This document tracks the implementation of features and fixes for the MostlyWhat
 - [x] **App Top Bar**: Fixed missing top bar in app/admin error pages for full screen
 - [x] **Portal Announcement Bar**: Make consistent height, show announcements set by super admin
 - [x] **Admin Page Padding**: Consistent `px-6 py-8 md:px-12 lg:px-16` padding across all admin pages
+- [x] **Skeleton Loading**: Streaming data with skeleton placeholders for users and tickets pages
 - [ ] **Mobile Responsiveness**: Audit all pages for mobile compatibility
 
 ### 2. Navigation & Access
@@ -212,7 +213,7 @@ This document tracks the implementation of features and fixes for the MostlyWhat
 
 ## Database Schema
 
-### Tables (26 total, all with RLS enabled)
+### Tables (36 total, all with RLS enabled)
 - [x] `profiles` - User profiles linked to Supabase Auth
 - [x] `organizations` - Client organizations/companies
 - [x] `organization_members` - M:N relationship profiles↔organizations
@@ -226,19 +227,28 @@ This document tracks the implementation of features and fixes for the MostlyWhat
 - [x] `payments` - Payment records
 - [x] `tickets` - Support tickets
 - [x] `ticket_comments` - Ticket conversation threads
+- [x] `ticket_categories` - Ticket categorization
 - [x] `activity_log` - Audit trail
-- [x] `login_logs` - User login/logout events (NEW)
+- [x] `login_logs` - User login/logout events
 - [x] `file_uploads` - File attachment metadata
 - [x] `announcements` - Portal announcements with targeting
 - [x] `announcement_dismissals` - Track dismissed announcements per user
 - [x] `sla_policies` - SLA definitions
+- [x] `sla_org_assignments` - SLA policy org assignments
 - [x] `canned_responses` - Ticket response templates
 - [x] `system_settings` - Key-value system configuration
 - [x] `support_articles` - Knowledge base articles
 - [x] `staff_groups` - Admin/support team groups
 - [x] `staff_group_members` - M:N relationship profiles↔staff_groups
-- [x] `blog_posts` - Blog content management (NEW)
-- [x] `portfolio_projects` - Portfolio/case studies content (NEW)
+- [x] `blog_posts` - Blog content management
+- [x] `portfolio_projects` - Portfolio/case studies content
+- [x] `contact_submissions` - Contact form submissions (with ticket linking)
+- [x] `user_notifications` - In-app notifications
+- [x] `status_services` - Status page services
+- [x] `status_incidents` - Status page incidents
+- [x] `status_incident_updates` - Incident timeline updates
+- [x] `job_postings` - Career job postings
+- [x] `job_applications` - Job applications
 
 ### Security
 - RLS enabled on all tables (no policies = service role only access)
@@ -261,14 +271,17 @@ src/routes/
 ├── (admin)/admin/         # Admin panel routes
 │   ├── activity-log/      # Activity audit log
 │   ├── announcements/     # Announcement management
-│   ├── blog/              # Blog content management (NEW)
+│   ├── blog/              # Blog content management
 │   │   ├── new/           # Create new blog post
 │   │   └── [id]/          # Edit/delete blog post
 │   ├── canned-responses/  # Response templates
+│   ├── careers/           # Job postings management (NEW)
+│   │   └── [id]/          # Edit job + view applications (NEW)
 │   ├── invoices/          # Invoice management
 │   ├── knowledge-base/    # Knowledge base articles
+│   ├── messages/          # Contact form submissions (NEW)
 │   ├── organizations/     # Organization management
-│   ├── portfolio/         # Portfolio content management (NEW)
+│   ├── portfolio/         # Portfolio content management
 │   │   ├── new/           # Create new portfolio project
 │   │   └── [id]/          # Edit/delete portfolio project
 │   ├── projects/          # Project management (includes requests tab)
@@ -280,6 +293,7 @@ src/routes/
 │   ├── sla-policies/      # SLA management
 │   ├── staff-groups/      # Staff group management
 │   │   └── [id]/          # Staff group detail
+│   ├── status/            # Status page management (NEW)
 │   ├── tickets/           # Ticket management
 │   └── users/             # User management
 ├── (app)/app/             # Client portal routes
@@ -319,7 +333,69 @@ src/routes/
 
 ## Recent Changes (January 2025)
 
-### Login Logging System (Latest)
+### Performance & UX Improvements (Latest)
+- Implemented streaming with skeleton loading for data-heavy pages:
+  - `/admin/users`: Stats cards + user list skeletons during load
+  - `/app/tickets`: Ticket list skeletons during load
+  - Pattern: Server returns `streamed: { data: asyncFunction() }`, client uses `{#await}`
+  - Reference implementation from existing `/app/projects` page
+- Updated all 6 Supabase email templates to match design system:
+  - `confirm.html`, `recovery.html`, `magic_link.html`, `invite.html`, `email_change.html`, `reauthentication.html`
+  - Dark primary color (#171717) instead of sky blue
+  - Section markers (// EMAIL VERIFICATION style)
+  - Monospace font for UI text (Menlo, Monaco, Courier)
+  - Consistent footer with links to mostlywhat.com, Privacy, Terms
+  - Warning boxes with left border accent style
+- Fixed accessibility warnings in `/admin/messages` page (label associations)
+
+### Admin CMS & Content Management
+- Created full admin CMS for Status Page management at `/admin/status`:
+  - Services CRUD: name, slug, description, status (operational, degraded, outage, maintenance)
+  - Incidents CRUD: title, severity, status, affected services, timeline updates
+  - Scheduled maintenance support
+- Created full admin CMS for Careers/Jobs at `/admin/careers`:
+  - Job postings with title, department, location, type, requirements, benefits
+  - Draft/published status workflow
+  - Individual job editing at `/admin/careers/[id]`
+  - Job applications tracking and management
+- Created admin Messages page at `/admin/messages`:
+  - View and manage contact form submissions
+  - Filter by status (new, read, replied, archived, spam)
+  - Filter by topic (quote, support, general, partnership, feedback)
+  - Convert contact submissions to support tickets
+  - Contact-to-ticket conversion with organization assignment
+- Added Messages link to admin sidebar Operations section
+- Updated public Status page (`/status`) to load from database
+- Updated public Careers page (`/careers`) to load from database with markdown fallback
+- Added `ticketId` and `convertedToTicketAt` fields to `contactSubmissions` table
+
+### Database Schema Updates
+- Added Status Page tables:
+  - `status_services`: Services tracked on status page
+  - `status_incidents`: Incidents and maintenance events
+  - `status_incident_updates`: Timeline updates for incidents
+- Added Careers tables:
+  - `job_postings`: Job listing management
+  - `job_applications`: Application tracking
+- Added Contact-to-Ticket linking:
+  - `contact_submissions.ticketId`: Link to converted ticket
+  - `contact_submissions.convertedToTicketAt`: Timestamp of conversion
+
+### Admin Sidebar Reorganization
+- Reorganized admin sidebar into collapsible sections:
+  - Operations: Dashboard, Projects, Organizations, Invoices, Tickets, Messages, Reports
+  - Content: Blog Posts, Portfolio, Knowledge Base, Careers, Status Page
+  - Settings: Users, Staff Groups, Announcements, SLA Policies, Templates, Activity Log, System
+- Fixed TypeScript errors with optional properties using `'property' in item` pattern
+- Mobile navigation now uses collapsible sections
+
+### Register Form Improvements
+- Simplified register form layout
+- Email form first, OAuth buttons below
+- Full-width password fields for better UX
+- Compact OAuth provider buttons in 2-column grid
+
+### Login Logging System
 - Created `login_logs` table for tracking user authentication events
 - Captures: login method, IP address, user agent, geolocation (city, region, country)
 - Added `logLoginEvent` function in `activity-logger.ts`

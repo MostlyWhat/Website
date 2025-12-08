@@ -4,11 +4,12 @@
 	 */
 	import { Ticket, Plus, Clock, CheckCircle, MessageSquare, ChevronRight, AlertTriangle, User } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { Skeleton } from '$lib/components/ui/skeleton';
 
 	let { data } = $props();
 
-	// Get tickets from server data
-	const tickets = $derived(data.tickets ?? []);
+	// Access streamed data
+	const streamedTickets = $derived((data as any).streamed?.tickets as Promise<Array<any>>);
 
 	function formatTimeAgo(dateStr: string | Date | null): string {
 		if (!dateStr) return 'Unknown';
@@ -46,8 +47,6 @@
 			default: return { class: 'bg-muted text-muted-foreground', label: priority };
 		}
 	}
-
-	const awaitingResponse = $derived(tickets.filter(t => t.status === 'awaiting_customer'));
 </script>
 
 <svelte:head>
@@ -73,105 +72,142 @@
 	</section>
 
 	<!-- Response Needed Alert -->
-	{#if awaitingResponse.length > 0}
-		<section class="border-b border-border bg-purple-500/5">
-			<div class="flex items-center gap-4 px-6 py-4 md:px-12 lg:px-16">
-				<div class="flex h-10 w-10 items-center justify-center border border-purple-500/30 bg-purple-500/10">
-					<MessageSquare class="h-4 w-4 text-purple-500" />
-				</div>
-				<div class="flex-1">
-					<p class="font-ui text-sm font-semibold tracking-wider">
-						{awaitingResponse.length} TICKET{awaitingResponse.length > 1 ? 'S' : ''} NEED{awaitingResponse.length === 1 ? 'S' : ''} YOUR RESPONSE
-					</p>
-					<p class="font-body text-xs text-muted-foreground">Our team is waiting for additional information from you.</p>
-				</div>
-			</div>
-		</section>
-	{/if}
-
-	<!-- Tickets List -->
-	<section class="border-b border-border bg-background">
-		{#if tickets.length > 0}
+	{#await streamedTickets}
+		<!-- Skeleton Loading State -->
+		<section class="border-b border-border bg-background">
 			<div class="divide-y divide-border">
-				{#each tickets as ticket}
-					{@const statusConfig = getStatusConfig(ticket.status)}
-					{@const priorityConfig = getPriorityConfig(ticket.priority)}
-					<a
-						href="/app/tickets/{ticket.id}"
-						class="group flex items-center gap-4 px-6 py-6 transition-colors hover:bg-card md:px-12 lg:px-16"
-					>
-						<!-- Priority Indicator + Icon -->
+				{#each Array(5) as _}
+					<div class="flex items-center gap-4 px-6 py-6 md:px-12 lg:px-16">
 						<div class="relative">
-							<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">
-								<Ticket class="h-5 w-5 text-primary" />
-							</div>
-							{#if ticket.priority === 'urgent' || ticket.priority === 'high'}
-								<div class="absolute -right-1 -top-1">
-									<AlertTriangle class="h-4 w-4 text-{ticket.priority === 'urgent' ? 'red' : 'orange'}-500" />
-								</div>
-							{/if}
+							<Skeleton class="h-12 w-12 rounded" />
 						</div>
-
-						<!-- Ticket Info -->
-						<div class="min-w-0 flex-1">
+						<div class="min-w-0 flex-1 space-y-2">
 							<div class="flex items-center gap-3 flex-wrap">
-								<span class="font-mono text-xs font-bold tracking-wider text-muted-foreground">{ticket.ticketNumber}</span>
-								<span class="inline-flex items-center gap-1 px-2 py-0.5 {statusConfig.class}">
-									<statusConfig.icon class="h-3 w-3" />
-									<span class="font-mono text-[10px] tracking-wider">{statusConfig.label}</span>
-								</span>
-								<span class="px-2 py-0.5 {priorityConfig.class}">
-									<span class="font-mono text-[10px] tracking-wider">{priorityConfig.label}</span>
-								</span>
+								<Skeleton class="h-3 w-20 rounded" />
+								<Skeleton class="h-5 w-24 rounded" />
+								<Skeleton class="h-5 w-16 rounded" />
 							</div>
-							<h3 class="font-ui mt-1 text-sm font-semibold tracking-wider truncate">{ticket.subject}</h3>
-							<div class="mt-1 flex items-center gap-4 text-xs text-muted-foreground">
-								<span class="flex items-center gap-1">
-									<User class="h-3 w-3" />
-									{ticket.assignedTo}
-								</span>
-								<span class="flex items-center gap-1">
-									<MessageSquare class="h-3 w-3" />
-									{ticket.responseCount} responses
-								</span>
+							<Skeleton class="h-4 w-64 rounded" />
+							<div class="flex items-center gap-4">
+								<Skeleton class="h-3 w-20 rounded" />
+								<Skeleton class="h-3 w-24 rounded" />
 							</div>
 						</div>
-
-						<!-- Time & Action -->
-						<div class="flex items-center gap-6">
-							<div class="text-right hidden md:block">
-								<div class="flex items-center gap-1 justify-end">
-									<Clock class="h-3 w-3 text-muted-foreground" />
-									<span class="font-body text-xs">{formatTimeAgo(ticket.updatedAt)}</span>
-								</div>
-								<p class="font-mono text-[10px] tracking-wider text-muted-foreground">LAST UPDATE</p>
+						<div class="hidden md:flex items-center gap-6">
+							<div class="space-y-1">
+								<Skeleton class="h-3 w-16 rounded" />
+								<Skeleton class="h-2 w-20 rounded" />
 							</div>
-							
-							{#if ticket.status === 'awaiting_customer'}
-								<Button size="sm" class="font-ui text-xs tracking-wider">
-									RESPOND
-								</Button>
-							{:else}
-								<ChevronRight class="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-1" />
-							{/if}
+							<Skeleton class="h-5 w-5 rounded" />
 						</div>
-					</a>
+					</div>
 				{/each}
 			</div>
-		{:else}
-			<div class="flex flex-col items-center justify-center py-16">
-				<div class="flex h-16 w-16 items-center justify-center border border-border bg-card">
-					<Ticket class="h-8 w-8 text-muted-foreground/50" />
+		</section>
+	{:then tickets}
+		{@const awaitingResponse = tickets.filter(t => t.status === 'awaiting_customer')}
+		
+		<!-- Response Needed Alert -->
+		{#if awaitingResponse.length > 0}
+			<section class="border-b border-border bg-purple-500/5">
+				<div class="flex items-center gap-4 px-6 py-4 md:px-12 lg:px-16">
+					<div class="flex h-10 w-10 items-center justify-center border border-purple-500/30 bg-purple-500/10">
+						<MessageSquare class="h-4 w-4 text-purple-500" />
+					</div>
+					<div class="flex-1">
+						<p class="font-ui text-sm font-semibold tracking-wider">
+							{awaitingResponse.length} TICKET{awaitingResponse.length > 1 ? 'S' : ''} NEED{awaitingResponse.length === 1 ? 'S' : ''} YOUR RESPONSE
+						</p>
+						<p class="font-body text-xs text-muted-foreground">Our team is waiting for additional information from you.</p>
+					</div>
 				</div>
-				<h3 class="font-ui mt-6 text-lg font-semibold tracking-wider">NO TICKETS YET</h3>
-				<p class="font-body mt-2 text-sm text-muted-foreground">
-					Need help? Create a support ticket.
-				</p>
-				<Button href="/app/tickets/new" class="mt-6 font-ui text-xs tracking-wider">
-					<Plus class="mr-2 h-4 w-4" />
-					NEW TICKET
-				</Button>
-			</div>
+			</section>
 		{/if}
-	</section>
+
+		<!-- Tickets List -->
+		<section class="border-b border-border bg-background">
+			{#if tickets.length > 0}
+				<div class="divide-y divide-border">
+					{#each tickets as ticket}
+						{@const statusConfig = getStatusConfig(ticket.status)}
+						{@const priorityConfig = getPriorityConfig(ticket.priority)}
+						<a
+							href="/app/tickets/{ticket.id}"
+							class="group flex items-center gap-4 px-6 py-6 transition-colors hover:bg-card md:px-12 lg:px-16"
+						>
+							<!-- Priority Indicator + Icon -->
+							<div class="relative">
+								<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">
+									<Ticket class="h-5 w-5 text-primary" />
+								</div>
+								{#if ticket.priority === 'urgent' || ticket.priority === 'high'}
+									<div class="absolute -right-1 -top-1">
+										<AlertTriangle class="h-4 w-4 text-{ticket.priority === 'urgent' ? 'red' : 'orange'}-500" />
+									</div>
+								{/if}
+							</div>
+
+							<!-- Ticket Info -->
+							<div class="min-w-0 flex-1">
+								<div class="flex items-center gap-3 flex-wrap">
+									<span class="font-mono text-xs font-bold tracking-wider text-muted-foreground">{ticket.ticketNumber}</span>
+									<span class="inline-flex items-center gap-1 px-2 py-0.5 {statusConfig.class}">
+										<statusConfig.icon class="h-3 w-3" />
+										<span class="font-mono text-[10px] tracking-wider">{statusConfig.label}</span>
+									</span>
+									<span class="px-2 py-0.5 {priorityConfig.class}">
+										<span class="font-mono text-[10px] tracking-wider">{priorityConfig.label}</span>
+									</span>
+								</div>
+								<h3 class="font-ui mt-1 text-sm font-semibold tracking-wider truncate">{ticket.subject}</h3>
+								<div class="mt-1 flex items-center gap-4 text-xs text-muted-foreground">
+									<span class="flex items-center gap-1">
+										<User class="h-3 w-3" />
+										{ticket.assignedTo}
+									</span>
+									<span class="flex items-center gap-1">
+										<MessageSquare class="h-3 w-3" />
+										{ticket.responseCount} responses
+									</span>
+								</div>
+							</div>
+
+							<!-- Time & Action -->
+							<div class="flex items-center gap-6">
+								<div class="text-right hidden md:block">
+									<div class="flex items-center gap-1 justify-end">
+										<Clock class="h-3 w-3 text-muted-foreground" />
+										<span class="font-body text-xs">{formatTimeAgo(ticket.updatedAt)}</span>
+									</div>
+									<p class="font-mono text-[10px] tracking-wider text-muted-foreground">LAST UPDATE</p>
+								</div>
+								
+								{#if ticket.status === 'awaiting_customer'}
+									<Button size="sm" class="font-ui text-xs tracking-wider">
+										RESPOND
+									</Button>
+								{:else}
+									<ChevronRight class="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-1" />
+								{/if}
+							</div>
+						</a>
+					{/each}
+				</div>
+			{:else}
+				<div class="flex flex-col items-center justify-center py-16">
+					<div class="flex h-16 w-16 items-center justify-center border border-border bg-card">
+						<Ticket class="h-8 w-8 text-muted-foreground/50" />
+					</div>
+					<h3 class="font-ui mt-6 text-lg font-semibold tracking-wider">NO TICKETS YET</h3>
+					<p class="font-body mt-2 text-sm text-muted-foreground">
+						Need help? Create a support ticket.
+					</p>
+					<Button href="/app/tickets/new" class="mt-6 font-ui text-xs tracking-wider">
+						<Plus class="mr-2 h-4 w-4" />
+						NEW TICKET
+					</Button>
+				</div>
+			{/if}
+		</section>
+	{/await}
 </div>
