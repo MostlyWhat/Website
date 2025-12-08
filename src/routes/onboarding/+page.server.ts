@@ -1,7 +1,7 @@
 import { fail, redirect, isRedirect } from '@sveltejs/kit';
 import type { Actions, RequestEvent } from '@sveltejs/kit';
 import { completeOnboarding, getOrCreateProfile } from '$lib/server/auth';
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { organizations, organizationMembers, organizationInvites, pendingOrganizationMembers } from '$lib/server/db/schema';
 import { generateOrgNumber } from '$lib/server/id-generator';
 import { eq, and, sql } from 'drizzle-orm';
@@ -22,6 +22,9 @@ export const actions = {
         if (!locals.user) {
             return fail(401, { error: 'You must be logged in' });
         }
+
+        // Create per-request database connection (Cloudflare Workers compatible)
+        const db = createDb();
 
         // Ensure profile exists before onboarding
         // This handles cases where the user signed in via magic link, OAuth, etc.

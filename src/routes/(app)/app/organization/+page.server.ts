@@ -1,5 +1,5 @@
 import { redirect, fail } from '@sveltejs/kit';
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { organizations, organizationMembers, organizationInvites, profiles, projects, tickets } from '$lib/server/db/schema';
 import { eq, and, count, inArray, desc } from 'drizzle-orm';
 import { generateOrgNumber } from '$lib/server/id-generator';
@@ -21,6 +21,9 @@ export const load: PageServerLoad = async ({ locals, url }) => {
     if (!locals.user) {
         throw redirect(303, '/auth/login?redirectTo=/app/organization');
     }
+
+    // Create per-request database connection for Cloudflare Workers
+    const db = createDb();
 
     // Get selected org from URL or use first
     const selectedOrgId = url.searchParams.get('org');

@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { tickets, ticketComments, profiles, organizations, organizationMembers } from '$lib/server/db/schema';
 import { eq, and, desc, sql, inArray } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
@@ -7,6 +7,9 @@ export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user || !locals.profile) {
         return { tickets: [] };
     }
+
+    // Create per-request database connection
+    const db = createDb();
 
     // Get all organizations the user belongs to
     const userOrgs = await db

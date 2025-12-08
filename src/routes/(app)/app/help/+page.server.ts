@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { supportArticles } from '$lib/server/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
@@ -7,6 +7,9 @@ export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user || !locals.profile) {
         return { articles: [], categories: [] };
     }
+
+    // Create per-request database connection
+    const db = createDb();
 
     // Fetch published user-facing support articles
     let articles: Array<{

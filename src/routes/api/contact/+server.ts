@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { contactSubmissions } from '$lib/server/db/schema';
 import { siteConfig } from '$lib/config/site';
 
@@ -73,6 +73,9 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 
         const userAgent = request.headers.get('user-agent');
         const referrer = request.headers.get('referer');
+
+        // Create per-request database connection
+        const db = createDb();
 
         // Store in database
         const [submission] = await db.insert(contactSubmissions).values({

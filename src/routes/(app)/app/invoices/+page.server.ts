@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { invoices, organizationMembers, organizations, projects } from '$lib/server/db/schema';
 import { eq, inArray, desc } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
@@ -7,6 +7,9 @@ export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user || !locals.profile) {
         return { invoices: [] };
     }
+
+    // Create per-request database connection
+    const db = createDb();
 
     // Get user's organization IDs
     const userOrgs = await db

@@ -6,7 +6,7 @@
 
 import { json, error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { fileUploads, profiles } from '$lib/server/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 
@@ -20,6 +20,9 @@ export const GET: RequestHandler = async ({ url, locals }) => {
     if (!locals.profile.onboardingCompleted) {
         throw error(403, 'Please complete onboarding first');
     }
+
+    // Create per-request database connection
+    const db = createDb();
 
     const entityType = url.searchParams.get('entityType');
     const entityId = url.searchParams.get('entityId');

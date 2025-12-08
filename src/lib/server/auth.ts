@@ -3,9 +3,13 @@
  * 
  * Server-side utilities for user authentication and profile management.
  * All database operations go through Drizzle ORM.
+ * 
+ * NOTE: Uses createDb() to ensure Cloudflare Workers compatibility.
+ * Each function call creates its own database connection within the
+ * request context.
  */
 
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { profiles, type Profile, type NewProfile } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { error } from '@sveltejs/kit';
@@ -31,6 +35,8 @@ export const DEFAULT_PREFERENCES = {
  * This is called after successful authentication.
  */
 export async function getOrCreateProfile(user: User): Promise<Profile> {
+    const db = createDb();
+    
     try {
         // Try to get existing profile (may have been created by database trigger)
         const existingProfile = await db.query.profiles.findFirst({
@@ -94,6 +100,7 @@ export async function getOrCreateProfile(user: User): Promise<Profile> {
  * Get a user profile by ID
  */
 export async function getProfileById(userId: string): Promise<Profile | null> {
+    const db = createDb();
     const profile = await db.query.profiles.findFirst({
         where: eq(profiles.id, userId)
     });
@@ -108,6 +115,7 @@ export async function updateProfile(
     userId: string,
     data: Partial<Omit<NewProfile, 'id' | 'createdAt'>>
 ): Promise<Profile> {
+    const db = createDb();
     const [updatedProfile] = await db
         .update(profiles)
         .set({
@@ -137,6 +145,7 @@ export async function completeOnboarding(
         preferences?: Partial<Profile['preferences']>;
     }
 ): Promise<Profile> {
+    const db = createDb();
     const currentProfile = await getProfileById(userId);
 
     if (!currentProfile) {

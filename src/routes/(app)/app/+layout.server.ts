@@ -1,5 +1,4 @@
 import { redirect } from '@sveltejs/kit';
-import { db } from '$lib/server/db';
 import { announcements, announcementDismissals, organizationMembers, organizations } from '$lib/server/db/schema';
 import { eq, and, gt, desc, isNull, or, notInArray, lte, sql } from 'drizzle-orm';
 import type { LayoutServerLoad } from './$types';
@@ -20,6 +19,9 @@ export const load: LayoutServerLoad = async ({ locals }) => {
     if (!locals.profile.onboardingCompleted) {
         throw redirect(303, '/onboarding');
     }
+
+    // Use the per-request database connection from locals
+    const db = locals.db;
 
     // Fetch user's organizations with error handling
     let userOrganizations: Array<{

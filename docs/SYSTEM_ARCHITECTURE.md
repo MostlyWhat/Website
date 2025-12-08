@@ -1,6 +1,7 @@
 # MostlyWhat Systems - Complete Architecture Documentation
 
-> **Purpose**: This document provides a comprehensive guide to building a full-stack SaaS application with SvelteKit, Supabase, and Cloudflare Workers. It is designed to be consumed by an LLM to replicate or extend this architecture.
+> **Purpose**: This document provides a comprehensive guide to building a full-stack SaaS application with SvelteKit, Supabase, and Cloudflare Workers. It is designed to be consumed by an LLM to replicate or extend this architecture,
+but also as a reference to developers for building based on the architecture.
 
 ---
 

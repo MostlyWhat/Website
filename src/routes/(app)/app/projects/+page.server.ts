@@ -1,10 +1,13 @@
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { projects, organizationMembers, profiles, projectRequests } from '$lib/server/db/schema';
 import { eq, inArray, desc, and, ne } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 
 // Async function to load projects data
 async function loadProjectsData(profileId: string) {
+    // Create per-request database connection
+    const db = createDb();
+    
     // Get user's organization IDs
     const userOrgs = await db
         .select({ organizationId: organizationMembers.organizationId })

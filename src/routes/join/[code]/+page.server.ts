@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import {
     organizations,
     organizationInvites,
@@ -11,6 +11,9 @@ import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
     const code = params.code;
+    
+    // Create per-request database connection
+    const db = createDb();
 
     // Fetch the invite
     const [invite] = await db
@@ -98,6 +101,9 @@ export const actions: Actions = {
         }
 
         const code = params.code;
+        
+        // Create per-request database connection
+        const db = createDb();
 
         // Fetch and validate invite again
         const [invite] = await db

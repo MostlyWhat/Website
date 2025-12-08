@@ -4,7 +4,7 @@ import { sequence } from '@sveltejs/kit/hooks';
 import { paraglideMiddleware } from '$lib/paraglide/server';
 import { createServerClient } from '@supabase/ssr';
 import { env } from '$env/dynamic/public';
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { profiles } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 
@@ -81,6 +81,11 @@ const handleSupabase: Handle = async ({ event, resolve }) => {
 	const { session, user } = await event.locals.safeGetSession();
 	event.locals.session = session;
 	event.locals.user = user;
+
+	// Create database connection for this request (Cloudflare Workers compatible)
+	// This ensures each request gets its own connection context
+	const db = createDb();
+	event.locals.db = db;
 
 	// Get the user's profile from our database if authenticated
 	if (user) {

@@ -7,7 +7,7 @@
 
 import { json, error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { fileUploads } from '$lib/server/db/schema';
 import { createSupabaseAdminClient } from '$lib/server/supabase';
 
@@ -103,6 +103,9 @@ export const POST: RequestHandler = async ({ request, locals }) => {
             .getPublicUrl(storagePath);
 
         const fileUrl = urlData.publicUrl;
+
+        // Create per-request database connection
+        const db = createDb();
 
         // Save file record to database
         const [fileRecord] = await db.insert(fileUploads).values({

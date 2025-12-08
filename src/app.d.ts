@@ -3,6 +3,7 @@
 
 import type { Session, SupabaseClient, User } from '@supabase/supabase-js';
 import type { Profile } from '$lib/server/db/schema';
+import type { Database } from '$lib/server/db';
 
 declare global {
     namespace App {
@@ -36,6 +37,13 @@ declare global {
              * Includes role, preferences, and onboarding status
              */
             profile: Profile | null;
+
+            /**
+             * Database connection for this request.
+             * Created per-request for Cloudflare Workers compatibility.
+             * Use this instead of importing `db` directly.
+             */
+            db: Database;
         }
 
         interface PageData {

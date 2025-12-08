@@ -1,6 +1,5 @@
 import { redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
-import { db } from '$lib/server/db';
 import { announcements, announcementDismissals, staffGroupMembers } from '$lib/server/db/schema';
 import { eq, and, or, isNull, gt, lte, sql, notInArray } from 'drizzle-orm';
 
@@ -26,6 +25,9 @@ export const load: LayoutServerLoad = async ({ locals }) => {
     if (!allowedRoles.includes(locals.profile.role)) {
         throw redirect(303, '/app');
     }
+
+    // Use the per-request database connection from locals
+    const db = locals.db;
 
     // Get user's staff group IDs
     const userStaffGroups = await db
