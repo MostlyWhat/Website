@@ -59,10 +59,22 @@ export const load: PageServerLoad = async () => {
             })
         );
 
-        // Calculate overall uptime (simplified - based on operational time)
-        const totalServices = services.length;
-        const operationalServices = services.filter(s => s.status === 'operational').length;
-        const uptimePercentage = totalServices > 0 ? ((operationalServices / totalServices) * 100).toFixed(1) : '100';
+        // Calculate overall uptime from individual service uptimes
+        // If services have their own uptime values, average them; otherwise calculate based on current status
+        const servicesWithUptime = services.filter(s => s.uptime !== null && s.uptime !== undefined);
+        let uptimePercentage: string;
+        
+        if (servicesWithUptime.length > 0) {
+            // Average the individual service uptimes
+            const totalUptime = servicesWithUptime.reduce((sum, s) => sum + parseFloat(String(s.uptime ?? '100')), 0);
+            uptimePercentage = (totalUptime / servicesWithUptime.length).toFixed(1);
+        } else if (services.length > 0) {
+            // Fallback: Calculate based on current operational status
+            const operationalServices = services.filter(s => s.status === 'operational').length;
+            uptimePercentage = ((operationalServices / services.length) * 100).toFixed(1);
+        } else {
+            uptimePercentage = '100';
+        }
 
         return {
             services,

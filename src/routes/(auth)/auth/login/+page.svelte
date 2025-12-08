@@ -11,51 +11,70 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
-	import { Mail, Github, Loader2, LogIn, ArrowRight, KeyRound } from '@lucide/svelte';
+	import { Mail, Github, Loader2, LogIn, ArrowRight, KeyRound, RefreshCw } from '@lucide/svelte';
 
 	let { form } = $props();
 
 	let email = $state('');
 	let password = $state('');
 	let isLoading = $state(false);
-	let activeMethod = $state<'password' | 'magic-link' | null>(null);
-	let timeoutError = $state('');
-	let loadingTimeout: ReturnType<typeof setTimeout> | null = null;
+	let timeoutSeconds = $state(0);
+	let isTimedOut = $state(false);
+	let timeoutInterval: ReturnType<typeof setInterval> | null = null;
 
+	const TIMEOUT_DURATION = 30; // 30 seconds
 	const redirectTo = $derived(page.url.searchParams.get('redirectTo') ?? '/app');
 
-	function handleSubmit(method: 'password' | 'magic-link') {
+	function startTimeout() {
+		timeoutSeconds = TIMEOUT_DURATION;
+		isTimedOut = false;
+		
+		// Live countdown
+		timeoutInterval = setInterval(() => {
+			timeoutSeconds--;
+			if (timeoutSeconds <= 0) {
+				if (timeoutInterval) clearInterval(timeoutInterval);
+				timeoutInterval = null;
+				if (isLoading) {
+					isTimedOut = true;
+					isLoading = false;
+				}
+			}
+		}, 1000);
+	}
+
+	function clearTimeouts() {
+		if (timeoutInterval) {
+			clearInterval(timeoutInterval);
+			timeoutInterval = null;
+		}
+	}
+
+	function handleSubmit() {
 		return () => {
 			isLoading = true;
-			activeMethod = method;
-			timeoutError = '';
-			
-			// Safety timeout - reset loading state after 30 seconds if no response
-			loadingTimeout = setTimeout(() => {
-				if (isLoading) {
-					isLoading = false;
-					activeMethod = null;
-					timeoutError = 'Request timed out. Please check your connection and try again.';
-					console.error('Form submission timed out');
-				}
-			}, 30000);
+			isTimedOut = false;
+			startTimeout();
 			
 			return async ({ result, update }: { result: any; update: () => Promise<void> }) => {
-				// Clear the timeout since we got a response
-				if (loadingTimeout) {
-					clearTimeout(loadingTimeout);
-					loadingTimeout = null;
-				}
-				
-				// Always reset loading state after form submission completes
+				clearTimeouts();
 				isLoading = false;
-				activeMethod = null;
-				
-				// Update form state for all result types
+				timeoutSeconds = 0;
 				await update();
 			};
 		};
 	}
+
+	function resetTimeout() {
+		isTimedOut = false;
+		timeoutSeconds = 0;
+	}
+
+	$effect(() => {
+		return () => {
+			clearTimeouts();
+		};
+	});
 </script>
 
 <svelte:head>
@@ -100,9 +119,21 @@
 				</div>
 
 				<!-- Error Message -->
-				{#if form?.error || timeoutError}
+				{#if form?.error || isTimedOut}
 					<div class="mb-6 border border-destructive/50 bg-destructive/10 px-6 py-4">
-						<p class="font-mono text-sm text-destructive">{form?.error || timeoutError}</p>
+						{#if isTimedOut}
+							<p class="font-mono text-sm text-destructive">Request timed out. Please check your connection and try again.</p>
+							<button 
+								type="button" 
+								onclick={resetTimeout}
+								class="font-ui mt-2 inline-flex items-center text-xs text-destructive hover:underline"
+							>
+								<RefreshCw class="mr-1 h-3 w-3" />
+								TRY AGAIN
+							</button>
+						{:else}
+							<p class="font-mono text-sm text-destructive">{form?.error}</p>
+						{/if}
 					</div>
 				{/if}
 
@@ -144,6 +175,17 @@
 						<span class="font-ui flex-1 text-sm tracking-wider">Continue with Google</span>
 						<ArrowRight class="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
 					</a>
+
+					<a
+						href={localizeHref(`/auth/magic-link?redirectTo=${encodeURIComponent(redirectTo)}`)}
+						class="group flex w-full items-center gap-4 border border-border bg-card px-6 py-4 transition-colors hover:bg-card/80"
+					>
+						<div class="flex h-10 w-10 items-center justify-center border border-border bg-background">
+							<Mail class="h-4 w-4" />
+						</div>
+						<span class="font-ui flex-1 text-sm tracking-wider">Sign in with Magic Link</span>
+						<ArrowRight class="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
+					</a>
 				</div>
 
 				<!-- Divider -->
@@ -162,7 +204,7 @@
 				<form
 					method="POST"
 					action="?/login"
-					use:enhance={handleSubmit('password')}
+					use:enhance={handleSubmit()}
 					class="space-y-6"
 				>
 					<input type="hidden" name="redirectTo" value={redirectTo} />
@@ -180,6 +222,7 @@
 							bind:value={email}
 							placeholder="you@example.com"
 							class="h-12 border-border bg-card px-4 font-body placeholder:text-muted-foreground/50"
+							disabled={isLoading}
 						/>
 					</div>
 
@@ -201,42 +244,17 @@
 							bind:value={password}
 							placeholder="••••••••"
 							class="h-12 border-border bg-card px-4 font-body placeholder:text-muted-foreground/50"
+							disabled={isLoading}
 						/>
 					</div>
 
-					<Button type="submit" size="lg" class="font-ui w-full tracking-wider" disabled={isLoading && activeMethod === 'password'}>
-						{#if isLoading && activeMethod === 'password'}
+					<Button type="submit" size="lg" class="font-ui w-full tracking-wider" disabled={isLoading}>
+						{#if isLoading}
 							<Loader2 class="mr-2 h-4 w-4 animate-spin" />
-							SIGNING IN...
+							SIGNING IN... ({timeoutSeconds}s)
 						{:else}
 							<LogIn class="mr-2 h-4 w-4" />
 							SIGN IN
-						{/if}
-					</Button>
-				</form>
-
-				<!-- Magic Link Option -->
-				<form
-					method="POST"
-					action="?/magicLink"
-					use:enhance={handleSubmit('magic-link')}
-				>
-					<input type="hidden" name="email" value={email} />
-					<input type="hidden" name="redirectTo" value={redirectTo} />
-
-					<Button
-						type="submit"
-						variant="outline"
-						size="lg"
-						class="font-ui w-full tracking-wider"
-						disabled={!email || (isLoading && activeMethod === 'magic-link')}
-					>
-						{#if isLoading && activeMethod === 'magic-link'}
-							<Loader2 class="mr-2 h-4 w-4 animate-spin" />
-							SENDING LINK...
-						{:else}
-							<Mail class="mr-2 h-4 w-4" />
-							SEND MAGIC LINK
 						{/if}
 					</Button>
 				</form>

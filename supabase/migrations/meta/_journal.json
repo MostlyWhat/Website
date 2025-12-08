@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1765171983596,
-      "tag": "0000_perfect_misty_knight",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1765226560237,
-      "tag": "0001_add_status_careers_tables",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1765227625045,
-      "tag": "0002_keen_victor_mancha",
+      "when": 1765231429219,
+      "tag": "0000_groovy_black_crow",
       "breakpoints": true
     }
   ]
