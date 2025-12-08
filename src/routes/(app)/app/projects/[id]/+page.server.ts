@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { projects, organizations, profiles, organizationMembers, activityLog, projectMilestones, proposals, invoices, projectRequests } from '$lib/server/db/schema';
 import { eq, and, inArray, desc, asc } from 'drizzle-orm';
 import { error } from '@sveltejs/kit';

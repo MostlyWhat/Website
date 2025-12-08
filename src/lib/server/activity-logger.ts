@@ -2,8 +2,11 @@
  * Activity Logger
  * 
  * Centralized activity logging for audit trails and activity feeds.
+ * 
+ * NOTE: Uses createDb() for Cloudflare Workers compatibility.
+ * Each function creates its own database connection.
  */
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { activityLog } from '$lib/server/db/schema';
 import type { ActivityType } from '$lib/server/db/schema';
 
@@ -42,6 +45,7 @@ export class ActivityLogger {
      * Log an activity with a simplified interface
      */
     static async log(options: SimpleLogOptions): Promise<void> {
+        const db = createDb();
         try {
             // Parse type into entityType (e.g., 'setting.updated' -> 'settings')
             const typePrefix = options.type.split('.')[0];
@@ -75,6 +79,7 @@ export class ActivityLogger {
  * Log an activity to the activity log table
  */
 export async function logActivity(options: LogActivityOptions): Promise<void> {
+    const db = createDb();
     try {
         await db.insert(activityLog).values({
             entityType: options.entityType,
@@ -998,6 +1003,7 @@ export interface LogLoginOptions {
  * Log a login event to the login_logs table
  */
 export async function logLoginEvent(options: LogLoginOptions): Promise<void> {
+    const db = createDb();
     try {
         const deviceInfo = parseUserAgent(options.userAgent ?? null);
 

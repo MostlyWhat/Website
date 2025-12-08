@@ -6,7 +6,7 @@
 
 import { fail, redirect, error } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import {
     organizations,
     organizationMembers,
@@ -116,7 +116,9 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 
 export const actions: Actions = {
     updateOrg: async ({ request, params, locals }) => {
-        if (!locals.session || !locals.profile) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.session || !locals.profile) {
             return fail(401, { error: 'Not authenticated' });
         }
 
@@ -165,7 +167,9 @@ export const actions: Actions = {
     },
 
     createInvite: async ({ request, params, locals }) => {
-        if (!locals.session || !locals.profile) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.session || !locals.profile) {
             return fail(401, { error: 'Not authenticated' });
         }
 
@@ -215,7 +219,9 @@ export const actions: Actions = {
     },
 
     deleteInvite: async ({ request, params, locals }) => {
-        if (!locals.session || !locals.profile) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.session || !locals.profile) {
             return fail(401, { error: 'Not authenticated' });
         }
 
@@ -255,7 +261,9 @@ export const actions: Actions = {
     },
 
     updateMemberRole: async ({ request, params, locals }) => {
-        if (!locals.session || !locals.profile) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.session || !locals.profile) {
             return fail(401, { error: 'Not authenticated' });
         }
 
@@ -301,7 +309,9 @@ export const actions: Actions = {
     },
 
     removeMember: async ({ request, params, locals }) => {
-        if (!locals.session || !locals.profile) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.session || !locals.profile) {
             return fail(401, { error: 'Not authenticated' });
         }
 
@@ -365,7 +375,9 @@ export const actions: Actions = {
     },
 
     deleteOrganization: async ({ params, locals }) => {
-        if (!locals.session || !locals.profile) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.session || !locals.profile) {
             return fail(401, { error: 'Not authenticated' });
         }
 

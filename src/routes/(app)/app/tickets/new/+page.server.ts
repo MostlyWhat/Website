@@ -6,7 +6,7 @@
 
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { tickets, organizationMembers, organizations, projects, supportArticles, profiles, fileUploads } from '$lib/server/db/schema';
 import { eq, and, or, desc } from 'drizzle-orm';
 import crypto from 'node:crypto';
@@ -119,7 +119,9 @@ function generateSlug(): string {
 
 export const actions: Actions = {
     default: async ({ request, locals }) => {
-        // Verify user is authenticated
+        // Create per-request database connection
+        const db = createDb();
+// Verify user is authenticated
         if (!locals.session || !locals.profile) {
             return fail(401, { error: 'You must be logged in to create a ticket' });
         }

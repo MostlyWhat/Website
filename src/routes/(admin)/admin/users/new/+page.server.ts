@@ -6,7 +6,7 @@
 
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { profiles } from '$lib/server/db/schema';
 import { createSupabaseAdminClient } from '$lib/server/supabase';
 import { userActivity, getClientIp } from '$lib/server/activity-logger';
@@ -22,7 +22,9 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 export const actions: Actions = {
     default: async ({ request, locals }) => {
-        // Verify admin access
+        // Create per-request database connection
+        const db = createDb();
+// Verify admin access
         if (!locals.profile || !['super_admin', 'admin'].includes(locals.profile.role)) {
             return fail(403, { error: 'Unauthorized' });
         }

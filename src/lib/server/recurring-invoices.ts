@@ -3,9 +3,11 @@
  * 
  * Handles the automatic generation of recurring invoices and payment reminders.
  * Designed to be called by a cron job (Cloudflare Workers scheduled trigger).
+ * 
+ * NOTE: Uses createDb() for Cloudflare Workers compatibility.
  */
 
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { invoices, organizations, profiles, organizationMembers } from '$lib/server/db/schema';
 import { eq, and, lte, isNotNull, desc, sql } from 'drizzle-orm';
 import { sendPaymentReminderEmail, sendInvoiceEmail } from '$lib/server/email';
@@ -29,6 +31,7 @@ export interface ProcessingResult {
  * Generate the next invoice number
  */
 async function generateInvoiceNumber(): Promise<string> {
+    const db = createDb();
     const year = new Date().getFullYear();
     const prefix = `INV-${year}-`;
 
@@ -81,6 +84,7 @@ function calculateNextDueDate(currentDueDate: Date, interval: string): Date {
  * Get the primary contact email for an organization
  */
 async function getOrganizationContact(organizationId: string): Promise<{ email: string; name: string } | null> {
+    const db = createDb();
     // Get the organization owner (role = 'owner') from organization members
     const [ownerMember] = await db
         .select({
@@ -128,6 +132,7 @@ async function getOrganizationContact(organizationId: string): Promise<{ email: 
  * - This is for cases where invoices should be generated before payment
  */
 export async function processRecurringInvoices(): Promise<ProcessingResult> {
+    const db = createDb();
     const result: ProcessingResult = {
         processedInvoices: 0,
         createdInvoices: [],
@@ -285,6 +290,7 @@ export async function processRecurringInvoices(): Promise<ProcessingResult> {
  * Called by cron job to remind customers about unpaid invoices
  */
 export async function sendPaymentReminders(): Promise<ProcessingResult> {
+    const db = createDb();
     const result: ProcessingResult = {
         processedInvoices: 0,
         createdInvoices: [],

@@ -1,10 +1,11 @@
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { portfolioProjects, profiles } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { fail, redirect, error } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
+    const db = createDb();
     if (!locals.profile || !['super_admin', 'admin'].includes(locals.profile.role)) {
         throw redirect(303, '/admin');
     }
@@ -68,7 +69,9 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 
 export const actions: Actions = {
     update: async ({ params, request, locals }) => {
-        if (!locals.profile || !['super_admin', 'admin'].includes(locals.profile.role)) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.profile || !['super_admin', 'admin'].includes(locals.profile.role)) {
             return fail(403, { error: 'Unauthorized' });
         }
 
@@ -153,7 +156,9 @@ export const actions: Actions = {
     },
 
     delete: async ({ params, locals }) => {
-        if (!locals.profile || !['super_admin', 'admin'].includes(locals.profile.role)) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.profile || !['super_admin', 'admin'].includes(locals.profile.role)) {
             return fail(403, { error: 'Unauthorized' });
         }
 

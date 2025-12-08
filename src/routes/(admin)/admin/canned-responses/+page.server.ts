@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { cannedResponses, profiles } from '$lib/server/db/schema';
 import { eq, desc, or } from 'drizzle-orm';
 import { error, fail, redirect } from '@sveltejs/kit';
@@ -55,7 +55,9 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 export const actions: Actions = {
     create: async ({ request, locals }) => {
-        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -89,7 +91,9 @@ export const actions: Actions = {
     },
 
     update: async ({ request, locals }) => {
-        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -142,7 +146,9 @@ export const actions: Actions = {
     },
 
     delete: async ({ request, locals }) => {
-        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 

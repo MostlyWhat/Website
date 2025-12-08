@@ -7,7 +7,7 @@ import type { PageServerLoad } from './$types';
 async function loadDashboardData(profileId: string) {
     // Create per-request database connection
     const db = createDb();
-    
+
     // Get user's organization IDs
     const userOrgs = await db
         .select({ organizationId: organizationMembers.organizationId })

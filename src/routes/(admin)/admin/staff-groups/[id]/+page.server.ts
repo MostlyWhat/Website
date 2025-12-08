@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { staffGroups, staffGroupMembers, profiles } from '$lib/server/db/schema';
 import { eq, and, inArray } from 'drizzle-orm';
 import { error, fail, redirect } from '@sveltejs/kit';
@@ -66,7 +66,9 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 
 export const actions: Actions = {
     addMember: async ({ request, params, locals }) => {
-        if (!locals.user || !locals.profile) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.user || !locals.profile) {
             return fail(401, { error: 'Unauthorized' });
         }
 
@@ -111,7 +113,9 @@ export const actions: Actions = {
     },
 
     removeMember: async ({ request, params, locals }) => {
-        if (!locals.user || !locals.profile) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.user || !locals.profile) {
             return fail(401, { error: 'Unauthorized' });
         }
 
@@ -144,7 +148,9 @@ export const actions: Actions = {
     },
 
     updateMemberRole: async ({ request, params, locals }) => {
-        if (!locals.user || !locals.profile) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.user || !locals.profile) {
             return fail(401, { error: 'Unauthorized' });
         }
 
@@ -179,7 +185,9 @@ export const actions: Actions = {
     },
 
     updateGroup: async ({ request, params, locals }) => {
-        if (!locals.user || !locals.profile) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.user || !locals.profile) {
             return fail(401, { error: 'Unauthorized' });
         }
 

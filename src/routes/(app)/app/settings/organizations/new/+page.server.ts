@@ -6,7 +6,7 @@
 
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { organizations, organizationMembers } from '$lib/server/db/schema';
 import { generateOrgNumber } from '$lib/server/id-generator';
 import crypto from 'node:crypto';
@@ -31,7 +31,9 @@ function generateSlug(name: string): string {
 
 export const actions: Actions = {
     default: async ({ request, locals }) => {
-        if (!locals.session || !locals.profile) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.session || !locals.profile) {
             return fail(401, { error: 'You must be logged in' });
         }
 

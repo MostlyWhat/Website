@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { invoices, organizations, projects, profiles, payments } from '$lib/server/db/schema';
 import { eq, desc, sql } from 'drizzle-orm';
 import { error, fail, redirect } from '@sveltejs/kit';
@@ -7,7 +7,8 @@ import type { PageServerLoad, Actions } from './$types';
 
 // Helper function to generate next invoice number
 async function generateInvoiceNumber(): Promise<string> {
-    const year = new Date().getFullYear();
+    const db = createDb();
+const year = new Date().getFullYear();
     const prefix = `INV-${year}-`;
 
     const [lastInvoice] = await db
@@ -159,7 +160,9 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 
 export const actions: Actions = {
     updateStatus: async ({ params, request, locals }) => {
-        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -198,7 +201,9 @@ export const actions: Actions = {
     },
 
     recordPayment: async ({ params, request, locals }) => {
-        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -388,7 +393,9 @@ export const actions: Actions = {
     },
 
     updateNotes: async ({ params, request, locals }) => {
-        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 

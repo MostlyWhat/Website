@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import {
     tickets, projects, invoices, organizations, profiles,
     organizationMembers, ticketComments

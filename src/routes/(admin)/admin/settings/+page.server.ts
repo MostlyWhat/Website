@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { systemSettings, profiles } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { fail, redirect } from '@sveltejs/kit';
@@ -85,7 +85,9 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 export const actions: Actions = {
     update: async ({ request, locals }) => {
-        if (!locals.profile || locals.profile.role !== 'super_admin') {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.profile || locals.profile.role !== 'super_admin') {
             return fail(403, { error: 'Access denied. Super admin required.' });
         }
 
@@ -155,7 +157,9 @@ export const actions: Actions = {
     },
 
     initialize: async ({ locals }) => {
-        if (!locals.profile || locals.profile.role !== 'super_admin') {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.profile || locals.profile.role !== 'super_admin') {
             return fail(403, { error: 'Access denied. Super admin required.' });
         }
 

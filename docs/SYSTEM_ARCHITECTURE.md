@@ -1,7 +1,25 @@
-# MostlyWhat Systems - Complete Architecture Documentation
+# MostlyWhat Systems' Horizon Architecture
 
-> **Purpose**: This document provides a comprehensive guide to building a full-stack SaaS application with SvelteKit, Supabase, and Cloudflare Workers. It is designed to be consumed by an LLM to replicate or extend this architecture,
-but also as a reference to developers for building based on the architecture.
+> **Purpose**: This document provides a comprehensive guide to building full-stack SaaS applications using the **Horizon Architecture** - a production-ready stack built on SvelteKit, Supabase, and Cloudflare Workers. It is designed for LLM consumption to replicate or extend this architecture, and as a developer reference for building robust web applications.
+
+---
+
+## Quick Reference Links
+
+Before diving into the architecture, these resources are essential for getting started:
+
+| Resource | Purpose | Link |
+|----------|---------|------|
+| **Cloudflare Workers + Svelte** | Edge deployment guide | [developers.cloudflare.com/workers/framework-guides/web-apps/svelte](https://developers.cloudflare.com/workers/framework-guides/web-apps/svelte/) |
+| **Supabase + SvelteKit Tutorial** | Authentication & database setup | [Davis-Media/supabase-sveltekit-2024-tutorial](https://github.com/Davis-Media/supabase-sveltekit-2024-tutorial) |
+| **shadcn-svelte** | UI component library | [shadcn-svelte.com/docs/installation/sveltekit](https://www.shadcn-svelte.com/docs/installation/sveltekit) |
+
+### MCP Server Tools
+
+This project uses Model Context Protocol (MCP) servers for AI-assisted development:
+
+- **Svelte MCP Server**: Official Svelte documentation server for accurate Svelte 5 patterns and runes
+- **Sentry MCP Server**: Error monitoring integration for production debugging
 
 ---
 
@@ -396,16 +414,134 @@ use:enhance={() => {
 
 ## 5. Database Architecture
 
-### ORM: Drizzle
-```typescript
-// src/lib/server/db/index.ts
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
-import * as schema from './schema';
+### Cloudflare Workers Compatibility
 
+⚠️ **CRITICAL**: Cloudflare Workers have strict request isolation. Each request runs in its own context and **cannot share I/O objects** (like database connections) with other requests.
+
+If you use a module-level database connection:
+```typescript
+// ❌ ANTI-PATTERN: This causes "Cannot perform I/O on behalf of a different request"
 const client = postgres(DATABASE_URL);
 export const db = drizzle(client, { schema });
 ```
+
+This will cause errors like:
+```
+Cannot perform I/O on behalf of a different request
+```
+
+### Solution: Per-Request Database Connections
+
+```typescript
+// src/lib/server/db/index.ts
+import { drizzle, type PostgresJsDatabase } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
+import * as schema from './schema';
+import { env } from '$env/dynamic/private';
+
+export type DbSchema = typeof schema;
+export type Database = PostgresJsDatabase<DbSchema>;
+
+/**
+ * Creates a new database connection per request.
+ * Call this within request handlers (load functions, actions, API routes).
+ */
+export function createDb(): Database {
+    if (!env.DATABASE_URL) {
+        throw new Error('DATABASE_URL is not set');
+    }
+
+    const client = postgres(env.DATABASE_URL, {
+        max: 1,           // Single connection per instance
+        idle_timeout: 20, // Close idle connections after 20s
+        connect_timeout: 10, // Connection timeout
+        prepare: false,   // Required for Supavisor connection pooler
+    });
+
+    return drizzle(client, { schema });
+}
+
+// Legacy export for backwards compatibility (deprecated)
+export const db = createDb();
+```
+
+### Usage Patterns
+
+#### Pattern 1: Via `event.locals.db` (Recommended for SSR)
+Set up the database in hooks and access via locals:
+
+```typescript
+// src/hooks.server.ts
+import { createDb, type Database } from '$lib/server/db';
+
+const handleSupabase: Handle = async ({ event, resolve }) => {
+    // Create per-request database connection
+    const db = createDb();
+    event.locals.db = db;
+    
+    // ... rest of middleware
+    return resolve(event);
+};
+```
+
+```typescript
+// src/routes/(app)/app/+layout.server.ts
+export const load: LayoutServerLoad = async ({ locals }) => {
+    const { db, profile } = locals;
+    
+    const projects = await db.query.projects.findMany({
+        where: eq(projects.organizationId, profile.activeOrganizationId)
+    });
+    
+    return { projects };
+};
+```
+
+#### Pattern 2: Direct `createDb()` Call (For Actions/API Routes)
+```typescript
+// src/routes/api/contact/+server.ts
+import { createDb } from '$lib/server/db';
+
+export const POST = async ({ request }) => {
+    const db = createDb();
+    
+    const [contact] = await db.insert(contactSubmissions)
+        .values({ ... })
+        .returning();
+    
+    return json({ success: true, id: contact.id });
+};
+```
+
+### App.Locals Type Definition
+```typescript
+// src/app.d.ts
+import type { Database } from '$lib/server/db';
+
+declare global {
+    namespace App {
+        interface Locals {
+            db: Database;
+            supabase: SupabaseClient;
+            safeGetSession: () => Promise<{ session: Session | null; user: User | null }>;
+            session: Session | null;
+            user: User | null;
+            profile: Profile | null;
+        }
+    }
+}
+```
+
+### Connection Settings Explained
+
+| Setting | Value | Reason |
+|---------|-------|--------|
+| `max` | 1 | Single connection per Worker instance |
+| `idle_timeout` | 20 | Prevent connection pool exhaustion |
+| `connect_timeout` | 10 | Fast fail for unresponsive database |
+| `prepare` | false | **Required** for Supavisor pooler (transaction mode) |
+
+### ORM: Drizzle
 
 ### Schema Pattern
 ```typescript
@@ -435,18 +571,39 @@ export const profilesRelations = relations(profiles, ({ many }) => ({
 }));
 ```
 
-### Key Tables
+### Key Tables (Multi-Tenant SaaS Pattern)
+
+The database schema follows a multi-tenant pattern where resources are scoped to tenants (organizations):
+
 ```
-profiles              - User profile data (extends Supabase auth.users)
-organizations         - Companies/clients
-organization_members  - M:N relationship between profiles and orgs
-projects              - Project management
-proposals             - Project proposals
-invoices              - Billing
-tickets               - Support tickets
-activity_log          - Audit trail
-announcements         - System announcements
+┌─────────────────────────────────────────────────────────────────────────┐
+│                           CORE TABLES                                   │
+├─────────────────────────────────────────────────────────────────────────┤
+│ profiles              - User data (extends Supabase auth.users)         │
+│ organizations         - Tenant/workspace entities                       │
+│ organization_members  - Many-to-many: users ↔ organizations (with role)│
+├─────────────────────────────────────────────────────────────────────────┤
+│                        BUSINESS DOMAIN TABLES                           │
+├─────────────────────────────────────────────────────────────────────────┤
+│ projects              - Scoped to organization                          │
+│ proposals             - Scoped to organization                          │
+│ invoices              - Scoped to organization                          │
+│ tickets               - Support tickets, scoped to organization         │
+├─────────────────────────────────────────────────────────────────────────┤
+│                          SYSTEM TABLES                                  │
+├─────────────────────────────────────────────────────────────────────────┤
+│ activity_log          - Audit trail for compliance                      │
+│ announcements         - System-wide or targeted notifications           │
+│ contact_submissions   - Public contact form submissions                 │
+│ file_uploads          - File metadata storage                           │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
+
+**Key Design Principles:**
+- Every tenant-scoped table has an `organizationId` foreign key
+- Users can belong to multiple organizations with different roles
+- Activity logging captures who did what, when, and to which resource
+- All tables use UUIDs for primary keys (compatible with Supabase auth)
 
 ### Row Level Security (RLS)
 Enable RLS on tables for Supabase security:
@@ -897,12 +1054,12 @@ export const actions = {
 
 ## Quick Start Checklist
 
-When building a new application with this architecture:
+When building a new application with the Horizon Architecture:
 
 ### 1. Initial Setup
 - [ ] Create SvelteKit project with `npx sv create`
 - [ ] Install dependencies (Tailwind, Drizzle, Supabase, etc.)
-- [ ] Configure Cloudflare adapter
+- [ ] Configure Cloudflare adapter (`@sveltejs/adapter-cloudflare`)
 - [ ] Set up Supabase project
 
 ### 2. Authentication
@@ -912,10 +1069,11 @@ When building a new application with this architecture:
 - [ ] Add route protection middleware
 
 ### 3. Database
+- [ ] Create `createDb()` function for per-request connections
 - [ ] Define Drizzle schema with RLS enabled
 - [ ] Create profiles table linked to auth.users
-- [ ] Set up migrations
-- [ ] Configure RLS policies
+- [ ] Set up migrations with `drizzle-kit`
+- [ ] Configure connection pooler settings (`prepare: false`)
 
 ### 4. Route Groups
 - [ ] Create `(auth)` group for auth pages
@@ -934,10 +1092,77 @@ When building a new application with this architecture:
 - [ ] Configure design tokens
 - [ ] Set up typography and colors
 
-### 7. Deployment
-- [ ] Configure wrangler.jsonc
-- [ ] Set environment variables
-- [ ] Deploy to Cloudflare
+### 7. Testing
+- [ ] Install Vitest (`vitest`, `@vitest/coverage-v8`)
+- [ ] Create `vitest.config.ts` with SvelteKit plugin
+- [ ] Write tests for database connection patterns
+- [ ] Test request isolation for Workers compatibility
+
+### 8. Deployment
+- [ ] Configure wrangler.jsonc with `nodejs_compat` flag
+- [ ] Set environment variables in Cloudflare dashboard
+- [ ] Deploy to Cloudflare Workers
+
+---
+
+## Testing
+
+### Setup
+```bash
+pnpm add -D vitest @vitest/coverage-v8
+```
+
+```typescript
+// vitest.config.ts
+import { defineConfig } from 'vitest/config';
+import { sveltekit } from '@sveltejs/kit/vite';
+
+export default defineConfig({
+    plugins: [sveltekit()],
+    test: {
+        include: ['src/**/*.{test,spec}.{js,ts}'],
+        globals: true,
+        environment: 'node',
+        setupFiles: ['./tests/setup.ts']
+    }
+});
+```
+
+### Database Connection Tests
+```typescript
+// src/lib/server/db/db.test.ts
+import { describe, it, expect, vi } from 'vitest';
+import postgres from 'postgres';
+
+describe('createDb()', () => {
+    it('should create independent connections per call', () => {
+        const db1 = createDb();
+        const db2 = createDb();
+        
+        // Each call invokes postgres() again
+        expect(postgres).toHaveBeenCalledTimes(2);
+    });
+
+    it('should use Workers-compatible connection settings', () => {
+        createDb();
+        
+        expect(postgres).toHaveBeenCalledWith(
+            expect.any(String),
+            expect.objectContaining({
+                max: 1,
+                prepare: false
+            })
+        );
+    });
+});
+```
+
+### Running Tests
+```bash
+pnpm test        # Watch mode
+pnpm test:run    # Single run
+pnpm test:coverage  # With coverage
+```
 
 ---
 
@@ -945,9 +1170,13 @@ When building a new application with this architecture:
 
 ### `app.d.ts`
 ```typescript
+import type { Database } from '$lib/server/db';
+import type { SupabaseClient, Session, User } from '@supabase/supabase-js';
+
 declare global {
   namespace App {
     interface Locals {
+      db: Database;
       supabase: SupabaseClient;
       safeGetSession: () => Promise<{ session: Session | null; user: User | null }>;
       session: Session | null;
@@ -978,4 +1207,34 @@ export const load = async ({ locals }) => {
 
 ---
 
-*This documentation was generated for LLM consumption. Follow the patterns exactly as described for consistent results.*
+## Troubleshooting
+
+### "Cannot perform I/O on behalf of a different request"
+**Cause**: Using a module-level database connection in Cloudflare Workers.  
+**Solution**: Use `createDb()` within each request handler instead of importing a shared `db` instance.
+
+### Redirect loops after login
+**Cause**: `locals.profile` not refreshed after onboarding completion.  
+**Solution**: Use `window.location.href` for full page reload instead of client-side navigation.
+
+### Database connection timeouts
+**Cause**: Connection pool exhaustion or wrong settings.  
+**Solution**: Ensure `max: 1`, `idle_timeout: 20`, and `prepare: false` in postgres options.
+
+---
+
+## Reference Architecture
+
+The **Horizon Architecture** is built on these key principles:
+
+1. **Edge-First**: Deploy to Cloudflare Workers for global low-latency
+2. **Request Isolation**: Per-request database connections for Workers compatibility
+3. **Defense in Depth**: Multi-layer route protection (hooks → layouts → pages)
+4. **Type Safety**: End-to-end TypeScript with Drizzle ORM
+5. **Multi-Tenant**: Organization-scoped resources with RLS
+6. **Audit Trail**: Comprehensive activity logging
+
+---
+
+*MostlyWhat Systems' Horizon Architecture - Documentation v2.0*
+*Built with SvelteKit, Supabase, and Cloudflare Workers*

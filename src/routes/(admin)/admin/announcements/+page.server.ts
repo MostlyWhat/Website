@@ -1,11 +1,12 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { announcements, staffGroups, organizations, profiles } from '$lib/server/db/schema';
 import { eq, desc } from 'drizzle-orm';
 import { logActivity } from '$lib/server/activity-logger';
 
 export const load: PageServerLoad = async ({ locals }) => {
+    const db = createDb();
     // Only super_admin can manage announcements
     if (locals.profile?.role !== 'super_admin' && locals.profile?.role !== 'admin') {
         throw redirect(303, '/admin');
@@ -33,7 +34,9 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 export const actions: Actions = {
     create: async ({ request, locals }) => {
-        if (locals.profile?.role !== 'super_admin' && locals.profile?.role !== 'admin') {
+        // Create per-request database connection
+        const db = createDb();
+if (locals.profile?.role !== 'super_admin' && locals.profile?.role !== 'admin') {
             return fail(403, { error: 'Unauthorized' });
         }
 
@@ -89,7 +92,9 @@ export const actions: Actions = {
     },
 
     update: async ({ request, locals }) => {
-        if (locals.profile?.role !== 'super_admin' && locals.profile?.role !== 'admin') {
+        // Create per-request database connection
+        const db = createDb();
+if (locals.profile?.role !== 'super_admin' && locals.profile?.role !== 'admin') {
             return fail(403, { error: 'Unauthorized' });
         }
 
@@ -130,7 +135,9 @@ export const actions: Actions = {
     },
 
     delete: async ({ request, locals }) => {
-        if (locals.profile?.role !== 'super_admin' && locals.profile?.role !== 'admin') {
+        // Create per-request database connection
+        const db = createDb();
+if (locals.profile?.role !== 'super_admin' && locals.profile?.role !== 'admin') {
             return fail(403, { error: 'Unauthorized' });
         }
 
@@ -157,7 +164,9 @@ export const actions: Actions = {
     },
 
     toggleActive: async ({ request, locals }) => {
-        if (locals.profile?.role !== 'super_admin' && locals.profile?.role !== 'admin') {
+        // Create per-request database connection
+        const db = createDb();
+if (locals.profile?.role !== 'super_admin' && locals.profile?.role !== 'admin') {
             return fail(403, { error: 'Unauthorized' });
         }
 

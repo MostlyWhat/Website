@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { slaPolicies, slaOrganizationAssignments, ticketCategories, organizations, profiles } from '$lib/server/db/schema';
 import { eq, desc, asc } from 'drizzle-orm';
 import { fail, redirect } from '@sveltejs/kit';
@@ -86,7 +86,9 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 export const actions: Actions = {
     create: async ({ request, locals }) => {
-        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -184,7 +186,9 @@ export const actions: Actions = {
     },
 
     update: async ({ request, locals }) => {
-        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -298,7 +302,9 @@ export const actions: Actions = {
 
 
     delete: async ({ request, locals }) => {
-        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -321,7 +327,9 @@ export const actions: Actions = {
     },
 
     setDefault: async ({ request, locals }) => {
-        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -354,7 +362,9 @@ export const actions: Actions = {
     },
 
     assignOrganization: async ({ request, locals }) => {
-        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -397,7 +407,9 @@ export const actions: Actions = {
     },
 
     removeAssignment: async ({ request, locals }) => {
-        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -414,7 +426,9 @@ export const actions: Actions = {
     },
 
     createCategory: async ({ request, locals }) => {
-        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -445,7 +459,9 @@ export const actions: Actions = {
     },
 
     updateCategory: async ({ request, locals }) => {
-        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -482,7 +498,9 @@ export const actions: Actions = {
     },
 
     deleteCategory: async ({ request, locals }) => {
-        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -499,7 +517,9 @@ export const actions: Actions = {
     },
 
     initializeDefaults: async ({ locals }) => {
-        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 

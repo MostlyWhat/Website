@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { projects, organizations, profiles } from '$lib/server/db/schema';
 import { eq, desc, sql } from 'drizzle-orm';
 import { fail, redirect } from '@sveltejs/kit';
@@ -7,7 +7,8 @@ import type { PageServerLoad, Actions } from './$types';
 
 // Generate project number (e.g., PRJ-2024-00001)
 async function generateProjectNumber(): Promise<string> {
-    const year = new Date().getFullYear();
+    const db = createDb();
+const year = new Date().getFullYear();
     const prefix = `PRJ-${year}-`;
 
     const [lastProject] = await db
@@ -89,7 +90,9 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 export const actions: Actions = {
     default: async ({ request, locals }) => {
-        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 

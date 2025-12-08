@@ -34,19 +34,19 @@ export type Database = PostgresJsDatabase<DbSchema>;
  * ```
  */
 export function createDb(): Database {
-	if (!env.DATABASE_URL) {
-		throw new Error('DATABASE_URL is not set');
-	}
-	
-	const client = postgres(env.DATABASE_URL, {
-		// Connection settings optimized for serverless/Workers
-		max: 1, // Single connection per instance
-		idle_timeout: 20, // Close idle connections after 20s
-		connect_timeout: 10, // Connection timeout
-		prepare: false, // Disable prepared statements for connection poolers like Supavisor
-	});
-	
-	return drizzle(client, { schema });
+    if (!env.DATABASE_URL) {
+        throw new Error('DATABASE_URL is not set');
+    }
+
+    const client = postgres(env.DATABASE_URL, {
+        // Connection settings optimized for serverless/Workers
+        max: 1, // Single connection per instance
+        idle_timeout: 20, // Close idle connections after 20s
+        connect_timeout: 10, // Connection timeout
+        prepare: false, // Disable prepared statements for connection poolers like Supavisor
+    });
+
+    return drizzle(client, { schema });
 }
 
 /**

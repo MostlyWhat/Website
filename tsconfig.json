@@ -12,7 +12,8 @@
 		"strict": true,
 		"moduleResolution": "bundler",
 		"types": [
-			"./src/worker-configuration.d.ts"
+			"./src/worker-configuration.d.ts",
+			"vitest/globals"
 		]
 	}
 	// Path aliases are handled by https://svelte.dev/docs/kit/configuration#alias

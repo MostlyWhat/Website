@@ -11,7 +11,7 @@ import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
     const code = params.code;
-    
+
     // Create per-request database connection
     const db = createDb();
 
@@ -101,7 +101,7 @@ export const actions: Actions = {
         }
 
         const code = params.code;
-        
+
         // Create per-request database connection
         const db = createDb();
 

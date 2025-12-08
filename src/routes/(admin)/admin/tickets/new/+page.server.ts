@@ -6,7 +6,7 @@
 
 import { fail, redirect, error } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { tickets, organizations, profiles, projects } from '$lib/server/db/schema';
 import { eq, desc, ilike, or, and } from 'drizzle-orm';
 import crypto from 'node:crypto';

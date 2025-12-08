@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { organizations, organizationMembers, profiles, projects, invoices } from '$lib/server/db/schema';
 import { eq, desc, sql } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';

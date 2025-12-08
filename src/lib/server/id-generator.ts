@@ -3,7 +3,7 @@
  * Generates human-readable sequential IDs for various entities
  */
 
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { organizations, projects, tickets } from '$lib/server/db/schema';
 import { desc, sql } from 'drizzle-orm';
 

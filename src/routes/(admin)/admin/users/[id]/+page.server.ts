@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import {
     profiles,
     organizations,
@@ -101,7 +101,9 @@ export const load: PageServerLoad = async ({ params }) => {
 
 export const actions: Actions = {
     updateRole: async ({ request, params, locals }) => {
-        const formData = await request.formData();
+        // Create per-request database connection
+        const db = createDb();
+const formData = await request.formData();
         const newRole = formData.get('role') as string;
 
         if (!newRole || !['super_admin', 'admin', 'staff', 'customer'].includes(newRole)) {
@@ -134,7 +136,9 @@ export const actions: Actions = {
     },
 
     updateProfile: async ({ request, params, locals }) => {
-        const formData = await request.formData();
+        // Create per-request database connection
+        const db = createDb();
+const formData = await request.formData();
         const firstName = formData.get('firstName') as string;
         const lastName = formData.get('lastName') as string;
         const phone = formData.get('phone') as string;
@@ -176,7 +180,9 @@ export const actions: Actions = {
     },
 
     removeFromOrganization: async ({ request, params, locals }) => {
-        const formData = await request.formData();
+        // Create per-request database connection
+        const db = createDb();
+const formData = await request.formData();
         const organizationId = formData.get('organizationId') as string;
 
         if (!organizationId) {

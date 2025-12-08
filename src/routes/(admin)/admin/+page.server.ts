@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { profiles, organizations, projects, proposals, invoices, tickets } from '$lib/server/db/schema';
 import { eq, sql, or, desc } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
@@ -16,7 +16,8 @@ async function safeCount<T>(query: Promise<T[]>, defaultValue = 0): Promise<numb
 
 // Async function to load admin dashboard data
 async function loadAdminDashboardData() {
-    // Get counts in parallel with error handling
+    const db = createDb();
+// Get counts in parallel with error handling
     const [
         usersCount,
         orgsCount,

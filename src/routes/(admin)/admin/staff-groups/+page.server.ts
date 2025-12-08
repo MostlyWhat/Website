@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { staffGroups, staffGroupMembers, profiles } from '$lib/server/db/schema';
 import { eq, desc, and, inArray } from 'drizzle-orm';
 import { error, fail, redirect } from '@sveltejs/kit';
@@ -89,7 +89,9 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 export const actions: Actions = {
     createGroup: async ({ request, locals }) => {
-        if (!locals.user || !locals.profile) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.user || !locals.profile) {
             return fail(401, { error: 'Unauthorized' });
         }
 
@@ -139,7 +141,9 @@ export const actions: Actions = {
     },
 
     deleteGroup: async ({ request, locals }) => {
-        if (!locals.user || !locals.profile) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.user || !locals.profile) {
             return fail(401, { error: 'Unauthorized' });
         }
 
@@ -179,7 +183,9 @@ export const actions: Actions = {
     },
 
     toggleGroup: async ({ request, locals }) => {
-        if (!locals.user || !locals.profile) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.user || !locals.profile) {
             return fail(401, { error: 'Unauthorized' });
         }
 

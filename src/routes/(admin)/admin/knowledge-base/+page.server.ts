@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { supportArticles, profiles } from '$lib/server/db/schema';
 import { desc, eq, sql } from 'drizzle-orm';
 import { fail, redirect } from '@sveltejs/kit';
@@ -87,7 +87,9 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 
 export const actions: Actions = {
     delete: async ({ request, locals }) => {
-        if (!locals.user || !locals.profile) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.user || !locals.profile) {
             return fail(401, { error: 'Unauthorized' });
         }
 
@@ -113,7 +115,9 @@ export const actions: Actions = {
     },
 
     togglePublish: async ({ request, locals }) => {
-        if (!locals.user || !locals.profile) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.user || !locals.profile) {
             return fail(401, { error: 'Unauthorized' });
         }
 

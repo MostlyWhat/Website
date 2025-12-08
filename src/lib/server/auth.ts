@@ -36,7 +36,7 @@ export const DEFAULT_PREFERENCES = {
  */
 export async function getOrCreateProfile(user: User): Promise<Profile> {
     const db = createDb();
-    
+
     try {
         // Try to get existing profile (may have been created by database trigger)
         const existingProfile = await db.query.profiles.findFirst({

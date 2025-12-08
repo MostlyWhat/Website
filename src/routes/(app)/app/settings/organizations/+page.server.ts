@@ -6,7 +6,7 @@
 
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { organizations, organizationMembers, projects, tickets } from '$lib/server/db/schema';
 import { eq, and, count, inArray } from 'drizzle-orm';
 

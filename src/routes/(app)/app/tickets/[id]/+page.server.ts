@@ -6,7 +6,7 @@
 
 import { fail, redirect, error } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { tickets, ticketComments, profiles, organizations, projects, organizationMembers } from '$lib/server/db/schema';
 import { eq, and, or } from 'drizzle-orm';
 import { sendTicketReplyEmail, sendTicketStatusChangeEmail } from '$lib/server/email';
@@ -177,7 +177,9 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 export const actions: Actions = {
     sendMessage: async ({ request, locals, params }) => {
-        // Verify user is authenticated
+        // Create per-request database connection
+        const db = createDb();
+// Verify user is authenticated
         if (!locals.session || !locals.profile) {
             return fail(401, { error: 'You must be logged in to send messages' });
         }
@@ -372,7 +374,9 @@ export const actions: Actions = {
     },
 
     closeTicket: async ({ locals, params }) => {
-        if (!locals.session || !locals.profile) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.session || !locals.profile) {
             return fail(401, { error: 'You must be logged in' });
         }
 
@@ -435,7 +439,9 @@ export const actions: Actions = {
     },
 
     reopenTicket: async ({ locals, params }) => {
-        if (!locals.session || !locals.profile) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.session || !locals.profile) {
             return fail(401, { error: 'You must be logged in' });
         }
 
@@ -517,7 +523,9 @@ export const actions: Actions = {
     },
 
     markResolved: async ({ locals, params }) => {
-        if (!locals.session || !locals.profile) {
+        // Create per-request database connection
+        const db = createDb();
+if (!locals.session || !locals.profile) {
             return fail(401, { error: 'You must be logged in' });
         }
 

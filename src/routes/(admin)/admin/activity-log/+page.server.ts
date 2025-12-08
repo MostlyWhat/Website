@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { createDb } from '$lib/server/db';
 import { activityLog, profiles } from '$lib/server/db/schema';
 import { desc, eq, and, ilike, or, gte, lte, sql } from 'drizzle-orm';
 import { redirect } from '@sveltejs/kit';
