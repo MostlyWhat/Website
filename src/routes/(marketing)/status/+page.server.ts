@@ -63,7 +63,7 @@ export const load: PageServerLoad = async () => {
         // If services have their own uptime values, average them; otherwise calculate based on current status
         const servicesWithUptime = services.filter(s => s.uptime !== null && s.uptime !== undefined);
         let uptimePercentage: string;
-        
+
         if (servicesWithUptime.length > 0) {
             // Average the individual service uptimes
             const totalUptime = servicesWithUptime.reduce((sum, s) => sum + parseFloat(String(s.uptime ?? '100')), 0);
