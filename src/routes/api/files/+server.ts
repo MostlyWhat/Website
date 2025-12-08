@@ -16,6 +16,11 @@ export const GET: RequestHandler = async ({ url, locals }) => {
         throw error(401, 'Authentication required');
     }
 
+    // SECURITY: Require onboarding completion
+    if (!locals.profile.onboardingCompleted) {
+        throw error(403, 'Please complete onboarding first');
+    }
+
     const entityType = url.searchParams.get('entityType');
     const entityId = url.searchParams.get('entityId');
 

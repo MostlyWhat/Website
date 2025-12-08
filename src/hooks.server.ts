@@ -155,6 +155,15 @@ const handleRouteProtection: Handle = async ({ event, resolve }) => {
 			});
 		}
 
+		// SECURITY: Require profile to exist for app/admin routes
+		// If no profile, redirect to onboarding (it will create one)
+		if (!isOnboardingRoute && !profile) {
+			return new Response(null, {
+				status: 302,
+				headers: { Location: '/onboarding' }
+			});
+		}
+
 		// Check if user needs to complete onboarding
 		if (!isOnboardingRoute && profile && !profile.onboardingCompleted) {
 			return new Response(null, {

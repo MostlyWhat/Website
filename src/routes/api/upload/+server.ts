@@ -37,6 +37,11 @@ export const POST: RequestHandler = async ({ request, locals }) => {
         throw error(401, 'Authentication required');
     }
 
+    // SECURITY: Require onboarding completion for file uploads
+    if (!locals.profile.onboardingCompleted) {
+        throw error(403, 'Please complete onboarding first');
+    }
+
     try {
         const formData = await request.formData();
         const file = formData.get('file') as File | null;

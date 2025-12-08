@@ -42,17 +42,24 @@ export const GET = async ({ url, request, locals: { supabase } }: RequestEvent) 
                     sessionId: data.session?.access_token?.slice(-16)
                 });
 
-                // Redirect to onboarding if not completed
+                // SECURITY: Always redirect to onboarding if not completed
+                // This ensures users complete their profile before accessing the app
                 if (!profile.onboardingCompleted) {
                     redirect(303, '/onboarding');
                 }
+
+                // Profile exists and onboarding complete - safe to redirect
+                redirect(303, redirectTo);
             } catch (profileError) {
                 console.error('Profile creation error:', profileError);
-                // Still redirect - profile will be created on next login
+                // SECURITY: On profile error, redirect to onboarding
+                // It will attempt to create the profile again
+                redirect(303, '/onboarding');
             }
         }
 
-        redirect(303, redirectTo);
+        // No user data - something went wrong
+        redirect(303, '/auth/login?error=no_user_data');
     }
 
     // Handle token hash (magic link, email verification, password reset)
@@ -87,20 +94,26 @@ export const GET = async ({ url, request, locals: { supabase } }: RequestEvent) 
                     redirect(303, '/auth/reset-password');
                 }
 
-                // For email verification or magic link
+                // SECURITY: Always redirect to onboarding if not completed
                 if (!profile.onboardingCompleted) {
                     redirect(303, '/onboarding');
                 }
+
+                // Profile exists and onboarding complete - safe to redirect
+                redirect(303, redirectTo);
             } catch (profileError) {
                 console.error('Profile creation error:', profileError);
-                // For password reset, still redirect
+                // For password reset, still redirect there
                 if (type === 'recovery') {
                     redirect(303, '/auth/reset-password');
                 }
+                // SECURITY: On profile error, redirect to onboarding
+                redirect(303, '/onboarding');
             }
         }
 
-        redirect(303, redirectTo);
+        // No user data - something went wrong
+        redirect(303, '/auth/login?error=no_user_data');
     }
 
     // No code or token_hash provided

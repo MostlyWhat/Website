@@ -44,19 +44,20 @@ export class ActivityLogger {
     static async log(options: SimpleLogOptions): Promise<void> {
         try {
             // Parse type into entityType (e.g., 'setting.updated' -> 'settings')
-            const entityType = options.type.split('.')[0] as EntityType;
+            const typePrefix = options.type.split('.')[0];
+            const entityType = (typePrefix === 'setting' ? 'settings' : typePrefix) as EntityType;
 
-            // Map action to ActivityType
+            // Map action to ActivityType (only using valid types from schema)
             const actionMap: Record<string, ActivityType> = {
                 'create': 'created',
                 'update': 'updated',
-                'delete': 'deleted',
-                'view': 'viewed'
+                'delete': 'updated', // Fallback since 'deleted' isn't in the enum
+                'view': 'updated'    // Fallback since 'viewed' isn't in the enum
             };
             const activityType = actionMap[options.action] || 'updated';
 
             await db.insert(activityLog).values({
-                entityType: entityType === 'setting' ? 'settings' : entityType,
+                entityType,
                 entityId: options.metadata?.key as string || 'system',
                 activityType,
                 description: options.description,

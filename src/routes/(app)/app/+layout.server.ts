@@ -10,8 +10,14 @@ export const load: LayoutServerLoad = async ({ locals }) => {
         throw redirect(303, '/auth/login?redirectTo=/app');
     }
 
+    // SECURITY: Require profile to exist
+    // If no profile, redirect to onboarding (it will create one)
+    if (!locals.profile) {
+        throw redirect(303, '/onboarding');
+    }
+
     // Require onboarding completion
-    if (locals.profile && !locals.profile.onboardingCompleted) {
+    if (!locals.profile.onboardingCompleted) {
         throw redirect(303, '/onboarding');
     }
 

@@ -7,18 +7,24 @@ import { eq, and, or, isNull, gt, lte, sql, notInArray } from 'drizzle-orm';
 export const load: LayoutServerLoad = async ({ locals }) => {
     // Require authentication
     if (!locals.user) {
-        redirect(303, '/auth/login?redirectTo=/admin');
+        throw redirect(303, '/auth/login?redirectTo=/admin');
+    }
+
+    // SECURITY: Require profile to exist
+    // If no profile, redirect to onboarding (it will create one)
+    if (!locals.profile) {
+        throw redirect(303, '/onboarding');
     }
 
     // Require onboarding completion
-    if (locals.profile && !locals.profile.onboardingCompleted) {
-        redirect(303, '/onboarding');
+    if (!locals.profile.onboardingCompleted) {
+        throw redirect(303, '/onboarding');
     }
 
     // Require admin, staff, or super_admin role
     const allowedRoles = ['super_admin', 'admin', 'staff'];
-    if (!locals.profile || !allowedRoles.includes(locals.profile.role)) {
-        redirect(303, '/app');
+    if (!allowedRoles.includes(locals.profile.role)) {
+        throw redirect(303, '/app');
     }
 
     // Get user's staff group IDs

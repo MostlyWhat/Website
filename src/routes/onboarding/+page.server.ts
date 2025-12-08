@@ -1,6 +1,6 @@
 import { fail, redirect, isRedirect } from '@sveltejs/kit';
 import type { Actions, RequestEvent } from '@sveltejs/kit';
-import { completeOnboarding } from '$lib/server/auth';
+import { completeOnboarding, getOrCreateProfile } from '$lib/server/auth';
 import { db } from '$lib/server/db';
 import { organizations, organizationMembers, organizationInvites, pendingOrganizationMembers } from '$lib/server/db/schema';
 import { generateOrgNumber } from '$lib/server/id-generator';
@@ -22,6 +22,11 @@ export const actions = {
         if (!locals.user) {
             return fail(401, { error: 'You must be logged in' });
         }
+
+        // Ensure profile exists before onboarding
+        // This handles cases where the user signed in via magic link, OAuth, etc.
+        // and the profile wasn't created during the auth flow
+        await getOrCreateProfile(locals.user);
 
         const formData = await request.formData();
         const firstName = formData.get('firstName') as string;
