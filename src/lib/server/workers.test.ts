@@ -12,9 +12,9 @@ describe('Cloudflare Workers Compatibility', () => {
 		it('should not share database connections between requests', async () => {
 			// Simulate the Cloudflare Workers request isolation requirement
 			// Each request should create its own database connection
-			
+
 			const connections: symbol[] = [];
-			
+
 			// Mock createDb to return unique instances
 			const createDb = vi.fn(() => {
 				const id = Symbol('connection');
@@ -48,11 +48,11 @@ describe('Cloudflare Workers Compatibility', () => {
 			// In Cloudflare Workers, if you try to use a database connection
 			// created in a different request context, you get an error like:
 			// "Cannot perform I/O on behalf of a different request"
-			
+
 			// The fix is to create a new connection for each request:
 			const errorMessage = 'Cannot perform I/O on behalf of a different request';
 			const fixPattern = 'createDb()';
-			
+
 			expect(errorMessage).toContain('I/O');
 			expect(fixPattern).toBe('createDb()');
 		});
@@ -76,7 +76,7 @@ describe('Cloudflare Workers Compatibility', () => {
 			// Supabase uses Supavisor as a connection pooler
 			// Prepared statements don't work with transaction pooling mode
 			// Setting prepare: false disables prepared statements
-			
+
 			const reason = 'Supavisor connection pooler in transaction mode';
 			expect(reason).toContain('Supavisor');
 		});
@@ -87,10 +87,10 @@ describe('Cloudflare Workers Compatibility', () => {
 			// In Cloudflare Workers, environment variables are not available
 			// at module load time. Use $env/dynamic/private instead of
 			// $env/static/private
-			
+
 			const correctImport = "$env/dynamic/private";
 			const incorrectImport = "$env/static/private";
-			
+
 			expect(correctImport).toContain('dynamic');
 		});
 	});
@@ -132,7 +132,7 @@ describe('Error Scenarios', () => {
 			// When database errors occur, load functions might fail
 			// and cause redirects to login/onboarding pages
 			// which then also fail, creating a loop
-			
+
 			const scenario = `
 				1. User visits /app/dashboard
 				2. Load function calls db.query.profiles

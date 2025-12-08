@@ -132,7 +132,7 @@ describe('Error Handling', () => {
 
 		// Re-import to get the new mock
 		const { createDb: createDbWithoutUrl } = await import('$lib/server/db');
-		
+
 		// This test validates the error is thrown, but since we're mocking,
 		// we need to reset back to the original state
 		vi.doMock('$env/dynamic/private', () => ({

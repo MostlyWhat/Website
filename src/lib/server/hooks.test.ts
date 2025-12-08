@@ -39,7 +39,7 @@ describe('Hooks Server - Database Pattern', () => {
 		// 1. Import createDb from '$lib/server/db'
 		// 2. Call createDb() once per request
 		// 3. Assign to event.locals.db
-		
+
 		const expectedPattern = `
 			import { createDb } from '$lib/server/db';
 			
@@ -51,7 +51,7 @@ describe('Hooks Server - Database Pattern', () => {
 				return resolve(event);
 			};
 		`;
-		
+
 		expect(expectedPattern).toContain('createDb()');
 		expect(expectedPattern).toContain('event.locals.db');
 	});
@@ -75,7 +75,7 @@ describe('Hooks Server - Database Pattern', () => {
 
 	it('should allow createDb to be called directly in actions', async () => {
 		const { createDb } = await import('$lib/server/db');
-		
+
 		// Action pattern for form actions
 		const actionFunction = async () => {
 			const db = createDb();
@@ -102,7 +102,7 @@ describe('App.Locals Type Definition', () => {
 				profile: Profile | null;
 			}
 		`;
-		
+
 		expect(expectedInterface).toContain('db: Database');
 	});
 });

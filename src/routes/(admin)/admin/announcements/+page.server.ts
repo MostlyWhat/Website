@@ -36,7 +36,7 @@ export const actions: Actions = {
     create: async ({ request, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (locals.profile?.role !== 'super_admin' && locals.profile?.role !== 'admin') {
+        if (locals.profile?.role !== 'super_admin' && locals.profile?.role !== 'admin') {
             return fail(403, { error: 'Unauthorized' });
         }
 
@@ -94,7 +94,7 @@ if (locals.profile?.role !== 'super_admin' && locals.profile?.role !== 'admin') 
     update: async ({ request, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (locals.profile?.role !== 'super_admin' && locals.profile?.role !== 'admin') {
+        if (locals.profile?.role !== 'super_admin' && locals.profile?.role !== 'admin') {
             return fail(403, { error: 'Unauthorized' });
         }
 
@@ -137,7 +137,7 @@ if (locals.profile?.role !== 'super_admin' && locals.profile?.role !== 'admin') 
     delete: async ({ request, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (locals.profile?.role !== 'super_admin' && locals.profile?.role !== 'admin') {
+        if (locals.profile?.role !== 'super_admin' && locals.profile?.role !== 'admin') {
             return fail(403, { error: 'Unauthorized' });
         }
 
@@ -166,7 +166,7 @@ if (locals.profile?.role !== 'super_admin' && locals.profile?.role !== 'admin') 
     toggleActive: async ({ request, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (locals.profile?.role !== 'super_admin' && locals.profile?.role !== 'admin') {
+        if (locals.profile?.role !== 'super_admin' && locals.profile?.role !== 'admin') {
             return fail(403, { error: 'Unauthorized' });
         }
 

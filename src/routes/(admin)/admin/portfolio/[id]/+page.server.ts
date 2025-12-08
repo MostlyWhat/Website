@@ -71,7 +71,7 @@ export const actions: Actions = {
     update: async ({ params, request, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.profile || !['super_admin', 'admin'].includes(locals.profile.role)) {
+        if (!locals.profile || !['super_admin', 'admin'].includes(locals.profile.role)) {
             return fail(403, { error: 'Unauthorized' });
         }
 
@@ -158,7 +158,7 @@ if (!locals.profile || !['super_admin', 'admin'].includes(locals.profile.role)) 
     delete: async ({ params, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.profile || !['super_admin', 'admin'].includes(locals.profile.role)) {
+        if (!locals.profile || !['super_admin', 'admin'].includes(locals.profile.role)) {
             return fail(403, { error: 'Unauthorized' });
         }
 
