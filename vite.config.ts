@@ -52,8 +52,8 @@ export default defineConfig({
 				manualChunks: {
 					// Group UI components together
 					'ui': ['bits-ui', 'svelte-sonner', 'mode-watcher'],
-					// Group database/auth libraries
-					'data': ['@supabase/supabase-js', 'drizzle-orm'],
+					// Group database libraries (excluding @supabase/supabase-js as it's external)
+					'data': ['drizzle-orm'],
 					// Group icons separately
 					'icons': ['@lucide/svelte'],
 					// Group markdown processing
