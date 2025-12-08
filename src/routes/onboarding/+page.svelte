@@ -5,6 +5,7 @@
 	 * Collect user profile information and preferences after registration.
 	 */
 	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
@@ -142,9 +143,24 @@
 					method="POST"
 					use:enhance={() => {
 						isLoading = true;
-						return async ({ update }) => {
+						return async ({ result }) => {
 							isLoading = false;
-							await update();
+							
+							// On successful redirect, do a full page navigation
+							// This ensures the profile data is refreshed from the database
+							// Prevents redirect loop from stale locals.profile
+							if (result.type === 'redirect') {
+								// Invalidate all data first to clear caches
+								await invalidateAll();
+								// Force full page load to get fresh profile data
+								window.location.href = result.location;
+								return;
+							}
+							
+							// For errors/failures, update normally
+							if (result.type === 'failure' || result.type === 'error') {
+								// Let SvelteKit handle error display
+							}
 						};
 					}}
 				>
