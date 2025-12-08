@@ -1,13 +1,19 @@
 CREATE TYPE "public"."activity_type" AS ENUM('created', 'updated', 'status_changed', 'comment_added', 'file_uploaded', 'email_sent', 'payment_received', 'assigned', 'approved', 'rejected');--> statement-breakpoint
+CREATE TYPE "public"."blog_post_status" AS ENUM('draft', 'published', 'archived');--> statement-breakpoint
+CREATE TYPE "public"."contact_submission_status" AS ENUM('new', 'read', 'replied', 'archived', 'spam');--> statement-breakpoint
+CREATE TYPE "public"."contact_submission_topic" AS ENUM('quote', 'support', 'general', 'partnership', 'feedback');--> statement-breakpoint
 CREATE TYPE "public"."customer_type" AS ENUM('personal', 'business', 'enterprise');--> statement-breakpoint
 CREATE TYPE "public"."invoice_status" AS ENUM('draft', 'sent', 'viewed', 'paid', 'partially_paid', 'overdue', 'cancelled', 'refunded');--> statement-breakpoint
+CREATE TYPE "public"."invoice_type" AS ENUM('one_time', 'recurring', 'deposit', 'milestone', 'final');--> statement-breakpoint
 CREATE TYPE "public"."milestone_status" AS ENUM('pending', 'in_progress', 'completed', 'on_hold', 'cancelled');--> statement-breakpoint
 CREATE TYPE "public"."notification_type" AS ENUM('announcement', 'ticket_update', 'project_update', 'proposal_update', 'invoice_update', 'system', 'mention');--> statement-breakpoint
+CREATE TYPE "public"."portfolio_project_status" AS ENUM('draft', 'published', 'archived');--> statement-breakpoint
 CREATE TYPE "public"."project_phase" AS ENUM('request', 'review', 'proposal', 'confirmed', 'building', 'completed', 'support');--> statement-breakpoint
 CREATE TYPE "public"."project_request_status" AS ENUM('pending', 'under_review', 'approved', 'rejected', 'converted');--> statement-breakpoint
 CREATE TYPE "public"."project_status" AS ENUM('draft', 'proposal_sent', 'proposal_accepted', 'proposal_rejected', 'in_progress', 'on_hold', 'completed', 'cancelled');--> statement-breakpoint
 CREATE TYPE "public"."proposal_confirmation_status" AS ENUM('draft', 'sent', 'viewed', 'client_accepted', 'admin_confirmed', 'rejected', 'expired');--> statement-breakpoint
 CREATE TYPE "public"."proposal_status" AS ENUM('draft', 'sent', 'viewed', 'accepted', 'rejected', 'expired', 'revised');--> statement-breakpoint
+CREATE TYPE "public"."recurring_interval" AS ENUM('weekly', 'bi_weekly', 'monthly', 'quarterly', 'yearly');--> statement-breakpoint
 CREATE TYPE "public"."revision_status" AS ENUM('pending', 'in_progress', 'resolved', 'declined');--> statement-breakpoint
 CREATE TYPE "public"."support_article_audience" AS ENUM('user', 'admin', 'all');--> statement-breakpoint
 CREATE TYPE "public"."ticket_priority" AS ENUM('low', 'medium', 'high', 'urgent');--> statement-breakpoint
@@ -42,6 +48,9 @@ CREATE TABLE "announcements" (
 	"title" text NOT NULL,
 	"message" text NOT NULL,
 	"type" text DEFAULT 'info' NOT NULL,
+	"link_url" text,
+	"link_text" text,
+	"link_style" text DEFAULT 'link',
 	"is_active" boolean DEFAULT true NOT NULL,
 	"starts_at" timestamp with time zone,
 	"ends_at" timestamp with time zone,
@@ -57,6 +66,29 @@ CREATE TABLE "announcements" (
 );
 --> statement-breakpoint
 ALTER TABLE "announcements" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
+CREATE TABLE "blog_posts" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"slug" text NOT NULL,
+	"title" text NOT NULL,
+	"excerpt" text,
+	"content" text NOT NULL,
+	"featured_image" text,
+	"category" text NOT NULL,
+	"tags" jsonb DEFAULT '[]'::jsonb,
+	"status" "blog_post_status" DEFAULT 'draft' NOT NULL,
+	"is_featured" boolean DEFAULT false NOT NULL,
+	"published_at" timestamp with time zone,
+	"meta_title" text,
+	"meta_description" text,
+	"read_time" text DEFAULT '5 min read',
+	"view_count" integer DEFAULT 0 NOT NULL,
+	"author_id" uuid NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "blog_posts_slug_unique" UNIQUE("slug")
+);
+--> statement-breakpoint
+ALTER TABLE "blog_posts" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "canned_responses" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"title" text NOT NULL,
@@ -73,6 +105,31 @@ CREATE TABLE "canned_responses" (
 );
 --> statement-breakpoint
 ALTER TABLE "canned_responses" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
+CREATE TABLE "contact_submissions" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"name" text NOT NULL,
+	"email" text NOT NULL,
+	"company" text,
+	"phone" text,
+	"topic" "contact_submission_topic" DEFAULT 'general' NOT NULL,
+	"subject" text,
+	"message" text NOT NULL,
+	"project_type" text,
+	"budget" text,
+	"timeline" text,
+	"order_id" text,
+	"urgency" text,
+	"status" "contact_submission_status" DEFAULT 'new' NOT NULL,
+	"source" text DEFAULT 'website',
+	"ip_address" text,
+	"user_agent" text,
+	"referrer" text,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"read_at" timestamp with time zone,
+	"replied_at" timestamp with time zone
+);
+--> statement-breakpoint
+ALTER TABLE "contact_submissions" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "file_uploads" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"entity_type" text NOT NULL,
@@ -103,6 +160,14 @@ CREATE TABLE "invoices" (
 	"amount_paid" numeric(12, 2) DEFAULT '0' NOT NULL,
 	"amount_due" numeric(12, 2) NOT NULL,
 	"currency" text DEFAULT 'USD' NOT NULL,
+	"invoice_type" "invoice_type" DEFAULT 'one_time' NOT NULL,
+	"is_recurring" boolean DEFAULT false NOT NULL,
+	"recurring_interval" "recurring_interval",
+	"recurring_start_date" timestamp with time zone,
+	"recurring_end_date" timestamp with time zone,
+	"recurring_next_date" timestamp with time zone,
+	"recurring_parent_id" uuid,
+	"recurring_count" integer DEFAULT 0,
 	"issue_date" timestamp with time zone DEFAULT now() NOT NULL,
 	"due_date" timestamp with time zone NOT NULL,
 	"paid_at" timestamp with time zone,
@@ -121,6 +186,25 @@ CREATE TABLE "invoices" (
 );
 --> statement-breakpoint
 ALTER TABLE "invoices" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
+CREATE TABLE "login_logs" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"profile_id" uuid NOT NULL,
+	"event_type" text NOT NULL,
+	"ip_address" text,
+	"user_agent" text,
+	"country" text,
+	"region" text,
+	"city" text,
+	"geolocation" text,
+	"login_method" text,
+	"device_info" jsonb,
+	"success" boolean DEFAULT true NOT NULL,
+	"failure_reason" text,
+	"session_id" text,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+ALTER TABLE "login_logs" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "organization_invites" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"organization_id" uuid NOT NULL,
@@ -201,6 +285,34 @@ CREATE TABLE "pending_org_members" (
 );
 --> statement-breakpoint
 ALTER TABLE "pending_org_members" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
+CREATE TABLE "portfolio_projects" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"slug" text NOT NULL,
+	"title" text NOT NULL,
+	"client" text NOT NULL,
+	"description" text,
+	"content" text NOT NULL,
+	"category" text NOT NULL,
+	"tags" jsonb DEFAULT '[]'::jsonb,
+	"year" text,
+	"featured_image" text,
+	"gallery" jsonb DEFAULT '[]'::jsonb,
+	"video_url" text,
+	"status" "portfolio_project_status" DEFAULT 'draft' NOT NULL,
+	"is_featured" boolean DEFAULT false NOT NULL,
+	"published_at" timestamp with time zone,
+	"sort_order" integer DEFAULT 0 NOT NULL,
+	"meta_title" text,
+	"meta_description" text,
+	"live_url" text,
+	"case_study_url" text,
+	"created_by_id" uuid NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "portfolio_projects_slug_unique" UNIQUE("slug")
+);
+--> statement-breakpoint
+ALTER TABLE "portfolio_projects" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "profiles" (
 	"id" uuid PRIMARY KEY NOT NULL,
 	"email" text NOT NULL,
@@ -521,11 +633,14 @@ ALTER TABLE "announcements" ADD CONSTRAINT "announcements_target_user_id_profile
 ALTER TABLE "announcements" ADD CONSTRAINT "announcements_target_organization_id_organizations_id_fk" FOREIGN KEY ("target_organization_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "announcements" ADD CONSTRAINT "announcements_target_staff_group_id_staff_groups_id_fk" FOREIGN KEY ("target_staff_group_id") REFERENCES "public"."staff_groups"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "announcements" ADD CONSTRAINT "announcements_created_by_id_profiles_id_fk" FOREIGN KEY ("created_by_id") REFERENCES "public"."profiles"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "blog_posts" ADD CONSTRAINT "blog_posts_author_id_profiles_id_fk" FOREIGN KEY ("author_id") REFERENCES "public"."profiles"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "canned_responses" ADD CONSTRAINT "canned_responses_created_by_id_profiles_id_fk" FOREIGN KEY ("created_by_id") REFERENCES "public"."profiles"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "file_uploads" ADD CONSTRAINT "file_uploads_uploaded_by_id_profiles_id_fk" FOREIGN KEY ("uploaded_by_id") REFERENCES "public"."profiles"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "invoices" ADD CONSTRAINT "invoices_project_id_projects_id_fk" FOREIGN KEY ("project_id") REFERENCES "public"."projects"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "invoices" ADD CONSTRAINT "invoices_organization_id_organizations_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "invoices" ADD CONSTRAINT "invoices_recurring_parent_id_invoices_id_fk" FOREIGN KEY ("recurring_parent_id") REFERENCES "public"."invoices"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "invoices" ADD CONSTRAINT "invoices_created_by_id_profiles_id_fk" FOREIGN KEY ("created_by_id") REFERENCES "public"."profiles"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "login_logs" ADD CONSTRAINT "login_logs_profile_id_profiles_id_fk" FOREIGN KEY ("profile_id") REFERENCES "public"."profiles"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "organization_invites" ADD CONSTRAINT "organization_invites_organization_id_organizations_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "organization_invites" ADD CONSTRAINT "organization_invites_created_by_id_profiles_id_fk" FOREIGN KEY ("created_by_id") REFERENCES "public"."profiles"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "organization_members" ADD CONSTRAINT "organization_members_organization_id_organizations_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -536,6 +651,7 @@ ALTER TABLE "pending_org_members" ADD CONSTRAINT "pending_org_members_organizati
 ALTER TABLE "pending_org_members" ADD CONSTRAINT "pending_org_members_profile_id_profiles_id_fk" FOREIGN KEY ("profile_id") REFERENCES "public"."profiles"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "pending_org_members" ADD CONSTRAINT "pending_org_members_invite_id_organization_invites_id_fk" FOREIGN KEY ("invite_id") REFERENCES "public"."organization_invites"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "pending_org_members" ADD CONSTRAINT "pending_org_members_reviewed_by_id_profiles_id_fk" FOREIGN KEY ("reviewed_by_id") REFERENCES "public"."profiles"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "portfolio_projects" ADD CONSTRAINT "portfolio_projects_created_by_id_profiles_id_fk" FOREIGN KEY ("created_by_id") REFERENCES "public"."profiles"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "profiles" ADD CONSTRAINT "profiles_id_users_id_fk" FOREIGN KEY ("id") REFERENCES "auth"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "project_milestones" ADD CONSTRAINT "project_milestones_project_id_projects_id_fk" FOREIGN KEY ("project_id") REFERENCES "public"."projects"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "project_milestones" ADD CONSTRAINT "project_milestones_created_by_id_profiles_id_fk" FOREIGN KEY ("created_by_id") REFERENCES "public"."profiles"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
