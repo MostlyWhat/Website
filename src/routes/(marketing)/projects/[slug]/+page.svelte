@@ -12,8 +12,8 @@
 </script>
 
 <svelte:head>
-	<title>{project.title} — {m.site_name()}</title>
-	<meta name="description" content={project.description} />
+	<title>{project.metaTitle ?? project.title} — {m.site_name()}</title>
+	<meta name="description" content={project.metaDescription ?? project.description ?? ''} />
 </svelte:head>
 
 <!-- Hero Section -->

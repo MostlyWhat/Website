@@ -85,14 +85,6 @@
 					Configure system-wide settings and preferences.
 				</p>
 			</div>
-			{#if !hasSettings}
-				<form method="POST" action="?/initialize" use:enhance>
-					<Button type="submit" variant="outline" size="sm" class="font-ui text-xs tracking-wider">
-						<RotateCcw class="mr-2 h-4 w-4" />
-						INITIALIZE DEFAULTS
-					</Button>
-				</form>
-			{/if}
 		</div>
 	</section>
 
@@ -263,7 +255,7 @@
 					<Settings class="h-16 w-16 mx-auto text-muted-foreground/50 mb-6" />
 					<h2 class="font-display text-xl font-bold uppercase">No Settings Configured</h2>
 					<p class="text-muted-foreground mt-2 max-w-md mx-auto">
-						Click "Initialize Defaults" to set up the default system settings.
+						Settings will be loaded from the database. Run the seed script to initialize defaults.
 					</p>
 				</div>
 			{/if}

@@ -44,7 +44,24 @@ export default defineConfig({
 	build: {
 		// Target modern browsers for smaller builds
 		target: 'esnext',
-		// Enable source maps for development
-		sourcemap: true
+		// Enable source maps for development only
+		sourcemap: process.env.NODE_ENV !== 'production',
+		// Improve chunk splitting
+		rollupOptions: {
+			output: {
+				manualChunks: {
+					// Group UI components together
+					'ui': ['bits-ui', 'svelte-sonner', 'mode-watcher'],
+					// Group database/auth libraries
+					'data': ['@supabase/supabase-js', 'drizzle-orm'],
+					// Group icons separately
+					'icons': ['@lucide/svelte'],
+					// Group markdown processing
+					'markdown': ['marked']
+				}
+			}
+		},
+		// Reduce minification time in development
+		minify: process.env.NODE_ENV === 'production' ? 'esbuild' : false
 	}
 });

@@ -273,15 +273,8 @@
 							<Plus class="mr-2 h-4 w-4" />
 							Create Policy
 						</Button>
-						<span class="text-xs text-muted-foreground">or</span>
-						<form method="POST" action="?/initializeDefaults" use:enhance>
-							<Button type="submit" variant="outline" size="sm" class="font-mono text-xs">
-								<Settings2 class="mr-2 h-4 w-4" />
-								Initialize Default Policies
-							</Button>
-						</form>
 						<p class="mt-1 max-w-xs text-xs text-muted-foreground">
-							Sets up Standard, Priority, and Enterprise SLA policies with recommended settings.
+							Or run the database seed script to set up Standard, Priority, and Enterprise SLA policies with recommended settings.
 						</p>
 					</div>
 				</div>

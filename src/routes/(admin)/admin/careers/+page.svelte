@@ -25,6 +25,7 @@
 		MoreVertical,
 		FileText
 	} from '@lucide/svelte';
+	import { toast } from 'svelte-sonner';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { Button } from '$lib/components/ui/button';
@@ -344,8 +345,19 @@
 			<Dialog.Title>Create Job Posting</Dialog.Title>
 			<Dialog.Description>Add a new job posting to the careers page.</Dialog.Description>
 		</Dialog.Header>
-		<form method="POST" action="?/create" use:enhance>
-			<div class="space-y-4">
+		<form method="POST" action="?/create" use:enhance={() => {
+			return async ({ result, update }) => {
+				if (result.type === 'success') {
+					createDialogOpen = false;
+					toast.success('Job posting created successfully');
+				} else if (result.type === 'failure') {
+					const message = (result.data as { message?: string })?.message ?? 'Failed to create job posting';
+					toast.error(message);
+				}
+				await update();
+			};
+		}}>
+			<Dialog.Body class="space-y-4">
 				<div>
 					<Label for="title">Job Title</Label>
 					<Input id="title" name="title" placeholder="e.g., Senior Software Engineer" required />
@@ -384,8 +396,8 @@
 					<Label for="description">Description</Label>
 					<Textarea id="description" name="description" placeholder="Job description..." rows={4} />
 				</div>
-			</div>
-			<Dialog.Footer class="mt-6">
+			</Dialog.Body>
+			<Dialog.Footer>
 				<Button type="button" variant="outline" onclick={() => createDialogOpen = false}>Cancel</Button>
 				<Button type="submit">Create Job</Button>
 			</Dialog.Footer>

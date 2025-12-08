@@ -63,9 +63,13 @@
 		method="POST"
 		use:enhance={() => {
 			isSubmitting = true;
-			return async ({ update }) => {
+			return async ({ result, update }) => {
 				await update();
 				isSubmitting = false;
+				// Scroll to top to show success message or error
+				if (result.type === 'failure') {
+					window.scrollTo({ top: 0, behavior: 'smooth' });
+				}
 			};
 		}}
 		class="pb-12"

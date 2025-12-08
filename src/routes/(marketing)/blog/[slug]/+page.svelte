@@ -10,7 +10,8 @@
 	let { data }: { data: PageData } = $props();
 	const { post } = data;
 
-	function formatDate(dateStr: string): string {
+	function formatDate(dateStr: string | Date | null): string {
+		if (!dateStr) return '';
 		return new Date(dateStr).toLocaleDateString('en-US', {
 			year: 'numeric',
 			month: 'long',
@@ -20,8 +21,8 @@
 </script>
 
 <svelte:head>
-	<title>{post.title} — {m.site_name()}</title>
-	<meta name="description" content={post.excerpt} />
+	<title>{post.metaTitle ?? post.title} — {m.site_name()}</title>
+	<meta name="description" content={post.metaDescription ?? post.excerpt ?? ''} />
 </svelte:head>
 
 <!-- Article Header -->
@@ -32,11 +33,11 @@
 				<span class="font-mono uppercase text-primary">{post.category}</span>
 				<span class="font-mono flex items-center gap-1 text-muted-foreground">
 					<Calendar class="h-3 w-3" />
-					{formatDate(post.date)}
+					{formatDate(post.publishedAt)}
 				</span>
 				<span class="font-mono flex items-center gap-1 text-muted-foreground">
 					<Clock class="h-3 w-3" />
-					{post.readTime}
+					{post.readTime ?? '5 min read'}
 				</span>
 			</div>
 			<h1 class="font-display mt-4 text-3xl font-black uppercase leading-[0.95] tracking-tight md:text-4xl lg:text-5xl">
@@ -45,10 +46,10 @@
 			<p class="font-body mt-4 text-lg text-muted-foreground">{post.excerpt}</p>
 		</div>
 		<div class="col-span-12 flex flex-col justify-between bg-card px-6 py-12 md:px-12 lg:col-span-4 lg:px-16 lg:py-16">
-			{#if post.author}
+			{#if post.authorName}
 				<div>
 					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">AUTHOR</span>
-					<p class="font-ui mt-1 text-sm font-semibold">{post.author}</p>
+					<p class="font-ui mt-1 text-sm font-semibold">{post.authorName}</p>
 				</div>
 			{/if}
 			{#if post.tags && post.tags.length > 0}

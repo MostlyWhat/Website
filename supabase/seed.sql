@@ -495,6 +495,203 @@ ON CONFLICT (id) DO UPDATE SET
     updated_at = NOW();
 
 -- =============================================================================
+-- Default System Settings
+-- =============================================================================
+-- Key-value system configuration settings
+
+INSERT INTO system_settings (key, value, category, label, description, value_type, is_secret)
+VALUES
+    -- General Settings
+    ('site_name', '"MostlyWhat Systems"', 'general', 'Site Name', 'The name of your site shown in the header and emails', 'string', false),
+    ('support_email', '"support@mostlywhat.com"', 'general', 'Support Email', 'Default email for support inquiries', 'string', false),
+    ('timezone', '"America/New_York"', 'general', 'Default Timezone', 'Default timezone for date/time display', 'string', false),
+    
+    -- Ticket Settings  
+    ('ticket_auto_close_days', '7', 'tickets', 'Auto-Close Days', 'Days of inactivity before tickets are auto-closed (0 to disable)', 'number', false),
+    ('ticket_allow_customer_reopen', 'true', 'tickets', 'Allow Customer Reopen', 'Allow customers to reopen closed tickets', 'boolean', false),
+    ('ticket_require_category', 'true', 'tickets', 'Require Category', 'Require category selection when creating tickets', 'boolean', false),
+    ('ticket_allow_attachments', 'true', 'tickets', 'Allow Attachments', 'Allow file attachments on tickets', 'boolean', false),
+    ('ticket_max_attachment_size', '10', 'tickets', 'Max Attachment Size (MB)', 'Maximum file size for attachments in megabytes', 'number', false),
+    
+    -- Billing Settings
+    ('billing_currency', '"USD"', 'billing', 'Default Currency', 'Default currency for invoices and payments', 'string', false),
+    ('billing_tax_rate', '0', 'billing', 'Default Tax Rate (%)', 'Default tax rate applied to invoices', 'number', false),
+    ('billing_invoice_prefix', '"INV-"', 'billing', 'Invoice Prefix', 'Prefix for invoice numbers', 'string', false),
+    ('billing_due_days', '30', 'billing', 'Invoice Due Days', 'Default number of days until invoice is due', 'number', false),
+    
+    -- Email Settings
+    ('email_notifications_enabled', 'true', 'email', 'Email Notifications', 'Enable email notifications for tickets and updates', 'boolean', false),
+    ('email_digest_enabled', 'false', 'email', 'Daily Digest', 'Send daily summary emails instead of individual notifications', 'boolean', false),
+    
+    -- Security Settings
+    ('security_two_factor_required', 'false', 'security', 'Require 2FA', 'Require two-factor authentication for all admin users', 'boolean', false),
+    ('security_session_timeout_minutes', '60', 'security', 'Session Timeout (minutes)', 'Inactive session timeout in minutes', 'number', false),
+    ('security_password_min_length', '8', 'security', 'Min Password Length', 'Minimum password length for user accounts', 'number', false)
+ON CONFLICT (key) DO UPDATE SET
+    value = EXCLUDED.value,
+    updated_at = NOW();
+
+-- =============================================================================
+-- Status Page Services (Default)
+-- =============================================================================
+-- Basic services for the status page
+
+INSERT INTO status_services (id, name, slug, description, status, sort_order)
+VALUES
+    ('e0000000-0000-0000-0000-000000000001', 'Website', 'website', 'Main marketing website and public pages', 'operational', 1),
+    ('e0000000-0000-0000-0000-000000000002', 'Client Portal', 'client-portal', 'Customer dashboard and project management', 'operational', 2),
+    ('e0000000-0000-0000-0000-000000000003', 'API', 'api', 'Backend API services and integrations', 'operational', 3),
+    ('e0000000-0000-0000-0000-000000000004', 'Database', 'database', 'Data storage and retrieval services', 'operational', 4),
+    ('e0000000-0000-0000-0000-000000000005', 'Email Services', 'email', 'Transactional and notification emails', 'operational', 5)
+ON CONFLICT (slug) DO UPDATE SET
+    name = EXCLUDED.name,
+    description = EXCLUDED.description,
+    sort_order = EXCLUDED.sort_order,
+    updated_at = NOW();
+
+-- =============================================================================
+-- Sample Blog Post
+-- =============================================================================
+-- One sample blog post for the marketing site
+
+DO $$
+DECLARE
+    admin_id uuid;
+BEGIN
+    SELECT id INTO admin_id FROM profiles WHERE role IN ('super_admin', 'admin') LIMIT 1;
+    
+    IF admin_id IS NOT NULL THEN
+        INSERT INTO blog_posts (
+            id, slug, title, excerpt, content, category, tags,
+            status, is_featured, published_at, read_time, author_id
+        ) VALUES (
+            'f0000000-0000-0000-0000-000000000001',
+            'building-modern-web-applications',
+            'Building Modern Web Applications with SvelteKit',
+            'Learn how we leverage SvelteKit to build fast, scalable web applications for our clients.',
+            '## Introduction
+
+Modern web development has evolved significantly over the past few years. At MostlyWhat Systems, we''ve embraced SvelteKit as our framework of choice for building client applications.
+
+## Why SvelteKit?
+
+SvelteKit offers several advantages that make it ideal for production applications:
+
+- **Performance**: Svelte compiles to vanilla JavaScript, resulting in smaller bundle sizes
+- **Developer Experience**: The framework is intuitive and reduces boilerplate code
+- **SEO-Friendly**: Server-side rendering is built-in and easy to configure
+- **Type Safety**: Full TypeScript support out of the box
+
+## Our Approach
+
+When we start a new project, we follow these principles:
+
+1. **Design System First**: We establish a consistent design language
+2. **Component Architecture**: Reusable components for maintainability
+3. **Progressive Enhancement**: Core functionality works without JavaScript
+4. **Performance Budgets**: We set and monitor performance metrics
+
+## Conclusion
+
+SvelteKit has become an essential part of our technology stack. Its combination of performance, developer experience, and flexibility makes it perfect for building modern web applications.
+
+If you''re interested in learning more about how we can help build your next project, [get in touch](/contact).',
+            'development',
+            '["sveltekit", "web development", "javascript", "performance"]',
+            'published',
+            true,
+            NOW(),
+            '5 min read',
+            admin_id
+        )
+        ON CONFLICT (slug) DO UPDATE SET
+            title = EXCLUDED.title,
+            excerpt = EXCLUDED.excerpt,
+            content = EXCLUDED.content,
+            updated_at = NOW();
+    END IF;
+END $$;
+
+-- =============================================================================
+-- Sample Portfolio Project
+-- =============================================================================
+-- One sample portfolio project for the marketing site
+
+DO $$
+DECLARE
+    admin_id uuid;
+BEGIN
+    SELECT id INTO admin_id FROM profiles WHERE role IN ('super_admin', 'admin') LIMIT 1;
+    
+    IF admin_id IS NOT NULL THEN
+        INSERT INTO portfolio_projects (
+            id, slug, title, client, description, content, category, tags, year,
+            status, is_featured, published_at, sort_order, created_by_id
+        ) VALUES (
+            'f0000000-0000-0000-0000-000000000002',
+            'enterprise-dashboard',
+            'Enterprise Analytics Dashboard',
+            'TechCorp Industries',
+            'A comprehensive analytics dashboard for enterprise-level data visualization and reporting.',
+            '## Project Overview
+
+TechCorp Industries needed a powerful analytics solution to help their executive team make data-driven decisions. We built a custom dashboard that aggregates data from multiple sources and presents it in an intuitive interface.
+
+## The Challenge
+
+The client was dealing with:
+- Data scattered across multiple systems
+- Manual report generation taking days
+- Lack of real-time insights
+- Poor mobile experience for executives on the go
+
+## Our Solution
+
+We developed a comprehensive dashboard featuring:
+
+### Real-time Data Integration
+Connected to 5 different data sources with live updates every 30 seconds.
+
+### Custom Visualizations
+Built interactive charts and graphs tailored to their specific KPIs.
+
+### Mobile-First Design
+Fully responsive design that works seamlessly on tablets and phones.
+
+### Role-Based Access
+Different views for executives, managers, and analysts.
+
+## Results
+
+After implementation, TechCorp saw:
+- 80% reduction in report generation time
+- 45% increase in data-driven decisions
+- 100% executive adoption rate within first month
+
+## Technologies Used
+
+- SvelteKit for the frontend
+- PostgreSQL for data storage
+- Redis for caching
+- D3.js for visualizations',
+            'web-app',
+            '["dashboard", "analytics", "enterprise", "sveltekit"]',
+            '2024',
+            'published',
+            true,
+            NOW(),
+            1,
+            admin_id
+        )
+        ON CONFLICT (slug) DO UPDATE SET
+            title = EXCLUDED.title,
+            description = EXCLUDED.description,
+            content = EXCLUDED.content,
+            updated_at = NOW();
+    END IF;
+END $$;
+
+-- =============================================================================
 -- Note: Tickets and invoices will be created through the application
 -- after users are registered and linked to organizations.
 -- =============================================================================

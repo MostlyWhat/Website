@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
+	import { toast } from 'svelte-sonner';
 	import * as Card from '$lib/components/ui/card';
 	import * as Tabs from '$lib/components/ui/tabs';
 	import * as Dialog from '$lib/components/ui/dialog';
@@ -336,13 +337,17 @@
 				return async ({ result }) => {
 					if (result.type === 'success') {
 						showConvertDialog = false;
+						toast.success('Contact converted to ticket successfully');
 						invalidateAll();
+					} else if (result.type === 'failure') {
+						const message = (result.data as { message?: string })?.message ?? 'Failed to convert to ticket';
+						toast.error(message);
 					}
 				};
 			}}>
 				<input type="hidden" name="submissionId" value={selectedSubmission.id} />
 				
-				<div class="space-y-4 py-4">
+				<Dialog.Body class="space-y-4">
 					<div class="rounded-lg bg-muted p-3">
 						<p class="text-sm font-medium">{selectedSubmission.name}</p>
 						<p class="text-xs text-muted-foreground">{selectedSubmission.email}</p>
@@ -382,7 +387,7 @@
 							<option value="urgent">Urgent</option>
 						</select>
 					</div>
-				</div>
+				</Dialog.Body>
 				
 				<Dialog.Footer>
 					<Button type="button" variant="outline" onclick={() => showConvertDialog = false}>

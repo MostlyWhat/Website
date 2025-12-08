@@ -6,6 +6,7 @@
 	 */
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
+	import { toast } from 'svelte-sonner';
 	import { 
 		Plus, 
 		CheckCircle, 
@@ -403,11 +404,15 @@
 			return async ({ result }) => {
 				if (result.type === 'success') {
 					serviceDialogOpen = false;
+					toast.success('Service created successfully');
 					invalidateAll();
+				} else if (result.type === 'failure') {
+					const message = (result.data as { message?: string })?.message ?? 'Failed to create service';
+					toast.error(message);
 				}
 			};
 		}}>
-			<div class="space-y-4">
+			<Dialog.Body class="space-y-4">
 				<div>
 					<Label for="name">Service Name</Label>
 					<Input id="name" name="name" placeholder="e.g., Website, API, Database" required />
@@ -416,8 +421,8 @@
 					<Label for="description">Description</Label>
 					<Input id="description" name="description" placeholder="Brief description of the service" />
 				</div>
-			</div>
-			<Dialog.Footer class="mt-6">
+			</Dialog.Body>
+			<Dialog.Footer>
 				<Button type="button" variant="outline" onclick={() => serviceDialogOpen = false}>Cancel</Button>
 				<Button type="submit">Add Service</Button>
 			</Dialog.Footer>
@@ -436,11 +441,15 @@
 			return async ({ result }) => {
 				if (result.type === 'success') {
 					incidentDialogOpen = false;
+					toast.success('Incident reported successfully');
 					invalidateAll();
+				} else if (result.type === 'failure') {
+					const message = (result.data as { message?: string })?.message ?? 'Failed to report incident';
+					toast.error(message);
 				}
 			};
 		}}>
-			<div class="space-y-4">
+			<Dialog.Body class="space-y-4">
 				<div>
 					<Label for="title">Title</Label>
 					<Input id="title" name="title" placeholder="Brief incident title" required />
@@ -477,8 +486,8 @@
 						<span class="text-sm">Scheduled Maintenance</span>
 					</label>
 				</div>
-			</div>
-			<Dialog.Footer class="mt-6">
+			</Dialog.Body>
+			<Dialog.Footer>
 				<Button type="button" variant="outline" onclick={() => incidentDialogOpen = false}>Cancel</Button>
 				<Button type="submit">Report Incident</Button>
 			</Dialog.Footer>
@@ -498,12 +507,16 @@
 				if (result.type === 'success') {
 					updateDialogOpen = false;
 					selectedIncident = null;
+					toast.success('Incident updated successfully');
 					invalidateAll();
+				} else if (result.type === 'failure') {
+					const message = (result.data as { message?: string })?.message ?? 'Failed to update incident';
+					toast.error(message);
 				}
 			};
 		}}>
 			<input type="hidden" name="id" value={selectedIncident?.id} />
-			<div class="space-y-4">
+			<Dialog.Body class="space-y-4">
 				<div>
 					<Label for="updateStatus">New Status</Label>
 					<select name="status" id="updateStatus" class="w-full rounded border border-border bg-background px-3 py-2 text-sm">
@@ -517,8 +530,8 @@
 					<Label for="updateMessage">Update Message</Label>
 					<Textarea id="updateMessage" name="message" placeholder="Describe the current status..." rows={3} />
 				</div>
-			</div>
-			<Dialog.Footer class="mt-6">
+			</Dialog.Body>
+			<Dialog.Footer>
 				<Button type="button" variant="outline" onclick={() => { updateDialogOpen = false; selectedIncident = null; }}>Cancel</Button>
 				<Button type="submit">Post Update</Button>
 			</Dialog.Footer>
