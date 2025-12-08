@@ -15,6 +15,9 @@ export const load: PageServerLoad = async ({ locals }) => {
         throw error(403, 'Access denied');
     }
 
+    // Create per-request database connection
+    const db = createDb();
+
     // Fetch all canned responses (global + user's own)
     const responses = await db
         .select({
@@ -55,9 +58,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 export const actions: Actions = {
     create: async ({ request, locals }) => {
-        // Create per-request database connection
-        const db = createDb();
-if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -75,6 +76,9 @@ if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profil
         // Only admins can create global responses
         const canCreateGlobal = ['admin', 'super_admin'].includes(locals.profile.role ?? '');
 
+        // Create per-request database connection
+        const db = createDb();
+
         const [created] = await db.insert(cannedResponses).values({
             title: title.trim(),
             shortcut: shortcut?.trim() || null,
@@ -91,9 +95,7 @@ if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profil
     },
 
     update: async ({ request, locals }) => {
-        // Create per-request database connection
-        const db = createDb();
-if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -108,6 +110,9 @@ if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profil
         if (!id || !title?.trim() || !content?.trim()) {
             return fail(400, { error: 'ID, title, and content are required' });
         }
+
+        // Create per-request database connection
+        const db = createDb();
 
         // Check ownership or admin status
         const [existing] = await db
@@ -146,9 +151,7 @@ if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profil
     },
 
     delete: async ({ request, locals }) => {
-        // Create per-request database connection
-        const db = createDb();
-if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -158,6 +161,9 @@ if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profil
         if (!id) {
             return fail(400, { error: 'ID is required' });
         }
+
+        // Create per-request database connection
+        const db = createDb();
 
         // Check ownership or admin status
         const [existing] = await db

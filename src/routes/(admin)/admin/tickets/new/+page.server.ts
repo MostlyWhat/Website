@@ -22,6 +22,9 @@ export const load: PageServerLoad = async ({ locals }) => {
         return error(403, 'Access denied');
     }
 
+    // Create per-request database connection
+    const db = createDb();
+
     // Get organizations for selection
     const orgs = await db
         .select({
@@ -69,6 +72,8 @@ function generateTicketNumber(): string {
 
 export const actions: Actions = {
     createTicket: async ({ request, locals }) => {
+        // Create per-request database connection
+        const db = createDb();
         if (!locals.user || !locals.profile) {
             return redirect(302, '/auth/login');
         }

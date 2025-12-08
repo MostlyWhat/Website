@@ -7,6 +7,7 @@ import { ticketActivity, getClientIp } from '$lib/server/activity-logger';
 import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
+    const db = createDb();
     if (!locals.user || !locals.profile) {
         throw redirect(302, '/auth/login');
     }

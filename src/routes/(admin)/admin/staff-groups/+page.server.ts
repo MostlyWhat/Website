@@ -28,6 +28,9 @@ export const load: PageServerLoad = async ({ locals }) => {
         memberCount: number;
     }> = [];
 
+    // Create per-request database connection
+    const db = createDb();
+
     try {
         const groupsData = await db
             .select({
@@ -91,7 +94,7 @@ export const actions: Actions = {
     createGroup: async ({ request, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.user || !locals.profile) {
+        if (!locals.user || !locals.profile) {
             return fail(401, { error: 'Unauthorized' });
         }
 
@@ -143,7 +146,7 @@ if (!locals.user || !locals.profile) {
     deleteGroup: async ({ request, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.user || !locals.profile) {
+        if (!locals.user || !locals.profile) {
             return fail(401, { error: 'Unauthorized' });
         }
 
@@ -185,7 +188,7 @@ if (!locals.user || !locals.profile) {
     toggleGroup: async ({ request, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.user || !locals.profile) {
+        if (!locals.user || !locals.profile) {
             return fail(401, { error: 'Unauthorized' });
         }
 

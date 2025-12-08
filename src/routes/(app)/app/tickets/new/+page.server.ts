@@ -43,6 +43,9 @@ export const load: PageServerLoad = async ({ locals }) => {
         throw redirect(303, '/auth/login');
     }
 
+    // Create per-request database connection
+    const db = createDb();
+
     // Get user's organizations
     const userOrgs = await db
         .select({
@@ -119,9 +122,7 @@ function generateSlug(): string {
 
 export const actions: Actions = {
     default: async ({ request, locals }) => {
-        // Create per-request database connection
-        const db = createDb();
-// Verify user is authenticated
+        // Verify user is authenticated
         if (!locals.session || !locals.profile) {
             return fail(401, { error: 'You must be logged in to create a ticket' });
         }
@@ -169,6 +170,9 @@ export const actions: Actions = {
                 subject, description, priority, category
             });
         }
+
+        // Create per-request database connection
+        const db = createDb();
 
         try {
             // Get user's first organization (or use project's organization)

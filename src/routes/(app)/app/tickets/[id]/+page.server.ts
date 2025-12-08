@@ -14,6 +14,7 @@ import { env } from '$env/dynamic/private';
 import { ticketActivity, getClientIp } from '$lib/server/activity-logger';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
+    const db = createDb();
     // Verify user is authenticated
     if (!locals.session || !locals.profile) {
         throw redirect(303, '/auth/login');
@@ -179,7 +180,7 @@ export const actions: Actions = {
     sendMessage: async ({ request, locals, params }) => {
         // Create per-request database connection
         const db = createDb();
-// Verify user is authenticated
+        // Verify user is authenticated
         if (!locals.session || !locals.profile) {
             return fail(401, { error: 'You must be logged in to send messages' });
         }
@@ -374,13 +375,14 @@ export const actions: Actions = {
     },
 
     closeTicket: async ({ locals, params }) => {
-        // Create per-request database connection
-        const db = createDb();
-if (!locals.session || !locals.profile) {
+        if (!locals.session || !locals.profile) {
             return fail(401, { error: 'You must be logged in' });
         }
 
         const ticketId = params.id;
+
+        // Create per-request database connection
+        const db = createDb();
 
         try {
             // Only staff can close tickets
@@ -439,13 +441,14 @@ if (!locals.session || !locals.profile) {
     },
 
     reopenTicket: async ({ locals, params }) => {
-        // Create per-request database connection
-        const db = createDb();
-if (!locals.session || !locals.profile) {
+        if (!locals.session || !locals.profile) {
             return fail(401, { error: 'You must be logged in' });
         }
 
         const ticketId = params.id;
+
+        // Create per-request database connection
+        const db = createDb();
 
         try {
             // Get ticket
@@ -523,13 +526,14 @@ if (!locals.session || !locals.profile) {
     },
 
     markResolved: async ({ locals, params }) => {
-        // Create per-request database connection
-        const db = createDb();
-if (!locals.session || !locals.profile) {
+        if (!locals.session || !locals.profile) {
             return fail(401, { error: 'You must be logged in' });
         }
 
         const ticketId = params.id;
+
+        // Create per-request database connection
+        const db = createDb();
 
         try {
             const ticketData = await db

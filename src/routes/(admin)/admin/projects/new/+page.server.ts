@@ -8,7 +8,7 @@ import type { PageServerLoad, Actions } from './$types';
 // Generate project number (e.g., PRJ-2024-00001)
 async function generateProjectNumber(): Promise<string> {
     const db = createDb();
-const year = new Date().getFullYear();
+    const year = new Date().getFullYear();
     const prefix = `PRJ-${year}-`;
 
     const [lastProject] = await db
@@ -38,6 +38,9 @@ export const load: PageServerLoad = async ({ locals }) => {
     if (!['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
         throw redirect(302, '/admin');
     }
+
+    // Create per-request database connection
+    const db = createDb();
 
     // Fetch organizations for dropdown
     const orgs = await db
@@ -90,9 +93,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 export const actions: Actions = {
     default: async ({ request, locals }) => {
-        // Create per-request database connection
-        const db = createDb();
-if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -123,6 +124,9 @@ if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profil
             .replace(/[^a-z0-9]+/g, '-')
             .replace(/^-+|-+$/g, '')
             + '-' + Date.now().toString(36);
+
+        // Create per-request database connection
+        const db = createDb();
 
         try {
             const projectNumber = await generateProjectNumber();

@@ -13,6 +13,9 @@ export const load: PageServerLoad = async ({ locals }) => {
         return { organizations: [] };
     }
 
+    // Create per-request database connection
+    const db = createDb();
+
     // Fetch all organizations with computed counts
     const allOrgs = await db
         .select({

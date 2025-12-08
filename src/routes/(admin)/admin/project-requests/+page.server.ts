@@ -6,7 +6,7 @@ import type { PageServerLoad, Actions } from './$types';
 import { projectRequestActivity, projectActivity, getClientIp } from '$lib/server/activity-logger';
 
 // Generate project number like PRJ-YYYY-XXXXX
-async function generateProjectNumber(): Promise<string> {
+async function generateProjectNumber(db: ReturnType<typeof createDb>): Promise<string> {
     const year = new Date().getFullYear();
     const prefix = `PRJ-${year}-`;
 
@@ -32,6 +32,9 @@ export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user || !locals.profile || !['super_admin', 'admin', 'staff'].includes(locals.profile.role ?? '')) {
         redirect(302, '/auth/login');
     }
+
+    // Create per-request database connection
+    const db = createDb();
 
     // Get all project requests with related data
     const allRequests = await db
@@ -67,6 +70,8 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 export const actions: Actions = {
     updateStatus: async ({ request, locals }) => {
+        // Create per-request database connection
+        const db = createDb();
         if (!locals.user || !locals.profile || !['super_admin', 'admin', 'staff'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Unauthorized' });
         }
@@ -119,6 +124,8 @@ export const actions: Actions = {
     },
 
     convertToProject: async ({ request, locals }) => {
+        // Create per-request database connection
+        const db = createDb();
         if (!locals.user || !locals.profile || !['super_admin', 'admin', 'staff'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Unauthorized' });
         }
@@ -145,7 +152,7 @@ export const actions: Actions = {
         const projectRequest = req[0];
 
         try {
-            const projectNumber = await generateProjectNumber();
+            const projectNumber = await generateProjectNumber(db);
             const slug = (projectName || projectRequest.title)
                 .toLowerCase()
                 .replace(/[^a-z0-9]+/g, '-')

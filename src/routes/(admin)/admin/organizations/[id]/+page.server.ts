@@ -35,6 +35,9 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 
     const orgId = params.id;
 
+    // Create per-request database connection
+    const db = createDb();
+
     // Fetch organization
     const [org] = await db
         .select()
@@ -123,9 +126,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 
 export const actions: Actions = {
     createInvite: async ({ request, params, locals }) => {
-        // Create per-request database connection
-        const db = createDb();
-if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -156,6 +157,9 @@ if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ??
             }
         }
 
+        // Create per-request database connection
+        const db = createDb();
+
         await db.insert(organizationInvites).values({
             organizationId: params.id,
             code,
@@ -175,14 +179,15 @@ if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ??
     },
 
     deleteInvite: async ({ request, params, locals }) => {
-        // Create per-request database connection
-        const db = createDb();
-if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
         const formData = await request.formData();
         const inviteId = formData.get('inviteId') as string;
+
+        // Create per-request database connection
+        const db = createDb();
 
         // Get invite code for logging
         const [invite] = await db.select({ code: organizationInvites.code }).from(organizationInvites).where(eq(organizationInvites.id, inviteId));
@@ -204,14 +209,15 @@ if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ??
     },
 
     approveMember: async ({ request, params, locals }) => {
-        // Create per-request database connection
-        const db = createDb();
-if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
         const formData = await request.formData();
         const pendingId = formData.get('pendingId') as string;
+
+        // Create per-request database connection
+        const db = createDb();
 
         // Get pending member
         const [pending] = await db
@@ -256,15 +262,16 @@ if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ??
     },
 
     rejectMember: async ({ request, params, locals }) => {
-        // Create per-request database connection
-        const db = createDb();
-if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
         const formData = await request.formData();
         const pendingId = formData.get('pendingId') as string;
         const reason = formData.get('reason') as string;
+
+        // Create per-request database connection
+        const db = createDb();
 
         // Get pending member info for logging
         const [pending] = await db
@@ -296,14 +303,15 @@ if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ??
     },
 
     removeMember: async ({ request, params, locals }) => {
-        // Create per-request database connection
-        const db = createDb();
-if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
         const formData = await request.formData();
         const profileId = formData.get('profileId') as string;
+
+        // Create per-request database connection
+        const db = createDb();
 
         // Get info for activity log
         const [org] = await db.select({ name: organizations.name }).from(organizations).where(eq(organizations.id, params.id));
@@ -325,15 +333,16 @@ if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ??
     },
 
     updateMemberRole: async ({ request, params, locals }) => {
-        // Create per-request database connection
-        const db = createDb();
-if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
         const formData = await request.formData();
         const profileId = formData.get('profileId') as string;
         const role = formData.get('role') as string;
+
+        // Create per-request database connection
+        const db = createDb();
 
         // Get current role and user info for logging
         const [currentMember] = await db.select({ role: organizationMembers.role }).from(organizationMembers).where(and(eq(organizationMembers.profileId, profileId), eq(organizationMembers.organizationId, params.id)));
@@ -357,9 +366,7 @@ if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ??
     },
 
     addMember: async ({ request, params, locals }) => {
-        // Create per-request database connection
-        const db = createDb();
-if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -370,6 +377,9 @@ if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ??
         if (!email || !email.includes('@')) {
             return fail(400, { error: 'Please provide a valid email address' });
         }
+
+        // Create per-request database connection
+        const db = createDb();
 
         // Find the user by email
         const [user] = await db

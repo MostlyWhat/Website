@@ -10,6 +10,9 @@ async function generateProjectNumber(): Promise<string> {
     const year = new Date().getFullYear();
     const prefix = `PRJ-${year}-`;
 
+    // Create per-request database connection
+    const db = createDb();
+
     const latest = await db
         .select({ projectNumber: projects.projectNumber })
         .from(projects)
@@ -34,6 +37,9 @@ export const load: PageServerLoad = async ({ params, locals }) => {
     }
 
     const requestId = params.id;
+
+    // Create per-request database connection
+    const db = createDb();
 
     // Get the request with related data
     const request = await db
@@ -131,6 +137,9 @@ export const actions: Actions = {
             return fail(400, { error: 'Missing status' });
         }
 
+        // Create per-request database connection
+        const db = createDb();
+
         try {
             // Get current status for logging
             const [currentRequest] = await db
@@ -173,6 +182,9 @@ export const actions: Actions = {
 
         const formData = await request.formData();
         const projectName = formData.get('projectName') as string;
+
+        // Create per-request database connection
+        const db = createDb();
 
         // Get the request details
         const req = await db

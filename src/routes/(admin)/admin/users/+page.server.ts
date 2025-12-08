@@ -13,6 +13,9 @@ export const load: PageServerLoad = async ({ locals }) => {
         return { users: [] };
     }
 
+    // Create per-request database connection
+    const db = createDb();
+
     // Fetch all users
     const allUsers = await db
         .select({

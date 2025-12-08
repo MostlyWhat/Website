@@ -17,6 +17,9 @@ export const load: PageServerLoad = async ({ locals, url }) => {
         throw redirect(302, '/admin');
     }
 
+    // Create per-request database connection
+    const db = createDb();
+
     // Get date range from query params (default: last 30 days)
     const endDate = url.searchParams.get('endDate') ?? new Date().toISOString().split('T')[0];
     const startDate = url.searchParams.get('startDate') ??

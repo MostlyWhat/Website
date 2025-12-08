@@ -5,6 +5,7 @@ import { error, fail } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
+    const db = createDb();
     if (!locals.user || !locals.profile) {
         throw error(401, 'Unauthorized');
     }
@@ -107,6 +108,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 
 export const actions: Actions = {
     feedback: async ({ request, params }) => {
+        const db = createDb();
         const formData = await request.formData();
         const helpful = formData.get('helpful') === 'true';
         const { slug } = params;

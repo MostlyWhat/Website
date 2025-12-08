@@ -14,6 +14,9 @@ export const load: PageServerLoad = async ({ locals }) => {
         throw redirect(302, '/app');
     }
 
+    // Create per-request database connection
+    const db = createDb();
+
     // Get existing categories for suggestions
     let categories: string[] = [];
     try {
@@ -33,6 +36,8 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 export const actions: Actions = {
     default: async ({ request, locals }) => {
+        // Create per-request database connection
+        const db = createDb();
         if (!locals.user || !locals.profile) {
             return fail(401, { error: 'Unauthorized' });
         }

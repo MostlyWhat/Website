@@ -18,6 +18,9 @@ export const load: PageServerLoad = async ({ locals, url }) => {
     const audienceFilter = url.searchParams.get('audience');
     const categoryFilter = url.searchParams.get('category');
 
+    // Create per-request database connection
+    const db = createDb();
+
     try {
         // Build query
         let query = db
@@ -87,9 +90,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 
 export const actions: Actions = {
     delete: async ({ request, locals }) => {
-        // Create per-request database connection
-        const db = createDb();
-if (!locals.user || !locals.profile) {
+        if (!locals.user || !locals.profile) {
             return fail(401, { error: 'Unauthorized' });
         }
 
@@ -105,6 +106,9 @@ if (!locals.user || !locals.profile) {
             return fail(400, { error: 'Article ID required' });
         }
 
+        // Create per-request database connection
+        const db = createDb();
+
         try {
             await db.delete(supportArticles).where(eq(supportArticles.id, articleId));
             return { success: true };
@@ -115,9 +119,7 @@ if (!locals.user || !locals.profile) {
     },
 
     togglePublish: async ({ request, locals }) => {
-        // Create per-request database connection
-        const db = createDb();
-if (!locals.user || !locals.profile) {
+        if (!locals.user || !locals.profile) {
             return fail(401, { error: 'Unauthorized' });
         }
 
@@ -128,6 +130,9 @@ if (!locals.user || !locals.profile) {
         if (!articleId) {
             return fail(400, { error: 'Article ID required' });
         }
+
+        // Create per-request database connection
+        const db = createDb();
 
         try {
             await db

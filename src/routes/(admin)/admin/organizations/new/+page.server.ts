@@ -24,6 +24,9 @@ export const load: PageServerLoad = async ({ locals }) => {
         throw redirect(302, '/admin');
     }
 
+    // Create per-request database connection
+    const db = createDb();
+
     // Fetch all users who could be set as owner
     const users = await db
         .select({
@@ -40,9 +43,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 export const actions: Actions = {
     default: async ({ request, locals }) => {
-        // Create per-request database connection
-        const db = createDb();
-if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -64,6 +65,9 @@ if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ??
         let slug = generateSlug(name);
         let slugCounter = 0;
         let slugExists = true;
+
+        // Create per-request database connection
+        const db = createDb();
 
         while (slugExists) {
             const checkSlug = slugCounter > 0 ? `${slug}-${slugCounter}` : slug;

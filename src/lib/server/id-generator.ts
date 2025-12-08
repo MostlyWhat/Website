@@ -11,6 +11,7 @@ import { desc, sql } from 'drizzle-orm';
  * Generate organization number (e.g., ORG-0001)
  */
 export async function generateOrgNumber(): Promise<string> {
+    const db = createDb();
     const prefix = 'ORG-';
 
     const [lastOrg] = await db
@@ -35,6 +36,7 @@ export async function generateOrgNumber(): Promise<string> {
  * Generate project number (e.g., PRJ-2024-00001)
  */
 export async function generateProjectNumber(): Promise<string> {
+    const db = createDb();
     const year = new Date().getFullYear();
     const prefix = `PRJ-${year}-`;
 
@@ -60,6 +62,7 @@ export async function generateProjectNumber(): Promise<string> {
  * Generate ticket number (e.g., TKT-2024-00001)
  */
 export async function generateTicketNumber(): Promise<string> {
+    const db = createDb();
     const year = new Date().getFullYear();
     const prefix = `TKT-${year}-`;
 

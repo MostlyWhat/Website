@@ -15,6 +15,9 @@ export const load: PageServerLoad = async ({ locals }) => {
         throw redirect(303, '/auth/login');
     }
 
+    // Create per-request database connection
+    const db = createDb();
+
     // Get user's organizations with their role
     const userOrgs = await db
         .select({

@@ -36,6 +36,9 @@ export const load: PageServerLoad = async ({ params, locals }) => {
     const requestedByProfile = alias(profiles, 'requested_by');
     const revisionAssignedProfile = alias(profiles, 'revision_assigned');
 
+    // Create per-request database connection
+    const db = createDb();
+
     // Fetch the project with phase data
     const projectData = await db
         .select({
@@ -325,7 +328,7 @@ export const actions: Actions = {
     assign: async ({ request, params, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -367,7 +370,7 @@ if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profil
     updatePhase: async ({ request, params, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -475,7 +478,7 @@ if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profil
     updateDetails: async ({ request, params, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -502,7 +505,7 @@ if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profil
     updateDescription: async ({ request, params, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -523,7 +526,7 @@ if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profil
     createRevision: async ({ request, params, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -553,7 +556,7 @@ if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profil
     updateRevision: async ({ request, params, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -587,7 +590,7 @@ if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profil
     createMilestone: async ({ request, params, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -621,7 +624,7 @@ if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profil
     updateMilestone: async ({ request, params, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -667,7 +670,7 @@ if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profil
     deleteMilestone: async ({ request, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 

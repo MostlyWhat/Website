@@ -13,6 +13,9 @@ export const load: PageServerLoad = async ({ locals }) => {
         return { projects: [], requests: [] };
     }
 
+    // Create per-request database connection
+    const db = createDb();
+
     // Fetch all projects with organization and assignee info
     const allProjects = await db
         .select({

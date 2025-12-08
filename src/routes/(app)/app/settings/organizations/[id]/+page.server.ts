@@ -23,6 +23,9 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         throw redirect(303, '/auth/login');
     }
 
+    // Create per-request database connection
+    const db = createDb();
+
     // Check if user is member of this organization with admin/owner role
     const [membership] = await db
         .select({
@@ -116,11 +119,12 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 
 export const actions: Actions = {
     updateOrg: async ({ request, params, locals }) => {
-        // Create per-request database connection
-        const db = createDb();
-if (!locals.session || !locals.profile) {
+        if (!locals.session || !locals.profile) {
             return fail(401, { error: 'Not authenticated' });
         }
+
+        // Create per-request database connection
+        const db = createDb();
 
         // Verify ownership
         const [membership] = await db
@@ -167,11 +171,12 @@ if (!locals.session || !locals.profile) {
     },
 
     createInvite: async ({ request, params, locals }) => {
-        // Create per-request database connection
-        const db = createDb();
-if (!locals.session || !locals.profile) {
+        if (!locals.session || !locals.profile) {
             return fail(401, { error: 'Not authenticated' });
         }
+
+        // Create per-request database connection
+        const db = createDb();
 
         // Verify admin/owner role
         const [membership] = await db
@@ -219,14 +224,15 @@ if (!locals.session || !locals.profile) {
     },
 
     deleteInvite: async ({ request, params, locals }) => {
-        // Create per-request database connection
-        const db = createDb();
-if (!locals.session || !locals.profile) {
+        if (!locals.session || !locals.profile) {
             return fail(401, { error: 'Not authenticated' });
         }
 
         const formData = await request.formData();
         const inviteId = formData.get('inviteId') as string;
+
+        // Create per-request database connection
+        const db = createDb();
 
         // Verify admin/owner role
         const [membership] = await db
@@ -261,11 +267,12 @@ if (!locals.session || !locals.profile) {
     },
 
     updateMemberRole: async ({ request, params, locals }) => {
-        // Create per-request database connection
-        const db = createDb();
-if (!locals.session || !locals.profile) {
+        if (!locals.session || !locals.profile) {
             return fail(401, { error: 'Not authenticated' });
         }
+
+        // Create per-request database connection
+        const db = createDb();
 
         // Only owners can change roles
         const [membership] = await db
@@ -309,11 +316,12 @@ if (!locals.session || !locals.profile) {
     },
 
     removeMember: async ({ request, params, locals }) => {
-        // Create per-request database connection
-        const db = createDb();
-if (!locals.session || !locals.profile) {
+        if (!locals.session || !locals.profile) {
             return fail(401, { error: 'Not authenticated' });
         }
+
+        // Create per-request database connection
+        const db = createDb();
 
         // Only owners/admins can remove members
         const [membership] = await db
@@ -375,11 +383,12 @@ if (!locals.session || !locals.profile) {
     },
 
     deleteOrganization: async ({ params, locals }) => {
-        // Create per-request database connection
-        const db = createDb();
-if (!locals.session || !locals.profile) {
+        if (!locals.session || !locals.profile) {
             return fail(401, { error: 'Not authenticated' });
         }
+
+        // Create per-request database connection
+        const db = createDb();
 
         // Only owners can delete organizations
         const [membership] = await db

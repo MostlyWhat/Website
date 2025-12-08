@@ -11,6 +11,9 @@ export const load: PageServerLoad = async ({ params, locals, url }) => {
 
     const requestId = params.id;
 
+    // Create per-request database connection
+    const db = createDb();
+
     // Get the request with related data
     const request = await db
         .select({

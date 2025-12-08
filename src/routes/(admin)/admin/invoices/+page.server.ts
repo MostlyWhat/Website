@@ -13,6 +13,9 @@ export const load: PageServerLoad = async ({ locals }) => {
         return { invoices: [] };
     }
 
+    // Create per-request database connection
+    const db = createDb();
+
     // Fetch all invoices with related data
     const allInvoices = await db
         .select({

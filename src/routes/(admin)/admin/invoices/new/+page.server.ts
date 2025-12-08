@@ -6,7 +6,7 @@ import { invoiceActivity, getClientIp } from '$lib/server/activity-logger';
 import type { PageServerLoad, Actions } from './$types';
 
 // Generate invoice number
-async function generateInvoiceNumber(): Promise<string> {
+async function generateInvoiceNumber(db: ReturnType<typeof createDb>): Promise<string> {
     const year = new Date().getFullYear();
     const prefix = `INV-${year}-`;
 
@@ -38,6 +38,9 @@ export const load: PageServerLoad = async ({ locals, url }) => {
     if (!['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
         throw redirect(302, '/admin');
     }
+
+    // Create per-request database connection
+    const db = createDb();
 
     // Get organizations for dropdown
     const orgs = await db
@@ -114,8 +117,11 @@ export const actions: Actions = {
             return fail(400, { error: 'Due date is required' });
         }
 
+        // Create per-request database connection
+        const db = createDb();
+
         try {
-            const invoiceNumber = await generateInvoiceNumber();
+            const invoiceNumber = await generateInvoiceNumber(db);
             const dueDateObj = new Date(dueDate);
 
             // Calculate recurring next date based on interval

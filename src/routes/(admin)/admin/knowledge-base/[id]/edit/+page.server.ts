@@ -17,6 +17,9 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
     const { id } = params;
 
+    // Create per-request database connection
+    const db = createDb();
+
     try {
         // Get the article
         const [article] = await db
@@ -94,6 +97,9 @@ export const actions: Actions = {
             .split(',')
             .map(t => t.trim().toLowerCase())
             .filter(Boolean);
+
+        // Create per-request database connection
+        const db = createDb();
 
         try {
             // Get current article to check publish status

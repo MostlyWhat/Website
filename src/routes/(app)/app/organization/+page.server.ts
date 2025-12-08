@@ -138,6 +138,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 
 export const actions: Actions = {
     createOrganization: async ({ request, locals }) => {
+        const db = createDb();
         if (!locals.user) {
             return fail(401, { error: 'You must be logged in' });
         }
@@ -211,6 +212,9 @@ export const actions: Actions = {
         const phone = formData.get('phone') as string;
         const website = formData.get('website') as string;
 
+        // Create per-request database connection
+        const db = createDb();
+
         // Verify ownership
         const [membership] = await db
             .select({ role: organizationMembers.role })
@@ -253,6 +257,9 @@ export const actions: Actions = {
         if (!locals.user) {
             return fail(401, { error: 'You must be logged in' });
         }
+
+        // Create per-request database connection
+        const db = createDb();
 
         const formData = await request.formData();
         const orgId = formData.get('orgId') as string;
@@ -309,6 +316,9 @@ export const actions: Actions = {
         const orgId = formData.get('orgId') as string;
         const inviteId = formData.get('inviteId') as string;
 
+        // Create per-request database connection
+        const db = createDb();
+
         // Verify admin/owner role
         const [membership] = await db
             .select({ role: organizationMembers.role })
@@ -350,6 +360,9 @@ export const actions: Actions = {
         const orgId = formData.get('orgId') as string;
         const profileId = formData.get('profileId') as string;
         const newRole = formData.get('role') as string;
+
+        // Create per-request database connection
+        const db = createDb();
 
         // Only owners can change roles
         const [membership] = await db
@@ -396,6 +409,9 @@ export const actions: Actions = {
         const formData = await request.formData();
         const orgId = formData.get('orgId') as string;
         const profileId = formData.get('profileId') as string;
+
+        // Create per-request database connection
+        const db = createDb();
 
         // Verify admin/owner role
         const [membership] = await db
@@ -461,6 +477,9 @@ export const actions: Actions = {
         const orgId = formData.get('orgId') as string;
         const confirmName = formData.get('confirmName') as string;
 
+        // Create per-request database connection
+        const db = createDb();
+
         // Verify ownership
         const [membership] = await db
             .select({ role: organizationMembers.role })
@@ -508,6 +527,9 @@ export const actions: Actions = {
 
         const formData = await request.formData();
         const orgId = formData.get('orgId') as string;
+
+        // Create per-request database connection
+        const db = createDb();
 
         // Verify membership
         const [membership] = await db

@@ -14,6 +14,9 @@ export const load: PageServerLoad = async ({ locals, url }) => {
         throw redirect(302, '/admin');
     }
 
+    // Create per-request database connection
+    const db = createDb();
+
     // Get filter parameters
     const entityType = url.searchParams.get('entityType') || '';
     const activityType = url.searchParams.get('activityType') || '';

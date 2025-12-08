@@ -15,6 +15,9 @@ export const load: PageServerLoad = async ({ locals, url }) => {
         return { tickets: [], filters: { search: '', status: 'all', priority: 'all', category: 'all' } };
     }
 
+    // Create per-request database connection
+    const db = createDb();
+
     // Get filters from URL
     const search = url.searchParams.get('q') ?? '';
     const status = url.searchParams.get('status') ?? 'all';
@@ -142,6 +145,8 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 
 export const actions: Actions = {
     bulkUpdateStatus: async ({ request, locals }) => {
+        // Create per-request database connection
+        const db = createDb();
         if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
@@ -180,6 +185,8 @@ export const actions: Actions = {
     },
 
     bulkUpdatePriority: async ({ request, locals }) => {
+        // Create per-request database connection
+        const db = createDb();
         if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
@@ -209,6 +216,8 @@ export const actions: Actions = {
     },
 
     bulkAssign: async ({ request, locals }) => {
+        // Create per-request database connection
+        const db = createDb();
         if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
@@ -238,6 +247,8 @@ export const actions: Actions = {
     },
 
     bulkDelete: async ({ request, locals }) => {
+        // Create per-request database connection
+        const db = createDb();
         // Only super_admin and admin can delete tickets
         if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Only admins can delete tickets' });

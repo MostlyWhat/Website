@@ -8,7 +8,7 @@ import type { PageServerLoad, Actions } from './$types';
 // Helper function to generate next invoice number
 async function generateInvoiceNumber(): Promise<string> {
     const db = createDb();
-const year = new Date().getFullYear();
+    const year = new Date().getFullYear();
     const prefix = `INV-${year}-`;
 
     const [lastInvoice] = await db
@@ -63,6 +63,9 @@ export const load: PageServerLoad = async ({ params, locals }) => {
     if (!['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
         throw error(403, 'Access denied');
     }
+
+    // Create per-request database connection
+    const db = createDb();
 
     // Fetch invoice with related data
     const [invoice] = await db
@@ -160,9 +163,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 
 export const actions: Actions = {
     updateStatus: async ({ params, request, locals }) => {
-        // Create per-request database connection
-        const db = createDb();
-if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -172,6 +173,9 @@ if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ??
         if (!['draft', 'sent', 'viewed', 'paid', 'overdue', 'cancelled', 'refunded'].includes(status)) {
             return fail(400, { error: 'Invalid status' });
         }
+
+        // Create per-request database connection
+        const db = createDb();
 
         const [invoice] = await db
             .select({ invoiceNumber: invoices.invoiceNumber, status: invoices.status })
@@ -201,9 +205,7 @@ if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ??
     },
 
     recordPayment: async ({ params, request, locals }) => {
-        // Create per-request database connection
-        const db = createDb();
-if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -216,6 +218,9 @@ if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ??
         if (!amount || amount <= 0) {
             return fail(400, { error: 'Invalid payment amount' });
         }
+
+        // Create per-request database connection
+        const db = createDb();
 
         // Get current invoice data including recurring fields
         const [invoice] = await db
@@ -393,14 +398,15 @@ if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ??
     },
 
     updateNotes: async ({ params, request, locals }) => {
-        // Create per-request database connection
-        const db = createDb();
-if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
         const formData = await request.formData();
         const internalNotes = formData.get('internalNotes') as string;
+
+        // Create per-request database connection
+        const db = createDb();
 
         await db
             .update(invoices)

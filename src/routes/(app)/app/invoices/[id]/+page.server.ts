@@ -5,6 +5,7 @@ import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
+    const db = createDb();
     if (!locals.user || !locals.profile) {
         error(401, 'Unauthorized');
     }

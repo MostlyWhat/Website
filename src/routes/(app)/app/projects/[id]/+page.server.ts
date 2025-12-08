@@ -9,6 +9,9 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         error(401, 'Unauthorized');
     }
 
+    // Create per-request database connection
+    const db = createDb();
+
     // Get user's organization IDs
     const userOrgs = await db
         .select({ organizationId: organizationMembers.organizationId })

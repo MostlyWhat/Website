@@ -15,6 +15,9 @@ export const load: PageServerLoad = async ({ locals }) => {
         throw redirect(302, '/admin');
     }
 
+    // Create per-request database connection
+    const db = createDb();
+
     // Fetch all SLA policies
     const policies = await db
         .select({
@@ -88,7 +91,7 @@ export const actions: Actions = {
     create: async ({ request, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -188,7 +191,7 @@ if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ??
     update: async ({ request, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -304,7 +307,7 @@ if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ??
     delete: async ({ request, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -329,7 +332,7 @@ if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ??
     setDefault: async ({ request, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -364,7 +367,7 @@ if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ??
     assignOrganization: async ({ request, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -409,7 +412,7 @@ if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ??
     removeAssignment: async ({ request, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -428,7 +431,7 @@ if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ??
     createCategory: async ({ request, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -461,7 +464,7 @@ if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ??
     updateCategory: async ({ request, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -500,7 +503,7 @@ if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ??
     deleteCategory: async ({ request, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 
@@ -519,7 +522,7 @@ if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ??
     initializeDefaults: async ({ locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
             return fail(403, { error: 'Access denied' });
         }
 

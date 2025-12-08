@@ -144,6 +144,9 @@ export const DELETE: RequestHandler = async ({ request, locals }) => {
         throw error(401, 'Authentication required');
     }
 
+    // Create per-request database connection
+    const db = createDb();
+
     try {
         const body = await request.json() as { fileId?: string };
         const { fileId } = body;

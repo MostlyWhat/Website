@@ -45,6 +45,9 @@ export const load: PageServerLoad = async ({ locals }) => {
         throw redirect(302, '/admin');
     }
 
+    // Create per-request database connection
+    const db = createDb();
+
     // Fetch all settings
     const settings = await db
         .select({
@@ -87,7 +90,7 @@ export const actions: Actions = {
     update: async ({ request, locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.profile || locals.profile.role !== 'super_admin') {
+        if (!locals.profile || locals.profile.role !== 'super_admin') {
             return fail(403, { error: 'Access denied. Super admin required.' });
         }
 
@@ -159,7 +162,7 @@ if (!locals.profile || locals.profile.role !== 'super_admin') {
     initialize: async ({ locals }) => {
         // Create per-request database connection
         const db = createDb();
-if (!locals.profile || locals.profile.role !== 'super_admin') {
+        if (!locals.profile || locals.profile.role !== 'super_admin') {
             return fail(403, { error: 'Access denied. Super admin required.' });
         }
 

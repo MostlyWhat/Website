@@ -9,7 +9,7 @@ import { projectRequestActivity, getClientIp } from '$lib/server/activity-logger
 // Generate request number like REQ-YYYY-XXXXX
 async function generateRequestNumber(): Promise<string> {
     const db = createDb();
-const year = new Date().getFullYear();
+    const year = new Date().getFullYear();
     const prefix = `REQ-${year}-`;
 
     // Get the latest request number for this year
@@ -34,7 +34,7 @@ const year = new Date().getFullYear();
 // Create a personal organization for the user
 async function createPersonalOrganization(profileId: string, userEmail: string, displayName: string): Promise<string> {
     const db = createDb();
-const orgNumber = await generateOrgNumber();
+    const orgNumber = await generateOrgNumber();
     const personalOrgName = `${displayName}'s Organization`;
     const slug = `personal-${profileId.slice(0, 8)}-${Date.now().toString(36)}`;
 
@@ -64,6 +64,9 @@ export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user || !locals.profile) {
         throw redirect(302, '/auth/login?redirectTo=/app/projects/new');
     }
+
+    // Create per-request database connection
+    const db = createDb();
 
     // Get user's organizations
     let userOrgs = await db
@@ -101,9 +104,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 export const actions: Actions = {
     default: async ({ request, locals }) => {
-        // Create per-request database connection
-        const db = createDb();
-if (!locals.user || !locals.profile) {
+        if (!locals.user || !locals.profile) {
             return fail(401, { error: 'You must be logged in to submit a project request.' });
         }
 
@@ -131,6 +132,9 @@ if (!locals.user || !locals.profile) {
         if (!projectType) {
             return fail(400, { error: 'Please select a project type.' });
         }
+
+        // Create per-request database connection
+        const db = createDb();
 
         // Verify user belongs to the organization
         const membership = await db

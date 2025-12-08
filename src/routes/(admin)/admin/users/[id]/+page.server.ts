@@ -13,6 +13,7 @@ import { userActivity, getClientIp } from '$lib/server/activity-logger';
 import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ params }) => {
+    const db = createDb();
     const userId = params.id;
 
     // Fetch the user profile
