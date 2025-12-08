@@ -1737,24 +1737,24 @@ export const statusIncidents = pgTable('status_incidents', {
 	description: text('description'),
 	status: incidentStatusEnum('status').default('investigating').notNull(),
 	severity: incidentSeverityEnum('severity').default('minor').notNull(),
-	
+
 	// Affected services (stored as array of service IDs)
 	affectedServices: jsonb('affected_services').$type<string[]>().default([]),
-	
+
 	// Timeline
 	startedAt: timestamp('started_at', { withTimezone: true }).defaultNow().notNull(),
 	resolvedAt: timestamp('resolved_at', { withTimezone: true }),
-	
+
 	// Scheduled maintenance
 	isScheduled: boolean('is_scheduled').default(false).notNull(),
 	scheduledFor: timestamp('scheduled_for', { withTimezone: true }),
 	scheduledUntil: timestamp('scheduled_until', { withTimezone: true }),
-	
+
 	// Author
 	createdById: uuid('created_by_id')
 		.notNull()
 		.references(() => profiles.id, { onDelete: 'cascade' }),
-	
+
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
 }).enableRLS();
@@ -1830,36 +1830,36 @@ export const jobPostings = pgTable('job_postings', {
 	location: text('location'),
 	locationType: jobLocationTypeEnum('location_type').default('remote').notNull(),
 	type: jobTypeEnum('type').default('full_time').notNull(),
-	
+
 	// Job details
 	description: text('description').notNull(),
 	responsibilities: jsonb('responsibilities').$type<string[]>().default([]),
 	requirements: jsonb('requirements').$type<string[]>().default([]),
 	niceToHave: jsonb('nice_to_have').$type<string[]>().default([]),
 	benefits: jsonb('benefits').$type<string[]>().default([]),
-	
+
 	// Compensation (optional)
 	salaryMin: decimal('salary_min', { precision: 10, scale: 2 }),
 	salaryMax: decimal('salary_max', { precision: 10, scale: 2 }),
 	salaryCurrency: text('salary_currency').default('USD'),
 	salaryPeriod: text('salary_period').default('yearly'), // yearly, monthly, hourly
-	
+
 	// Application
 	applicationUrl: text('application_url'),
 	applicationEmail: text('application_email'),
-	
+
 	// Publishing
 	status: jobStatusEnum('status').default('draft').notNull(),
 	publishedAt: timestamp('published_at', { withTimezone: true }),
 	closesAt: timestamp('closes_at', { withTimezone: true }),
 	isFeatured: boolean('is_featured').default(false).notNull(),
 	sortOrder: integer('sort_order').default(0).notNull(),
-	
+
 	// Author
 	createdById: uuid('created_by_id')
 		.notNull()
 		.references(() => profiles.id, { onDelete: 'cascade' }),
-	
+
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
 }).enableRLS();
@@ -1880,7 +1880,7 @@ export const jobApplications = pgTable('job_applications', {
 	jobId: uuid('job_id')
 		.notNull()
 		.references(() => jobPostings.id, { onDelete: 'cascade' }),
-	
+
 	// Applicant info
 	firstName: text('first_name').notNull(),
 	lastName: text('last_name').notNull(),
@@ -1888,20 +1888,20 @@ export const jobApplications = pgTable('job_applications', {
 	phone: text('phone'),
 	linkedinUrl: text('linkedin_url'),
 	portfolioUrl: text('portfolio_url'),
-	
+
 	// Application details
 	coverLetter: text('cover_letter'),
 	resumeUrl: text('resume_url'),
 	answers: jsonb('answers').$type<Record<string, string>>(),
-	
+
 	// Status
 	status: jobApplicationStatusEnum('status').default('submitted').notNull(),
 	notes: text('notes'),
-	
+
 	// Reviewer
 	reviewedById: uuid('reviewed_by_id')
 		.references(() => profiles.id, { onDelete: 'set null' }),
-	
+
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
 }).enableRLS();
