@@ -57,7 +57,7 @@ export const actions: Actions = {
         if (data.user && data.session) {
             try {
                 await getOrCreateProfile(data.user);
-                
+
                 // Log registration activity
                 await logActivity({
                     entityType: 'user',

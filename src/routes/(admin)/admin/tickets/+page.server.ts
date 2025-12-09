@@ -119,7 +119,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 
     // Fetch all unique SLA policy IDs from tickets
     const slaPolicyIds = [...new Set(allTickets.map(t => t.slaPolicyId).filter(Boolean))];
-    
+
     // Fetch SLA policies
     const slaPoliciesMap = new Map();
     if (slaPolicyIds.length > 0) {
@@ -127,7 +127,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
             .select()
             .from(slaPolicies)
             .where(inArray(slaPolicies.id, slaPolicyIds as string[]));
-        
+
         policies.forEach(policy => {
             slaPoliciesMap.set(policy.id, policy);
         });
@@ -136,7 +136,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
     // Format tickets for the frontend with SLA status
     const formattedTickets = allTickets.map((ticket) => {
         const slaPolicy = ticket.slaPolicyId ? slaPoliciesMap.get(ticket.slaPolicyId) : null;
-        
+
         // Calculate SLA status if policy and deadlines exist
         let slaStatus = null;
         if (slaPolicy && ticket.slaResponseDueAt && ticket.slaResolutionDueAt) {

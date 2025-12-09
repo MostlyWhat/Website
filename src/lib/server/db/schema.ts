@@ -1982,28 +1982,28 @@ export const jobApplicationsRelations = relations(jobApplications, ({ one }) => 
 
 export const legalPages = pgTable('legal_pages', {
 	id: uuid('id').primaryKey().defaultRandom(),
-	
+
 	// Identity
 	slug: text('slug').notNull().unique(),
 	title: text('title').notNull(),
-	
+
 	// Content
 	content: text('content').notNull(), // Markdown content
 	summary: text('summary'), // Brief summary for meta description
-	
+
 	// Metadata
 	version: text('version').default('1.0').notNull(), // Version number (e.g., "2.1")
 	effectiveDate: timestamp('effective_date', { withTimezone: true }).notNull(),
 	lastReviewedAt: timestamp('last_reviewed_at', { withTimezone: true }),
-	
+
 	// Publishing
 	isPublished: boolean('is_published').default(true).notNull(),
 	sortOrder: integer('sort_order').default(0).notNull(), // Display order in footer/menu
-	
+
 	// Author/Editor
 	lastEditedById: uuid('last_edited_by_id')
 		.references(() => profiles.id, { onDelete: 'set null' }),
-	
+
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
 }).enableRLS();

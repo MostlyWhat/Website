@@ -171,17 +171,17 @@ export const load: PageServerLoad = async ({ params, locals }) => {
     // Fetch SLA policy and calculate status
     let slaPolicy = null;
     let slaStatus = null;
-    
+
     if (ticket.slaPolicyId) {
         const [policy] = await db
             .select()
             .from(slaPolicies)
             .where(eq(slaPolicies.id, ticket.slaPolicyId))
             .limit(1);
-        
+
         if (policy) {
             slaPolicy = policy;
-            
+
             // Calculate SLA status if deadlines exist
             if (ticket.slaResponseDueAt && ticket.slaResolutionDueAt) {
                 slaStatus = calculateSLAStatus(
@@ -448,43 +448,43 @@ export const actions: Actions = {
         return { success: true, message: 'Comment deleted successfully' };
     },
 
-	updateCategory: async ({ request, params, locals }) => {
-		// Create per-request database connection
-		const db = createDb();
-		if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
-			return fail(403, { error: 'Access denied' });
-		}
+    updateCategory: async ({ request, params, locals }) => {
+        // Create per-request database connection
+        const db = createDb();
+        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+            return fail(403, { error: 'Access denied' });
+        }
 
-		const formData = await request.formData();
-		const category = formData.get('category') as string;
+        const formData = await request.formData();
+        const category = formData.get('category') as string;
 
-		// Get current ticket info for logging
-		const [currentTicket] = await db
-			.select({ ticketNumber: tickets.ticketNumber, category: tickets.category })
-			.from(tickets)
-			.where(eq(tickets.id, params.id));
+        // Get current ticket info for logging
+        const [currentTicket] = await db
+            .select({ ticketNumber: tickets.ticketNumber, category: tickets.category })
+            .from(tickets)
+            .where(eq(tickets.id, params.id));
 
-		const oldCategory = currentTicket.category;
+        const oldCategory = currentTicket.category;
 
-		await db
-			.update(tickets)
-			.set({
-				category: category || null,
-				updatedAt: new Date()
-			})
-			.where(eq(tickets.id, params.id));
+        await db
+            .update(tickets)
+            .set({
+                category: category || null,
+                updatedAt: new Date()
+            })
+            .where(eq(tickets.id, params.id));
 
-		// Log activity
-		await ticketActivity.updated(
-			params.id,
-			currentTicket.ticketNumber,
-			{ category: { old: oldCategory, new: category } },
-			locals.profile.id,
-			getClientIp(request)
-		);
+        // Log activity
+        await ticketActivity.updated(
+            params.id,
+            currentTicket.ticketNumber,
+            { category: { old: oldCategory, new: category } },
+            locals.profile.id,
+            getClientIp(request)
+        );
 
-		return { success: true, message: 'Category updated successfully' };
-	},    addTag: async ({ request, params, locals }) => {
+        return { success: true, message: 'Category updated successfully' };
+    }, addTag: async ({ request, params, locals }) => {
         // Create per-request database connection
         const db = createDb();
         if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
@@ -498,40 +498,40 @@ export const actions: Actions = {
             return fail(400, { error: 'Tag cannot be empty' });
         }
 
-		// Get current tags
-		const [ticketData] = await db
-			.select({ tags: tickets.tags, ticketNumber: tickets.ticketNumber })
-			.from(tickets)
-			.where(eq(tickets.id, params.id))
-			.limit(1);
+        // Get current tags
+        const [ticketData] = await db
+            .select({ tags: tickets.tags, ticketNumber: tickets.ticketNumber })
+            .from(tickets)
+            .where(eq(tickets.id, params.id))
+            .limit(1);
 
-		const currentTags = ticketData?.tags ?? [];
+        const currentTags = ticketData?.tags ?? [];
 
-		// Check if tag already exists
-		if (currentTags.includes(tag)) {
-			return fail(400, { error: 'Tag already exists' });
-		}
+        // Check if tag already exists
+        if (currentTags.includes(tag)) {
+            return fail(400, { error: 'Tag already exists' });
+        }
 
-		// Add new tag
-		await db
-			.update(tickets)
-			.set({
-				tags: [...currentTags, tag],
-				updatedAt: new Date()
-			})
-			.where(eq(tickets.id, params.id));
+        // Add new tag
+        await db
+            .update(tickets)
+            .set({
+                tags: [...currentTags, tag],
+                updatedAt: new Date()
+            })
+            .where(eq(tickets.id, params.id));
 
-		// Log activity
-		await ticketActivity.updated(
-			params.id,
-			ticketData.ticketNumber,
-			{ tags: { added: tag } },
-			locals.profile.id,
-			getClientIp(request)
-		);
+        // Log activity
+        await ticketActivity.updated(
+            params.id,
+            ticketData.ticketNumber,
+            { tags: { added: tag } },
+            locals.profile.id,
+            getClientIp(request)
+        );
 
-		return { success: true, message: 'Tag added successfully' };
-	},    removeTag: async ({ request, params, locals }) => {
+        return { success: true, message: 'Tag added successfully' };
+    }, removeTag: async ({ request, params, locals }) => {
         // Create per-request database connection
         const db = createDb();
         if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {

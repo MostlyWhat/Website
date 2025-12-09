@@ -39,17 +39,17 @@ export const actions: Actions = {
         // Check if user exists and has magic link enabled
         const db = createDb();
         const [userProfile] = await db
-            .select({ 
+            .select({
                 id: profiles.id,
-                preferences: profiles.preferences 
+                preferences: profiles.preferences
             })
             .from(profiles)
             .where(eq(profiles.email, email));
 
         // If user exists and has disabled magic links, reject
         if (userProfile && userProfile.preferences?.magicLinkEnabled === false) {
-            return fail(403, { 
-                error: 'Magic link authentication is disabled for this account. Please sign in with your password or contact support.' 
+            return fail(403, {
+                error: 'Magic link authentication is disabled for this account. Please sign in with your password or contact support.'
             });
         }
 

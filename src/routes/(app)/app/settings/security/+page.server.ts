@@ -205,7 +205,7 @@ export const actions: Actions = {
 
         try {
             const db = createDb();
-            
+
             // Get current preferences
             const [currentProfile] = await db
                 .select({ preferences: profiles.preferences })
@@ -229,8 +229,8 @@ export const actions: Actions = {
             return {
                 success: true,
                 magicLinkEnabled: enabled,
-                message: enabled 
-                    ? 'Magic link authentication enabled' 
+                message: enabled
+                    ? 'Magic link authentication enabled'
                     : 'Magic link authentication disabled'
             };
         } catch (err) {
