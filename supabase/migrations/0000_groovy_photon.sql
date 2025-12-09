@@ -743,6 +743,35 @@ CREATE TABLE "ticket_comments" (
 );
 --> statement-breakpoint
 ALTER TABLE "ticket_comments" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
+CREATE TABLE "ticket_escalations" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"ticket_id" uuid NOT NULL,
+	"reason" text NOT NULL,
+	"from_priority" "ticket_priority" NOT NULL,
+	"to_priority" "ticket_priority" NOT NULL,
+	"escalated_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+ALTER TABLE "ticket_escalations" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
+CREATE TABLE "ticket_satisfaction_surveys" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"ticket_id" uuid NOT NULL,
+	"customer_id" uuid NOT NULL,
+	"rating" integer NOT NULL,
+	"response_time_rating" integer,
+	"resolution_quality_rating" integer,
+	"staff_professionalism_rating" integer,
+	"feedback" text,
+	"would_recommend" boolean,
+	"survey_token" varchar(64) NOT NULL,
+	"survey_sent_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"responded_at" timestamp with time zone,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "ticket_satisfaction_surveys_ticket_id_unique" UNIQUE("ticket_id"),
+	CONSTRAINT "ticket_satisfaction_surveys_survey_token_unique" UNIQUE("survey_token")
+);
+--> statement-breakpoint
+ALTER TABLE "ticket_satisfaction_surveys" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "ticket_templates" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" text NOT NULL,
@@ -765,6 +794,14 @@ CREATE TABLE "ticket_templates" (
 );
 --> statement-breakpoint
 ALTER TABLE "ticket_templates" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
+CREATE TABLE "ticket_watchers" (
+	"ticket_id" uuid NOT NULL,
+	"user_id" uuid NOT NULL,
+	"added_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "ticket_watchers_ticket_id_user_id_pk" PRIMARY KEY("ticket_id","user_id")
+);
+--> statement-breakpoint
+ALTER TABLE "ticket_watchers" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "tickets" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"organization_id" uuid NOT NULL,
@@ -791,6 +828,10 @@ CREATE TABLE "tickets" (
 	"sla_breached" boolean DEFAULT false,
 	"due_at" timestamp with time zone,
 	"first_response_at" timestamp with time zone,
+	"merged_into_id" uuid,
+	"merged_at" timestamp with time zone,
+	"merged_by_id" uuid,
+	"parent_ticket_id" uuid,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "tickets_ticket_number_unique" UNIQUE("ticket_number")
@@ -880,14 +921,22 @@ ALTER TABLE "ticket_auto_assignment_rules" ADD CONSTRAINT "ticket_auto_assignmen
 ALTER TABLE "ticket_auto_assignment_rules" ADD CONSTRAINT "ticket_auto_assignment_rules_created_by_id_profiles_id_fk" FOREIGN KEY ("created_by_id") REFERENCES "public"."profiles"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "ticket_comments" ADD CONSTRAINT "ticket_comments_ticket_id_tickets_id_fk" FOREIGN KEY ("ticket_id") REFERENCES "public"."tickets"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "ticket_comments" ADD CONSTRAINT "ticket_comments_author_id_profiles_id_fk" FOREIGN KEY ("author_id") REFERENCES "public"."profiles"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ticket_escalations" ADD CONSTRAINT "ticket_escalations_ticket_id_tickets_id_fk" FOREIGN KEY ("ticket_id") REFERENCES "public"."tickets"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ticket_satisfaction_surveys" ADD CONSTRAINT "ticket_satisfaction_surveys_ticket_id_tickets_id_fk" FOREIGN KEY ("ticket_id") REFERENCES "public"."tickets"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ticket_satisfaction_surveys" ADD CONSTRAINT "ticket_satisfaction_surveys_customer_id_profiles_id_fk" FOREIGN KEY ("customer_id") REFERENCES "public"."profiles"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "ticket_templates" ADD CONSTRAINT "ticket_templates_category_id_ticket_categories_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."ticket_categories"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "ticket_templates" ADD CONSTRAINT "ticket_templates_default_assignee_id_profiles_id_fk" FOREIGN KEY ("default_assignee_id") REFERENCES "public"."profiles"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "ticket_templates" ADD CONSTRAINT "ticket_templates_default_staff_group_id_staff_groups_id_fk" FOREIGN KEY ("default_staff_group_id") REFERENCES "public"."staff_groups"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "ticket_templates" ADD CONSTRAINT "ticket_templates_created_by_id_profiles_id_fk" FOREIGN KEY ("created_by_id") REFERENCES "public"."profiles"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ticket_watchers" ADD CONSTRAINT "ticket_watchers_ticket_id_tickets_id_fk" FOREIGN KEY ("ticket_id") REFERENCES "public"."tickets"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ticket_watchers" ADD CONSTRAINT "ticket_watchers_user_id_profiles_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "tickets" ADD CONSTRAINT "tickets_organization_id_organizations_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "tickets" ADD CONSTRAINT "tickets_project_id_projects_id_fk" FOREIGN KEY ("project_id") REFERENCES "public"."projects"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "tickets" ADD CONSTRAINT "tickets_category_id_ticket_categories_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."ticket_categories"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "tickets" ADD CONSTRAINT "tickets_assigned_to_id_profiles_id_fk" FOREIGN KEY ("assigned_to_id") REFERENCES "public"."profiles"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "tickets" ADD CONSTRAINT "tickets_created_by_id_profiles_id_fk" FOREIGN KEY ("created_by_id") REFERENCES "public"."profiles"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "tickets" ADD CONSTRAINT "tickets_sla_policy_id_sla_policies_id_fk" FOREIGN KEY ("sla_policy_id") REFERENCES "public"."sla_policies"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "tickets" ADD CONSTRAINT "tickets_merged_into_id_tickets_id_fk" FOREIGN KEY ("merged_into_id") REFERENCES "public"."tickets"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "tickets" ADD CONSTRAINT "tickets_merged_by_id_profiles_id_fk" FOREIGN KEY ("merged_by_id") REFERENCES "public"."profiles"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "tickets" ADD CONSTRAINT "tickets_parent_ticket_id_tickets_id_fk" FOREIGN KEY ("parent_ticket_id") REFERENCES "public"."tickets"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_notifications" ADD CONSTRAINT "user_notifications_user_id_profiles_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE cascade ON UPDATE no action;

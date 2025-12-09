@@ -10,8 +10,8 @@
  * Add to wrangler.jsonc:
  * ```
  * "triggers": {
- *   "crons": ["*/15 * * * *"]  // Every 15 minutes
- * }
+ *   "crons": ["*/15 * * * * "]  // Every 15 minutes
+    * }
  * ```
  * 
  * Or use an external service like:
@@ -30,7 +30,7 @@ export const GET: RequestHandler = async ({ request }) => {
 	try {
 		// Verify cron secret
 		const authHeader = request.headers.get('authorization');
-		if (!authHeader || authHeader !== `Bearer ${CRON_SECRET}`) {
+		if (!authHeader || authHeader !== `Bearer ${ CRON_SECRET } `) {
 			return json({ error: 'Unauthorized' }, { status: 401 });
 		}
 

@@ -8,8 +8,8 @@
  */
 
 import { createDb } from '$lib/server/db';
-import { tickets, ticketComments, ticketSatisfactionSurveys } from '$lib/server/db/schema';
-import { eq, and, isNull, desc } from 'drizzle-orm';
+import { tickets, ticketComments, ticketSatisfactionSurveys, ticketLinks } from '$lib/server/db/schema';
+import { eq, and, isNull, desc, or } from 'drizzle-orm';
 import crypto from 'node:crypto';
 
 export interface MergeTicketsOptions {
@@ -65,9 +65,9 @@ export async function mergeTickets(options: MergeTicketsOptions): Promise<MergeT
                 .select({ id: ticketComments.id })
                 .from(ticketComments)
                 .where(eq(ticketComments.ticketId, sourceTicketId));
-            
+
             mergedCommentCount = commentsToTransfer.length;
-            
+
             if (mergedCommentCount > 0) {
                 await db
                     .update(ticketComments)
@@ -426,4 +426,343 @@ export async function getAverageSatisfaction(
         totalResponses: surveys.length,
         wouldRecommendPercentage: (recommendCount / surveys.length) * 100
     };
+}
+
+// =============================================================================
+// TICKET SPLITTING
+// =============================================================================
+
+export interface SplitTicketOptions {
+    sourceTicketId: string;
+    splitById: string;
+    newTickets: Array<{
+        subject: string;
+        description: string;
+        priority?: string;
+        categoryId?: string;
+        transferComments?: boolean; // If true, will transfer specified comment IDs
+        commentIdsToTransfer?: string[];
+    }>;
+}
+
+export interface SplitTicketResult {
+    success: boolean;
+    error?: string;
+    newTicketIds?: string[];
+    sourceTicketId?: string;
+}
+
+/**
+ * Split one ticket into multiple tickets
+ * Creates new tickets and optionally transfers specific comments
+ */
+export async function splitTicket(options: SplitTicketOptions): Promise<SplitTicketResult> {
+    const { sourceTicketId, splitById, newTickets } = options;
+    const db = createDb();
+
+    try {
+        // Verify source ticket exists
+        const sourceTicket = await db
+            .select()
+            .from(tickets)
+            .where(eq(tickets.id, sourceTicketId))
+            .limit(1);
+
+        if (!sourceTicket.length) {
+            return { success: false, error: 'Source ticket not found' };
+        }
+
+        const source = sourceTicket[0];
+
+        // Create new tickets
+        const newTicketIds: string[] = [];
+
+        for (const newTicket of newTickets) {
+            // Create the new ticket
+            const [created] = await db
+                .insert(tickets)
+                .values({
+                    subject: newTicket.subject,
+                    description: newTicket.description,
+                    priority: (newTicket.priority as any) || source.priority,
+                    status: 'open',
+                    categoryId: newTicket.categoryId || source.categoryId,
+                    organizationId: source.organizationId,
+                    createdById: source.createdById,
+                    source: source.source,
+                    parentTicketId: sourceTicketId, // Link to source as parent
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                })
+                .returning({ id: tickets.id });
+
+            if (created?.id) {
+                newTicketIds.push(created.id);
+
+                // Transfer specific comments if requested
+                if (newTicket.transferComments && newTicket.commentIdsToTransfer && newTicket.commentIdsToTransfer.length > 0) {
+                    // Update comments to point to new ticket
+                    for (const commentId of newTicket.commentIdsToTransfer) {
+                        await db
+                            .update(ticketComments)
+                            .set({ ticketId: created.id })
+                            .where(and(
+                                eq(ticketComments.id, commentId),
+                                eq(ticketComments.ticketId, sourceTicketId)
+                            ));
+                    }
+                }
+
+                // Add a comment to the new ticket referencing the split
+                await db.insert(ticketComments).values({
+                    ticketId: created.id,
+                    createdById: splitById,
+                    content: `This ticket was split from ticket #${source.ticketNumber}`,
+                    isInternal: false,
+                    createdAt: new Date()
+                });
+            }
+        }
+
+        // Add a comment to the source ticket about the split
+        const ticketNumbers = await db
+            .select({ ticketNumber: tickets.ticketNumber })
+            .from(tickets)
+            .where(eq(tickets.id, newTicketIds[0]));
+
+        await db.insert(ticketComments).values({
+            ticketId: sourceTicketId,
+            createdById: splitById,
+            content: `This ticket has been split into ${newTickets.length} new ticket(s)`,
+            isInternal: true,
+            createdAt: new Date()
+        });
+
+        return {
+            success: true,
+            newTicketIds,
+            sourceTicketId
+        };
+    } catch (error) {
+        console.error('Error splitting ticket:', error);
+        return {
+            success: false,
+            error: error instanceof Error ? error.message : 'Failed to split ticket'
+        };
+    }
+}
+
+// =============================================================================
+// TICKET LINKING (Non-hierarchical)
+// =============================================================================
+
+export type TicketLinkType = 'related' | 'duplicate' | 'blocks' | 'blocked_by' | 'references' | 'referenced_by';
+
+export interface LinkTicketsOptions {
+    sourceTicketId: string;
+    targetTicketId: string;
+    linkType: TicketLinkType;
+    createdById: string;
+}
+
+export interface LinkTicketsResult {
+    success: boolean;
+    error?: string;
+    linkId?: string;
+}
+
+/**
+ * Create a link between two tickets
+ */
+export async function linkTickets(options: LinkTicketsOptions): Promise<LinkTicketsResult> {
+    const { sourceTicketId, targetTicketId, linkType, createdById } = options;
+    const db = createDb();
+
+    try {
+        // Verify both tickets exist
+        const [sourceTicket, targetTicket] = await Promise.all([
+            db.select().from(tickets).where(eq(tickets.id, sourceTicketId)).limit(1),
+            db.select().from(tickets).where(eq(tickets.id, targetTicketId)).limit(1)
+        ]);
+
+        if (!sourceTicket.length) {
+            return { success: false, error: 'Source ticket not found' };
+        }
+
+        if (!targetTicket.length) {
+            return { success: false, error: 'Target ticket not found' };
+        }
+
+        if (sourceTicketId === targetTicketId) {
+            return { success: false, error: 'Cannot link a ticket to itself' };
+        }
+
+        // Check if link already exists
+        const existingLink = await db
+            .select()
+            .from(ticketLinks)
+            .where(
+                and(
+                    eq(ticketLinks.sourceTicketId, sourceTicketId),
+                    eq(ticketLinks.targetTicketId, targetTicketId),
+                    eq(ticketLinks.linkType, linkType)
+                )
+            )
+            .limit(1);
+
+        if (existingLink.length > 0) {
+            return { success: false, error: 'This link already exists' };
+        }
+
+        // Create the link
+        const [created] = await db
+            .insert(ticketLinks)
+            .values({
+                sourceTicketId,
+                targetTicketId,
+                linkType,
+                createdById,
+                createdAt: new Date()
+            })
+            .returning({ id: ticketLinks.id });
+
+        // Add comments to both tickets
+        const sourceLinkText = getLinkTypeText(linkType, 'source');
+        const targetLinkText = getLinkTypeText(linkType, 'target');
+
+        await Promise.all([
+            db.insert(ticketComments).values({
+                ticketId: sourceTicketId,
+                createdById,
+                content: `${sourceLinkText} ticket #${targetTicket[0].ticketNumber}`,
+                isInternal: true,
+                createdAt: new Date()
+            }),
+            db.insert(ticketComments).values({
+                ticketId: targetTicketId,
+                createdById,
+                content: `${targetLinkText} ticket #${sourceTicket[0].ticketNumber}`,
+                isInternal: true,
+                createdAt: new Date()
+            })
+        ]);
+
+        return {
+            success: true,
+            linkId: created.id
+        };
+    } catch (error) {
+        console.error('Error linking tickets:', error);
+        return {
+            success: false,
+            error: error instanceof Error ? error.message : 'Failed to link tickets'
+        };
+    }
+}
+
+/**
+ * Remove a link between two tickets
+ */
+export async function unlinkTickets(linkId: string, deletedById: string): Promise<LinkTicketsResult> {
+    const db = createDb();
+
+    try {
+        // Get link details before deleting
+        const link = await db
+            .select()
+            .from(ticketLinks)
+            .where(eq(ticketLinks.id, linkId))
+            .limit(1);
+
+        if (!link.length) {
+            return { success: false, error: 'Link not found' };
+        }
+
+        // Delete the link
+        await db
+            .delete(ticketLinks)
+            .where(eq(ticketLinks.id, linkId));
+
+        // Add comments to both tickets
+        const [sourceTicket, targetTicket] = await Promise.all([
+            db.select().from(tickets).where(eq(tickets.id, link[0].sourceTicketId)).limit(1),
+            db.select().from(tickets).where(eq(tickets.id, link[0].targetTicketId)).limit(1)
+        ]);
+
+        if (sourceTicket.length && targetTicket.length) {
+            await Promise.all([
+                db.insert(ticketComments).values({
+                    ticketId: link[0].sourceTicketId,
+                    createdById: deletedById,
+                    content: `Unlinked from ticket #${targetTicket[0].ticketNumber}`,
+                    isInternal: true,
+                    createdAt: new Date()
+                }),
+                db.insert(ticketComments).values({
+                    ticketId: link[0].targetTicketId,
+                    createdById: deletedById,
+                    content: `Unlinked from ticket #${sourceTicket[0].ticketNumber}`,
+                    isInternal: true,
+                    createdAt: new Date()
+                })
+            ]);
+        }
+
+        return { success: true };
+    } catch (error) {
+        console.error('Error unlinking tickets:', error);
+        return {
+            success: false,
+            error: error instanceof Error ? error.message : 'Failed to unlink tickets'
+        };
+    }
+}
+
+/**
+ * Get all links for a ticket (both as source and target)
+ */
+export async function getTicketLinks(ticketId: string) {
+    const db = createDb();
+
+    const links = await db
+        .select({
+            id: ticketLinks.id,
+            linkType: ticketLinks.linkType,
+            sourceTicketId: ticketLinks.sourceTicketId,
+            targetTicketId: ticketLinks.targetTicketId,
+            createdAt: ticketLinks.createdAt,
+            sourceTicket: {
+                ticketNumber: tickets.ticketNumber,
+                subject: tickets.subject,
+                status: tickets.status
+            },
+            targetTicket: tickets
+        })
+        .from(ticketLinks)
+        .leftJoin(tickets, eq(ticketLinks.targetTicketId, tickets.id))
+        .where(
+            or(
+                eq(ticketLinks.sourceTicketId, ticketId),
+                eq(ticketLinks.targetTicketId, ticketId)
+            )
+        )
+        .orderBy(desc(ticketLinks.createdAt));
+
+    return links;
+}
+
+/**
+ * Get human-readable link type text
+ */
+function getLinkTypeText(linkType: TicketLinkType, perspective: 'source' | 'target'): string {
+    const texts: Record<TicketLinkType, { source: string; target: string }> = {
+        related: { source: 'Related to', target: 'Related to' },
+        duplicate: { source: 'Duplicate of', target: 'Has duplicate' },
+        blocks: { source: 'Blocks', target: 'Blocked by' },
+        blocked_by: { source: 'Blocked by', target: 'Blocks' },
+        references: { source: 'References', target: 'Referenced by' },
+        referenced_by: { source: 'Referenced by', target: 'References' }
+    };
+
+    return texts[linkType][perspective];
 }

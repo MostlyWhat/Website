@@ -510,6 +510,30 @@ export const projectMilestones = pgTable('project_milestones', {
 }).enableRLS();
 
 // =============================================================================
+// PROJECT NOTES TABLE
+// =============================================================================
+// Internal staff notes for projects
+
+export const projectNotes = pgTable('project_notes', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	projectId: uuid('project_id')
+		.notNull()
+		.references(() => projects.id, { onDelete: 'cascade' }),
+
+	// Note content
+	content: text('content').notNull(),
+
+	// Author
+	createdById: uuid('created_by_id')
+		.notNull()
+		.references(() => profiles.id),
+
+	// Timestamps
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+}).enableRLS();
+
+// =============================================================================
 // INVOICES TABLE
 // =============================================================================
 
@@ -577,6 +601,11 @@ export const invoices = pgTable('invoices', {
 
 	// PDF
 	pdfUrl: text('pdf_url'),
+
+	// Stripe Integration
+	stripePaymentIntentId: text('stripe_payment_intent_id'),
+	stripeSessionId: text('stripe_session_id'),
+	stripeCustomerId: text('stripe_customer_id'),
 
 	// Internal
 	createdById: uuid('created_by_id')
@@ -766,11 +795,11 @@ export const ticketEscalations = pgTable('ticket_escalations', {
 	ticketId: uuid('ticket_id')
 		.notNull()
 		.references(() => tickets.id, { onDelete: 'cascade' }),
-	
+
 	reason: text('reason').notNull(), // 'sla_breach', 'high_priority_waiting', etc.
 	fromPriority: ticketPriorityEnum('from_priority').notNull(),
 	toPriority: ticketPriorityEnum('to_priority').notNull(),
-	
+
 	escalatedAt: timestamp('escalated_at', { withTimezone: true }).defaultNow().notNull()
 }).enableRLS();
 
@@ -793,7 +822,7 @@ export const ticketWatchers = pgTable('ticket_watchers', {
 	userId: uuid('user_id')
 		.notNull()
 		.references(() => profiles.id, { onDelete: 'cascade' }),
-	
+
 	addedAt: timestamp('added_at', { withTimezone: true }).defaultNow().notNull()
 }, (table) => ({
 	pk: primaryKey({ columns: [table.ticketId, table.userId] })
@@ -806,6 +835,56 @@ export const ticketWatchersRelations = relations(ticketWatchers, ({ one }) => ({
 	}),
 	user: one(profiles, {
 		fields: [ticketWatchers.userId],
+		references: [profiles.id]
+	})
+}));
+
+// =============================================================================
+// TICKET LINKS TABLE
+// =============================================================================
+// Non-hierarchical relationships between tickets (related tickets)
+
+export const ticketLinkTypeEnum = pgEnum('ticket_link_type', [
+	'related',
+	'duplicate',
+	'blocks',
+	'blocked_by',
+	'references',
+	'referenced_by'
+]);
+
+export const ticketLinks = pgTable('ticket_links', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	
+	sourceTicketId: uuid('source_ticket_id')
+		.notNull()
+		.references(() => tickets.id, { onDelete: 'cascade' }),
+	targetTicketId: uuid('target_ticket_id')
+		.notNull()
+		.references(() => tickets.id, { onDelete: 'cascade' }),
+	
+	linkType: ticketLinkTypeEnum('link_type').notNull().default('related'),
+	
+	createdById: uuid('created_by_id')
+		.notNull()
+		.references(() => profiles.id),
+	
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
+}).enableRLS();
+
+export const ticketLinksRelations = relations(ticketLinks, ({ one }) => ({
+	sourceTicket: one(tickets, {
+		fields: [ticketLinks.sourceTicketId],
+		references: [tickets.id],
+		relationName: 'sourceTicketLinks'
+	}),
+	targetTicket: one(tickets, {
+		fields: [ticketLinks.targetTicketId],
+		references: [tickets.id],
+		relationName: 'targetTicketLinks'
+	}),
+	createdBy: one(profiles, {
+		fields: [ticketLinks.createdById],
 		references: [profiles.id]
 	})
 }));
@@ -957,9 +1036,39 @@ export const projectsRelations = relations(projects, ({ one, many }) => ({
 	invoices: many(invoices),
 	tickets: many(tickets),
 	revisions: many(projectRevisions),
+	milestones: many(projectMilestones),
+	notes: many(projectNotes),
 	sourceRequest: one(projectRequests, {
 		fields: [projects.id],
 		references: [projectRequests.projectId]
+	})
+}));
+
+export const projectMilestonesRelations = relations(projectMilestones, ({ one }) => ({
+	project: one(projects, {
+		fields: [projectMilestones.projectId],
+		references: [projects.id]
+	}),
+	createdBy: one(profiles, {
+		fields: [projectMilestones.createdById],
+		references: [profiles.id],
+		relationName: 'createdBy'
+	}),
+	completedBy: one(profiles, {
+		fields: [projectMilestones.completedById],
+		references: [profiles.id],
+		relationName: 'completedBy'
+	})
+}));
+
+export const projectNotesRelations = relations(projectNotes, ({ one }) => ({
+	project: one(projects, {
+		fields: [projectNotes.projectId],
+		references: [projects.id]
+	}),
+	createdBy: one(profiles, {
+		fields: [projectNotes.createdById],
+		references: [profiles.id]
 	})
 }));
 
@@ -1087,6 +1196,12 @@ export const ticketsRelations = relations(tickets, ({ one, many }) => ({
 	}),
 	mergedTickets: many(tickets, {
 		relationName: 'mergedTickets'
+	}),
+	sourceLinks: many(ticketLinks, {
+		relationName: 'sourceTicketLinks'
+	}),
+	targetLinks: many(ticketLinks, {
+		relationName: 'targetTicketLinks'
 	}),
 	comments: many(ticketComments),
 	satisfactionSurvey: one(ticketSatisfactionSurveys)
