@@ -913,39 +913,39 @@ export const webhookEventEnum = pgEnum('webhook_event', [
 
 export const webhooks = pgTable('webhooks', {
 	id: uuid('id').primaryKey().defaultRandom(),
-	
+
 	// Webhook details
 	url: text('url').notNull(),
 	secret: text('secret').notNull(), // For signature verification
-	
+
 	// Events to subscribe to
 	events: jsonb('events').$type<string[]>().notNull(),
-	
+
 	// Optional filters
 	organizationId: uuid('organization_id').references(() => organizations.id, { onDelete: 'cascade' }),
 	projectId: uuid('project_id').references(() => projects.id, { onDelete: 'cascade' }),
-	
+
 	// Status
 	isActive: boolean('is_active').default(true).notNull(),
-	
+
 	// Rate limiting
 	maxRetries: integer('max_retries').default(3).notNull(),
 	retryDelay: integer('retry_delay').default(60).notNull(), // seconds
-	
+
 	// Stats
 	lastTriggeredAt: timestamp('last_triggered_at', { withTimezone: true }),
 	totalDeliveries: integer('total_deliveries').default(0).notNull(),
 	failedDeliveries: integer('failed_deliveries').default(0).notNull(),
-	
+
 	// Metadata
 	description: text('description'),
 	headers: jsonb('headers').$type<Record<string, string>>(), // Custom headers
-	
+
 	// Ownership
 	createdById: uuid('created_by_id')
 		.notNull()
 		.references(() => profiles.id),
-	
+
 	// Timestamps
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
@@ -953,25 +953,25 @@ export const webhooks = pgTable('webhooks', {
 
 export const webhookDeliveries = pgTable('webhook_deliveries', {
 	id: uuid('id').primaryKey().defaultRandom(),
-	
+
 	webhookId: uuid('webhook_id')
 		.notNull()
 		.references(() => webhooks.id, { onDelete: 'cascade' }),
-	
+
 	// Event details
 	event: text('event').notNull(),
 	payload: jsonb('payload').notNull(),
-	
+
 	// Delivery status
 	status: text('status').notNull(), // pending, success, failed
 	responseCode: integer('response_code'),
 	responseBody: text('response_body'),
 	errorMessage: text('error_message'),
-	
+
 	// Retry tracking
 	attempts: integer('attempts').default(0).notNull(),
 	nextRetryAt: timestamp('next_retry_at', { withTimezone: true }),
-	
+
 	// Timestamps
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	deliveredAt: timestamp('delivered_at', { withTimezone: true })
