@@ -855,20 +855,20 @@ export const ticketLinkTypeEnum = pgEnum('ticket_link_type', [
 
 export const ticketLinks = pgTable('ticket_links', {
 	id: uuid('id').primaryKey().defaultRandom(),
-	
+
 	sourceTicketId: uuid('source_ticket_id')
 		.notNull()
 		.references(() => tickets.id, { onDelete: 'cascade' }),
 	targetTicketId: uuid('target_ticket_id')
 		.notNull()
 		.references(() => tickets.id, { onDelete: 'cascade' }),
-	
+
 	linkType: ticketLinkTypeEnum('link_type').notNull().default('related'),
-	
+
 	createdById: uuid('created_by_id')
 		.notNull()
 		.references(() => profiles.id),
-	
+
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
 }).enableRLS();
 
@@ -886,6 +886,117 @@ export const ticketLinksRelations = relations(ticketLinks, ({ one }) => ({
 	createdBy: one(profiles, {
 		fields: [ticketLinks.createdById],
 		references: [profiles.id]
+	})
+}));
+
+// =============================================================================
+// WEBHOOK SUBSCRIPTIONS TABLE
+// =============================================================================
+
+export const webhookEventEnum = pgEnum('webhook_event', [
+	'ticket.created',
+	'ticket.updated',
+	'ticket.status_changed',
+	'ticket.assigned',
+	'ticket.resolved',
+	'ticket.closed',
+	'project.created',
+	'project.updated',
+	'project.status_changed',
+	'invoice.created',
+	'invoice.sent',
+	'invoice.paid',
+	'invoice.overdue',
+	'payment.received',
+	'payment.failed'
+]);
+
+export const webhooks = pgTable('webhooks', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	
+	// Webhook details
+	url: text('url').notNull(),
+	secret: text('secret').notNull(), // For signature verification
+	
+	// Events to subscribe to
+	events: jsonb('events').$type<string[]>().notNull(),
+	
+	// Optional filters
+	organizationId: uuid('organization_id').references(() => organizations.id, { onDelete: 'cascade' }),
+	projectId: uuid('project_id').references(() => projects.id, { onDelete: 'cascade' }),
+	
+	// Status
+	isActive: boolean('is_active').default(true).notNull(),
+	
+	// Rate limiting
+	maxRetries: integer('max_retries').default(3).notNull(),
+	retryDelay: integer('retry_delay').default(60).notNull(), // seconds
+	
+	// Stats
+	lastTriggeredAt: timestamp('last_triggered_at', { withTimezone: true }),
+	totalDeliveries: integer('total_deliveries').default(0).notNull(),
+	failedDeliveries: integer('failed_deliveries').default(0).notNull(),
+	
+	// Metadata
+	description: text('description'),
+	headers: jsonb('headers').$type<Record<string, string>>(), // Custom headers
+	
+	// Ownership
+	createdById: uuid('created_by_id')
+		.notNull()
+		.references(() => profiles.id),
+	
+	// Timestamps
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+}).enableRLS();
+
+export const webhookDeliveries = pgTable('webhook_deliveries', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	
+	webhookId: uuid('webhook_id')
+		.notNull()
+		.references(() => webhooks.id, { onDelete: 'cascade' }),
+	
+	// Event details
+	event: text('event').notNull(),
+	payload: jsonb('payload').notNull(),
+	
+	// Delivery status
+	status: text('status').notNull(), // pending, success, failed
+	responseCode: integer('response_code'),
+	responseBody: text('response_body'),
+	errorMessage: text('error_message'),
+	
+	// Retry tracking
+	attempts: integer('attempts').default(0).notNull(),
+	nextRetryAt: timestamp('next_retry_at', { withTimezone: true }),
+	
+	// Timestamps
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	deliveredAt: timestamp('delivered_at', { withTimezone: true })
+}).enableRLS();
+
+export const webhooksRelations = relations(webhooks, ({ one, many }) => ({
+	organization: one(organizations, {
+		fields: [webhooks.organizationId],
+		references: [organizations.id]
+	}),
+	project: one(projects, {
+		fields: [webhooks.projectId],
+		references: [projects.id]
+	}),
+	createdBy: one(profiles, {
+		fields: [webhooks.createdById],
+		references: [profiles.id]
+	}),
+	deliveries: many(webhookDeliveries)
+}));
+
+export const webhookDeliveriesRelations = relations(webhookDeliveries, ({ one }) => ({
+	webhook: one(webhooks, {
+		fields: [webhookDeliveries.webhookId],
+		references: [webhooks.id]
 	})
 }));
 
@@ -2507,4 +2618,59 @@ export type IncidentSeverity = typeof incidentSeverityEnum.enumValues[number];
 export type JobType = typeof jobTypeEnum.enumValues[number];
 export type JobLocationType = typeof jobLocationTypeEnum.enumValues[number];
 export type JobStatus = typeof jobStatusEnum.enumValues[number];
+
+// ============================================================================
+// Time Tracking System
+// ============================================================================
+
+export const timeEntries = pgTable('time_entries', {
+	id: uuid('id').defaultRandom().primaryKey(),
+	ticketId: uuid('ticket_id').references(() => tickets.id, { onDelete: 'cascade' }),
+	projectId: uuid('project_id').references(() => projects.id, { onDelete: 'cascade' }),
+	userId: uuid('user_id')
+		.notNull()
+		.references(() => profiles.id, { onDelete: 'cascade' }),
+	description: text('description'),
+	startTime: timestamp('start_time').notNull(),
+	endTime: timestamp('end_time'),
+	duration: integer('duration'), // in minutes, calculated when stopped
+	isBillable: boolean('is_billable').default(true),
+	hourlyRate: decimal('hourly_rate', { precision: 10, scale: 2 }),
+	totalAmount: decimal('total_amount', { precision: 10, scale: 2 }),
+	invoiceId: uuid('invoice_id').references(() => invoices.id, { onDelete: 'set null' }),
+	createdAt: timestamp('created_at').defaultNow(),
+	updatedAt: timestamp('updated_at').defaultNow()
+});
+
+export const timeEntriesRelations = relations(timeEntries, ({ one }) => ({
+	ticket: one(tickets, {
+		fields: [timeEntries.ticketId],
+		references: [tickets.id]
+	}),
+	project: one(projects, {
+		fields: [timeEntries.projectId],
+		references: [projects.id]
+	}),
+	user: one(profiles, {
+		fields: [timeEntries.userId],
+		references: [profiles.id]
+	}),
+	invoice: one(invoices, {
+		fields: [timeEntries.invoiceId],
+		references: [invoices.id]
+	})
+}));
+
+// Update tickets to include time entries
+export const ticketsRelations2 = relations(tickets, ({ many }) => ({
+	timeEntries: many(timeEntries)
+}));
+
+// Update projects to include time entries  
+export const projectsRelations2 = relations(projects, ({ many }) => ({
+	timeEntries: many(timeEntries)
+}));
+
+export type TicketLinkType = typeof ticketLinkTypeEnum.enumValues[number];
+export type WebhookEvent = typeof webhookEventEnum.enumValues[number];
 export type JobApplicationStatus = typeof jobApplicationStatusEnum.enumValues[number];
