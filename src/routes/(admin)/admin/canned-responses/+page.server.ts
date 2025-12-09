@@ -29,6 +29,8 @@ export const load: PageServerLoad = async ({ locals }) => {
             isGlobal: cannedResponses.isGlobal,
             usageCount: cannedResponses.usageCount,
             lastUsedAt: cannedResponses.lastUsedAt,
+            supportsVariables: cannedResponses.supportsVariables,
+            availableVariables: cannedResponses.availableVariables,
             createdAt: cannedResponses.createdAt,
             createdById: cannedResponses.createdById,
             createdByName: profiles.displayName
@@ -68,6 +70,8 @@ export const actions: Actions = {
         const content = formData.get('content') as string;
         const category = formData.get('category') as string;
         const isGlobal = formData.get('isGlobal') === 'true';
+        const supportsVariables = formData.get('supportsVariables') === 'true';
+        const availableVariables = formData.get('availableVariables') as string;
 
         if (!title?.trim() || !content?.trim()) {
             return fail(400, { error: 'Title and content are required' });
@@ -75,6 +79,11 @@ export const actions: Actions = {
 
         // Only admins can create global responses
         const canCreateGlobal = ['admin', 'super_admin'].includes(locals.profile.role ?? '');
+
+        // Parse available variables
+        const variablesArray = availableVariables
+            ? availableVariables.split(',').map(v => v.trim()).filter(Boolean)
+            : null;
 
         // Create per-request database connection
         const db = createDb();
@@ -85,6 +94,8 @@ export const actions: Actions = {
             content: content.trim(),
             category: category?.trim() || null,
             isGlobal: canCreateGlobal ? isGlobal : false,
+            supportsVariables,
+            availableVariables: variablesArray,
             createdById: locals.profile.id
         }).returning({ id: cannedResponses.id });
 
@@ -106,10 +117,17 @@ export const actions: Actions = {
         const content = formData.get('content') as string;
         const category = formData.get('category') as string;
         const isGlobal = formData.get('isGlobal') === 'true';
+        const supportsVariables = formData.get('supportsVariables') === 'true';
+        const availableVariables = formData.get('availableVariables') as string;
 
         if (!id || !title?.trim() || !content?.trim()) {
             return fail(400, { error: 'ID, title, and content are required' });
         }
+
+        // Parse available variables
+        const variablesArray = availableVariables
+            ? availableVariables.split(',').map(v => v.trim()).filter(Boolean)
+            : null;
 
         // Create per-request database connection
         const db = createDb();
@@ -140,6 +158,8 @@ export const actions: Actions = {
                 content: content.trim(),
                 category: category?.trim() || null,
                 isGlobal: isAdmin ? isGlobal : false,
+                supportsVariables,
+                availableVariables: variablesArray,
                 updatedAt: new Date()
             })
             .where(eq(cannedResponses.id, id));

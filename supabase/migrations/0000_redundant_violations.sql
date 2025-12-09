@@ -1,4 +1,4 @@
-CREATE TYPE "public"."activity_type" AS ENUM('created', 'updated', 'status_changed', 'comment_added', 'file_uploaded', 'email_sent', 'payment_received', 'assigned', 'approved', 'rejected');--> statement-breakpoint
+CREATE TYPE "public"."activity_type" AS ENUM('created', 'updated', 'deleted', 'status_changed', 'comment_added', 'file_uploaded', 'email_sent', 'payment_received', 'assigned', 'approved', 'rejected');--> statement-breakpoint
 CREATE TYPE "public"."blog_post_status" AS ENUM('draft', 'published', 'archived');--> statement-breakpoint
 CREATE TYPE "public"."contact_submission_status" AS ENUM('new', 'read', 'replied', 'archived', 'spam');--> statement-breakpoint
 CREATE TYPE "public"."contact_submission_topic" AS ENUM('quote', 'support', 'general', 'partnership', 'feedback');--> statement-breakpoint
@@ -13,6 +13,7 @@ CREATE TYPE "public"."job_status" AS ENUM('draft', 'published', 'closed', 'archi
 CREATE TYPE "public"."job_type" AS ENUM('full_time', 'part_time', 'contract', 'freelance', 'internship');--> statement-breakpoint
 CREATE TYPE "public"."milestone_status" AS ENUM('pending', 'in_progress', 'completed', 'on_hold', 'cancelled');--> statement-breakpoint
 CREATE TYPE "public"."notification_type" AS ENUM('announcement', 'ticket_update', 'project_update', 'proposal_update', 'invoice_update', 'system', 'mention');--> statement-breakpoint
+CREATE TYPE "public"."payment_evidence_status" AS ENUM('pending', 'approved', 'rejected', 'processing');--> statement-breakpoint
 CREATE TYPE "public"."portfolio_project_status" AS ENUM('draft', 'published', 'archived');--> statement-breakpoint
 CREATE TYPE "public"."project_phase" AS ENUM('request', 'review', 'proposal', 'confirmed', 'building', 'completed', 'support');--> statement-breakpoint
 CREATE TYPE "public"."project_request_status" AS ENUM('pending', 'under_review', 'approved', 'rejected', 'converted');--> statement-breakpoint
@@ -102,6 +103,8 @@ CREATE TABLE "canned_responses" (
 	"shortcut" text,
 	"content" text NOT NULL,
 	"category" text,
+	"supports_variables" boolean DEFAULT false,
+	"available_variables" text[] DEFAULT '{"{{ticket.number}}","{{customer.name}}","{{customer.email}}","{{assignee.name}}","{{ticket.subject}}","{{ticket.category}}"}',
 	"is_global" boolean DEFAULT true NOT NULL,
 	"is_active" boolean DEFAULT true NOT NULL,
 	"created_by_id" uuid NOT NULL,
@@ -246,6 +249,24 @@ CREATE TABLE "job_postings" (
 );
 --> statement-breakpoint
 ALTER TABLE "job_postings" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
+CREATE TABLE "legal_pages" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"slug" text NOT NULL,
+	"title" text NOT NULL,
+	"content" text NOT NULL,
+	"summary" text,
+	"version" text DEFAULT '1.0' NOT NULL,
+	"effective_date" timestamp with time zone NOT NULL,
+	"last_reviewed_at" timestamp with time zone,
+	"is_published" boolean DEFAULT true NOT NULL,
+	"sort_order" integer DEFAULT 0 NOT NULL,
+	"last_edited_by_id" uuid,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "legal_pages_slug_unique" UNIQUE("slug")
+);
+--> statement-breakpoint
+ALTER TABLE "legal_pages" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "login_logs" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"profile_id" uuid NOT NULL,
@@ -316,6 +337,28 @@ CREATE TABLE "organizations" (
 );
 --> statement-breakpoint
 ALTER TABLE "organizations" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
+CREATE TABLE "payment_evidence" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"invoice_id" uuid NOT NULL,
+	"file_name" text NOT NULL,
+	"file_url" text NOT NULL,
+	"file_size" integer,
+	"file_type" text,
+	"amount" numeric(12, 2),
+	"payment_date" timestamp with time zone,
+	"payment_method" text,
+	"transaction_reference" text,
+	"notes" text,
+	"status" "payment_evidence_status" DEFAULT 'pending' NOT NULL,
+	"admin_notes" text,
+	"reviewed_by_id" uuid,
+	"reviewed_at" timestamp with time zone,
+	"submitted_by_id" uuid NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+ALTER TABLE "payment_evidence" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "payments" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"invoice_id" uuid NOT NULL,
@@ -556,6 +599,7 @@ CREATE TABLE "staff_group_members" (
 	"group_id" uuid NOT NULL,
 	"profile_id" uuid NOT NULL,
 	"role" text DEFAULT 'member' NOT NULL,
+	"last_assignment_at" timestamp with time zone,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "staff_group_members_group_id_profile_id_pk" PRIMARY KEY("group_id","profile_id")
 );
@@ -657,6 +701,21 @@ CREATE TABLE "system_settings" (
 );
 --> statement-breakpoint
 ALTER TABLE "system_settings" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
+CREATE TABLE "ticket_auto_assignment_rules" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"category_id" uuid,
+	"priority" "ticket_priority",
+	"keywords" text[],
+	"staff_group_id" uuid NOT NULL,
+	"is_active" boolean DEFAULT true NOT NULL,
+	"priority_order" integer DEFAULT 0 NOT NULL,
+	"assignment_strategy" text DEFAULT 'round_robin' NOT NULL,
+	"created_by_id" uuid NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+ALTER TABLE "ticket_auto_assignment_rules" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "ticket_categories" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" text NOT NULL,
@@ -684,6 +743,28 @@ CREATE TABLE "ticket_comments" (
 );
 --> statement-breakpoint
 ALTER TABLE "ticket_comments" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
+CREATE TABLE "ticket_templates" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"name" text NOT NULL,
+	"slug" text NOT NULL,
+	"description" text,
+	"category_id" uuid,
+	"default_priority" "ticket_priority" DEFAULT 'medium' NOT NULL,
+	"subject_template" text NOT NULL,
+	"description_template" text NOT NULL,
+	"default_assignee_id" uuid,
+	"default_staff_group_id" uuid,
+	"tags" text[],
+	"is_active" boolean DEFAULT true NOT NULL,
+	"is_public" boolean DEFAULT true NOT NULL,
+	"usage_count" integer DEFAULT 0 NOT NULL,
+	"created_by_id" uuid NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "ticket_templates_slug_unique" UNIQUE("slug")
+);
+--> statement-breakpoint
+ALTER TABLE "ticket_templates" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "tickets" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"organization_id" uuid NOT NULL,
@@ -749,11 +830,15 @@ ALTER TABLE "invoices" ADD CONSTRAINT "invoices_created_by_id_profiles_id_fk" FO
 ALTER TABLE "job_applications" ADD CONSTRAINT "job_applications_job_id_job_postings_id_fk" FOREIGN KEY ("job_id") REFERENCES "public"."job_postings"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "job_applications" ADD CONSTRAINT "job_applications_reviewed_by_id_profiles_id_fk" FOREIGN KEY ("reviewed_by_id") REFERENCES "public"."profiles"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "job_postings" ADD CONSTRAINT "job_postings_created_by_id_profiles_id_fk" FOREIGN KEY ("created_by_id") REFERENCES "public"."profiles"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "legal_pages" ADD CONSTRAINT "legal_pages_last_edited_by_id_profiles_id_fk" FOREIGN KEY ("last_edited_by_id") REFERENCES "public"."profiles"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "login_logs" ADD CONSTRAINT "login_logs_profile_id_profiles_id_fk" FOREIGN KEY ("profile_id") REFERENCES "public"."profiles"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "organization_invites" ADD CONSTRAINT "organization_invites_organization_id_organizations_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "organization_invites" ADD CONSTRAINT "organization_invites_created_by_id_profiles_id_fk" FOREIGN KEY ("created_by_id") REFERENCES "public"."profiles"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "organization_members" ADD CONSTRAINT "organization_members_organization_id_organizations_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "organization_members" ADD CONSTRAINT "organization_members_profile_id_profiles_id_fk" FOREIGN KEY ("profile_id") REFERENCES "public"."profiles"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "payment_evidence" ADD CONSTRAINT "payment_evidence_invoice_id_invoices_id_fk" FOREIGN KEY ("invoice_id") REFERENCES "public"."invoices"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "payment_evidence" ADD CONSTRAINT "payment_evidence_reviewed_by_id_profiles_id_fk" FOREIGN KEY ("reviewed_by_id") REFERENCES "public"."profiles"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "payment_evidence" ADD CONSTRAINT "payment_evidence_submitted_by_id_profiles_id_fk" FOREIGN KEY ("submitted_by_id") REFERENCES "public"."profiles"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "payments" ADD CONSTRAINT "payments_invoice_id_invoices_id_fk" FOREIGN KEY ("invoice_id") REFERENCES "public"."invoices"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "payments" ADD CONSTRAINT "payments_recorded_by_id_profiles_id_fk" FOREIGN KEY ("recorded_by_id") REFERENCES "public"."profiles"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "pending_org_members" ADD CONSTRAINT "pending_org_members_organization_id_organizations_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -790,8 +875,15 @@ ALTER TABLE "status_incident_updates" ADD CONSTRAINT "status_incident_updates_cr
 ALTER TABLE "status_incidents" ADD CONSTRAINT "status_incidents_created_by_id_profiles_id_fk" FOREIGN KEY ("created_by_id") REFERENCES "public"."profiles"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "support_articles" ADD CONSTRAINT "support_articles_author_id_profiles_id_fk" FOREIGN KEY ("author_id") REFERENCES "public"."profiles"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "system_settings" ADD CONSTRAINT "system_settings_updated_by_id_profiles_id_fk" FOREIGN KEY ("updated_by_id") REFERENCES "public"."profiles"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ticket_auto_assignment_rules" ADD CONSTRAINT "ticket_auto_assignment_rules_category_id_ticket_categories_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."ticket_categories"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ticket_auto_assignment_rules" ADD CONSTRAINT "ticket_auto_assignment_rules_staff_group_id_staff_groups_id_fk" FOREIGN KEY ("staff_group_id") REFERENCES "public"."staff_groups"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ticket_auto_assignment_rules" ADD CONSTRAINT "ticket_auto_assignment_rules_created_by_id_profiles_id_fk" FOREIGN KEY ("created_by_id") REFERENCES "public"."profiles"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "ticket_comments" ADD CONSTRAINT "ticket_comments_ticket_id_tickets_id_fk" FOREIGN KEY ("ticket_id") REFERENCES "public"."tickets"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "ticket_comments" ADD CONSTRAINT "ticket_comments_author_id_profiles_id_fk" FOREIGN KEY ("author_id") REFERENCES "public"."profiles"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ticket_templates" ADD CONSTRAINT "ticket_templates_category_id_ticket_categories_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."ticket_categories"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ticket_templates" ADD CONSTRAINT "ticket_templates_default_assignee_id_profiles_id_fk" FOREIGN KEY ("default_assignee_id") REFERENCES "public"."profiles"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ticket_templates" ADD CONSTRAINT "ticket_templates_default_staff_group_id_staff_groups_id_fk" FOREIGN KEY ("default_staff_group_id") REFERENCES "public"."staff_groups"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "ticket_templates" ADD CONSTRAINT "ticket_templates_created_by_id_profiles_id_fk" FOREIGN KEY ("created_by_id") REFERENCES "public"."profiles"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "tickets" ADD CONSTRAINT "tickets_organization_id_organizations_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "tickets" ADD CONSTRAINT "tickets_project_id_projects_id_fk" FOREIGN KEY ("project_id") REFERENCES "public"."projects"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "tickets" ADD CONSTRAINT "tickets_category_id_ticket_categories_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."ticket_categories"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint

@@ -2,7 +2,7 @@
 	/**
 	 * Create New Ticket Page
 	 */
-	import { ArrowLeft, Send, Loader2, Paperclip, AlertTriangle, AlertCircle, BookOpen, ChevronRight, X, Upload, File as FileIcon, Image } from '@lucide/svelte';
+	import { ArrowLeft, Send, Loader2, Paperclip, AlertTriangle, AlertCircle, BookOpen, ChevronRight, X, Upload, File as FileIcon, Image, FileText } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { enhance } from '$app/forms';
 	import { RichTextEditor } from '$lib/components/ui/rich-text-editor';
@@ -22,6 +22,30 @@
 		category: string | null;
 	};
 
+	type TicketTemplate = {
+		id: string;
+		name: string;
+		slug: string;
+		description: string | null;
+		categoryId: string | null;
+		categoryName: string | null;
+		defaultPriority: string;
+		subjectTemplate: string;
+		descriptionTemplate: string;
+		defaultAssigneeId: string | null;
+		defaultStaffGroupId: string | null;
+		tags: string[] | null;
+		isActive: boolean;
+		isPublic: boolean;
+		usageCount: number;
+	};
+
+	type TicketCategory = {
+		id: string;
+		name: string;
+		slug: string;
+	};
+
 	interface SelectedFile {
 		file: File;
 		name: string;
@@ -29,13 +53,50 @@
 		type: string;
 	}
 
-	let { data, form }: { data: { organizations: unknown[]; projects: unknown[]; suggestedArticles: SuggestedArticle[] }; form: FormReturn } = $props();
+	let { 
+		data, 
+		form 
+	}: { 
+		data: { 
+			organizations: unknown[]; 
+			projects: unknown[]; 
+			suggestedArticles: SuggestedArticle[];
+			templates: TicketTemplate[];
+			categories: TicketCategory[];
+		}; 
+		form: FormReturn;
+	} = $props();
 	
 	let loading = $state(false);
 	let subject = $state(form?.subject || '');
 	let description = $state(form?.description || '');
 	let priority = $state(form?.priority || 'medium');
 	let category = $state(form?.category || 'general');
+	let selectedTemplateId = $state<string | null>(null);
+	
+	// File handling
+	let selectedFiles = $state<SelectedFile[]>([]);
+	let dragActive = $state(false);
+	let fileInputRef: HTMLInputElement;
+
+	// Apply template when selected
+	function applyTemplate(templateId: string) {
+		const template = data.templates.find(t => t.id === templateId);
+		if (!template) return;
+
+		selectedTemplateId = templateId;
+		subject = template.subjectTemplate;
+		description = template.descriptionTemplate;
+		priority = template.defaultPriority;
+		
+		// Set category if template has one
+		if (template.categoryId) {
+			const cat = data.categories.find(c => c.id === template.categoryId);
+			if (cat) {
+				category = cat.slug;
+			}
+		}
+	}
 	
 	// File handling
 	let selectedFiles = $state<SelectedFile[]>([]);
@@ -148,6 +209,48 @@
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">01 — TICKET DETAILS</span>
 				
 				<div class="mt-6 space-y-6">
+					<!-- Template Selector -->
+					{#if data.templates && data.templates.length > 0}
+						<div>
+							<label for="template" class="font-ui text-xs font-medium tracking-wider text-foreground">
+								TEMPLATE <span class="text-muted-foreground">(OPTIONAL)</span>
+							</label>
+							<div class="relative mt-2">
+								<select
+									id="template"
+									onchange={(e) => {
+										const value = (e.target as HTMLSelectElement).value;
+										if (value) applyTemplate(value);
+									}}
+									class="font-body h-12 w-full appearance-none border border-border bg-card px-4 pr-10 text-sm focus:border-primary focus:outline-none"
+								>
+									<option value="">Choose a template (optional)</option>
+									{#each data.templates as template}
+										<option value={template.id}>
+											{template.name}
+											{#if template.categoryName}
+												— {template.categoryName}
+											{/if}
+										</option>
+									{/each}
+								</select>
+								<FileText class="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+							</div>
+							{#if selectedTemplateId}
+								{@const template = data.templates.find(t => t.id === selectedTemplateId)}
+								{#if template?.description}
+									<p class="font-body mt-2 text-xs text-muted-foreground">
+										{template.description}
+									</p>
+								{/if}
+							{/if}
+							<!-- Hidden field for template ID -->
+							{#if selectedTemplateId}
+								<input type="hidden" name="templateId" value={selectedTemplateId} />
+							{/if}
+						</div>
+					{/if}
+
 					<!-- Subject -->
 					<div>
 						<label for="subject" class="font-ui text-xs font-medium tracking-wider text-foreground">

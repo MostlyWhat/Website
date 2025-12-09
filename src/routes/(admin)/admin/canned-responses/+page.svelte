@@ -23,6 +23,10 @@
 	let content = $state('');
 	let category = $state('');
 	let isGlobal = $state(true);
+	let supportsVariables = $state(false);
+	let availableVariables = $state('');
+	let supportsVariables = $state(false);
+	let availableVariables = $state('');
 
 	const filteredResponses = $derived(
 		data.responses.filter(response => {
@@ -41,6 +45,8 @@
 		content = '';
 		category = '';
 		isGlobal = true;
+		supportsVariables = false;
+		availableVariables = '';
 		editingResponse = null;
 		showCreateDialog = true;
 	}
@@ -51,6 +57,8 @@
 		content = response.content;
 		category = response.category ?? '';
 		isGlobal = response.isGlobal;
+		supportsVariables = response.supportsVariables ?? false;
+		availableVariables = response.availableVariables?.join(', ') ?? '';
 		editingResponse = response;
 		showCreateDialog = true;
 	}
@@ -162,6 +170,9 @@
 											<Hash class="h-3 w-3" />
 											<span class="font-mono text-[10px]">{response.shortcut}</span>
 										</span>
+									{/if}
+									{#if response.supportsVariables}
+										<span class="px-1.5 py-0.5 text-[10px] bg-primary/10 text-primary border border-primary/30">MACRO</span>
 									{/if}
 									{#if response.isGlobal}
 										<span class="flex items-center gap-1 px-2 py-0.5 bg-blue-500/10 text-blue-500 border border-blue-500/30">
@@ -305,6 +316,47 @@
 						required
 						class="mt-2 resize-none"
 					/>
+					{#if supportsVariables}
+						<p class="mt-2 text-xs text-muted-foreground">
+							Use variables like {{'{'}}{'{'}ticket.number{'}'}{'}}'}, {{'{'}}{'{'}customer.name{'}'}{'}}'}, {{'{'}}{'{'}assignee.name{'}'}{'}'}} in your content.
+						</p>
+					{/if}
+				</div>
+
+				<!-- Macro Variables Section -->
+				<div class="border-t border-border pt-4">
+					<div class="flex items-center gap-2 mb-3">
+						<input
+							type="checkbox"
+							id="supportsVariables"
+							name="supportsVariables"
+							value="true"
+							bind:checked={supportsVariables}
+							class="h-4 w-4"
+						/>
+						<label for="supportsVariables" class="font-mono text-[10px] tracking-widest text-muted-foreground cursor-pointer">
+							ENABLE MACRO VARIABLES
+						</label>
+					</div>
+					
+					{#if supportsVariables}
+						<div>
+							<label for="availableVariables" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+								AVAILABLE VARIABLES (COMMA-SEPARATED)
+							</label>
+							<Textarea
+								id="availableVariables"
+								name="availableVariables"
+								bind:value={availableVariables}
+								rows={3}
+								placeholder="{{'{'}}{'{'}ticket.number{'}'}{'}}'}, {{'{'}}{'{'}customer.name{'}'}{'}}'}, {{'{'}}{'{'}customer.email{'}'}{'}}'}, {{'{'}}{'{'}assignee.name{'}'}{'}}'}, {{'{'}}{'{'}ticket.subject{'}'}{'}}'}, {{'{'}}{'{'}ticket.category{'}'}{'}'}}" 
+								class="mt-2 resize-none font-mono text-xs"
+							/>
+							<p class="mt-2 text-xs text-muted-foreground">
+								Default variables: ticket.number, customer.name, customer.email, assignee.name, ticket.subject, ticket.category
+							</p>
+						</div>
+					{/if}
 				</div>
 
 				<div class="grid grid-cols-2 gap-4">

@@ -7,14 +7,16 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { createDb } from '$lib/server/db';
-import { tickets, organizationMembers, organizations, projects, supportArticles, profiles, fileUploads } from '$lib/server/db/schema';
+import { tickets, organizationMembers, organizations, projects, supportArticles, profiles, fileUploads, ticketCategories } from '$lib/server/db/schema';
 import { eq, and, or, desc } from 'drizzle-orm';
 import crypto from 'node:crypto';
 import { generateOrgNumber } from '$lib/server/id-generator';
 import { sendTicketCreatedEmail } from '$lib/server/email';
 import { env } from '$env/dynamic/private';
-import { ticketActivity, organizationActivity, getClientIp } from '$lib/server/activity-logger';
+import { ticketActivity, organizationActivity, getClientIp, logActivity } from '$lib/server/activity-logger';
 import { createSupabaseAdminClient } from '$lib/server/supabase';
+import { autoAssignTicket } from '$lib/server/ticket-auto-assignment';
+import { getTicketTemplates, incrementTemplateUsage } from '$lib/server/ticket-templates';
 
 // File size limit: 10MB
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
@@ -101,10 +103,37 @@ export const load: PageServerLoad = async ({ locals }) => {
         console.warn('Support articles query failed (table may not exist):', error);
     }
 
+    // Get available ticket templates
+    // Include staff-only templates if user is staff
+    let templates: any[] = [];
+    try {
+        const isStaff = locals.profile.isStaff || locals.profile.isAdmin;
+        templates = await getTicketTemplates(isStaff);
+    } catch (error) {
+        console.warn('Ticket templates query failed (table may not exist):', error);
+    }
+
+    // Get ticket categories
+    let categories: { id: string; name: string; slug: string }[] = [];
+    try {
+        categories = await db
+            .select({
+                id: ticketCategories.id,
+                name: ticketCategories.name,
+                slug: ticketCategories.slug
+            })
+            .from(ticketCategories)
+            .where(eq(ticketCategories.isActive, true));
+    } catch (error) {
+        console.warn('Ticket categories query failed (table may not exist):', error);
+    }
+
     return {
         organizations: userOrgs,
         projects: userProjects,
-        suggestedArticles
+        suggestedArticles,
+        templates,
+        categories
     };
 };
 
@@ -133,6 +162,7 @@ export const actions: Actions = {
         const priority = formData.get('priority') as 'low' | 'medium' | 'high' | 'urgent';
         const category = formData.get('category') as string;
         const projectId = formData.get('projectId') as string | null;
+        const templateId = formData.get('templateId') as string | null;
 
         // Validation
         if (!subject?.trim()) {
@@ -247,6 +277,25 @@ export const actions: Actions = {
                     break;
             }
 
+            // Get category ID if category slug is provided
+            let categoryId: string | null = null;
+            if (category) {
+                const [cat] = await db
+                    .select({ id: ticketCategories.id })
+                    .from(ticketCategories)
+                    .where(eq(ticketCategories.slug, category))
+                    .limit(1);
+                categoryId = cat?.id || null;
+            }
+
+            // Try auto-assignment before creating ticket
+            const autoAssignment = await autoAssignTicket(
+                categoryId,
+                priority,
+                subject.trim(),
+                description.trim()
+            );
+
             // Create the ticket
             const [newTicket] = await db.insert(tickets).values({
                 organizationId,
@@ -257,6 +306,8 @@ export const actions: Actions = {
                 status: 'open',
                 priority,
                 category: category || 'general',
+                categoryId,
+                assignedToId: autoAssignment.assigned ? autoAssignment.assignedToId : null,
                 createdById: locals.profile.id,
                 dueAt: dueDate
             }).returning({ id: tickets.id, ticketNumber: tickets.ticketNumber });
@@ -326,6 +377,33 @@ export const actions: Actions = {
                 locals.profile.id,
                 getClientIp(request)
             );
+
+            // Increment template usage if template was used
+            if (templateId) {
+                try {
+                    await incrementTemplateUsage(templateId);
+                } catch (error) {
+                    console.warn('Failed to increment template usage:', error);
+                }
+            }
+
+            // Log auto-assignment if assigned
+            if (autoAssignment.assigned && autoAssignment.assignedToId) {
+                // Use custom logging for auto-assignment to include rule details
+                await logActivity({
+                    entityType: 'ticket',
+                    entityId: newTicket.id,
+                    activityType: 'assigned',
+                    description: `Ticket #${newTicket.ticketNumber} auto-assigned to ${autoAssignment.assignedToName} via rule: ${autoAssignment.ruleName} (${autoAssignment.strategy})`,
+                    newValues: {
+                        assignee: autoAssignment.assignedToName,
+                        assignmentRule: autoAssignment.ruleName,
+                        assignmentStrategy: autoAssignment.strategy
+                    },
+                    performedById: locals.profile.id,
+                    ipAddress: getClientIp(request)
+                });
+            }
 
             // Send confirmation email to ticket creator
             const ticketUrl = `${env.PUBLIC_SITE_URL || 'http://localhost:5173'}/app/tickets/${newTicket.id}`;

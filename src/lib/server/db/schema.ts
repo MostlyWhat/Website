@@ -713,6 +713,12 @@ export const tickets = pgTable('tickets', {
 	dueAt: timestamp('due_at', { withTimezone: true }),
 	firstResponseAt: timestamp('first_response_at', { withTimezone: true }),
 
+	// Ticket Relationships
+	mergedIntoId: uuid('merged_into_id').references(() => tickets.id, { onDelete: 'set null' }),
+	mergedAt: timestamp('merged_at', { withTimezone: true }),
+	mergedById: uuid('merged_by_id').references(() => profiles.id, { onDelete: 'set null' }),
+	parentTicketId: uuid('parent_ticket_id').references(() => tickets.id, { onDelete: 'set null' }),
+
 	// Metadata
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
@@ -1003,7 +1009,32 @@ export const ticketsRelations = relations(tickets, ({ one, many }) => ({
 		fields: [tickets.createdById],
 		references: [profiles.id]
 	}),
-	comments: many(ticketComments)
+	category: one(ticketCategories, {
+		fields: [tickets.categoryId],
+		references: [ticketCategories.id]
+	}),
+	mergedInto: one(tickets, {
+		fields: [tickets.mergedIntoId],
+		references: [tickets.id],
+		relationName: 'mergedTickets'
+	}),
+	mergedBy: one(profiles, {
+		fields: [tickets.mergedById],
+		references: [profiles.id]
+	}),
+	parentTicket: one(tickets, {
+		fields: [tickets.parentTicketId],
+		references: [tickets.id],
+		relationName: 'childTickets'
+	}),
+	childTickets: many(tickets, {
+		relationName: 'childTickets'
+	}),
+	mergedTickets: many(tickets, {
+		relationName: 'mergedTickets'
+	}),
+	comments: many(ticketComments),
+	satisfactionSurvey: one(ticketSatisfactionSurveys)
 }));
 
 export const ticketCommentsRelations = relations(ticketComments, ({ one }) => ({
@@ -1013,6 +1044,17 @@ export const ticketCommentsRelations = relations(ticketComments, ({ one }) => ({
 	}),
 	author: one(profiles, {
 		fields: [ticketComments.authorId],
+		references: [profiles.id]
+	})
+}));
+
+export const ticketSatisfactionSurveysRelations = relations(ticketSatisfactionSurveys, ({ one }) => ({
+	ticket: one(tickets, {
+		fields: [ticketSatisfactionSurveys.ticketId],
+		references: [tickets.id]
+	}),
+	customer: one(profiles, {
+		fields: [ticketSatisfactionSurveys.customerId],
 		references: [profiles.id]
 	})
 }));
@@ -1066,10 +1108,44 @@ export const staffGroupMembers = pgTable(
 			.notNull()
 			.references(() => profiles.id, { onDelete: 'cascade' }),
 		role: text('role').default('member').notNull(), // 'leader', 'member'
+		lastAssignmentAt: timestamp('last_assignment_at', { withTimezone: true }),
 		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
 	},
 	(table) => [primaryKey({ columns: [table.groupId, table.profileId] })]
 ).enableRLS();
+
+// =============================================================================
+// TICKET AUTO-ASSIGNMENT RULES TABLE
+// =============================================================================
+// Rules for automatically assigning tickets to staff groups based on category/priority/keywords
+
+export const ticketAutoAssignmentRules = pgTable('ticket_auto_assignment_rules', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	
+	// Matching criteria
+	categoryId: uuid('category_id').references(() => ticketCategories.id, { onDelete: 'cascade' }),
+	priority: ticketPriorityEnum('priority'), // null = any priority
+	keywords: text('keywords').array(), // Optional keywords to match
+	
+	// Assignment target
+	staffGroupId: uuid('staff_group_id')
+		.notNull()
+		.references(() => staffGroups.id, { onDelete: 'cascade' }),
+	
+	// Behavior
+	isActive: boolean('is_active').default(true).notNull(),
+	priorityOrder: integer('priority_order').default(0).notNull(), // Higher = checked first
+	
+	// Assignment strategy
+	assignmentStrategy: text('assignment_strategy').default('round_robin').notNull(), // 'round_robin', 'least_busy', 'random'
+	
+	// Metadata
+	createdById: uuid('created_by_id')
+		.notNull()
+		.references(() => profiles.id),
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+}).enableRLS();
 
 // =============================================================================
 // USER NOTIFICATIONS TABLE
@@ -1306,7 +1382,8 @@ export const staffGroupsRelations = relations(staffGroups, ({ one, many }) => ({
 		fields: [staffGroups.createdById],
 		references: [profiles.id]
 	}),
-	members: many(staffGroupMembers)
+	members: many(staffGroupMembers),
+	autoAssignmentRules: many(ticketAutoAssignmentRules)
 }));
 
 export const staffGroupMembersRelations = relations(staffGroupMembers, ({ one }) => ({
@@ -1316,6 +1393,21 @@ export const staffGroupMembersRelations = relations(staffGroupMembers, ({ one })
 	}),
 	profile: one(profiles, {
 		fields: [staffGroupMembers.profileId],
+		references: [profiles.id]
+	})
+}));
+
+export const ticketAutoAssignmentRulesRelations = relations(ticketAutoAssignmentRules, ({ one }) => ({
+	category: one(ticketCategories, {
+		fields: [ticketAutoAssignmentRules.categoryId],
+		references: [ticketCategories.id]
+	}),
+	staffGroup: one(staffGroups, {
+		fields: [ticketAutoAssignmentRules.staffGroupId],
+		references: [staffGroups.id]
+	}),
+	createdBy: one(profiles, {
+		fields: [ticketAutoAssignmentRules.createdById],
 		references: [profiles.id]
 	})
 }));
@@ -1409,6 +1501,81 @@ export const ticketCategories = pgTable('ticket_categories', {
 	isActive: boolean('is_active').default(true).notNull(),
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+}).enableRLS();
+
+// =============================================================================
+// TICKET TEMPLATES TABLE
+// =============================================================================
+// Pre-defined templates for quick ticket creation
+
+export const ticketTemplates = pgTable('ticket_templates', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	
+	// Template info
+	name: text('name').notNull(),
+	slug: text('slug').notNull().unique(),
+	description: text('description'),
+	
+	// Template fields
+	categoryId: uuid('category_id').references(() => ticketCategories.id, { onDelete: 'set null' }),
+	defaultPriority: ticketPriorityEnum('default_priority').default('medium').notNull(),
+	subjectTemplate: text('subject_template').notNull(),
+	descriptionTemplate: text('description_template').notNull(),
+	
+	// Auto-assignment
+	defaultAssigneeId: uuid('default_assignee_id').references(() => profiles.id, { onDelete: 'set null' }),
+	defaultStaffGroupId: uuid('default_staff_group_id').references(() => staffGroups.id, { onDelete: 'set null' }),
+	
+	// Tags
+	tags: text('tags').array(),
+	
+	// Visibility
+	isActive: boolean('is_active').default(true).notNull(),
+	isPublic: boolean('is_public').default(true).notNull(),
+	
+	// Usage tracking
+	usageCount: integer('usage_count').default(0).notNull(),
+	
+	// Metadata
+	createdById: uuid('created_by_id')
+		.notNull()
+		.references(() => profiles.id),
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+}).enableRLS();
+
+// =============================================================================
+// TICKET SATISFACTION SURVEYS TABLE
+// =============================================================================
+// Customer satisfaction surveys sent after ticket resolution
+
+export const ticketSatisfactionSurveys = pgTable('ticket_satisfaction_surveys', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	
+	ticketId: uuid('ticket_id')
+		.notNull()
+		.unique()
+		.references(() => tickets.id, { onDelete: 'cascade' }),
+	customerId: uuid('customer_id')
+		.notNull()
+		.references(() => profiles.id, { onDelete: 'cascade' }),
+	
+	// Ratings (1-5 scale)
+	rating: integer('rating').notNull(), // Overall satisfaction
+	responseTimeRating: integer('response_time_rating'),
+	resolutionQualityRating: integer('resolution_quality_rating'),
+	staffProfessionalismRating: integer('staff_professionalism_rating'),
+	
+	// Feedback
+	feedback: text('feedback'),
+	wouldRecommend: boolean('would_recommend'),
+	
+	// Survey tracking
+	surveyToken: varchar('survey_token', { length: 64 }).notNull().unique(),
+	surveySentAt: timestamp('survey_sent_at', { withTimezone: true }).defaultNow().notNull(),
+	respondedAt: timestamp('responded_at', { withTimezone: true }),
+	
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
 }).enableRLS();
 
 // =============================================================================
@@ -1518,6 +1685,17 @@ export const cannedResponses = pgTable('canned_responses', {
 
 	// Categorization
 	category: text('category'), // e.g., 'greeting', 'closing', 'technical', 'billing'
+
+	// Variable substitution
+	supportsVariables: boolean('supports_variables').default(false),
+	availableVariables: text('available_variables').array().default([
+		'{{ticket.number}}',
+		'{{customer.name}}',
+		'{{customer.email}}',
+		'{{assignee.name}}',
+		'{{ticket.subject}}',
+		'{{ticket.category}}'
+	]),
 
 	// Visibility
 	isGlobal: boolean('is_global').default(true).notNull(), // Available to all staff
@@ -2097,6 +2275,12 @@ export type NewStaffGroup = typeof staffGroups.$inferInsert;
 export type StaffGroupMember = typeof staffGroupMembers.$inferSelect;
 export type NewStaffGroupMember = typeof staffGroupMembers.$inferInsert;
 
+export type TicketAutoAssignmentRule = typeof ticketAutoAssignmentRules.$inferSelect;
+export type NewTicketAutoAssignmentRule = typeof ticketAutoAssignmentRules.$inferInsert;
+
+export type TicketTemplate = typeof ticketTemplates.$inferSelect;
+export type NewTicketTemplate = typeof ticketTemplates.$inferInsert;
+
 export type UserNotification = typeof userNotifications.$inferSelect;
 export type NewUserNotification = typeof userNotifications.$inferInsert;
 
@@ -2128,6 +2312,12 @@ export type NewJobApplication = typeof jobApplications.$inferInsert;
 
 export type LegalPage = typeof legalPages.$inferSelect;
 export type NewLegalPage = typeof legalPages.$inferInsert;
+
+export type TicketTemplate = typeof ticketTemplates.$inferSelect;
+export type NewTicketTemplate = typeof ticketTemplates.$inferInsert;
+
+export type TicketSatisfactionSurvey = typeof ticketSatisfactionSurveys.$inferSelect;
+export type NewTicketSatisfactionSurvey = typeof ticketSatisfactionSurveys.$inferInsert;
 
 export type UserRole = 'super_admin' | 'admin' | 'staff' | 'customer';
 export type CustomerType = typeof customerTypeEnum.enumValues[number];

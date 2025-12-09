@@ -1,10 +1,11 @@
 import { createDb } from '$lib/server/db';
-import { tickets, profiles, organizations, ticketComments, projects, cannedResponses, fileUploads, slaPolicies } from '$lib/server/db/schema';
-import { eq, desc, and, or, inArray } from 'drizzle-orm';
+import { tickets, profiles, organizations, ticketComments, projects, cannedResponses, fileUploads, slaPolicies, ticketSatisfactionSurveys } from '$lib/server/db/schema';
+import { eq, desc, and, or, inArray, like, isNull } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 import { error, fail, redirect } from '@sveltejs/kit';
 import { ticketActivity, getClientIp } from '$lib/server/activity-logger';
 import { calculateSLAStatus } from '$lib/server/sla-calculator';
+import { mergeTickets, getMergedTickets, getChildTickets, getParentHierarchy, setParentTicket, createSatisfactionSurvey } from '$lib/server/ticket-relationships';
 import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
@@ -132,7 +133,8 @@ export const load: PageServerLoad = async ({ params, locals }) => {
             shortcut: cannedResponses.shortcut,
             title: cannedResponses.title,
             content: cannedResponses.content,
-            category: cannedResponses.category
+            category: cannedResponses.category,
+            supportsVariables: cannedResponses.supportsVariables
         })
         .from(cannedResponses)
         .where(
@@ -209,19 +211,54 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         }
     }
 
+    // Fetch merged tickets
+    const mergedTickets = await getMergedTickets(ticketId);
+    
+    // Fetch child tickets
+    const childTickets = await getChildTickets(ticketId);
+    
+    // Fetch parent hierarchy
+    const parentHierarchy = await getParentHierarchy(ticketId);
+    
+    // Fetch satisfaction survey if exists
+    const [satisfactionSurvey] = await db
+        .select({
+            id: ticketSatisfactionSurveys.id,
+            rating: ticketSatisfactionSurveys.rating,
+            responseTimeRating: ticketSatisfactionSurveys.responseTimeRating,
+            resolutionQualityRating: ticketSatisfactionSurveys.resolutionQualityRating,
+            staffProfessionalismRating: ticketSatisfactionSurveys.staffProfessionalismRating,
+            feedback: ticketSatisfactionSurveys.feedback,
+            wouldRecommend: ticketSatisfactionSurveys.wouldRecommend,
+            surveySentAt: ticketSatisfactionSurveys.surveySentAt,
+            respondedAt: ticketSatisfactionSurveys.respondedAt
+        })
+        .from(ticketSatisfactionSurveys)
+        .where(eq(ticketSatisfactionSurveys.ticketId, ticketId))
+        .limit(1);
+
     return {
         ticket: {
             ...ticket,
-            organization: ticket.organizationName ?? 'Unknown',
+            organization: ticket.organizationId ? {
+                id: ticket.organizationId,
+                name: ticket.organizationName ?? 'Unknown'
+            } : null,
             createdBy: {
                 id: ticket.createdById,
-                name: ticket.createdByName ?? 'Unknown',
-                email: ticket.createdByEmail
+                displayName: ticket.createdByName ?? 'Unknown',
+                email: ticket.createdByEmail,
+                firstName: ticket.createdByName?.split(' ')[0] ?? '',
+                lastName: ticket.createdByName?.split(' ').slice(1).join(' ') ?? ''
             },
             assignedTo: ticket.assignedToId ? {
                 id: ticket.assignedToId,
-                name: ticket.assignedToName ?? 'Unknown',
+                displayName: ticket.assignedToName ?? 'Unknown',
                 email: ticket.assignedToEmail
+            } : null,
+            project: project ? {
+                id: project.id,
+                name: project.name
             } : null,
             slaStatus
         },
@@ -239,7 +276,11 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         })),
         staffMembers,
         cannedResponses: cannedResponsesData,
-        attachments: attachmentsData
+        attachments: attachmentsData,
+        mergedTickets,
+        childTickets,
+        parentHierarchy,
+        satisfactionSurvey: satisfactionSurvey ?? null
     };
 };
 
@@ -300,9 +341,13 @@ export const actions: Actions = {
         const formData = await request.formData();
         const status = formData.get('status') as string;
 
-        // Get current ticket info for logging
+        // Get current ticket info for logging and survey
         const [currentTicket] = await db
-            .select({ ticketNumber: tickets.ticketNumber, status: tickets.status })
+            .select({ 
+                ticketNumber: tickets.ticketNumber, 
+                status: tickets.status, 
+                createdById: tickets.createdById 
+            })
             .from(tickets)
             .where(eq(tickets.id, params.id));
 
@@ -316,6 +361,19 @@ export const actions: Actions = {
         // Set timestamps based on status
         if (status === 'resolved') {
             updateData.resolvedAt = new Date();
+            
+            // Create satisfaction survey if transitioning to resolved
+            if (oldStatus !== 'resolved') {
+                try {
+                    await createSatisfactionSurvey(params.id, currentTicket.createdById);
+                    // TODO: Send email with survey link
+                    // The survey token is stored in the database and can be used to generate the link
+                    // Survey URL: /surveys/{token}
+                } catch (error) {
+                    console.error('Failed to create satisfaction survey:', error);
+                    // Don't fail the status update if survey creation fails
+                }
+            }
         } else if (status === 'closed') {
             updateData.closedAt = new Date();
         } else if (status === 'open' || status === 'in_progress') {
@@ -571,5 +629,216 @@ export const actions: Actions = {
         );
 
         return { success: true, message: 'Tag removed successfully' };
+    },
+    
+    searchTickets: async ({ request, locals }) => {
+        const db = createDb();
+        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+            return fail(403, { error: 'Access denied' });
+        }
+
+        const formData = await request.formData();
+        const query = (formData.get('query') as string)?.trim();
+
+        if (!query || query.length < 2) {
+            return { tickets: [] };
+        }
+
+        // Search for tickets by number or subject (exclude merged tickets)
+        const creatorProfile = alias(profiles, 'creator_profile');
+        
+        const searchResults = await db
+            .select({
+                id: tickets.id,
+                ticketNumber: tickets.ticketNumber,
+                subject: tickets.subject,
+                status: tickets.status,
+                priority: tickets.priority,
+                createdAt: tickets.createdAt,
+                createdByName: creatorProfile.displayName
+            })
+            .from(tickets)
+            .leftJoin(creatorProfile, eq(tickets.createdById, creatorProfile.id))
+            .where(
+                and(
+                    or(
+                        like(tickets.ticketNumber, `%${query}%`),
+                        like(tickets.subject, `%${query}%`)
+                    ),
+                    isNull(tickets.mergedIntoId) // Exclude already merged tickets
+                )
+            )
+            .orderBy(desc(tickets.createdAt))
+            .limit(10);
+
+        return { 
+            tickets: searchResults.map(t => ({
+                id: t.id,
+                ticketNumber: t.ticketNumber,
+                subject: t.subject,
+                status: t.status,
+                priority: t.priority,
+                createdAt: t.createdAt?.toISOString() ?? null,
+                createdByName: t.createdByName ?? 'Unknown'
+            }))
+        };
+    },
+
+    merge: async ({ request, params, locals }) => {
+        const db = createDb();
+        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+            return fail(403, { error: 'Access denied' });
+        }
+
+        const formData = await request.formData();
+        const targetTicketId = formData.get('targetTicketId') as string;
+        const transferComments = formData.get('transferComments') === 'true';
+        const transferTags = formData.get('transferTags') === 'true';
+
+        if (!targetTicketId) {
+            return fail(400, { error: 'Target ticket is required' });
+        }
+
+        if (targetTicketId === params.id) {
+            return fail(400, { error: 'Cannot merge a ticket into itself' });
+        }
+
+        // Get ticket numbers for logging
+        const [sourceTicket] = await db
+            .select({ ticketNumber: tickets.ticketNumber })
+            .from(tickets)
+            .where(eq(tickets.id, params.id));
+
+        const [targetTicket] = await db
+            .select({ ticketNumber: tickets.ticketNumber })
+            .from(tickets)
+            .where(eq(tickets.id, targetTicketId));
+
+        if (!sourceTicket || !targetTicket) {
+            return fail(404, { error: 'One or both tickets not found' });
+        }
+
+        // Perform the merge
+        const result = await mergeTickets({
+            sourceTicketId: params.id,
+            targetTicketId,
+            mergedById: locals.profile.id,
+            transferComments,
+            transferTags
+        });
+
+        if (!result.success) {
+            return fail(400, { error: result.error ?? 'Failed to merge tickets' });
+        }
+
+        // Log activity
+        await ticketActivity.updated(
+            params.id,
+            sourceTicket.ticketNumber,
+            { 
+                merged: {
+                    into: targetTicket.ticketNumber,
+                    transferredComments: result.commentsTransferred,
+                    mergedTags: result.tagsMerged
+                }
+            },
+            locals.profile.id,
+            getClientIp(request)
+        );
+
+        // Redirect to the target ticket
+        redirect(303, `/admin/tickets/${targetTicketId}`);
+    },
+
+    setParent: async ({ request, params, locals }) => {
+        const db = createDb();
+        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+            return fail(403, { error: 'Access denied' });
+        }
+
+        const formData = await request.formData();
+        const parentTicketId = formData.get('parentTicketId') as string;
+
+        if (!parentTicketId) {
+            return fail(400, { error: 'Parent ticket is required' });
+        }
+
+        if (parentTicketId === params.id) {
+            return fail(400, { error: 'A ticket cannot be its own parent' });
+        }
+
+        // Get ticket numbers for logging
+        const [childTicket] = await db
+            .select({ ticketNumber: tickets.ticketNumber })
+            .from(tickets)
+            .where(eq(tickets.id, params.id));
+
+        const [parentTicket] = await db
+            .select({ ticketNumber: tickets.ticketNumber })
+            .from(tickets)
+            .where(eq(tickets.id, parentTicketId));
+
+        if (!childTicket || !parentTicket) {
+            return fail(404, { error: 'One or both tickets not found' });
+        }
+
+        // Set the parent relationship
+        const result = await setParentTicket(params.id, parentTicketId);
+
+        if (!result.success) {
+            return fail(400, { error: result.error ?? 'Failed to set parent ticket' });
+        }
+
+        // Log activity
+        await ticketActivity.updated(
+            params.id,
+            childTicket.ticketNumber,
+            { parent: { set: parentTicket.ticketNumber } },
+            locals.profile.id,
+            getClientIp(request)
+        );
+
+        return { success: true, message: 'Parent ticket set successfully' };
+    },
+
+    removeParent: async ({ request, params, locals }) => {
+        const db = createDb();
+        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+            return fail(403, { error: 'Access denied' });
+        }
+
+        // Get ticket number for logging
+        const [childTicket] = await db
+            .select({ ticketNumber: tickets.ticketNumber, parentTicketId: tickets.parentTicketId })
+            .from(tickets)
+            .where(eq(tickets.id, params.id));
+
+        if (!childTicket?.parentTicketId) {
+            return fail(400, { error: 'Ticket does not have a parent' });
+        }
+
+        // Get parent ticket number for logging
+        const [parentTicket] = await db
+            .select({ ticketNumber: tickets.ticketNumber })
+            .from(tickets)
+            .where(eq(tickets.id, childTicket.parentTicketId));
+
+        // Remove the parent relationship
+        const result = await setParentTicket(params.id, null);
+
+        if (!result.success) {
+            return fail(400, { error: result.error ?? 'Failed to remove parent ticket' });
+        }
+
+        // Log activity
+        await ticketActivity.updated(
+            params.id,
+            childTicket.ticketNumber,
+            { parent: { removed: parentTicket?.ticketNumber ?? 'Unknown' } },
+            locals.profile.id,
+            getClientIp(request)
+        );
+
+        return { success: true, message: 'Parent ticket removed successfully' };
     }
 };
