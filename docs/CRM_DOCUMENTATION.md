@@ -362,6 +362,92 @@ Open → In Progress → Waiting → Resolved → Closed
 Comments added at any stage until closed
 ```
 
+### Advanced Ticketing Features
+
+The CRM includes comprehensive enterprise-grade ticketing capabilities:
+
+#### SLA Management
+- **Response Time Targets**: Define expected first response times
+- **Resolution Time Targets**: Set resolution deadlines
+- **Breach Detection**: Automatic calculation of SLA violations
+- **Visual Indicators**: Color-coded warnings in ticket lists and details
+- **Default Policies**: Standard (24h/72h) and Premium (4h/24h) tiers
+- **Admin Interface**: `/admin/sla-policies` for policy management
+
+#### Canned Responses
+- **Pre-defined Templates**: Quick responses for common issues
+- **Category Organization**: Group responses by topic
+- **Keyboard Shortcuts**: Fast access to frequently used responses
+- **Macro Variables**: Dynamic content insertion (see below)
+- **Admin Interface**: `/admin/canned-responses` for template management
+
+#### Ticket Templates
+- **Pre-configured Tickets**: Templates for common request types
+- **Auto-population**: Subject, description, priority, tags
+- **Default Assignment**: Assign to specific staff or groups
+- **Usage Tracking**: Monitor template popularity
+- **Visibility Control**: Public (customer-facing) or staff-only
+- **Admin Interface**: `/admin/templates` for template CRUD
+
+#### Macro System
+Dynamic variable substitution in templates and responses:
+
+**Ticket Context:**
+- `{{ticket.number}}` - Ticket reference number
+- `{{ticket.subject}}` - Ticket subject line
+- `{{ticket.priority}}` - Priority level
+- `{{ticket.category}}` - Category name
+
+**Customer Context:**
+- `{{customer.name}}` - Customer full name
+- `{{customer.email}}` - Customer email address
+- `{{customer.firstName}}` - First name only
+- `{{customer.lastName}}` - Last name only
+
+**Organization Context:**
+- `{{org.name}}` - Organization name
+
+**Staff Context:**
+- `{{staff.name}}` - Assigned staff member name
+- `{{staff.email}}` - Staff email address
+
+**Project Context:**
+- `{{project.name}}` - Associated project name
+
+#### Auto-Assignment Rules
+- **Category-based**: Assign tickets by category to specific groups
+- **Priority-based**: Route urgent tickets to specialized teams
+- **Keyword Matching**: Smart assignment based on subject/description keywords
+- **Load Balancing**: Round-robin distribution within groups
+- **Assignment History**: Track last assignment time per staff member
+- **Admin Interface**: `/admin/auto-assignment` for rule configuration
+
+#### Ticket Relationships
+
+**Merging Tickets:**
+- Combine duplicate tickets into one
+- Transfer all comments and attachments
+- Maintain activity history
+- Update merged ticket references
+- Server function: `mergeTickets(sourceId, targetId)`
+
+**Parent/Child Hierarchies:**
+- Link related tickets hierarchically
+- Parent ticket shows all child tickets
+- Useful for complex issues with sub-tasks
+- Unlinking capability for flexibility
+- Server functions: `createParentChildRelationship()`, `removeParentChildRelationship()`
+
+#### Customer Satisfaction Surveys
+- **Post-Resolution Surveys**: Sent after ticket resolution
+- **5-Star Rating System**: Overall satisfaction score
+- **Detailed Ratings**: Response time, quality, professionalism
+- **Text Feedback**: Open-ended customer comments
+- **Recommendation Question**: "Would you recommend?" metric
+- **Unique Tokens**: Secure, expirable survey links
+- **Public Form**: `/surveys/[token]` for customer completion
+- **Survey Management**: Track response rates and analyze feedback
+
 ## API Endpoints
 
 ### Authentication

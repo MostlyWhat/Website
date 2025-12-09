@@ -1,9 +1,9 @@
 import { error, fail } from '@sveltejs/kit';
 import { getSurveyByToken, submitSatisfactionSurvey } from '$lib/server/ticket-relationships';
-import type { PageServerLoad, Actions } from './$types';
+import type { RequestEvent } from '@sveltejs/kit';
 
-export const load: PageServerLoad = async ({ params }) => {
-    const { token } = params;
+export const load = async ({ params }: RequestEvent) => {
+    const token = params.token as string;
 
     const survey = await getSurveyByToken(token);
 
@@ -38,9 +38,9 @@ export const load: PageServerLoad = async ({ params }) => {
     };
 };
 
-export const actions: Actions = {
-    submit: async ({ request, params }) => {
-        const { token } = params;
+export const actions = {
+    submit: async ({ request, params }: RequestEvent) => {
+        const token = params.token as string;
         const formData = await request.formData();
 
         const rating = parseInt(formData.get('rating') as string);
@@ -57,10 +57,10 @@ export const actions: Actions = {
 
         const result = await submitSatisfactionSurvey(token, {
             rating,
-            responseTimeRating,
-            resolutionQualityRating,
-            staffProfessionalismRating,
-            feedback,
+            responseTimeRating: responseTimeRating ?? undefined,
+            resolutionQualityRating: resolutionQualityRating ?? undefined,
+            staffProfessionalismRating: staffProfessionalismRating ?? undefined,
+            feedback: feedback ?? undefined,
             wouldRecommend
         });
 

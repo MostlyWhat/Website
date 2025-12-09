@@ -1,11 +1,12 @@
 import { createDb } from '$lib/server/db';
-import { tickets, profiles, organizations, ticketComments, projects, cannedResponses, fileUploads, slaPolicies, ticketSatisfactionSurveys } from '$lib/server/db/schema';
+import { tickets, profiles, organizations, ticketComments, projects, cannedResponses, fileUploads, slaPolicies, ticketSatisfactionSurveys, ticketWatchers } from '$lib/server/db/schema';
 import { eq, desc, and, or, inArray, like, isNull } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 import { error, fail, redirect } from '@sveltejs/kit';
 import { ticketActivity, getClientIp } from '$lib/server/activity-logger';
 import { calculateSLAStatus } from '$lib/server/sla-calculator';
 import { mergeTickets, getMergedTickets, getChildTickets, getParentHierarchy, setParentTicket, createSatisfactionSurvey } from '$lib/server/ticket-relationships';
+import { addTicketWatcher, removeTicketWatcher, getTicketWatchers } from '$lib/server/ticket-watchers';
 import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
@@ -213,13 +214,13 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 
     // Fetch merged tickets
     const mergedTickets = await getMergedTickets(ticketId);
-    
+
     // Fetch child tickets
     const childTickets = await getChildTickets(ticketId);
-    
+
     // Fetch parent hierarchy
     const parentHierarchy = await getParentHierarchy(ticketId);
-    
+
     // Fetch satisfaction survey if exists
     const [satisfactionSurvey] = await db
         .select({
@@ -236,6 +237,10 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         .from(ticketSatisfactionSurveys)
         .where(eq(ticketSatisfactionSurveys.ticketId, ticketId))
         .limit(1);
+
+    // Fetch watchers
+    const watchers = await getTicketWatchers(ticketId);
+    const isWatching = watchers.some(w => w.userId === locals.profile?.id);
 
     return {
         ticket: {
@@ -280,7 +285,9 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         mergedTickets,
         childTickets,
         parentHierarchy,
-        satisfactionSurvey: satisfactionSurvey ?? null
+        satisfactionSurvey: satisfactionSurvey ?? null,
+        watchers,
+        isWatching
     };
 };
 
@@ -343,10 +350,10 @@ export const actions: Actions = {
 
         // Get current ticket info for logging and survey
         const [currentTicket] = await db
-            .select({ 
-                ticketNumber: tickets.ticketNumber, 
-                status: tickets.status, 
-                createdById: tickets.createdById 
+            .select({
+                ticketNumber: tickets.ticketNumber,
+                status: tickets.status,
+                createdById: tickets.createdById
             })
             .from(tickets)
             .where(eq(tickets.id, params.id));
@@ -361,7 +368,7 @@ export const actions: Actions = {
         // Set timestamps based on status
         if (status === 'resolved') {
             updateData.resolvedAt = new Date();
-            
+
             // Create satisfaction survey if transitioning to resolved
             if (oldStatus !== 'resolved') {
                 try {
@@ -630,7 +637,7 @@ export const actions: Actions = {
 
         return { success: true, message: 'Tag removed successfully' };
     },
-    
+
     searchTickets: async ({ request, locals }) => {
         const db = createDb();
         if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
@@ -646,7 +653,7 @@ export const actions: Actions = {
 
         // Search for tickets by number or subject (exclude merged tickets)
         const creatorProfile = alias(profiles, 'creator_profile');
-        
+
         const searchResults = await db
             .select({
                 id: tickets.id,
@@ -671,7 +678,7 @@ export const actions: Actions = {
             .orderBy(desc(tickets.createdAt))
             .limit(10);
 
-        return { 
+        return {
             tickets: searchResults.map(t => ({
                 id: t.id,
                 ticketNumber: t.ticketNumber,
@@ -735,7 +742,7 @@ export const actions: Actions = {
         await ticketActivity.updated(
             params.id,
             sourceTicket.ticketNumber,
-            { 
+            {
                 merged: {
                     into: targetTicket.ticketNumber,
                     transferredComments: result.commentsTransferred,
@@ -840,5 +847,73 @@ export const actions: Actions = {
         );
 
         return { success: true, message: 'Parent ticket removed successfully' };
+    },
+
+    addPrivateNote: async ({ request, params, locals }) => {
+        const db = createDb();
+        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+            return fail(403, { error: 'Access denied' });
+        }
+
+        const formData = await request.formData();
+        const content = formData.get('content') as string;
+
+        if (!content?.trim()) {
+            return fail(400, { error: 'Note content is required' });
+        }
+
+        // Add internal comment (private note)
+        await db.insert(ticketComments).values({
+            ticketId: params.id,
+            authorId: locals.profile.id,
+            content: content.trim(),
+            isInternal: true // This makes it a private note
+        });
+
+        // Log activity
+        const [ticket] = await db
+            .select({ ticketNumber: tickets.ticketNumber })
+            .from(tickets)
+            .where(eq(tickets.id, params.id));
+
+        if (ticket) {
+            await ticketActivity.updated(
+                params.id,
+                ticket.ticketNumber,
+                { privateNote: 'added' },
+                locals.profile.id,
+                getClientIp(request)
+            );
+        }
+
+        return { success: true, message: 'Private note added successfully' };
+    },
+
+    watchTicket: async ({ params, locals }) => {
+        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+            return fail(403, { error: 'Access denied' });
+        }
+
+        const result = await addTicketWatcher(params.id, locals.profile.id);
+
+        if (!result.success) {
+            return fail(400, { error: result.error ?? 'Failed to watch ticket' });
+        }
+
+        return { success: true, message: 'Now watching this ticket' };
+    },
+
+    unwatchTicket: async ({ params, locals }) => {
+        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+            return fail(403, { error: 'Access denied' });
+        }
+
+        const result = await removeTicketWatcher(params.id, locals.profile.id);
+
+        if (!result.success) {
+            return fail(400, { error: result.error ?? 'Failed to unwatch ticket' });
+        }
+
+        return { success: true, message: 'Stopped watching this ticket' };
     }
 };

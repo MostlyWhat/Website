@@ -107,7 +107,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     // Include staff-only templates if user is staff
     let templates: any[] = [];
     try {
-        const isStaff = locals.profile.isStaff || locals.profile.isAdmin;
+        const isStaff = ['super_admin', 'admin', 'staff'].includes(locals.profile.role ?? '');
         templates = await getTicketTemplates(isStaff);
     } catch (error) {
         console.warn('Ticket templates query failed (table may not exist):', error);
