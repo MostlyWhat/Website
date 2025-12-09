@@ -1,11 +1,15 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
+import { logActivity, getClientIp } from '$lib/server/activity-logger';
 
 export const actions: Actions = {
     changePassword: async ({ request, locals }) => {
         if (!locals.user || !locals.supabase) {
             return fail(401, { error: 'Unauthorized' });
         }
+
+        const ipAddress = getClientIp(request);
+        const userAgent = request.headers.get('user-agent') ?? undefined;
 
         const formData = await request.formData();
         const currentPassword = formData.get('currentPassword') as string;
@@ -42,6 +46,17 @@ export const actions: Actions = {
         if (updateError) {
             return fail(500, { error: 'Failed to update password. Please try again.' });
         }
+
+        // Log password change
+        await logActivity({
+            entityType: 'user',
+            entityId: locals.user.id,
+            activityType: 'updated',
+            description: 'Password was changed',
+            performedById: locals.user.id,
+            ipAddress,
+            userAgent
+        });
 
         return { success: true, message: 'Password updated successfully.' };
     }

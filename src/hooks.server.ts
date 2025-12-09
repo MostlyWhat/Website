@@ -7,6 +7,7 @@ import { env } from '$env/dynamic/public';
 import { createDb } from '$lib/server/db';
 import { profiles } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
+import { logLoginEvent, getClientIp } from '$lib/server/activity-logger';
 
 /**
  * Paraglide i18n middleware
@@ -53,6 +54,7 @@ const handleSupabase: Handle = async ({ event, resolve }) => {
 	/**
 		* Safe session getter that validates JWT
 		* Unlike `supabase.auth.getSession()`, this validates the JWT before returning.
+		* Also logs session timeouts when JWT validation fails.
 		*/
 	event.locals.safeGetSession = async () => {
 		const {
@@ -70,7 +72,18 @@ const handleSupabase: Handle = async ({ event, resolve }) => {
 		} = await event.locals.supabase.auth.getUser();
 
 		if (error) {
-			// JWT validation failed
+			// JWT validation failed - could be session timeout
+			// Log this as a potential timeout event
+			if (session?.user?.id) {
+				await logLoginEvent({
+					profileId: session.user.id,
+					eventType: 'logout',
+					ipAddress: getClientIp(event.request),
+					userAgent: event.request.headers.get('user-agent') ?? undefined,
+					success: true,
+					failureReason: 'Session timeout or invalid JWT'
+				});
+			}
 			return { session: null, user: null };
 		}
 

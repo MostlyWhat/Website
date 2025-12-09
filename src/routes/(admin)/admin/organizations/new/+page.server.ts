@@ -122,7 +122,7 @@ export const actions: Actions = {
                 getClientIp(request)
             );
 
-            redirect(302, `/admin/organizations/${newOrg.id}`);
+            return { success: true, message: 'Organization created successfully!' };
         } catch (err) {
             if ((err as any)?.status === 302) throw err; // Re-redirect
             console.error('Error creating organization:', err);

@@ -5,12 +5,14 @@
 	 * Admin form to create new client organizations.
 	 */
 	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
 	import { ArrowLeft, Building2, Loader2 } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import * as Select from '$lib/components/ui/select';
+	import { toast } from 'svelte-sonner';
 
 	let { data, form } = $props();
 
@@ -31,6 +33,15 @@
 			await update();
 		};
 	}
+
+	// Handle success toast and redirect
+	$effect(() => {
+		if (form?.success && form?.message) {
+			toast.success(form.message);
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+			setTimeout(() => goto('/admin/organizations'), 1500);
+		}
+	});
 </script>
 
 <svelte:head>

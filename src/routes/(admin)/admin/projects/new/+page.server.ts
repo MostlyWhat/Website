@@ -148,7 +148,7 @@ export const actions: Actions = {
             // Log activity
             await projectActivity.created(newProject.id, newProject.name, locals.profile.id, getClientIp(request));
 
-            redirect(302, `/admin/projects/${newProject.id}`);
+            return { success: true, message: 'Project created successfully!' };
         } catch (err) {
             if (err instanceof Response) throw err;
             console.error('Failed to create project:', err);

@@ -141,6 +141,43 @@
 			default: return { class: 'bg-muted text-muted-foreground', label: priority };
 		}
 	}
+
+	function getSLAConfig(slaStatus: any): { class: string; label: string; icon: typeof AlertCircle } | null {
+		if (!slaStatus) return null;
+
+		// Check for breaches first
+		if (slaStatus.responseBreached || slaStatus.resolutionBreached) {
+			return {
+				class: 'bg-red-500/10 text-red-500 border border-red-500/30 animate-pulse',
+				label: 'SLA BREACHED',
+				icon: AlertCircle
+			};
+		}
+
+		// Check urgency level
+		switch (slaStatus.urgencyLevel) {
+			case 'critical':
+				return {
+					class: 'bg-red-500/10 text-red-500 border border-red-500/30',
+					label: `SLA: ${slaStatus.resolutionTimeRemaining}`,
+					icon: AlertTriangle
+				};
+			case 'warning':
+				return {
+					class: 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/30',
+					label: `SLA: ${slaStatus.resolutionTimeRemaining}`,
+					icon: Clock
+				};
+			case 'normal':
+				return {
+					class: 'bg-green-500/10 text-green-500 border border-green-500/30',
+					label: `SLA: ${slaStatus.resolutionTimeRemaining}`,
+					icon: CheckCircle
+				};
+			default:
+				return null;
+		}
+	}
 </script>
 
 <svelte:head>
@@ -395,8 +432,8 @@
 				<p class="font-mono text-[10px] tracking-wider text-muted-foreground">OPEN</p>
 			</div>
 			<div class="col-span-3 bg-background px-6 py-4">
-				<span class="font-display text-xl font-bold text-red-500">{tickets.filter(t => t.priority === 'urgent').length}</span>
-				<p class="font-mono text-[10px] tracking-wider text-muted-foreground">URGENT</p>
+				<span class="font-display text-xl font-bold text-red-500">{tickets.filter(t => t.slaStatus?.responseBreached || t.slaStatus?.resolutionBreached).length}</span>
+				<p class="font-mono text-[10px] tracking-wider text-muted-foreground">SLA BREACH</p>
 			</div>
 			<div class="col-span-3 bg-background px-6 py-4 md:px-12 lg:px-16">
 				<span class="font-display text-xl font-bold text-orange-500">{tickets.filter(t => !t.assignedTo).length}</span>
@@ -431,6 +468,7 @@
 				{#each tickets as ticket}
 					{@const statusConfig = getStatusConfig(ticket.status)}
 					{@const priorityConfig = getPriorityConfig(ticket.priority)}
+					{@const slaConfig = getSLAConfig(ticket.slaStatus)}
 					{@const isSelected = selectedTickets.has(ticket.id)}
 					<div
 						class="group flex items-center gap-4 px-6 py-4 transition-colors hover:bg-card md:px-12 lg:px-16 {isSelected ? 'bg-primary/5' : ''}"
@@ -473,6 +511,13 @@
 									<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-muted text-muted-foreground border border-border">
 										<Tag class="h-3 w-3" />
 										<span class="font-mono text-[10px] tracking-wider uppercase">{ticket.category}</span>
+									</span>
+								{/if}
+								{#if slaConfig}
+									{@const SlaIcon = slaConfig.icon}
+									<span class="inline-flex items-center gap-1 px-2 py-0.5 {slaConfig.class}">
+										<SlaIcon class="h-3 w-3" />
+										<span class="font-mono text-[10px] tracking-wider font-bold">{slaConfig.label}</span>
 									</span>
 								{/if}
 							</div>

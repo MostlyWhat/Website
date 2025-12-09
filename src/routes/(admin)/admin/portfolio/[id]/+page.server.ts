@@ -3,6 +3,7 @@ import { portfolioProjects, profiles } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { fail, redirect, error } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
+import { logActivity, getClientIp } from '$lib/server/activity-logger';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
     const db = createDb();
@@ -142,6 +143,25 @@ export const actions: Actions = {
                 updatedAt: new Date()
             }).where(eq(portfolioProjects.id, params.id));
 
+            // Log activity
+            const ipAddress = getClientIp(request);
+            const userAgent = request.headers.get('user-agent') || undefined;
+            await logActivity({
+                performedById: locals.profile!.id,
+                activityType: 'updated',
+                entityType: 'portfolio_project',
+                entityId: params.id,
+                description: `Updated portfolio project: ${title}`,
+                ipAddress,
+                userAgent,
+                newValues: {
+                    title: title.trim(),
+                    client: client.trim(),
+                    status,
+                    category: category.trim()
+                }
+            });
+
             return { success: true };
         } catch (error) {
             console.error('Failed to update portfolio project:', error);
@@ -155,7 +175,7 @@ export const actions: Actions = {
         }
     },
 
-    delete: async ({ params, locals }) => {
+    delete: async ({ params, request, locals }) => {
         // Create per-request database connection
         const db = createDb();
         if (!locals.profile || !['super_admin', 'admin'].includes(locals.profile.role)) {
@@ -163,7 +183,29 @@ export const actions: Actions = {
         }
 
         try {
+            // Get project details before deletion
+            const [project] = await db
+                .select({ title: portfolioProjects.title, client: portfolioProjects.client })
+                .from(portfolioProjects)
+                .where(eq(portfolioProjects.id, params.id));
+
             await db.delete(portfolioProjects).where(eq(portfolioProjects.id, params.id));
+
+            // Log activity
+            if (project) {
+                const ipAddress = getClientIp(request);
+                const userAgent = request.headers.get('user-agent') || undefined;
+                await logActivity({
+                    performedById: locals.profile!.id,
+                    activityType: 'deleted',
+                    entityType: 'portfolio_project',
+                    entityId: params.id,
+                    description: `Deleted portfolio project: ${project.title} (${project.client})`,
+                    ipAddress,
+                    userAgent
+                });
+            }
+
             redirect(303, '/admin/portfolio');
         } catch (error) {
             if (error instanceof Response) error;

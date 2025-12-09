@@ -150,7 +150,7 @@ export const actions: Actions = {
                 getClientIp(request)
             );
 
-            return redirect(303, `/admin/tickets/${newTicket.id}`);
+            return { success: true, message: 'Ticket created successfully!' };
         } catch (err) {
             console.error('Error creating ticket:', err);
             return fail(500, {

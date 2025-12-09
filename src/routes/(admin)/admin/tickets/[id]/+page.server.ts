@@ -1,9 +1,10 @@
 import { createDb } from '$lib/server/db';
-import { tickets, profiles, organizations, ticketComments, projects, cannedResponses, fileUploads } from '$lib/server/db/schema';
+import { tickets, profiles, organizations, ticketComments, projects, cannedResponses, fileUploads, slaPolicies } from '$lib/server/db/schema';
 import { eq, desc, and, or, inArray } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 import { error, fail, redirect } from '@sveltejs/kit';
 import { ticketActivity, getClientIp } from '$lib/server/activity-logger';
+import { calculateSLAStatus } from '$lib/server/sla-calculator';
 import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
@@ -49,7 +50,14 @@ export const load: PageServerLoad = async ({ params, locals }) => {
             createdByEmail: creatorProfile.email,
             organizationId: tickets.organizationId,
             organizationName: organizations.name,
-            projectId: tickets.projectId
+            projectId: tickets.projectId,
+            // SLA fields
+            slaPolicyId: tickets.slaPolicyId,
+            slaResponseDueAt: tickets.slaResponseDueAt,
+            slaResolutionDueAt: tickets.slaResolutionDueAt,
+            slaFirstResponseAt: tickets.slaFirstResponseAt,
+            slaResolvedAt: tickets.slaResolvedAt,
+            slaBreached: tickets.slaBreached
         })
         .from(tickets)
         .leftJoin(assignedProfile, eq(tickets.assignedToId, assignedProfile.id))
@@ -160,6 +168,47 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         )
         .orderBy(desc(fileUploads.createdAt));
 
+    // Fetch SLA policy and calculate status
+    let slaPolicy = null;
+    let slaStatus = null;
+    
+    if (ticket.slaPolicyId) {
+        const [policy] = await db
+            .select()
+            .from(slaPolicies)
+            .where(eq(slaPolicies.id, ticket.slaPolicyId))
+            .limit(1);
+        
+        if (policy) {
+            slaPolicy = policy;
+            
+            // Calculate SLA status if deadlines exist
+            if (ticket.slaResponseDueAt && ticket.slaResolutionDueAt) {
+                slaStatus = calculateSLAStatus(
+                    ticket.createdAt,
+                    ticket.slaResponseDueAt,
+                    ticket.slaResolutionDueAt,
+                    ticket.slaFirstResponseAt,
+                    ticket.slaResolvedAt,
+                    {
+                        urgentResponseHours: policy.urgentResponseHours,
+                        urgentResolutionHours: policy.urgentResolutionHours,
+                        highResponseHours: policy.highResponseHours,
+                        highResolutionHours: policy.highResolutionHours,
+                        mediumResponseHours: policy.mediumResponseHours,
+                        mediumResolutionHours: policy.mediumResolutionHours,
+                        lowResponseHours: policy.lowResponseHours,
+                        lowResolutionHours: policy.lowResolutionHours,
+                        businessHoursOnly: policy.businessHoursOnly,
+                        businessHoursStart: policy.businessHoursStart,
+                        businessHoursEnd: policy.businessHoursEnd,
+                        businessDays: policy.businessDays
+                    }
+                );
+            }
+        }
+    }
+
     return {
         ticket: {
             ...ticket,
@@ -173,8 +222,10 @@ export const load: PageServerLoad = async ({ params, locals }) => {
                 id: ticket.assignedToId,
                 name: ticket.assignedToName ?? 'Unknown',
                 email: ticket.assignedToEmail
-            } : null
+            } : null,
+            slaStatus
         },
+        slaPolicy,
         project,
         comments: commentsData.map(c => ({
             ...c,
@@ -397,28 +448,43 @@ export const actions: Actions = {
         return { success: true, message: 'Comment deleted successfully' };
     },
 
-    updateCategory: async ({ request, params, locals }) => {
-        // Create per-request database connection
-        const db = createDb();
-        if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
-            return fail(403, { error: 'Access denied' });
-        }
+	updateCategory: async ({ request, params, locals }) => {
+		// Create per-request database connection
+		const db = createDb();
+		if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
+			return fail(403, { error: 'Access denied' });
+		}
 
-        const formData = await request.formData();
-        const category = formData.get('category') as string;
+		const formData = await request.formData();
+		const category = formData.get('category') as string;
 
-        await db
-            .update(tickets)
-            .set({
-                category: category || null,
-                updatedAt: new Date()
-            })
-            .where(eq(tickets.id, params.id));
+		// Get current ticket info for logging
+		const [currentTicket] = await db
+			.select({ ticketNumber: tickets.ticketNumber, category: tickets.category })
+			.from(tickets)
+			.where(eq(tickets.id, params.id));
 
-        return { success: true, message: 'Category updated successfully' };
-    },
+		const oldCategory = currentTicket.category;
 
-    addTag: async ({ request, params, locals }) => {
+		await db
+			.update(tickets)
+			.set({
+				category: category || null,
+				updatedAt: new Date()
+			})
+			.where(eq(tickets.id, params.id));
+
+		// Log activity
+		await ticketActivity.updated(
+			params.id,
+			currentTicket.ticketNumber,
+			{ category: { old: oldCategory, new: category } },
+			locals.profile.id,
+			getClientIp(request)
+		);
+
+		return { success: true, message: 'Category updated successfully' };
+	},    addTag: async ({ request, params, locals }) => {
         // Create per-request database connection
         const db = createDb();
         if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
@@ -432,33 +498,40 @@ export const actions: Actions = {
             return fail(400, { error: 'Tag cannot be empty' });
         }
 
-        // Get current tags
-        const [ticketData] = await db
-            .select({ tags: tickets.tags })
-            .from(tickets)
-            .where(eq(tickets.id, params.id))
-            .limit(1);
+		// Get current tags
+		const [ticketData] = await db
+			.select({ tags: tickets.tags, ticketNumber: tickets.ticketNumber })
+			.from(tickets)
+			.where(eq(tickets.id, params.id))
+			.limit(1);
 
-        const currentTags = ticketData?.tags ?? [];
+		const currentTags = ticketData?.tags ?? [];
 
-        // Check if tag already exists
-        if (currentTags.includes(tag)) {
-            return fail(400, { error: 'Tag already exists' });
-        }
+		// Check if tag already exists
+		if (currentTags.includes(tag)) {
+			return fail(400, { error: 'Tag already exists' });
+		}
 
-        // Add new tag
-        await db
-            .update(tickets)
-            .set({
-                tags: [...currentTags, tag],
-                updatedAt: new Date()
-            })
-            .where(eq(tickets.id, params.id));
+		// Add new tag
+		await db
+			.update(tickets)
+			.set({
+				tags: [...currentTags, tag],
+				updatedAt: new Date()
+			})
+			.where(eq(tickets.id, params.id));
 
-        return { success: true, message: 'Tag added successfully' };
-    },
+		// Log activity
+		await ticketActivity.updated(
+			params.id,
+			ticketData.ticketNumber,
+			{ tags: { added: tag } },
+			locals.profile.id,
+			getClientIp(request)
+		);
 
-    removeTag: async ({ request, params, locals }) => {
+		return { success: true, message: 'Tag added successfully' };
+	},    removeTag: async ({ request, params, locals }) => {
         // Create per-request database connection
         const db = createDb();
         if (!locals.profile || !['admin', 'super_admin', 'staff'].includes(locals.profile.role ?? '')) {
@@ -470,7 +543,7 @@ export const actions: Actions = {
 
         // Get current tags
         const [ticketData] = await db
-            .select({ tags: tickets.tags })
+            .select({ tags: tickets.tags, ticketNumber: tickets.ticketNumber })
             .from(tickets)
             .where(eq(tickets.id, params.id))
             .limit(1);
@@ -487,6 +560,15 @@ export const actions: Actions = {
                 updatedAt: new Date()
             })
             .where(eq(tickets.id, params.id));
+
+        // Log activity
+        await ticketActivity.updated(
+            params.id,
+            ticketData.ticketNumber,
+            { tags: { removed: tag } },
+            locals.profile.id,
+            getClientIp(request)
+        );
 
         return { success: true, message: 'Tag removed successfully' };
     }

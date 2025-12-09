@@ -69,51 +69,63 @@
 	<title>Messages — Admin</title>
 </svelte:head>
 
-<div class="space-y-6">
+<div class="container mx-auto max-w-7xl p-6 space-y-6">
 	<!-- Header -->
 	<div class="flex items-center justify-between">
 		<div>
-			<h1 class="font-display text-2xl font-bold">Messages</h1>
-			<p class="text-sm text-muted-foreground">Manage contact form submissions</p>
+			<h1 class="font-display text-3xl font-bold tracking-tight">Messages</h1>
+			<p class="text-muted-foreground mt-1">Manage contact form submissions and inquiries</p>
 		</div>
 	</div>
 
 	<!-- Stats -->
-	<div class="grid grid-cols-2 gap-4 md:grid-cols-6">
+	<div class="grid gap-4 md:grid-cols-6">
 		<Card.Root>
-			<Card.Content class="p-4 text-center">
-				<p class="font-display text-2xl font-bold">{data.stats?.total || 0}</p>
-				<p class="text-xs text-muted-foreground">Total</p>
+			<Card.Content class="pt-6">
+				<div class="text-center">
+					<p class="font-display text-3xl font-bold tabular-nums">{data.stats?.total || 0}</p>
+					<p class="text-xs text-muted-foreground mt-1 uppercase tracking-wider">Total</p>
+				</div>
 			</Card.Content>
 		</Card.Root>
 		<Card.Root>
-			<Card.Content class="p-4 text-center">
-				<p class="font-display text-2xl font-bold text-blue-500">{data.stats?.new || 0}</p>
-				<p class="text-xs text-muted-foreground">New</p>
+			<Card.Content class="pt-6">
+				<div class="text-center">
+					<p class="font-display text-3xl font-bold tabular-nums text-blue-500">{data.stats?.new || 0}</p>
+					<p class="text-xs text-muted-foreground mt-1 uppercase tracking-wider">New</p>
+				</div>
 			</Card.Content>
 		</Card.Root>
 		<Card.Root>
-			<Card.Content class="p-4 text-center">
-				<p class="font-display text-2xl font-bold text-yellow-500">{data.stats?.read || 0}</p>
-				<p class="text-xs text-muted-foreground">Read</p>
+			<Card.Content class="pt-6">
+				<div class="text-center">
+					<p class="font-display text-3xl font-bold tabular-nums text-yellow-500">{data.stats?.read || 0}</p>
+					<p class="text-xs text-muted-foreground mt-1 uppercase tracking-wider">Read</p>
+				</div>
 			</Card.Content>
 		</Card.Root>
 		<Card.Root>
-			<Card.Content class="p-4 text-center">
-				<p class="font-display text-2xl font-bold text-green-500">{data.stats?.replied || 0}</p>
-				<p class="text-xs text-muted-foreground">Replied</p>
+			<Card.Content class="pt-6">
+				<div class="text-center">
+					<p class="font-display text-3xl font-bold tabular-nums text-green-500">{data.stats?.replied || 0}</p>
+					<p class="text-xs text-muted-foreground mt-1 uppercase tracking-wider">Replied</p>
+				</div>
 			</Card.Content>
 		</Card.Root>
 		<Card.Root>
-			<Card.Content class="p-4 text-center">
-				<p class="font-display text-2xl font-bold text-orange-500">{data.stats?.support || 0}</p>
-				<p class="text-xs text-muted-foreground">Support</p>
+			<Card.Content class="pt-6">
+				<div class="text-center">
+					<p class="font-display text-3xl font-bold tabular-nums text-orange-500">{data.stats?.support || 0}</p>
+					<p class="text-xs text-muted-foreground mt-1 uppercase tracking-wider">Support</p>
+				</div>
 			</Card.Content>
 		</Card.Root>
 		<Card.Root>
-			<Card.Content class="p-4 text-center">
-				<p class="font-display text-2xl font-bold text-purple-500">{data.stats?.quote || 0}</p>
-				<p class="text-xs text-muted-foreground">Quotes</p>
+			<Card.Content class="pt-6">
+				<div class="text-center">
+					<p class="font-display text-3xl font-bold tabular-nums text-purple-500">{data.stats?.quote || 0}</p>
+					<p class="text-xs text-muted-foreground mt-1 uppercase tracking-wider">Quotes</p>
+				</div>
 			</Card.Content>
 		</Card.Root>
 	</div>
@@ -169,14 +181,14 @@
 							<div class="min-w-0 flex-1">
 								<div class="flex flex-wrap items-center gap-2">
 									<span class="font-semibold">{submission.name}</span>
-									<Badge variant="outline" class={topicColors[submission.topic]}>
+									<Badge variant="outline" class="font-ui {topicColors[submission.topic]}">
 										{submission.topic.toUpperCase()}
 									</Badge>
-									<Badge variant="outline" class={statusColors[submission.status]}>
+									<Badge variant="outline" class="font-ui {statusColors[submission.status]}">
 										{submission.status.toUpperCase()}
 									</Badge>
 									{#if submission.ticketId}
-										<Badge variant="outline" class="bg-green-500/10 text-green-500 border-green-500/20">
+										<Badge variant="outline" class="font-ui bg-green-500/10 text-green-500 border-green-500/20">
 											<Ticket class="mr-1 h-3 w-3" />
 											TICKET
 										</Badge>

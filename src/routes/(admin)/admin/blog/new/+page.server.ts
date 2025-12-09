@@ -2,6 +2,14 @@ import { createDb } from '$lib/server/db';
 import { blogPosts } from '$lib/server/db/schema';
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
+import { logActivity, getClientIp } from '$lib/server/activity-logger';
+
+// Calculate read time based on word count (average 200 words per minute)
+function calculateReadTime(content: string): string {
+    const words = content.trim().split(/\s+/).length;
+    const minutes = Math.ceil(words / 200);
+    return `${minutes} min read`;
+}
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.profile || !['super_admin', 'admin'].includes(locals.profile.role)) {
@@ -31,6 +39,8 @@ export const actions: Actions = {
         if (!locals.profile || !['super_admin', 'admin'].includes(locals.profile.role)) {
             return fail(403, { error: 'Unauthorized' });
         }
+
+        const ipAddress = getClientIp(request);
 
         const formData = await request.formData();
 
@@ -64,6 +74,9 @@ export const actions: Actions = {
         // Parse tags
         const parsedTags = tags ? tags.split(',').map(t => t.trim()).filter(Boolean) : [];
 
+        // Calculate read time if not provided
+        const calculatedReadTime = readTime?.trim() || calculateReadTime(content);
+
         try {
             const [newPost] = await db.insert(blogPosts).values({
                 title: title.trim(),
@@ -75,14 +88,30 @@ export const actions: Actions = {
                 featuredImage: featuredImage?.trim() || null,
                 metaTitle: metaTitle?.trim() || null,
                 metaDescription: metaDescription?.trim() || null,
-                readTime: readTime?.trim() || '5 min read',
+                readTime: calculatedReadTime,
                 status: status || 'draft',
                 isFeatured,
                 publishedAt: status === 'published' ? new Date() : null,
                 authorId: locals.profile.id
-            }).returning({ id: blogPosts.id });
+            }).returning({ id: blogPosts.id, title: blogPosts.title, slug: blogPosts.slug });
 
-            return redirect(303, `/admin/blog/${newPost.id}`);
+            // Log activity
+            await logActivity({
+                entityType: 'user', // Using 'user' as blog isn't in entity types
+                entityId: newPost.id,
+                activityType: 'created',
+                description: `Blog post "${newPost.title}" was created`,
+                newValues: {
+                    title: newPost.title,
+                    slug: newPost.slug,
+                    status,
+                    category
+                },
+                performedById: locals.profile.id,
+                ipAddress
+            });
+
+            return { success: true, message: 'Blog post created successfully!' };
         } catch (error) {
             // Re-throw redirect errors
             if (error && typeof error === 'object' && 'status' in error && 'location' in error) {

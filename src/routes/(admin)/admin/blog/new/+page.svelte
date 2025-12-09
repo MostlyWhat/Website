@@ -3,9 +3,11 @@
 	 * Admin - New Blog Post
 	 */
 	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import { ChevronLeft, Save, Eye, FileText, Image, Tag, Settings } from '@lucide/svelte';
 	import { RichTextEditor } from '$lib/components/ui/rich-text-editor';
+	import { toast } from 'svelte-sonner';
 
 	let { data, form } = $props();
 
@@ -34,6 +36,15 @@
 			.replace(/-+/g, '-')
 			.trim();
 	}
+
+	// Handle success toast and redirect
+	$effect(() => {
+		if (form?.success && form?.message) {
+			toast.success(form.message);
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+			setTimeout(() => goto('/admin/blog'), 1500);
+		}
+	});
 </script>
 
 <svelte:head>

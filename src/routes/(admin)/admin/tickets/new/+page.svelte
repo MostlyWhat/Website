@@ -5,7 +5,9 @@
 	import { ArrowLeft, Send, Loader2, AlertCircle } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
 	import { RichTextEditor } from '$lib/components/ui/rich-text-editor';
+	import { toast } from 'svelte-sonner';
 	import type { PageData } from './$types';
 
 	type FormReturn = {
@@ -15,6 +17,8 @@
 		priority?: string;
 		category?: string;
 		projects?: Array<{ id: string; name: string }>;
+		success?: boolean;
+		message?: string;
 	} | null;
 
 	type User = { id: string; displayName: string | null; email: string; role: string | null };
@@ -41,6 +45,15 @@
 	$effect(() => {
 		if (organizationId) {
 			projectId = '';
+		}
+	});
+
+	// Handle success toast and redirect
+	$effect(() => {
+		if (form?.success && form?.message) {
+			toast.success(form.message);
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+			setTimeout(() => goto('/admin/tickets'), 1500);
 		}
 	});
 </script>

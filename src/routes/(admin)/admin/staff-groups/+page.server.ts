@@ -205,6 +205,12 @@ export const actions: Actions = {
         }
 
         try {
+            // Get group name for logging
+            const [group] = await db
+                .select({ name: staffGroups.name })
+                .from(staffGroups)
+                .where(eq(staffGroups.id, groupId));
+
             await db
                 .update(staffGroups)
                 .set({
@@ -212,6 +218,15 @@ export const actions: Actions = {
                     updatedAt: new Date()
                 })
                 .where(eq(staffGroups.id, groupId));
+
+            await logActivity({
+                entityType: 'staff_group',
+                entityId: groupId,
+                activityType: 'updated',
+                description: `${isActive ? 'Disabled' : 'Enabled'} staff group "${group?.name}"`,
+                performedById: locals.profile.id,
+                newValues: { isActive: !isActive }
+            });
 
             return { success: true, message: `Group ${isActive ? 'disabled' : 'enabled'} successfully` };
         } catch (err) {

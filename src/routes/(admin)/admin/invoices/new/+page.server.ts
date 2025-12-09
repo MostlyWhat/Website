@@ -183,7 +183,7 @@ export const actions: Actions = {
                 getClientIp(request)
             );
 
-            redirect(302, `/admin/invoices/${newInvoice.id}`);
+            return { success: true, message: 'Invoice created successfully!' };
         } catch (err) {
             if ((err as any)?.status === 302) throw err;
             console.error('Error creating invoice:', err);

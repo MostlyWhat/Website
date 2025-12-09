@@ -114,6 +114,13 @@ export const recurringIntervalEnum = pgEnum('recurring_interval', [
 	'yearly'
 ]);
 
+export const paymentEvidenceStatusEnum = pgEnum('payment_evidence_status', [
+	'pending',      // Uploaded, awaiting admin review
+	'approved',     // Verified and accepted by admin
+	'rejected',     // Rejected by admin
+	'processing'    // Being reviewed by admin
+]);
+
 export const ticketStatusEnum = pgEnum('ticket_status', [
 	'open',
 	'in_progress',
@@ -132,6 +139,7 @@ export const customerTypeEnum = pgEnum('customer_type', ['personal', 'business',
 export const activityTypeEnum = pgEnum('activity_type', [
 	'created',
 	'updated',
+	'deleted',
 	'status_changed',
 	'comment_added',
 	'file_uploaded',
@@ -606,6 +614,48 @@ export const payments = pgTable('payments', {
 		.references(() => profiles.id),
 
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
+}).enableRLS();
+
+// =============================================================================
+// PAYMENT EVIDENCE TABLE
+// =============================================================================
+// Tracks user-uploaded payment proof for invoices
+
+export const paymentEvidence = pgTable('payment_evidence', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	invoiceId: uuid('invoice_id')
+		.notNull()
+		.references(() => invoices.id, { onDelete: 'cascade' }),
+
+	// File information
+	fileName: text('file_name').notNull(),
+	fileUrl: text('file_url').notNull(),
+	fileSize: integer('file_size'), // in bytes
+	fileType: text('file_type'), // e.g., 'image/png', 'application/pdf'
+
+	// Payment details
+	amount: decimal('amount', { precision: 12, scale: 2 }),
+	paymentDate: timestamp('payment_date', { withTimezone: true }),
+	paymentMethod: text('payment_method'),
+	transactionReference: text('transaction_reference'),
+
+	// User notes
+	notes: text('notes'),
+
+	// Status and review
+	status: paymentEvidenceStatusEnum('status').default('pending').notNull(),
+	adminNotes: text('admin_notes'),
+	reviewedById: uuid('reviewed_by_id').references(() => profiles.id),
+	reviewedAt: timestamp('reviewed_at', { withTimezone: true }),
+
+	// Submitter
+	submittedById: uuid('submitted_by_id')
+		.notNull()
+		.references(() => profiles.id),
+
+	// Metadata
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
 }).enableRLS();
 
 // =============================================================================
@@ -1926,6 +1976,46 @@ export const jobApplicationsRelations = relations(jobApplications, ({ one }) => 
 }));
 
 // =============================================================================
+// LEGAL PAGES TABLE
+// =============================================================================
+// Store legal documents (Privacy Policy, Terms, EULA, etc.)
+
+export const legalPages = pgTable('legal_pages', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	
+	// Identity
+	slug: text('slug').notNull().unique(),
+	title: text('title').notNull(),
+	
+	// Content
+	content: text('content').notNull(), // Markdown content
+	summary: text('summary'), // Brief summary for meta description
+	
+	// Metadata
+	version: text('version').default('1.0').notNull(), // Version number (e.g., "2.1")
+	effectiveDate: timestamp('effective_date', { withTimezone: true }).notNull(),
+	lastReviewedAt: timestamp('last_reviewed_at', { withTimezone: true }),
+	
+	// Publishing
+	isPublished: boolean('is_published').default(true).notNull(),
+	sortOrder: integer('sort_order').default(0).notNull(), // Display order in footer/menu
+	
+	// Author/Editor
+	lastEditedById: uuid('last_edited_by_id')
+		.references(() => profiles.id, { onDelete: 'set null' }),
+	
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
+}).enableRLS();
+
+export const legalPagesRelations = relations(legalPages, ({ one }) => ({
+	lastEditedBy: one(profiles, {
+		fields: [legalPages.lastEditedById],
+		references: [profiles.id]
+	})
+}));
+
+// =============================================================================
 // TYPES EXPORT
 // =============================================================================
 
@@ -2035,6 +2125,9 @@ export type NewJobPosting = typeof jobPostings.$inferInsert;
 
 export type JobApplication = typeof jobApplications.$inferSelect;
 export type NewJobApplication = typeof jobApplications.$inferInsert;
+
+export type LegalPage = typeof legalPages.$inferSelect;
+export type NewLegalPage = typeof legalPages.$inferInsert;
 
 export type UserRole = 'super_admin' | 'admin' | 'staff' | 'customer';
 export type CustomerType = typeof customerTypeEnum.enumValues[number];

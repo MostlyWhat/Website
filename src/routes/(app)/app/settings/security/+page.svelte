@@ -18,6 +18,8 @@
 	let disableCode = $state('');
 	let showDisableForm = $state(false);
 	let secretCopied = $state(false);
+	let magicLinkLoading = $state(false);
+	let magicLinkEnabled = $state(data.magicLinkEnabled ?? true);
 
 	// Enrollment data from form response
 	let enrollData = $derived(form?.enrollData ?? null);
@@ -54,6 +56,16 @@
 			if (result.type === 'success') {
 				disableCode = '';
 				showDisableForm = false;
+			}
+		};
+	}
+
+	function handleMagicLinkToggle() {
+		magicLinkLoading = true;
+		return async ({ result }: { result: any }) => {
+			magicLinkLoading = false;
+			if (result.type === 'success' && result.data?.magicLinkEnabled !== undefined) {
+				magicLinkEnabled = result.data.magicLinkEnabled;
 			}
 		};
 	}
@@ -305,6 +317,53 @@
 				</form>
 			</div>
 		{/if}
+	</div>
+
+	<!-- Magic Link Preference -->
+	<div class="mt-8 max-w-xl border-t border-border pt-8">
+		<div class="flex items-center gap-4 mb-6">
+			<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">
+				<Key class="h-5 w-5 text-primary" />
+			</div>
+			<div>
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">LOGIN PREFERENCES</span>
+				<h2 class="font-ui text-lg font-semibold tracking-wider">Magic Link Authentication</h2>
+			</div>
+		</div>
+
+		<div class="border border-border p-6">
+			<div class="flex items-start justify-between gap-4">
+				<div class="flex-1">
+					<h3 class="font-ui font-semibold mb-2">Email Magic Links</h3>
+					<p class="text-sm text-muted-foreground mb-4">
+						Allow passwordless sign-in via email magic links. When enabled, you can log in by clicking a secure link sent to your email instead of entering your password.
+					</p>
+					{#if !magicLinkEnabled}
+						<div class="flex items-start gap-2 bg-amber-500/10 border border-amber-500/30 p-3 text-sm text-amber-600">
+							<AlertTriangle class="h-4 w-4 flex-shrink-0 mt-0.5" />
+							<span>Magic link authentication is currently disabled. You will not be able to use passwordless login.</span>
+						</div>
+					{/if}
+				</div>
+				<form method="POST" action="?/toggleMagicLink" use:enhance={handleMagicLinkToggle}>
+					<input type="hidden" name="enabled" value={magicLinkEnabled ? 'false' : 'true'} />
+					<Button
+						type="submit"
+						variant={magicLinkEnabled ? 'outline' : 'default'}
+						disabled={magicLinkLoading}
+						class="min-w-[100px]"
+					>
+						{#if magicLinkLoading}
+							<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+						{:else if magicLinkEnabled}
+							Disable
+						{:else}
+							Enable
+						{/if}
+					</Button>
+				</form>
+			</div>
+		</div>
 	</div>
 
 	<!-- Additional Security Info -->

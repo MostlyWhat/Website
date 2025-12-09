@@ -3,6 +3,7 @@ import { supportArticles } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { fail, redirect, error } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
+import { logActivity, getClientIp } from '$lib/server/activity-logger';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
     if (!locals.user || !locals.profile) {
@@ -134,6 +135,25 @@ export const actions: Actions = {
                     updatedAt: new Date()
                 })
                 .where(eq(supportArticles.id, id));
+
+            // Log activity
+            const ipAddress = getClientIp(request);
+            const userAgent = request.headers.get('user-agent') || undefined;
+            await logActivity({
+                performedById: locals.profile.id,
+                activityType: 'updated',
+                entityType: 'user',
+                entityId: id,
+                description: `Updated knowledge base article: ${title}`,
+                ipAddress,
+                userAgent,
+                newValues: {
+                    title,
+                    category,
+                    audience,
+                    isPublished
+                }
+            });
 
             redirect(302, '/admin/knowledge-base');
         } catch (err) {

@@ -5,9 +5,11 @@
 	 * Create a new knowledge base article.
 	 */
 	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import { ArrowLeft, Save, Eye, Users, Shield, Globe } from '@lucide/svelte';
 	import { RichTextEditor } from '$lib/components/ui/rich-text-editor';
+	import { toast } from 'svelte-sonner';
 
 	let { data, form } = $props<{
 		data: { categories?: string[]; defaultCategories?: string[] };
@@ -47,6 +49,15 @@
 		const existing = data.categories ?? [];
 		const defaults = data.defaultCategories ?? [];
 		return [...new Set([...existing, ...defaults])].sort();
+	});
+
+	// Handle success toast and redirect
+	$effect(() => {
+		if (form?.success && form?.message) {
+			toast.success(form.message);
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+			setTimeout(() => goto('/admin/knowledge-base'), 1500);
+		}
 	});
 </script>
 

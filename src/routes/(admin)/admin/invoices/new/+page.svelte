@@ -6,6 +6,7 @@
 	 * Supports one-time and recurring invoices.
 	 */
 	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
 	import { ArrowLeft, Plus, Trash2, Receipt, Loader2, RefreshCw } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
@@ -13,6 +14,7 @@
 	import { Textarea } from '$lib/components/ui/textarea';
 	import * as Select from '$lib/components/ui/select';
 	import { Checkbox } from '$lib/components/ui/checkbox';
+	import { toast } from 'svelte-sonner';
 
 	let { data, form } = $props();
 
@@ -101,6 +103,15 @@
 			await update();
 		};
 	}
+
+	// Handle success toast and redirect
+	$effect(() => {
+		if (form?.success && form?.message) {
+			toast.success(form.message);
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+			setTimeout(() => goto('/admin/invoices'), 1500);
+		}
+	});
 
 	// Default due date to 30 days from now
 	let defaultDueDate = $derived(() => {

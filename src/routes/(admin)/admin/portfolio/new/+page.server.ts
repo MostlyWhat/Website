@@ -2,6 +2,14 @@ import { createDb } from '$lib/server/db';
 import { portfolioProjects } from '$lib/server/db/schema';
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
+import { logActivity, getClientIp } from '$lib/server/activity-logger';
+
+// Calculate read time based on word count
+function calculateReadTime(content: string): string {
+    const words = content.trim().split(/\s+/).length;
+    const minutes = Math.ceil(words / 200);
+    return `${minutes} min read`;
+}
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.profile || !['super_admin', 'admin'].includes(locals.profile.role)) {
@@ -69,6 +77,8 @@ export const actions: Actions = {
         // Parse tags
         const parsedTags = tags ? tags.split(',').map(t => t.trim()).filter(Boolean) : [];
 
+        const ipAddress = getClientIp(request);
+
         try {
             const [newProject] = await db.insert(portfolioProjects).values({
                 title: title.trim(),
@@ -87,9 +97,26 @@ export const actions: Actions = {
                 isFeatured,
                 publishedAt: status === 'published' ? new Date() : null,
                 createdById: locals.profile.id
-            }).returning({ id: portfolioProjects.id });
+            }).returning({ id: portfolioProjects.id, title: portfolioProjects.title, slug: portfolioProjects.slug });
 
-            return redirect(303, `/admin/portfolio/${newProject.id}`);
+            // Log activity
+            await logActivity({
+                entityType: 'user',
+                entityId: newProject.id,
+                activityType: 'created',
+                description: `Portfolio project "${newProject.title}" was created`,
+                newValues: {
+                    title: newProject.title,
+                    slug: newProject.slug,
+                    client: client.trim(),
+                    status,
+                    category
+                },
+                performedById: locals.profile.id,
+                ipAddress
+            });
+
+            return { success: true, message: 'Portfolio project created successfully!' };
         } catch (error) {
             // Re-throw redirect errors
             if (error && typeof error === 'object' && 'status' in error && 'location' in error) {

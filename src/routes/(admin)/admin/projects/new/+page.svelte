@@ -5,6 +5,7 @@
 	 * Create a new project for an organization.
 	 */
 	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
 	import { 
 		FolderKanban, ArrowLeft, Save, Loader2, Building2, User,
 		Calendar, DollarSign, AlertCircle
@@ -13,6 +14,7 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import * as Card from '$lib/components/ui/card';
+	import { toast } from 'svelte-sonner';
 
 	let { data, form } = $props();
 	
@@ -36,6 +38,15 @@
 	];
 
 	const currencyOptions = ['USD', 'EUR', 'GBP', 'THB', 'JPY'];
+
+	// Handle success toast and redirect
+	$effect(() => {
+		if (form?.success && form?.message) {
+			toast.success(form.message);
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+			setTimeout(() => goto('/admin/projects'), 1500);
+		}
+	});
 </script>
 
 <svelte:head>

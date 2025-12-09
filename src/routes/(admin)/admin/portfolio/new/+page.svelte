@@ -3,9 +3,11 @@
 	 * Admin - New Portfolio Project
 	 */
 	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import { ChevronLeft, Save, Briefcase, Image, Tag, Settings, Link } from '@lucide/svelte';
 	import { RichTextEditor } from '$lib/components/ui/rich-text-editor';
+	import { toast } from 'svelte-sonner';
 
 	let { data, form } = $props();
 
@@ -36,6 +38,15 @@
 			.replace(/-+/g, '-')
 			.trim();
 	}
+
+	// Handle success toast and redirect
+	$effect(() => {
+		if (form?.success && form?.message) {
+			toast.success(form.message);
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+			setTimeout(() => goto('/admin/portfolio'), 1500);
+		}
+	});
 </script>
 
 <svelte:head>

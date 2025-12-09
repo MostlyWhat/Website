@@ -1,5 +1,5 @@
 import { createDb } from '$lib/server/db';
-import { invoices, organizations, projects, profiles, payments } from '$lib/server/db/schema';
+import { invoices, organizations, projects, profiles, payments, paymentEvidence } from '$lib/server/db/schema';
 import { eq, desc, sql } from 'drizzle-orm';
 import { error, fail, redirect } from '@sveltejs/kit';
 import { invoiceActivity, getClientIp } from '$lib/server/activity-logger';
@@ -139,6 +139,30 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         .where(eq(payments.invoiceId, params.id))
         .orderBy(desc(payments.paidAt));
 
+    // Fetch payment evidence for this invoice
+    const evidenceList = await db
+        .select({
+            id: paymentEvidence.id,
+            fileName: paymentEvidence.fileName,
+            fileUrl: paymentEvidence.fileUrl,
+            fileSize: paymentEvidence.fileSize,
+            fileType: paymentEvidence.fileType,
+            amount: paymentEvidence.amount,
+            paymentDate: paymentEvidence.paymentDate,
+            paymentMethod: paymentEvidence.paymentMethod,
+            transactionReference: paymentEvidence.transactionReference,
+            notes: paymentEvidence.notes,
+            status: paymentEvidence.status,
+            adminNotes: paymentEvidence.adminNotes,
+            reviewedAt: paymentEvidence.reviewedAt,
+            submittedByName: profiles.displayName,
+            createdAt: paymentEvidence.createdAt
+        })
+        .from(paymentEvidence)
+        .leftJoin(profiles, eq(paymentEvidence.submittedById, profiles.id))
+        .where(eq(paymentEvidence.invoiceId, params.id))
+        .orderBy(desc(paymentEvidence.createdAt));
+
     return {
         invoice: {
             ...invoice,
@@ -157,6 +181,11 @@ export const load: PageServerLoad = async ({ params, locals }) => {
             ...p,
             amount: parseFloat(p.amount) || 0,
             recordedBy: p.recordedByName ?? 'Unknown'
+        })),
+        paymentEvidence: evidenceList.map((e) => ({
+            ...e,
+            amount: e.amount ? parseFloat(e.amount) : null,
+            submittedBy: e.submittedByName ?? 'Unknown'
         }))
     };
 };
@@ -414,5 +443,180 @@ export const actions: Actions = {
             .where(eq(invoices.id, params.id));
 
         return { success: true };
+    },
+
+    approveEvidence: async ({ params, request, locals }) => {
+        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+            return fail(403, { error: 'Access denied' });
+        }
+
+        const formData = await request.formData();
+        const evidenceId = formData.get('evidenceId') as string;
+        const adminNotes = formData.get('adminNotes') as string;
+        const recordPayment = formData.get('recordPayment') === 'true';
+
+        if (!evidenceId) {
+            return fail(400, { error: 'Evidence ID is required' });
+        }
+
+        const db = createDb();
+
+        try {
+            // Get evidence details
+            const [evidence] = await db
+                .select({
+                    invoiceId: paymentEvidence.invoiceId,
+                    amount: paymentEvidence.amount,
+                    paymentDate: paymentEvidence.paymentDate,
+                    paymentMethod: paymentEvidence.paymentMethod,
+                    transactionReference: paymentEvidence.transactionReference,
+                    fileName: paymentEvidence.fileName
+                })
+                .from(paymentEvidence)
+                .where(eq(paymentEvidence.id, evidenceId))
+                .limit(1);
+
+            if (!evidence) {
+                return fail(404, { error: 'Payment evidence not found' });
+            }
+
+            // Update evidence status
+            await db
+                .update(paymentEvidence)
+                .set({
+                    status: 'approved',
+                    adminNotes,
+                    reviewedById: locals.profile.id,
+                    reviewedAt: new Date(),
+                    updatedAt: new Date()
+                })
+                .where(eq(paymentEvidence.id, evidenceId));
+
+            // If requested, automatically record the payment
+            if (recordPayment && evidence.amount) {
+                const [invoice] = await db
+                    .select({ invoiceNumber: invoices.invoiceNumber, total: invoices.total })
+                    .from(invoices)
+                    .where(eq(invoices.id, evidence.invoiceId))
+                    .limit(1);
+
+                if (invoice) {
+                    await db.insert(payments).values({
+                        invoiceId: evidence.invoiceId,
+                        amount: evidence.amount,
+                        paymentMethod: evidence.paymentMethod || 'Bank Transfer',
+                        paymentReference: evidence.transactionReference,
+                        paidAt: evidence.paymentDate || new Date(),
+                        notes: `Payment recorded from approved evidence: ${evidence.fileName}${adminNotes ? `\n\n${adminNotes}` : ''}`,
+                        recordedById: locals.profile.id
+                    });
+
+                    // Update invoice paid amount and status
+                    const currentPaid = parseFloat(invoice.total) || 0;
+                    const evidenceAmount = parseFloat(evidence.amount) || 0;
+                    const newPaidAmount = currentPaid + evidenceAmount;
+                    const invoiceTotal = parseFloat(invoice.total) || 0;
+                    const newDueAmount = invoiceTotal - newPaidAmount;
+
+                    await db
+                        .update(invoices)
+                        .set({
+                            amountPaid: newPaidAmount.toString(),
+                            amountDue: newDueAmount.toString(),
+                            status: newDueAmount <= 0.01 ? 'paid' : 'partially_paid',
+                            paidAt: newDueAmount <= 0.01 ? new Date() : undefined,
+                            updatedAt: new Date()
+                        })
+                        .where(eq(invoices.id, evidence.invoiceId));
+
+                    await invoiceActivity.created(
+                        evidence.invoiceId,
+                        invoice.invoiceNumber,
+                        locals.profile.id,
+                        getClientIp(request),
+                        { action: 'payment_evidence_approved_and_recorded', fileName: evidence.fileName }
+                    );
+
+                    return {
+                        success: true,
+                        message: 'Payment evidence approved and payment recorded successfully'
+                    };
+                }
+            }
+
+            await invoiceActivity.created(
+                evidence.invoiceId,
+                'Unknown',
+                locals.profile.id,
+                getClientIp(request),
+                { action: 'payment_evidence_approved', fileName: evidence.fileName }
+            );
+
+            return { success: true, message: 'Payment evidence approved successfully' };
+        } catch (err) {
+            console.error('Error approving payment evidence:', err);
+            return fail(500, { error: 'Failed to approve payment evidence' });
+        }
+    },
+
+    rejectEvidence: async ({ params, request, locals }) => {
+        if (!locals.profile || !['admin', 'super_admin'].includes(locals.profile.role ?? '')) {
+            return fail(403, { error: 'Access denied' });
+        }
+
+        const formData = await request.formData();
+        const evidenceId = formData.get('evidenceId') as string;
+        const adminNotes = formData.get('adminNotes') as string;
+
+        if (!evidenceId) {
+            return fail(400, { error: 'Evidence ID is required' });
+        }
+
+        if (!adminNotes) {
+            return fail(400, { error: 'Please provide a reason for rejection' });
+        }
+
+        const db = createDb();
+
+        try {
+            // Get evidence details
+            const [evidence] = await db
+                .select({
+                    invoiceId: paymentEvidence.invoiceId,
+                    fileName: paymentEvidence.fileName
+                })
+                .from(paymentEvidence)
+                .where(eq(paymentEvidence.id, evidenceId))
+                .limit(1);
+
+            if (!evidence) {
+                return fail(404, { error: 'Payment evidence not found' });
+            }
+
+            // Update evidence status
+            await db
+                .update(paymentEvidence)
+                .set({
+                    status: 'rejected',
+                    adminNotes,
+                    reviewedById: locals.profile.id,
+                    reviewedAt: new Date(),
+                    updatedAt: new Date()
+                })
+                .where(eq(paymentEvidence.id, evidenceId));
+
+            await invoiceActivity.created(
+                evidence.invoiceId,
+                'Unknown',
+                locals.profile.id,
+                getClientIp(request),
+                { action: 'payment_evidence_rejected', fileName: evidence.fileName, reason: adminNotes }
+            );
+
+            return { success: true, message: 'Payment evidence rejected' };
+        } catch (err) {
+            console.error('Error rejecting payment evidence:', err);
+            return fail(500, { error: 'Failed to reject payment evidence' });
+        }
     }
 };

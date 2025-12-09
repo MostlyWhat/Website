@@ -4,6 +4,7 @@ import { eq, desc, and, count } from 'drizzle-orm';
 import type { PageServerLoad, Actions } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
 import { isRedirect } from '@sveltejs/kit';
+import { logActivity, getClientIp } from '$lib/server/activity-logger';
 
 export const load: PageServerLoad = async ({ url, locals }) => {
     const db = createDb();
@@ -106,6 +107,25 @@ export const actions: Actions = {
                 createdById: locals.profile.id
             }).returning();
 
+            // Log activity
+            const ipAddress = getClientIp(request);
+            const userAgent = request.headers.get('user-agent') || undefined;
+            await logActivity({
+                performedById: locals.profile.id,
+                activityType: 'created',
+                entityType: 'user',
+                entityId: job.id,
+                description: `Created job posting: ${title}`,
+                ipAddress,
+                userAgent,
+                newValues: {
+                    title: title.trim(),
+                    department: department?.trim(),
+                    location: location?.trim(),
+                    type
+                }
+            });
+
             redirect(303, `/admin/careers/${job.id}`);
         } catch (error) {
             if (isRedirect(error)) throw error;
@@ -138,6 +158,21 @@ export const actions: Actions = {
             await db.update(jobPostings)
                 .set(updateData)
                 .where(eq(jobPostings.id, id));
+
+            // Log activity
+            const ipAddress = getClientIp(request);
+            const userAgent = request.headers.get('user-agent') || undefined;
+            await logActivity({
+                performedById: locals.profile.id,
+                activityType: 'status_changed',
+                entityType: 'user',
+                entityId: id,
+                description: `Changed job posting status to: ${status}`,
+                ipAddress,
+                userAgent,
+                newValues: { status }
+            });
+
             return { success: true };
         } catch (error) {
             console.error('Failed to update job status:', error);
@@ -186,10 +221,32 @@ export const actions: Actions = {
         }
 
         try {
+            // Get job title before deletion
+            const [job] = await db
+                .select({ title: jobPostings.title })
+                .from(jobPostings)
+                .where(eq(jobPostings.id, id));
+
             // Delete applications first
             await db.delete(jobApplications).where(eq(jobApplications.jobId, id));
             // Delete job posting
             await db.delete(jobPostings).where(eq(jobPostings.id, id));
+
+            // Log activity
+            if (job) {
+                const ipAddress = getClientIp(request);
+                const userAgent = request.headers.get('user-agent') || undefined;
+                await logActivity({
+                    performedById: locals.profile.id,
+                    activityType: 'deleted',
+                    entityType: 'user',
+                    entityId: id,
+                    description: `Deleted job posting: ${job.title}`,
+                    ipAddress,
+                    userAgent
+                });
+            }
+
             return { success: true };
         } catch (error) {
             console.error('Failed to delete job posting:', error);

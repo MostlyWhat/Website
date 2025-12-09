@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
+	import { toast } from 'svelte-sonner';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
@@ -21,7 +23,16 @@
 		Globe
 	} from '@lucide/svelte';
 
-	let { data } = $props();
+	let { data, form } = $props();
+
+	$effect(() => {
+		if (form?.success) {
+			toast.success('Announcement created successfully!');
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+			showCreateModal = false;
+			resetForm();
+		}
+	});
 
 	let showCreateModal = $state(false);
 	let showEditModal = $state(false);

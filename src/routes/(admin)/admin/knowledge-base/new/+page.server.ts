@@ -2,6 +2,7 @@ import { createDb } from '$lib/server/db';
 import { supportArticles } from '$lib/server/db/schema';
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
+import { logActivity, getClientIp } from '$lib/server/activity-logger';
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user || !locals.profile) {
@@ -100,7 +101,26 @@ export const actions: Actions = {
                 })
                 .returning({ id: supportArticles.id });
 
-            redirect(302, `/admin/knowledge-base`);
+            // Log activity
+            const ipAddress = getClientIp(request);
+            const userAgent = request.headers.get('user-agent') || undefined;
+            await logActivity({
+                performedById: locals.profile.id,
+                activityType: 'created',
+                entityType: 'user',
+                entityId: article.id,
+                description: `Created knowledge base article: ${title}`,
+                ipAddress,
+                userAgent,
+                newValues: {
+                    title,
+                    category,
+                    audience,
+                    isPublished
+                }
+            });
+
+            return { success: true, message: 'Knowledge base article created successfully!' };
         } catch (error) {
             if ((error as { status?: number }).status === 302) {
                 error;

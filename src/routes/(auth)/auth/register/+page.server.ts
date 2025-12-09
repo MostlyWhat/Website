@@ -1,10 +1,13 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { getOrCreateProfile } from '$lib/server/auth';
+import { logActivity, getClientIp } from '$lib/server/activity-logger';
 
 export const actions: Actions = {
     default: async ({ request, locals: { supabase }, url }) => {
         const formData = await request.formData();
+        const ipAddress = getClientIp(request);
+        const userAgent = request.headers.get('user-agent') ?? undefined;
         const email = formData.get('email') as string;
         const password = formData.get('password') as string;
         const confirmPassword = formData.get('confirmPassword') as string;
@@ -54,6 +57,18 @@ export const actions: Actions = {
         if (data.user && data.session) {
             try {
                 await getOrCreateProfile(data.user);
+                
+                // Log registration activity
+                await logActivity({
+                    entityType: 'user',
+                    entityId: data.user.id,
+                    activityType: 'created',
+                    description: `User account registered: ${email}`,
+                    newValues: { email },
+                    performedById: data.user.id,
+                    ipAddress,
+                    userAgent
+                });
             } catch (profileError) {
                 console.error('Failed to create profile:', profileError);
                 return fail(500, { error: 'Account created but profile setup failed. Please try logging in.' });

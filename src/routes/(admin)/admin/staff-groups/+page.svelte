@@ -5,6 +5,8 @@
 	 * Create and manage staff/admin teams.
 	 */
 	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
+	import { toast } from 'svelte-sonner';
 	import { 
 		Users, 
 		Plus, 
@@ -20,6 +22,14 @@
 	import { Button } from '$lib/components/ui/button';
 
 	let { data, form } = $props();
+
+	$effect(() => {
+		if (form?.success && form?.message) {
+			toast.success(form.message);
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+			resetForm();
+		}
+	});
 
 	let showCreateForm = $state(false);
 	let newGroupName = $state('');

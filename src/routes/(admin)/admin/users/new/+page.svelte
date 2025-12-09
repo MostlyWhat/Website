@@ -5,6 +5,8 @@
 	import { ArrowLeft, User, Shield, Mail, Phone, Save, Loader2, AlertCircle, CheckCircle } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { enhance } from '$app/forms';
+	import { toast } from 'svelte-sonner';
+	import { goto } from '$app/navigation';
 
 	type FormReturn = {
 		error?: string;
@@ -26,7 +28,16 @@
 	let phone = $state(form?.phone || '');
 	let role = $state(form?.role || 'customer');
 	let sendInvite = $state(true);
-	let successMessage = $state(form?.success ? form.message : '');
+	
+	// Show success toast on form success
+	$effect(() => {
+		if (form?.success && form?.message) {
+			toast.success(form.message);
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+			// Optionally redirect to users list after brief delay
+			setTimeout(() => goto('/admin/users'), 1500);
+		}
+	});
 </script>
 
 <svelte:head>
@@ -58,15 +69,6 @@
 			</div>
 		</div>
 	{/if}
-	
-	{#if successMessage}
-		<div class="border-b border-green-500/20 bg-green-500/5 px-6 py-4 md:px-12 lg:px-16">
-			<div class="flex items-center gap-3">
-				<CheckCircle class="h-5 w-5 text-green-500" />
-				<p class="font-body text-sm text-green-500">{successMessage}</p>
-			</div>
-		</div>
-	{/if}
 
 	<!-- Form Section -->
 	<section class="border-b border-border bg-background">
@@ -74,7 +76,6 @@
 			method="POST" 
 			use:enhance={() => {
 				loading = true;
-				successMessage = '';
 				return async ({ update }) => {
 					await update();
 					loading = false;

@@ -1,8 +1,9 @@
 import { createDb } from '$lib/server/db';
-import { tickets, profiles, organizations } from '$lib/server/db/schema';
+import { tickets, profiles, organizations, slaPolicies, slaOrganizationAssignments } from '$lib/server/db/schema';
 import { eq, desc, sql, and, or, ilike, inArray } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 import { fail } from '@sveltejs/kit';
+import { calculateSLAStatus } from '$lib/server/sla-calculator';
 import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ locals, url }) => {
@@ -94,7 +95,14 @@ export const load: PageServerLoad = async ({ locals, url }) => {
             organizationId: tickets.organizationId,
             organizationName: organizations.name,
             orgNumber: organizations.orgNumber,
-            projectId: tickets.projectId
+            projectId: tickets.projectId,
+            // SLA fields
+            slaPolicyId: tickets.slaPolicyId,
+            slaResponseDueAt: tickets.slaResponseDueAt,
+            slaResolutionDueAt: tickets.slaResolutionDueAt,
+            slaFirstResponseAt: tickets.slaFirstResponseAt,
+            slaResolvedAt: tickets.slaResolvedAt,
+            slaBreached: tickets.slaBreached
         })
         .from(tickets)
         .leftJoin(assignedProfile, eq(tickets.assignedToId, assignedProfile.id))
@@ -109,15 +117,62 @@ export const load: PageServerLoad = async ({ locals, url }) => {
     // Execute with ordering
     const allTickets = await query.orderBy(desc(tickets.updatedAt));
 
-    // Format tickets for the frontend
-    const formattedTickets = allTickets.map((ticket) => ({
-        ...ticket,
-        organization: ticket.organizationName ?? 'Unknown',
-        orgNumber: ticket.orgNumber ?? null,
-        createdBy: ticket.createdByName ?? 'Unknown',
-        createdByEmail: ticket.createdByEmail,
-        assignedTo: ticket.assignedToName
-    }));
+    // Fetch all unique SLA policy IDs from tickets
+    const slaPolicyIds = [...new Set(allTickets.map(t => t.slaPolicyId).filter(Boolean))];
+    
+    // Fetch SLA policies
+    const slaPoliciesMap = new Map();
+    if (slaPolicyIds.length > 0) {
+        const policies = await db
+            .select()
+            .from(slaPolicies)
+            .where(inArray(slaPolicies.id, slaPolicyIds as string[]));
+        
+        policies.forEach(policy => {
+            slaPoliciesMap.set(policy.id, policy);
+        });
+    }
+
+    // Format tickets for the frontend with SLA status
+    const formattedTickets = allTickets.map((ticket) => {
+        const slaPolicy = ticket.slaPolicyId ? slaPoliciesMap.get(ticket.slaPolicyId) : null;
+        
+        // Calculate SLA status if policy and deadlines exist
+        let slaStatus = null;
+        if (slaPolicy && ticket.slaResponseDueAt && ticket.slaResolutionDueAt) {
+            slaStatus = calculateSLAStatus(
+                ticket.createdAt,
+                ticket.slaResponseDueAt,
+                ticket.slaResolutionDueAt,
+                ticket.slaFirstResponseAt,
+                ticket.slaResolvedAt,
+                {
+                    urgentResponseHours: slaPolicy.urgentResponseHours,
+                    urgentResolutionHours: slaPolicy.urgentResolutionHours,
+                    highResponseHours: slaPolicy.highResponseHours,
+                    highResolutionHours: slaPolicy.highResolutionHours,
+                    mediumResponseHours: slaPolicy.mediumResponseHours,
+                    mediumResolutionHours: slaPolicy.mediumResolutionHours,
+                    lowResponseHours: slaPolicy.lowResponseHours,
+                    lowResolutionHours: slaPolicy.lowResolutionHours,
+                    businessHoursOnly: slaPolicy.businessHoursOnly,
+                    businessHoursStart: slaPolicy.businessHoursStart,
+                    businessHoursEnd: slaPolicy.businessHoursEnd,
+                    businessDays: slaPolicy.businessDays
+                }
+            );
+        }
+
+        return {
+            ...ticket,
+            organization: ticket.organizationName ?? 'Unknown',
+            orgNumber: ticket.orgNumber ?? null,
+            createdBy: ticket.createdByName ?? 'Unknown',
+            createdByEmail: ticket.createdByEmail,
+            assignedTo: ticket.assignedToName,
+            slaStatus
+        };
+    });
 
     // Get staff members for assignment filter
     const staffMembers = await db

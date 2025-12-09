@@ -3,6 +3,7 @@ import { supportArticles, profiles } from '$lib/server/db/schema';
 import { desc, eq, sql } from 'drizzle-orm';
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
+import { logActivity, getClientIp } from '$lib/server/activity-logger';
 
 export const load: PageServerLoad = async ({ locals, url }) => {
     if (!locals.user || !locals.profile) {
@@ -110,7 +111,29 @@ export const actions: Actions = {
         const db = createDb();
 
         try {
+            // Get article title before deletion
+            const [article] = await db
+                .select({ title: supportArticles.title })
+                .from(supportArticles)
+                .where(eq(supportArticles.id, articleId));
+
             await db.delete(supportArticles).where(eq(supportArticles.id, articleId));
+
+            // Log activity
+            if (article) {
+                const ipAddress = getClientIp(request);
+                const userAgent = request.headers.get('user-agent') || undefined;
+                await logActivity({
+                    performedById: locals.profile.id,
+                    activityType: 'deleted',
+                    entityType: 'user',
+                    entityId: articleId,
+                    description: `Deleted knowledge base article: ${article.title}`,
+                    ipAddress,
+                    userAgent
+                });
+            }
+
             return { success: true };
         } catch (error) {
             console.error('Error deleting article:', error);

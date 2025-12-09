@@ -4,6 +4,8 @@
 	 * Manage Service Level Agreement policies with customer type and category rules
 	 */
 	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
+	import { toast } from 'svelte-sonner';
 	import { 
 		Plus, Edit2, Trash2, Clock, Star, AlertCircle, Check, 
 		Building2, Users, Tag, ChevronDown, ChevronUp, Settings2,
@@ -12,6 +14,15 @@
 	import { Button } from '$lib/components/ui/button';
 
 	let { data, form } = $props();
+
+	$effect(() => {
+		if (form?.success && form?.message) {
+			toast.success(form.message);
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+			showCreateModal = false;
+			resetForm();
+		}
+	});
 
 	let showCreateModal = $state(false);
 	let editingPolicy = $state<typeof data.policies[0] | null>(null);

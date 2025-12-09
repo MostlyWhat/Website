@@ -6,6 +6,9 @@
 
 import { error, fail } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
+import { createDb } from '$lib/server/db';
+import { profiles } from '$lib/server/db/schema';
+import { eq } from 'drizzle-orm';
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user || !locals.profile) {
@@ -23,9 +26,19 @@ export const load: PageServerLoad = async ({ locals }) => {
     const totpFactor = factors?.totp?.[0] ?? null;
     const isMfaEnabled = totpFactor?.status === 'verified';
 
+    // Get magic link preference from profile
+    const db = createDb();
+    const [profile] = await db
+        .select({ preferences: profiles.preferences })
+        .from(profiles)
+        .where(eq(profiles.id, locals.profile.id));
+
+    const magicLinkEnabled = profile?.preferences?.magicLinkEnabled ?? true;
+
     return {
         isMfaEnabled,
-        factorId: totpFactor?.id ?? null
+        factorId: totpFactor?.id ?? null,
+        magicLinkEnabled
     };
 };
 
@@ -176,6 +189,53 @@ export const actions: Actions = {
         } catch (err) {
             console.error('Error disabling TOTP:', err);
             return fail(500, { error: 'Failed to disable 2FA' });
+        }
+    },
+
+    /**
+     * Toggle magic link authentication preference
+     */
+    toggleMagicLink: async ({ locals, request }) => {
+        if (!locals.user || !locals.profile) {
+            return fail(401, { error: 'Unauthorized' });
+        }
+
+        const formData = await request.formData();
+        const enabled = formData.get('enabled') === 'true';
+
+        try {
+            const db = createDb();
+            
+            // Get current preferences
+            const [currentProfile] = await db
+                .select({ preferences: profiles.preferences })
+                .from(profiles)
+                .where(eq(profiles.id, locals.profile.id));
+
+            const currentPreferences = currentProfile?.preferences ?? {};
+
+            // Update preferences with new magic link setting
+            await db
+                .update(profiles)
+                .set({
+                    preferences: {
+                        ...currentPreferences,
+                        magicLinkEnabled: enabled
+                    } as any,
+                    updatedAt: new Date()
+                })
+                .where(eq(profiles.id, locals.profile.id));
+
+            return {
+                success: true,
+                magicLinkEnabled: enabled,
+                message: enabled 
+                    ? 'Magic link authentication enabled' 
+                    : 'Magic link authentication disabled'
+            };
+        } catch (err) {
+            console.error('Error toggling magic link:', err);
+            return fail(500, { error: 'Failed to update preference' });
         }
     }
 };

@@ -1,6 +1,9 @@
 import type { Actions, PageServerLoad } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
 import { ActivityLogger, getClientIp } from '$lib/server/activity-logger';
+import { createDb } from '$lib/server/db';
+import { profiles } from '$lib/server/db/schema';
+import { eq } from 'drizzle-orm';
 
 export const load: PageServerLoad = async ({ url }) => {
     const email = url.searchParams.get('email');
@@ -31,6 +34,23 @@ export const actions: Actions = {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             return fail(400, { error: 'Please enter a valid email address' });
+        }
+
+        // Check if user exists and has magic link enabled
+        const db = createDb();
+        const [userProfile] = await db
+            .select({ 
+                id: profiles.id,
+                preferences: profiles.preferences 
+            })
+            .from(profiles)
+            .where(eq(profiles.email, email));
+
+        // If user exists and has disabled magic links, reject
+        if (userProfile && userProfile.preferences?.magicLinkEnabled === false) {
+            return fail(403, { 
+                error: 'Magic link authentication is disabled for this account. Please sign in with your password or contact support.' 
+            });
         }
 
         try {

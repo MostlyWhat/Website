@@ -3,6 +3,14 @@ import { blogPosts, profiles } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { fail, redirect, error } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
+import { logActivity, getClientIp } from '$lib/server/activity-logger';
+
+// Calculate read time based on word count
+function calculateReadTime(content: string): string {
+    const words = content.trim().split(/\s+/).length;
+    const minutes = Math.ceil(words / 200);
+    return `${minutes} min read`;
+}
 
 export const load: PageServerLoad = async ({ params, locals }) => {
     const db = createDb();
@@ -104,9 +112,14 @@ export const actions: Actions = {
         // Parse tags
         const parsedTags = tags ? tags.split(',').map(t => t.trim()).filter(Boolean) : [];
 
+        // Calculate read time if not provided
+        const calculatedReadTime = readTime?.trim() || calculateReadTime(content);
+
+        const ipAddress = getClientIp(request);
+
         // Get current post to check if status is changing to published
         const [currentPost] = await db
-            .select({ status: blogPosts.status, publishedAt: blogPosts.publishedAt })
+            .select({ status: blogPosts.status, publishedAt: blogPosts.publishedAt, title: blogPosts.title })
             .from(blogPosts)
             .where(eq(blogPosts.id, params.id));
 
@@ -125,12 +138,27 @@ export const actions: Actions = {
                 featuredImage: featuredImage?.trim() || null,
                 metaTitle: metaTitle?.trim() || null,
                 metaDescription: metaDescription?.trim() || null,
-                readTime: readTime?.trim() || '5 min read',
+                readTime: calculatedReadTime,
                 status,
                 isFeatured,
                 publishedAt,
                 updatedAt: new Date()
             }).where(eq(blogPosts.id, params.id));
+
+            // Log activity
+            await logActivity({
+                entityType: 'user',
+                entityId: params.id,
+                activityType: 'updated',
+                description: `Blog post "${currentPost?.title}" was updated`,
+                newValues: {
+                    title: title.trim(),
+                    status,
+                    category
+                },
+                performedById: locals.profile.id,
+                ipAddress
+            });
 
             return { success: true };
         } catch (error) {
@@ -145,18 +173,39 @@ export const actions: Actions = {
         }
     },
 
-    delete: async ({ params, locals }) => {
+    delete: async ({ params, locals, request }) => {
         // Create per-request database connection
         const db = createDb();
         if (!locals.profile || !['super_admin', 'admin'].includes(locals.profile.role)) {
             return fail(403, { error: 'Unauthorized' });
         }
 
+        const ipAddress = getClientIp(request);
+
         try {
+            // Get post title for logging
+            const [post] = await db
+                .select({ title: blogPosts.title })
+                .from(blogPosts)
+                .where(eq(blogPosts.id, params.id));
+
             await db.delete(blogPosts).where(eq(blogPosts.id, params.id));
+
+            // Log activity
+            if (post) {
+                await logActivity({
+                    entityType: 'user',
+                    entityId: params.id,
+                    activityType: 'updated',
+                    description: `Blog post "${post.title}" was deleted`,
+                    performedById: locals.profile.id,
+                    ipAddress
+                });
+            }
+
             redirect(303, '/admin/blog');
         } catch (error) {
-            if (error instanceof Response) error;
+            if (error instanceof Response) throw error;
             console.error('Failed to delete blog post:', error);
             return fail(500, { error: 'Failed to delete blog post' });
         }
