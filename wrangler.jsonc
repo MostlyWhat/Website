@@ -27,12 +27,19 @@
 	},
 	/**
 	 * Cron Triggers
-	 * Scheduled tasks for recurring invoice processing and payment reminders
+	 * Scheduled tasks for:
+	 * - Retry failed webhooks (every 15 minutes)
+	 * - Daily backups (2:00 AM UTC)
+	 * - Cleanup old backups (3:00 AM UTC)
+	 * - Sync to D1 (every hour)
 	 * https://developers.cloudflare.com/workers/configuration/cron-triggers/
 	 */
 	"triggers": {
 		"crons": [
-			"0 0 * * *"
+			"*/15 * * * *",  // Every 15 minutes - retry failed webhooks
+			"0 2 * * *",     // 2:00 AM UTC - daily backup
+			"0 3 * * *",     // 3:00 AM UTC - cleanup old backups
+			"0 * * * *"      // Every hour - sync to D1
 		]
 	},
 	/**
