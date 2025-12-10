@@ -36,10 +36,10 @@
 	 */
 	"triggers": {
 		"crons": [
-			"*/15 * * * *",  // Every 15 minutes - retry failed webhooks
-			"0 2 * * *",     // 2:00 AM UTC - daily backup
-			"0 3 * * *",     // 3:00 AM UTC - cleanup old backups
-			"0 * * * *"      // Every hour - sync to D1
+			"*/15 * * * *", // Every 15 minutes - retry failed webhooks
+			"0 2 * * *", // 2:00 AM UTC - daily backup
+			"0 3 * * *", // 3:00 AM UTC - cleanup old backups
+			"0 * * * *" // Every hour - sync to D1
 		]
 	},
 	/**

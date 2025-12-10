@@ -134,7 +134,7 @@ export function verifyWebhookSignature(
 	try {
 		const hmac = crypto.createHmac('sha256', LEMON_SQUEEZY_WEBHOOK_SECRET);
 		const digest = hmac.update(payload).digest('hex');
-		
+
 		return crypto.timingSafeEqual(
 			Buffer.from(signature),
 			Buffer.from(digest)
@@ -354,7 +354,7 @@ export function generateCheckoutUrl(
 	}
 ): string {
 	const params = new URLSearchParams();
-	
+
 	if (options?.embed !== undefined) params.set('embed', options.embed ? '1' : '0');
 	if (options?.media !== undefined) params.set('media', options.media ? '1' : '0');
 	if (options?.logo !== undefined) params.set('logo', options.logo ? '1' : '0');

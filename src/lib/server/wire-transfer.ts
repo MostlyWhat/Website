@@ -29,7 +29,7 @@ export function generateWireTransferInstructions(
 	currency: string = 'USD',
 	discount: number = 0 // percentage
 ): WireTransferDetails {
-	const discountedAmount = discount > 0 
+	const discountedAmount = discount > 0
 		? (amount * (1 - discount / 100)).toFixed(2)
 		: amount.toFixed(2);
 

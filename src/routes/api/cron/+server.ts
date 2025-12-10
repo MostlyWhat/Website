@@ -30,19 +30,19 @@ export const POST: RequestHandler = async ({ request }) => {
 			case 'retry-failed-webhooks':
 				await retryFailedWebhooks();
 				break;
-			
+
 			case 'daily-backup':
 				await performDailyBackup();
 				break;
-			
+
 			case 'cleanup-old-backups':
 				await cleanupOldBackups();
 				break;
-			
+
 			case 'sync-to-d1':
 				await syncToD1();
 				break;
-			
+
 			default:
 				throw error(400, `Unknown task: ${task}`);
 		}
@@ -60,10 +60,10 @@ export const POST: RequestHandler = async ({ request }) => {
  */
 async function retryFailedWebhooks() {
 	const db = createDb();
-	
+
 	// Find failed deliveries from the last 24 hours
 	const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-	
+
 	const failedDeliveries = await db
 		.select()
 		.from(webhookDeliveries)
@@ -88,7 +88,7 @@ async function retryFailedWebhooks() {
  */
 async function performDailyBackup() {
 	console.log('Starting daily backup...');
-	
+
 	const result = await createBackup({
 		type: 'scheduled',
 		description: 'Automated daily backup',
@@ -109,9 +109,9 @@ async function performDailyBackup() {
  */
 async function cleanupOldBackups() {
 	const db = createDb();
-	
+
 	const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-	
+
 	const oldBackups = await db
 		.select()
 		.from(backups)
@@ -122,7 +122,7 @@ async function cleanupOldBackups() {
 	for (const backup of oldBackups) {
 		// Delete backup file from storage
 		// TODO: Implement storage deletion
-		
+
 		// Delete database record
 		await db.delete(backups).where(eq(backups.id, backup.id));
 	}
@@ -134,27 +134,27 @@ async function cleanupOldBackups() {
  */
 async function syncToD1() {
 	console.log('Starting Supabase → D1 sync...');
-	
+
 	// Get D1 database binding
 	const d1 = (globalThis as any).D1; // From wrangler bindings
-	
+
 	if (!d1) {
 		console.warn('D1 database not configured, skipping sync');
 		return;
 	}
 
 	const db = createDb();
-	
+
 	// Sync critical tables (for low-latency reads)
 	// Example: organizations, projects, tickets
-	
+
 	try {
 		// TODO: Implement table-specific sync logic
 		// For each critical table:
 		// 1. Get latest data from Supabase
 		// 2. Upsert to D1
 		// 3. Track sync timestamp
-		
+
 		console.log('D1 sync completed');
 	} catch (err) {
 		console.error('D1 sync failed:', err);

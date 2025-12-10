@@ -604,19 +604,19 @@ export const invoices = pgTable('invoices', {
 
 	// Payment Provider (lemon_squeezy or wire_transfer)
 	paymentProvider: text('payment_provider'), // 'lemon_squeezy', 'wire_transfer', or null
-	
+
 	// Lemon Squeezy Integration
 	lemonSqueezyOrderId: text('lemon_squeezy_order_id'),
 	lemonSqueezyCheckoutId: text('lemon_squeezy_checkout_id'),
 	lemonSqueezyCustomerId: text('lemon_squeezy_customer_id'),
-	
+
 	// Wire Transfer
 	wireTransferInstructions: text('wire_transfer_instructions'),
 	wireTransferReceiptUrl: text('wire_transfer_receipt_url'),
 	wireTransferApprovedBy: uuid('wire_transfer_approved_by').references(() => profiles.id),
 	wireTransferApprovedAt: timestamp('wire_transfer_approved_at', { withTimezone: true }),
 	wireTransferDiscount: decimal('wire_transfer_discount', { precision: 5, scale: 2 }), // percentage discount
-	
+
 	// Internal
 	createdById: uuid('created_by_id')
 		.notNull()
@@ -2707,7 +2707,7 @@ export const apiKeys = pgTable('api_keys', {
 	name: text('name').notNull(),
 	key: text('key').notNull().unique(), // The actual API key (hashed)
 	keyPrefix: text('key_prefix').notNull(), // First 8 chars for display (e.g., "ls_key_...")
-	
+
 	// Ownership
 	userId: uuid('user_id')
 		.notNull()
@@ -2715,21 +2715,21 @@ export const apiKeys = pgTable('api_keys', {
 	organizationId: uuid('organization_id')
 		.notNull()
 		.references(() => organizations.id, { onDelete: 'cascade' }),
-	
+
 	// Permissions
 	scopes: text('scopes').array().notNull(), // Array of api_key_scope values
-	
+
 	// Rate limiting
 	rateLimit: integer('rate_limit').default(100), // requests per minute
-	
+
 	// Status
 	isActive: boolean('is_active').default(true).notNull(),
 	lastUsedAt: timestamp('last_used_at', { withTimezone: true }),
 	usageCount: integer('usage_count').default(0).notNull(),
-	
+
 	// Expiry
 	expiresAt: timestamp('expires_at', { withTimezone: true }),
-	
+
 	// Metadata
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
