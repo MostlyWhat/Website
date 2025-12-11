@@ -93,7 +93,7 @@ export async function uploadWireTransferReceipt(
 		.update(invoices)
 		.set({
 			wireTransferReceiptUrl: receiptUrl,
-			status: 'pending', // Pending admin approval
+			status: 'sent', // Awaiting admin approval
 			paymentMethod: 'wire_transfer',
 			updatedAt: new Date()
 		})

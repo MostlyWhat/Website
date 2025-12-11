@@ -28,6 +28,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
+	import { NativeSelect } from '$lib/components/ui/native-select';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import * as Select from '$lib/components/ui/select';
 	import type { ServiceStatus, IncidentStatus, IncidentSeverity } from '$lib/server/db/schema';
@@ -460,11 +461,11 @@
 				</div>
 				<div>
 					<Label for="severity">Severity</Label>
-					<select name="severity" id="severity" class="w-full rounded border border-border bg-background px-3 py-2 text-sm">
+					<NativeSelect name="severity" id="severity" class="w-full">
 						<option value="minor">Minor</option>
 						<option value="major">Major</option>
 						<option value="critical">Critical</option>
-					</select>
+					</NativeSelect>
 				</div>
 				<div>
 					<Label>Affected Services</Label>
@@ -519,12 +520,12 @@
 			<Dialog.Body class="space-y-4">
 				<div>
 					<Label for="updateStatus">New Status</Label>
-					<select name="status" id="updateStatus" class="w-full rounded border border-border bg-background px-3 py-2 text-sm">
+					<NativeSelect name="status" id="updateStatus" class="w-full">
 						<option value="investigating">Investigating</option>
 						<option value="identified">Identified</option>
 						<option value="monitoring">Monitoring</option>
 						<option value="resolved">Resolved</option>
-					</select>
+					</NativeSelect>
 				</div>
 				<div>
 					<Label for="updateMessage">Update Message</Label>

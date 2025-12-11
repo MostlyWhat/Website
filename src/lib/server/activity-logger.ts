@@ -11,7 +11,7 @@ import { activityLog } from '$lib/server/db/schema';
 import type { ActivityType } from '$lib/server/db/schema';
 
 // Extended entity types for logging (not all are in the DB enum)
-type EntityType = 'ticket' | 'project' | 'project_request' | 'proposal' | 'invoice' | 'organization' | 'user' | 'announcement' | 'sla_policy' | 'canned_response' | 'settings' | 'staff_group' | 'portfolio_project';
+type EntityType = 'ticket' | 'project' | 'project_request' | 'proposal' | 'invoice' | 'organization' | 'user' | 'announcement' | 'sla_policy' | 'canned_response' | 'settings' | 'staff_group' | 'portfolio_project' | 'ticket_auto_assignment_rule' | 'legal_page';
 
 export interface LogActivityOptions {
     entityType: EntityType;
@@ -175,7 +175,7 @@ export const ticketActivity = {
     async updated(
         ticketId: string,
         ticketNumber: string,
-        changes: Record<string, { old: unknown; new: unknown }>,
+        changes: Record<string, unknown>,
         performedById: string,
         ipAddress?: string
     ) {
@@ -185,8 +185,7 @@ export const ticketActivity = {
             entityId: ticketId,
             activityType: 'updated',
             description: `Ticket #${ticketNumber} updated: ${changedFields}`,
-            previousValues: Object.fromEntries(Object.entries(changes).map(([k, v]) => [k, v.old])),
-            newValues: Object.fromEntries(Object.entries(changes).map(([k, v]) => [k, v.new])),
+            newValues: changes,
             performedById,
             ipAddress
         });
@@ -701,14 +700,15 @@ export const proposalActivity = {
  * Log invoice-related activities
  */
 export const invoiceActivity = {
-    async created(invoiceId: string, invoiceNumber: string, performedById: string, ipAddress?: string) {
+    async created(invoiceId: string, invoiceNumber: string, performedById: string, ipAddress?: string, metadata?: Record<string, unknown>) {
         await logActivity({
             entityType: 'invoice',
             entityId: invoiceId,
             activityType: 'created',
-            description: `Invoice #${invoiceNumber} was created`,
+            description: metadata?.action ? `Invoice #${invoiceNumber}: ${metadata.action}` : `Invoice #${invoiceNumber} was created`,
             performedById,
-            ipAddress
+            ipAddress,
+            newValues: metadata
         });
     },
 

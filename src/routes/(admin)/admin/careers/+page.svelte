@@ -28,6 +28,7 @@
 	import { toast } from 'svelte-sonner';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import { NativeSelect } from '$lib/components/ui/native-select';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
@@ -373,24 +374,24 @@
 					</div>
 				</div>
 				<div class="grid grid-cols-2 gap-4">
-					<div>
-						<Label for="locationType">Work Type</Label>
-						<select name="locationType" id="locationType" class="w-full rounded border border-border bg-background px-3 py-2 text-sm">
-							<option value="remote">Remote</option>
-							<option value="hybrid">Hybrid</option>
-							<option value="onsite">On-site</option>
-						</select>
-					</div>
-					<div>
-						<Label for="type">Employment Type</Label>
-						<select name="type" id="type" class="w-full rounded border border-border bg-background px-3 py-2 text-sm">
-							<option value="full_time">Full-time</option>
-							<option value="part_time">Part-time</option>
-							<option value="contract">Contract</option>
-							<option value="freelance">Freelance</option>
-							<option value="internship">Internship</option>
-						</select>
-					</div>
+				<div>
+					<Label for="locationType">Work Type</Label>
+					<NativeSelect name="locationType" id="locationType" class="w-full">
+						<option value="remote">Remote</option>
+						<option value="hybrid">Hybrid</option>
+						<option value="onsite">On-site</option>
+					</NativeSelect>
+				</div>
+				<div>
+					<Label for="type">Employment Type</Label>
+					<NativeSelect name="type" id="type" class="w-full">
+						<option value="full_time">Full-time</option>
+						<option value="part_time">Part-time</option>
+						<option value="contract">Contract</option>
+						<option value="freelance">Freelance</option>
+						<option value="internship">Internship</option>
+					</NativeSelect>
+				</div>
 				</div>
 				<div>
 					<Label for="description">Description</Label>

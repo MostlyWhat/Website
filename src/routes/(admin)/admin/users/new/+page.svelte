@@ -2,11 +2,12 @@
 	/**
 	 * Create/Edit User Page
 	 */
-	import { ArrowLeft, User, Shield, Mail, Phone, Save, Loader2, AlertCircle, CheckCircle } from '@lucide/svelte';
+	import { User, Shield, Mail, Phone, Save, Loader2 } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { enhance } from '$app/forms';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
+	import CrudCreateLayout from '$lib/components/layout/CrudCreateLayout.svelte';
 
 	type FormReturn = {
 		error?: string;
@@ -44,34 +45,14 @@
 	<title>Add User | Admin | MostlyWhat Systems</title>
 </svelte:head>
 
-<div class="min-h-[calc(100dvh-4rem)]">
-	<!-- Header Section -->
-	<section class="border-b border-border bg-background px-6 py-8 md:px-12 lg:px-16">
-		<a
-			href="/admin/users"
-			class="group inline-flex items-center gap-2 text-muted-foreground transition-colors hover:text-foreground"
-		>
-			<ArrowLeft class="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-			<span class="font-mono text-[10px] tracking-widest">BACK TO USERS</span>
-		</a>
-		<h1 class="font-display mt-6 text-2xl font-bold uppercase md:text-3xl">Add New User</h1>
-		<p class="font-body mt-2 text-muted-foreground">
-			Create a new user account and assign their role.
-		</p>
-	</section>
-
-	<!-- Success/Error Messages -->
-	{#if form?.error}
-		<div class="border-b border-red-500/20 bg-red-500/5 px-6 py-4 md:px-12 lg:px-16">
-			<div class="flex items-center gap-3">
-				<AlertCircle class="h-5 w-5 text-red-500" />
-				<p class="font-body text-sm text-red-500">{form.error}</p>
-			</div>
-		</div>
-	{/if}
-
-	<!-- Form Section -->
-	<section class="border-b border-border bg-background">
+<CrudCreateLayout
+	title="Add New User"
+	description="Create a new user account and assign their role."
+	backHref="/admin/users"
+	errorMessage={form?.error}
+	successMessage={form?.success ? form.message : undefined}
+>
+	{#snippet children()}
 		<form 
 			method="POST" 
 			use:enhance={() => {
@@ -81,10 +62,10 @@
 					loading = false;
 				};
 			}}
-			class="grid grid-cols-12 gap-px bg-border"
+			class="space-y-8"
 		>
 			<!-- Basic Information -->
-			<div class="col-span-12 bg-background px-6 py-8 lg:col-span-8 md:px-12 lg:px-16">
+			<div>
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">01 — BASIC INFORMATION</span>
 				
 				<div class="mt-6 grid gap-6 md:grid-cols-2">
@@ -165,8 +146,28 @@
 				</div>
 			</div>
 
+			<!-- Form Actions -->
+			<div class="flex items-center justify-end gap-4 border-t border-border pt-6">
+				<Button variant="outline" href="/admin/users" class="font-ui text-xs tracking-wider">
+					CANCEL
+				</Button>
+				<Button type="submit" disabled={loading} class="font-ui text-xs tracking-wider">
+					{#if loading}
+						<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+						CREATING...
+					{:else}
+						<Save class="mr-2 h-4 w-4" />
+						CREATE USER
+					{/if}
+				</Button>
+			</div>
+		</form>
+	{/snippet}
+
+	{#snippet sidebar()}
+		<div class="space-y-6">
 			<!-- Role Selection -->
-			<div class="col-span-12 bg-background px-6 py-8 lg:col-span-4 lg:border-l lg:border-border md:px-12 lg:px-8">
+			<div>
 				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">02 — ROLE & PERMISSIONS</span>
 				
 				<div class="mt-6 space-y-3">
@@ -201,47 +202,31 @@
 						</label>
 					{/each}
 				</div>
-
-				<!-- Send Invite Option -->
-				<div class="mt-6 border-t border-border pt-6">
-					<label class="flex items-start gap-4 cursor-pointer">
-						<input
-							type="checkbox"
-							name="sendInvite"
-							bind:checked={sendInvite}
-							value="true"
-							class="sr-only"
-						/>
-						<div class="flex h-6 w-6 flex-shrink-0 items-center justify-center border {sendInvite ? 'border-primary bg-primary' : 'border-border bg-background'}">
-							{#if sendInvite}
-								<svg class="h-4 w-4 text-background" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-								</svg>
-							{/if}
-						</div>
-						<div>
-							<span class="font-ui text-xs font-semibold tracking-wider">SEND INVITE EMAIL</span>
-							<p class="font-body mt-1 text-xs text-muted-foreground">User will receive an email with login instructions.</p>
-						</div>
-					</label>
-				</div>
 			</div>
 
-			<!-- Form Actions -->
-			<div class="col-span-12 flex items-center justify-end gap-4 bg-card px-6 py-4 md:px-12 lg:px-16">
-				<Button variant="outline" href="/admin/users" class="font-ui text-xs tracking-wider">
-					CANCEL
-				</Button>
-				<Button type="submit" disabled={loading} class="font-ui text-xs tracking-wider">
-					{#if loading}
-						<Loader2 class="mr-2 h-4 w-4 animate-spin" />
-						CREATING...
-					{:else}
-						<Save class="mr-2 h-4 w-4" />
-						CREATE USER
-					{/if}
-				</Button>
+			<!-- Send Invite Option -->
+			<div class="border-t border-border pt-6">
+				<label class="flex items-start gap-4 cursor-pointer">
+					<input
+						type="checkbox"
+						name="sendInvite"
+						bind:checked={sendInvite}
+						value="true"
+						class="sr-only"
+					/>
+					<div class="flex h-6 w-6 flex-shrink-0 items-center justify-center border {sendInvite ? 'border-primary bg-primary' : 'border-border bg-background'}">
+						{#if sendInvite}
+							<svg class="h-4 w-4 text-background" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+							</svg>
+						{/if}
+					</div>
+					<div>
+						<span class="font-ui text-xs font-semibold tracking-wider">SEND INVITE EMAIL</span>
+						<p class="font-body mt-1 text-xs text-muted-foreground">User will receive an email with login instructions.</p>
+					</div>
+				</label>
 			</div>
-		</form>
-	</section>
-</div>
+		</div>
+	{/snippet}
+</CrudCreateLayout>

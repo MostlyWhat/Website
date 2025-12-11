@@ -3,6 +3,8 @@
 	import { Star, CheckCircle, AlertCircle, ThumbsUp, ThumbsDown } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Textarea } from '$lib/components/ui/textarea';
+	import { Input } from '$lib/components/ui/input';
+	import { Label } from '$lib/components/ui/label';
 
 	let { data, form } = $props();
 
@@ -87,11 +89,9 @@
 				{/if}
 
 				<form method="POST" action="?/submit" use:enhance class="space-y-8">
-					<!-- Overall Satisfaction -->
-					<div>
-						<label class="block font-medium text-foreground mb-3">
-							Overall Satisfaction <span class="text-destructive">*</span>
-						</label>
+				<!-- Overall Satisfaction -->
+				<div>
+					<Label class="block font-medium text-foreground mb-3">Overall Satisfaction <span class="text-destructive">*</span></Label>
 						<div class="flex items-center justify-center gap-2">
 							{#each [1, 2, 3, 4, 5] as value}
 								<button
@@ -111,7 +111,7 @@
 								</button>
 							{/each}
 						</div>
-						<input type="hidden" name="rating" value={rating} />
+							<Input type="hidden" name="rating" value={rating} />
 						<p class="mt-2 text-center text-sm text-muted-foreground">
 							{#if rating === 0}
 								Click to rate
@@ -137,9 +137,7 @@
 
 						<!-- Response Time -->
 						<div>
-							<label class="block text-sm font-medium text-foreground mb-2">
-								Response Time
-							</label>
+							<div class="block text-sm font-medium text-foreground mb-2">Response Time</div>
 							<div class="flex items-center justify-center gap-1">
 								{#each [1, 2, 3, 4, 5] as value}
 									<button
@@ -158,15 +156,13 @@
 								{/each}
 							</div>
 							{#if responseTimeRating > 0}
-								<input type="hidden" name="responseTimeRating" value={responseTimeRating} />
+								<Input type="hidden" name="responseTimeRating" value={responseTimeRating} />
 							{/if}
 						</div>
 
 						<!-- Resolution Quality -->
 						<div>
-							<label class="block text-sm font-medium text-foreground mb-2">
-								Resolution Quality
-							</label>
+							<div class="block text-sm font-medium text-foreground mb-2">Resolution Quality</div>
 							<div class="flex items-center justify-center gap-1">
 								{#each [1, 2, 3, 4, 5] as value}
 									<button
@@ -185,15 +181,13 @@
 								{/each}
 							</div>
 							{#if resolutionQualityRating > 0}
-								<input type="hidden" name="resolutionQualityRating" value={resolutionQualityRating} />
+								<Input type="hidden" name="resolutionQualityRating" value={resolutionQualityRating} />
 							{/if}
 						</div>
 
 						<!-- Staff Professionalism -->
 						<div>
-							<label class="block text-sm font-medium text-foreground mb-2">
-								Staff Professionalism
-							</label>
+							<div class="block text-sm font-medium text-foreground mb-2">Staff Professionalism</div>
 							<div class="flex items-center justify-center gap-1">
 								{#each [1, 2, 3, 4, 5] as value}
 									<button
@@ -212,16 +206,14 @@
 								{/each}
 							</div>
 							{#if staffProfessionalismRating > 0}
-								<input type="hidden" name="staffProfessionalismRating" value={staffProfessionalismRating} />
+								<Input type="hidden" name="staffProfessionalismRating" value={staffProfessionalismRating} />
 							{/if}
 						</div>
 					</div>
 
 					<!-- Would Recommend -->
 					<div class="border-t border-border pt-6">
-						<label class="block font-medium text-foreground mb-3">
-							Would you recommend our service to others?
-						</label>
+						<div class="block font-medium text-foreground mb-3">Would you recommend our service to others?</div>
 						<div class="flex items-center justify-center gap-4">
 							<button
 								type="button"
@@ -249,7 +241,7 @@
 							</button>
 						</div>
 						{#if wouldRecommend}
-							<input type="hidden" name="wouldRecommend" value={wouldRecommend} />
+							<Input type="hidden" name="wouldRecommend" value={wouldRecommend} />
 						{/if}
 					</div>
 
@@ -292,3 +284,5 @@
 		{/if}
 	</div>
 </div>
+
+

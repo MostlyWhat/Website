@@ -114,25 +114,25 @@
 		{:else}
 			<div class="max-w-4xl space-y-2">
 				{#each data.notifications as notification}
-					<button
+				{@const Icon = getNotificationIcon(notification.type)}
+				<button
 						onclick={() => handleNotificationClick(notification)}
 						class="w-full border border-border bg-card p-4 text-left transition-colors hover:bg-accent {!notification.isRead
-							? 'border-l-4 border-l-primary bg-primary/5'
-							: ''}"
-					>
-						<div class="flex items-start gap-4">
-							<div
-								class="flex h-10 w-10 flex-shrink-0 items-center justify-center border border-border bg-background"
-							>
-								{@const Icon = getNotificationIcon(notification.type)}
-								<Icon class="h-4 w-4 {getNotificationColor(notification.type)}" />
-							</div>
+						? 'border-l-4 border-l-primary bg-primary/5'
+						: ''}"
+				>
+					<div class="flex items-start gap-4">
+						<div
+							class="flex h-10 w-10 flex-shrink-0 items-center justify-center border border-border bg-background"
+						>
+							<Icon class="h-4 w-4 {getNotificationColor(notification.type)}" />
+						</div>
 
-							<div class="min-w-0 flex-1">
-								<div class="flex items-start justify-between gap-2">
-									<div class="min-w-0 flex-1">
-										<h3 class="font-ui text-sm font-semibold tracking-wide {!notification.isRead ? 'text-foreground' : 'text-muted-foreground'}">
-											{notification.title}
+						<div class="min-w-0 flex-1">
+							<div class="flex items-start justify-between gap-2">
+								<div class="min-w-0 flex-1">
+									<h3 class="font-ui text-sm font-semibold tracking-wide {!notification.isRead ? 'text-foreground' : 'text-muted-foreground'}">
+										{notification.title}
 										</h3>
 										<p class="font-body mt-1 text-sm text-muted-foreground">
 											{notification.message}
@@ -169,3 +169,5 @@
 		{/if}
 	</section>
 </div>
+
+

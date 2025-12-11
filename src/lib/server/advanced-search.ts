@@ -5,7 +5,7 @@
  */
 
 import { createDb } from '$lib/server/db';
-import { tickets, projects, customers, invoices } from '$lib/server/db/schema';
+import { tickets, projects, invoices } from '$lib/server/db/schema';
 import { and, or, eq, gte, lte, ilike, inArray, isNull, isNotNull, sql, desc } from 'drizzle-orm';
 
 export interface SearchFilter {
@@ -222,12 +222,11 @@ export async function searchProjects(options: SearchOptions & {
         conditions.push(inArray(projects.phase, options.phases as any));
     }
 
-    // Customer filter
-    if (options.customerIds && options.customerIds.length > 0) {
-        conditions.push(inArray(projects.customerId, options.customerIds));
-    }
-
-    // Budget range
+	// Customer filter
+	// TODO: Add customerId field to projects table
+	if (options.customerIds && options.customerIds.length > 0) {
+		// conditions.push(inArray(projects.customerId, options.customerIds));
+	}    // Budget range
     if (options.budgetRange) {
         if (options.budgetRange.min !== undefined) {
             conditions.push(gte(projects.estimatedBudget, options.budgetRange.min.toString()));
@@ -237,20 +236,18 @@ export async function searchProjects(options: SearchOptions & {
         }
     }
 
-    // Date range filter
-    if (options.dateRange) {
-        const dateField = projects[options.dateRange.field as keyof typeof projects];
-        if (dateField) {
-            if (options.dateRange.start) {
-                conditions.push(gte(dateField, options.dateRange.start));
-            }
-            if (options.dateRange.end) {
-                conditions.push(lte(dateField, options.dateRange.end));
-            }
-        }
-    }
-
-    // Custom filters
+	// Date range filter
+	if (options.dateRange) {
+		const dateField = projects[options.dateRange.field as keyof typeof projects] as any;
+		if (dateField) {
+			if (options.dateRange.start) {
+				conditions.push(gte(dateField, options.dateRange.start));
+			}
+			if (options.dateRange.end) {
+				conditions.push(lte(dateField, options.dateRange.end));
+			}
+		}
+	}    // Custom filters
     if (options.filters) {
         conditions.push(...buildFilterConditions(projects, options.filters));
     }
@@ -260,7 +257,7 @@ export async function searchProjects(options: SearchOptions & {
 
     // Sort
     if (options.sort) {
-        const sortField = projects[options.sort.field as keyof typeof projects];
+        const sortField = projects[options.sort.field as keyof typeof projects] as any;
         if (sortField) {
             query = query.orderBy(
                 options.sort.direction === 'desc' ? desc(sortField) : sortField
@@ -330,21 +327,8 @@ export async function globalSearch(query: string, organizationId: string, limit 
         )
         .limit(limit);
 
-    // Search customers
-    const customerResults = await db
-        .select()
-        .from(customers)
-        .where(
-            and(
-                eq(customers.organizationId, organizationId),
-                or(
-                    ilike(customers.name, `%${query}%`),
-                    ilike(customers.email, `%${query}%`),
-                    ilike(customers.company, `%${query}%`)
-                ) as any
-            )
-        )
-        .limit(limit);
+    // TODO: Add customer search when customers table exists
+    const customerResults: any[] = [];
 
     return {
         tickets: ticketResults.map((t) => ({ ...t, type: 'ticket' })),
@@ -411,20 +395,7 @@ export async function getSearchSuggestions(
 
         return suggestions;
     } else {
-        const suggestions = await db
-            .select({ id: customers.id, name: customers.name, email: customers.email })
-            .from(customers)
-            .where(
-                and(
-                    eq(customers.organizationId, organizationId),
-                    or(
-                        ilike(customers.name, `%${partialQuery}%`),
-                        ilike(customers.email, `%${partialQuery}%`)
-                    ) as any
-                )
-            )
-            .limit(10);
-
-        return suggestions;
+        // TODO: Implement customer autocomplete when customers table exists
+        return [];
     }
 }

@@ -6,6 +6,7 @@
 
 <script lang="ts">
 	import { slide } from 'svelte/transition';
+	import type { Snippet } from 'svelte';
 
 	interface NavItem {
 		label: string;
@@ -19,9 +20,10 @@
 		currentPath?: string;
 		logo?: string;
 		siteName?: string;
+		children?: Snippet; // Desktop navigation content
 	}
 
-	let { items = [], currentPath = '', logo, siteName = 'MostlyWhat' }: Props = $props();
+	let { items = [], currentPath = '', logo, siteName = 'MostlyWhat', children }: Props = $props();
 
 	let isOpen = $state(false);
 
@@ -102,7 +104,9 @@
 
 <!-- Desktop Navigation - Hidden on mobile -->
 <nav class="desktop-nav hidden lg:block">
-	<slot />
+	{#if children}
+		{@render children()}
+	{/if}
 </nav>
 
 <style>
@@ -187,10 +191,6 @@
 		border-radius: 9999px;
 	}
 
-	.desktop-nav {
-		/* Let the parent component style this */
-	}
-
 	/* Touch target optimization for mobile */
 	@media (max-width: 1024px) {
 		.mobile-menu-item {
@@ -203,3 +203,5 @@
 		}
 	}
 </style>
+
+

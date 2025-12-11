@@ -8,7 +8,6 @@ import { createDb } from '$lib/server/db';
 import { apiKeys } from '$lib/server/db/schema';
 import { eq, and } from 'drizzle-orm';
 import crypto from 'node:crypto';
-import bcrypt from 'bcrypt';
 
 export type ApiKeyScope =
 	| 'read:tickets'
@@ -61,14 +60,15 @@ function generateApiKey(): { key: string; prefix: string } {
  * Hash an API key for storage
  */
 async function hashApiKey(key: string): Promise<string> {
-	return await bcrypt.hash(key, 10);
+	return crypto.createHash('sha256').update(key).digest('hex');
 }
 
 /**
  * Verify an API key against a hash
  */
 async function verifyApiKey(key: string, hash: string): Promise<boolean> {
-	return await bcrypt.compare(key, hash);
+	const keyHash = crypto.createHash('sha256').update(key).digest('hex');
+	return keyHash === hash;
 }
 
 /**

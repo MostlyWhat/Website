@@ -7,14 +7,14 @@
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import { 
-		FolderKanban, ArrowLeft, Save, Loader2, Building2, User,
+		FolderKanban, Save, Loader2, Building2, User,
 		Calendar, DollarSign, AlertCircle
 	} from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Textarea } from '$lib/components/ui/textarea';
-	import * as Card from '$lib/components/ui/card';
 	import { toast } from 'svelte-sonner';
+	import CrudCreateLayout from '$lib/components/layout/CrudCreateLayout.svelte';
 
 	let { data, form } = $props();
 	
@@ -53,248 +53,251 @@
 	<title>New Project | Admin | MostlyWhat Systems</title>
 </svelte:head>
 
-<div class="min-h-[calc(100dvh-4rem)]">
-	<!-- Header Section -->
-	<section class="border-b border-border bg-background px-6 py-8 md:px-12 lg:px-16">
-		<div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-			<div class="flex items-center gap-4">
-				<Button href="/admin/projects" variant="outline" size="sm">
-					<ArrowLeft class="h-4 w-4" />
-				</Button>
-				<div>
-					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// CREATE NEW</span>
-					<h1 class="font-display mt-2 text-2xl font-bold uppercase md:text-3xl">New Project</h1>
+<CrudCreateLayout
+	title="New Project"
+	description="Create a new project for an organization."
+	backHref="/admin/projects"
+	errorMessage={form?.error}
+	successMessage={form?.success ? form.message : undefined}
+>
+	{#snippet children()}
+		<form
+			method="POST"
+			use:enhance={() => {
+				isSubmitting = true;
+				return async ({ update }) => {
+					isSubmitting = false;
+					await update();
+				};
+			}}
+			class="space-y-8"
+		>
+			<!-- Basic Information -->
+			<div class="space-y-6">
+				<div class="flex items-center gap-3">
+					<div class="flex h-10 w-10 items-center justify-center border border-border bg-card">
+						<FolderKanban class="h-5 w-5 text-primary" />
+					</div>
+					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">BASIC INFORMATION</span>
 				</div>
-			</div>
-		</div>
-	</section>
 
-	<!-- Form Section -->
-	<section class="px-6 py-8 md:px-12 lg:px-16">
-		<div class="max-w-3xl">
-			{#if form?.error}
-				<div class="mb-6 flex items-center gap-2 border border-red-500/30 bg-red-500/10 px-4 py-3 text-red-500">
-					<AlertCircle class="h-4 w-4" />
-					<span class="text-sm">{form.error}</span>
-				</div>
-			{/if}
+				<div class="space-y-6">
+					<div>
+						<label for="name" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+							PROJECT NAME *
+						</label>
+						<Input
+							id="name"
+							name="name"
+							type="text"
+							bind:value={name}
+							placeholder="e.g., Website Redesign"
+							required
+							class="mt-2 h-12 border-border bg-card"
+						/>
+					</div>
 
-			<form
-				method="POST"
-				use:enhance={() => {
-					isSubmitting = true;
-					return async ({ update }) => {
-						isSubmitting = false;
-						await update();
-					};
-				}}
-			>
-				<div class="space-y-8">
-					<!-- Basic Information -->
-					<Card.Root class="border-border">
-						<Card.Header>
-							<Card.Title class="font-display uppercase flex items-center gap-2">
-								<FolderKanban class="h-4 w-4" />
-								Basic Information
-							</Card.Title>
-						</Card.Header>
-						<Card.Content class="space-y-6">
-							<div>
-								<label for="name" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-									PROJECT NAME *
-								</label>
-								<Input
-									id="name"
-									name="name"
-									type="text"
-									bind:value={name}
-									placeholder="e.g., Website Redesign"
-									required
-									class="mt-2"
-								/>
-							</div>
+					<div>
+						<label for="description" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+							DESCRIPTION
+						</label>
+						<Textarea
+							id="description"
+							name="description"
+							bind:value={description}
+							placeholder="Brief description of the project scope and goals..."
+							rows={4}
+							class="mt-2 border-border bg-card"
+						/>
+					</div>
 
-							<div>
-								<label for="description" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-									DESCRIPTION
-								</label>
-								<Textarea
-									id="description"
-									name="description"
-									bind:value={description}
-									placeholder="Brief description of the project scope and goals..."
-									rows={4}
-									class="mt-2"
-								/>
-							</div>
+					<div>
+						<label for="organizationId" class="font-mono text-[10px] tracking-widest text-muted-foreground flex items-center gap-2">
+							<Building2 class="h-3 w-3" />
+							ORGANIZATION *
+						</label>
+						<select
+							id="organizationId"
+							name="organizationId"
+							bind:value={organizationId}
+							required
+							class="mt-2 w-full h-12 px-4 border border-border bg-card text-foreground focus:border-primary focus:outline-none"
+						>
+							<option value="">Select organization...</option>
+							{#each data.organizations as org}
+								<option value={org.id}>{org.name}</option>
+							{/each}
+						</select>
+					</div>
 
-							<div>
-								<label for="organizationId" class="font-mono text-[10px] tracking-widest text-muted-foreground flex items-center gap-2">
-									<Building2 class="h-3 w-3" />
-									ORGANIZATION *
-								</label>
-								<select
-									id="organizationId"
-									name="organizationId"
-									bind:value={organizationId}
-									required
-									class="mt-2 w-full px-4 py-2 border border-border bg-background text-foreground focus:border-primary focus:outline-none"
-								>
-									<option value="">Select organization...</option>
-									{#each data.organizations as org}
-										<option value={org.id}>{org.name}</option>
-									{/each}
-								</select>
-							</div>
-
-							<div>
-								<label for="status" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-									STATUS
-								</label>
-								<select
-									id="status"
-									name="status"
-									bind:value={status}
-									class="mt-2 w-full px-4 py-2 border border-border bg-background text-foreground focus:border-primary focus:outline-none"
-								>
-									{#each statusOptions as option}
-										<option value={option.value}>{option.label}</option>
-									{/each}
-								</select>
-							</div>
-						</Card.Content>
-					</Card.Root>
-
-					<!-- Assignment -->
-					<Card.Root class="border-border">
-						<Card.Header>
-							<Card.Title class="font-display uppercase flex items-center gap-2">
-								<User class="h-4 w-4" />
-								Assignment
-							</Card.Title>
-						</Card.Header>
-						<Card.Content>
-							<div>
-								<label for="assignedToId" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-									ASSIGNED TO
-								</label>
-								<select
-									id="assignedToId"
-									name="assignedToId"
-									bind:value={assignedToId}
-									class="mt-2 w-full px-4 py-2 border border-border bg-background text-foreground focus:border-primary focus:outline-none"
-								>
-									<option value="">Unassigned</option>
-									{#each data.staff as member}
-										<option value={member.id}>
-											{member.displayName || `${member.firstName ?? ''} ${member.lastName ?? ''}`.trim() || 'Unknown'}
-											({member.role})
-										</option>
-									{/each}
-								</select>
-							</div>
-						</Card.Content>
-					</Card.Root>
-
-					<!-- Timeline -->
-					<Card.Root class="border-border">
-						<Card.Header>
-							<Card.Title class="font-display uppercase flex items-center gap-2">
-								<Calendar class="h-4 w-4" />
-								Timeline
-							</Card.Title>
-						</Card.Header>
-						<Card.Content>
-							<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-								<div>
-									<label for="startDate" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-										START DATE
-									</label>
-									<Input
-										id="startDate"
-										name="startDate"
-										type="date"
-										bind:value={startDate}
-										class="mt-2"
-									/>
-								</div>
-								<div>
-									<label for="endDate" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-										END DATE
-									</label>
-									<Input
-										id="endDate"
-										name="endDate"
-										type="date"
-										bind:value={endDate}
-										class="mt-2"
-									/>
-								</div>
-							</div>
-						</Card.Content>
-					</Card.Root>
-
-					<!-- Budget -->
-					<Card.Root class="border-border">
-						<Card.Header>
-							<Card.Title class="font-display uppercase flex items-center gap-2">
-								<DollarSign class="h-4 w-4" />
-								Budget
-							</Card.Title>
-						</Card.Header>
-						<Card.Content>
-							<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-								<div>
-									<label for="estimatedBudget" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-										ESTIMATED BUDGET
-									</label>
-									<Input
-										id="estimatedBudget"
-										name="estimatedBudget"
-										type="number"
-										step="0.01"
-										min="0"
-										bind:value={estimatedBudget}
-										placeholder="0.00"
-										class="mt-2"
-									/>
-								</div>
-								<div>
-									<label for="currency" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-										CURRENCY
-									</label>
-									<select
-										id="currency"
-										name="currency"
-										bind:value={currency}
-										class="mt-2 w-full px-4 py-2 border border-border bg-background text-foreground focus:border-primary focus:outline-none"
-									>
-										{#each currencyOptions as curr}
-											<option value={curr}>{curr}</option>
-										{/each}
-									</select>
-								</div>
-							</div>
-						</Card.Content>
-					</Card.Root>
-
-					<!-- Actions -->
-					<div class="flex items-center gap-4">
-						<Button type="submit" disabled={isSubmitting} size="lg">
-							{#if isSubmitting}
-								<Loader2 class="mr-2 h-4 w-4 animate-spin" />
-								Creating...
-							{:else}
-								<Save class="mr-2 h-4 w-4" />
-								Create Project
-							{/if}
-						</Button>
-						<Button href="/admin/projects" variant="outline" size="lg">
-							Cancel
-						</Button>
+					<div>
+						<label for="status" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+							STATUS
+						</label>
+						<select
+							id="status"
+							name="status"
+							bind:value={status}
+							class="mt-2 w-full h-12 px-4 border border-border bg-card text-foreground focus:border-primary focus:outline-none"
+						>
+							{#each statusOptions as option}
+								<option value={option.value}>{option.label}</option>
+							{/each}
+						</select>
 					</div>
 				</div>
-			</form>
+			</div>
+
+			<!-- Assignment -->
+			<div class="space-y-6 border-t border-border pt-8">
+				<div class="flex items-center gap-3">
+					<div class="flex h-10 w-10 items-center justify-center border border-border bg-card">
+						<User class="h-5 w-5 text-primary" />
+					</div>
+					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">ASSIGNMENT</span>
+				</div>
+
+				<div>
+					<label for="assignedToId" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+						ASSIGNED TO
+					</label>
+					<select
+						id="assignedToId"
+						name="assignedToId"
+						bind:value={assignedToId}
+						class="mt-2 w-full h-12 px-4 border border-border bg-card text-foreground focus:border-primary focus:outline-none"
+					>
+						<option value="">Unassigned</option>
+						{#each data.staff as member}
+							<option value={member.id}>
+								{member.displayName || `${member.firstName ?? ''} ${member.lastName ?? ''}`.trim() || 'Unknown'}
+								({member.role})
+							</option>
+						{/each}
+					</select>
+				</div>
+			</div>
+
+			<!-- Timeline -->
+			<div class="space-y-6 border-t border-border pt-8">
+				<div class="flex items-center gap-3">
+					<div class="flex h-10 w-10 items-center justify-center border border-border bg-card">
+						<Calendar class="h-5 w-5 text-primary" />
+					</div>
+					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">TIMELINE</span>
+				</div>
+
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+					<div>
+						<label for="startDate" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+							START DATE
+						</label>
+						<Input
+							id="startDate"
+							name="startDate"
+							type="date"
+							bind:value={startDate}
+							class="mt-2 h-12 border-border bg-card"
+						/>
+					</div>
+					<div>
+						<label for="endDate" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+							END DATE
+						</label>
+						<Input
+							id="endDate"
+							name="endDate"
+							type="date"
+							bind:value={endDate}
+							class="mt-2 h-12 border-border bg-card"
+						/>
+					</div>
+				</div>
+			</div>
+
+			<!-- Budget -->
+			<div class="space-y-6 border-t border-border pt-8">
+				<div class="flex items-center gap-3">
+					<div class="flex h-10 w-10 items-center justify-center border border-border bg-card">
+						<DollarSign class="h-5 w-5 text-primary" />
+					</div>
+					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">BUDGET</span>
+				</div>
+
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+					<div>
+						<label for="estimatedBudget" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+							ESTIMATED BUDGET
+						</label>
+						<Input
+							id="estimatedBudget"
+							name="estimatedBudget"
+							type="number"
+							step="0.01"
+							min="0"
+							bind:value={estimatedBudget}
+							placeholder="0.00"
+							class="mt-2 h-12 border-border bg-card"
+						/>
+					</div>
+					<div>
+						<label for="currency" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+							CURRENCY
+						</label>
+						<select
+							id="currency"
+							name="currency"
+							bind:value={currency}
+							class="mt-2 w-full h-12 px-4 border border-border bg-card text-foreground focus:border-primary focus:outline-none"
+						>
+							{#each currencyOptions as curr}
+								<option value={curr}>{curr}</option>
+							{/each}
+						</select>
+					</div>
+				</div>
+			</div>
+
+			<!-- Actions -->
+			<div class="flex items-center gap-4 border-t border-border pt-8">
+				<Button type="submit" disabled={isSubmitting} size="lg">
+					{#if isSubmitting}
+						<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+						Creating...
+					{:else}
+						<Save class="mr-2 h-4 w-4" />
+						Create Project
+					{/if}
+				</Button>
+				<Button href="/admin/projects" variant="outline" size="lg">
+					Cancel
+				</Button>
+			</div>
+		</form>
+	{/snippet}
+
+	{#snippet sidebar()}
+		<div class="space-y-6">
+			<div>
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">PROJECT STATUS</span>
+				<div class="mt-3 space-y-2">
+					<p class="font-body text-xs text-muted-foreground"><strong>Draft:</strong> Initial planning phase</p>
+					<p class="font-body text-xs text-muted-foreground"><strong>Proposal Sent:</strong> Awaiting client approval</p>
+					<p class="font-body text-xs text-muted-foreground"><strong>Proposal Accepted:</strong> Approved, ready to start</p>
+					<p class="font-body text-xs text-muted-foreground"><strong>In Progress:</strong> Active development</p>
+					<p class="font-body text-xs text-muted-foreground"><strong>On Hold:</strong> Temporarily paused</p>
+				</div>
+			</div>
+
+			<div class="border-t border-border pt-6">
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">NEXT STEPS</span>
+				<ul class="font-body mt-3 space-y-2 text-xs text-muted-foreground">
+					<li>1. Create the project</li>
+					<li>2. Add project milestones</li>
+					<li>3. Assign team members</li>
+					<li>4. Create initial tasks</li>
+				</ul>
+			</div>
 		</div>
-	</section>
-</div>
+	{/snippet}
+</CrudCreateLayout>

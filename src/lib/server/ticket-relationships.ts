@@ -380,12 +380,21 @@ export async function getSurveyByToken(surveyToken: string) {
     const db = createDb();
 
     const [survey] = await db
-        .select()
+        .select({
+            survey: ticketSatisfactionSurveys,
+            ticket: tickets
+        })
         .from(ticketSatisfactionSurveys)
+        .leftJoin(tickets, eq(ticketSatisfactionSurveys.ticketId, tickets.id))
         .where(eq(ticketSatisfactionSurveys.surveyToken, surveyToken))
         .limit(1);
 
-    return survey || null;
+    if (!survey) return null;
+
+    return {
+        ...survey.survey,
+        ticket: survey.ticket
+    };
 }
 
 /**
@@ -516,10 +525,9 @@ export async function splitTicket(options: SplitTicketOptions): Promise<SplitTic
                 // Add a comment to the new ticket referencing the split
                 await db.insert(ticketComments).values({
                     ticketId: created.id,
-                    createdById: splitById,
+                    authorId: splitById,
                     content: `This ticket was split from ticket #${source.ticketNumber}`,
-                    isInternal: false,
-                    createdAt: new Date()
+                    isInternal: false
                 });
             }
         }
@@ -532,10 +540,9 @@ export async function splitTicket(options: SplitTicketOptions): Promise<SplitTic
 
         await db.insert(ticketComments).values({
             ticketId: sourceTicketId,
-            createdById: splitById,
+            authorId: splitById,
             content: `This ticket has been split into ${newTickets.length} new ticket(s)`,
-            isInternal: true,
-            createdAt: new Date()
+            isInternal: true
         });
 
         return {
@@ -633,17 +640,15 @@ export async function linkTickets(options: LinkTicketsOptions): Promise<LinkTick
         await Promise.all([
             db.insert(ticketComments).values({
                 ticketId: sourceTicketId,
-                createdById,
+                authorId: createdById,
                 content: `${sourceLinkText} ticket #${targetTicket[0].ticketNumber}`,
-                isInternal: true,
-                createdAt: new Date()
+                isInternal: true
             }),
             db.insert(ticketComments).values({
                 ticketId: targetTicketId,
-                createdById,
+                authorId: createdById,
                 content: `${targetLinkText} ticket #${sourceTicket[0].ticketNumber}`,
-                isInternal: true,
-                createdAt: new Date()
+                isInternal: true
             })
         ]);
 
@@ -693,17 +698,15 @@ export async function unlinkTickets(linkId: string, deletedById: string): Promis
             await Promise.all([
                 db.insert(ticketComments).values({
                     ticketId: link[0].sourceTicketId,
-                    createdById: deletedById,
+                    authorId: deletedById,
                     content: `Unlinked from ticket #${targetTicket[0].ticketNumber}`,
-                    isInternal: true,
-                    createdAt: new Date()
+                    isInternal: true
                 }),
                 db.insert(ticketComments).values({
                     ticketId: link[0].targetTicketId,
-                    createdById: deletedById,
+                    authorId: deletedById,
                     content: `Unlinked from ticket #${sourceTicket[0].ticketNumber}`,
-                    isInternal: true,
-                    createdAt: new Date()
+                    isInternal: true
                 })
             ]);
         }

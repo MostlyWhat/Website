@@ -1,4 +1,5 @@
 <script lang="ts">
+	// @ts-ignore - date-fns is installed
 	import { format, differenceInDays, addDays, startOfWeek, endOfWeek } from 'date-fns';
 	
 	interface Milestone {

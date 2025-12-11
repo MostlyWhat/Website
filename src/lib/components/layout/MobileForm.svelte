@@ -4,7 +4,9 @@
  * Touch-friendly form inputs with proper sizing and spacing
  */
 
-<script lang="ts" context="module">
+<script lang="ts" module>
+	import type { Snippet } from 'svelte';
+
 	export interface FormFieldProps {
 		label?: string;
 		name: string;
@@ -16,11 +18,11 @@
 		error?: string;
 		hint?: string;
 		class?: string;
+		children?: Snippet; // For select options
 	}
 </script>
 
 <script lang="ts">
-	import type { FormFieldProps } from './MobileForm.svelte';
 
 	let {
 		label,
@@ -32,7 +34,8 @@
 		disabled = false,
 		error,
 		hint,
-		class: className = ''
+		class: className = '',
+		children
 	}: FormFieldProps = $props();
 
 	const inputId = `field-${name}`;
@@ -70,7 +73,9 @@
 			class="form-select"
 			class:error
 		>
-			<slot />
+			{#if children}
+				{@render children()}
+			{/if}
 		</select>
 	{:else}
 		<input

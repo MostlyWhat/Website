@@ -131,9 +131,9 @@
 										{page.title}
 									</h3>
 									{#if page.isPublished}
-										<Eye class="h-4 w-4 text-green-500" title="Published" />
+										<Eye class="h-4 w-4 text-green-500" />
 									{:else}
-										<EyeOff class="h-4 w-4 text-muted-foreground" title="Draft" />
+										<EyeOff class="h-4 w-4 text-muted-foreground" />
 									{/if}
 								</div>
 								<p class="font-mono mt-1 text-xs text-muted-foreground">

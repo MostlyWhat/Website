@@ -28,6 +28,8 @@
 	} from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
+	import { Label } from '$lib/components/ui/label';
+	import { NativeSelect } from '$lib/components/ui/native-select';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import * as Tabs from '$lib/components/ui/tabs';
 	import { PhaseBadge, PhaseTimeline, PhaseActions } from '$lib/components/ui/phase-badge';
@@ -727,15 +729,15 @@
 										<label for="revision-description" class="block text-sm text-muted-foreground mb-1">Description</label>
 										<Textarea id="revision-description" name="description" rows={3} placeholder="Describe the revision..." />
 									</div>
-									<div>
-										<label for="priority" class="block text-sm text-muted-foreground mb-1">Priority</label>
-										<select id="priority" name="priority" class="h-10 w-full border border-border bg-background px-3 text-sm">
-											<option value="low">Low</option>
-											<option value="medium" selected>Medium</option>
-											<option value="high">High</option>
-											<option value="urgent">Urgent</option>
-										</select>
-									</div>
+								<div>
+									<Label for="priority" class="block text-sm text-muted-foreground mb-1">Priority</Label>
+									<NativeSelect id="priority" name="priority" class="h-10 w-full">
+										<option value="low">Low</option>
+										<option value="medium" selected>Medium</option>
+										<option value="high">High</option>
+										<option value="urgent">Urgent</option>
+									</NativeSelect>
+								</div>
 									<div class="flex justify-end gap-2">
 										<Button type="button" variant="outline" onclick={() => (showNewRevisionForm = false)}>Cancel</Button>
 										<Button type="submit">Create Revision</Button>

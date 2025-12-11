@@ -19,7 +19,7 @@
 
 import { json } from '@sveltejs/kit';
 import { createDb } from '$lib/server/db';
-import { tickets, profiles, organizations, ticketComments } from '$lib/server/db/schema';
+import { tickets, profiles, organizations, ticketComments, organizationMembers } from '$lib/server/db/schema';
 import { eq, or } from 'drizzle-orm';
 import type { RequestHandler } from './$types';
 
@@ -56,8 +56,7 @@ export const POST: RequestHandler = async ({ request }) => {
         const [user] = await db
             .select({
                 id: profiles.id,
-                email: profiles.email,
-                organizationId: profiles.organizationId
+                email: profiles.email
             })
             .from(profiles)
             .where(eq(profiles.email, senderEmail))
@@ -88,7 +87,7 @@ export const POST: RequestHandler = async ({ request }) => {
                 // Add comment to existing ticket
                 await db.insert(ticketComments).values({
                     ticketId: existingTicket.id,
-                    userId: user.id,
+                    authorId: user.id,
                     content: textBody.trim(),
                     isInternal: false
                 });
@@ -102,14 +101,28 @@ export const POST: RequestHandler = async ({ request }) => {
             }
         }
 
-        // Create new ticket
+        // Get user's organization
+        const [orgMember] = await db
+            .select({ organizationId: organizationMembers.organizationId })
+            .from(organizationMembers)
+            .where(eq(organizationMembers.profileId, user.id))
+            .limit(1);
+
+        if (!orgMember) {
+            return json({
+                error: 'No organization found',
+                message: `User ${senderEmail} is not associated with any organization.`
+            }, { status: 404 });
+        }
+
+        // Create a new ticket
         const [newTicket] = await db
             .insert(tickets)
             .values({
                 subject: subject.trim(),
                 description: textBody.trim(),
                 createdById: user.id,
-                organizationId: user.organizationId,
+                organizationId: orgMember.organizationId,
                 status: 'open',
                 priority: 'medium', // Default priority for email tickets
                 source: 'email' // Track that this came from email

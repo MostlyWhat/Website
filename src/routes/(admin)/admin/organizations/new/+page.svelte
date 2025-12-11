@@ -6,13 +6,13 @@
 	 */
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
-	import { ArrowLeft, Building2, Loader2 } from '@lucide/svelte';
+	import { Building2, Loader2 } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
-	import { Textarea } from '$lib/components/ui/textarea';
 	import * as Select from '$lib/components/ui/select';
 	import { toast } from 'svelte-sonner';
+	import CrudCreateLayout from '$lib/components/layout/CrudCreateLayout.svelte';
 
 	let { data, form } = $props();
 
@@ -48,31 +48,15 @@
 	<title>Create Organization | Admin | MostlyWhat Systems</title>
 </svelte:head>
 
-<div class="min-h-[calc(100dvh-4rem)]">
-	<!-- Header Section -->
-	<section class="border-b border-border bg-background px-6 py-8 md:px-12 lg:px-16">
-		<a
-			href="/admin/organizations"
-			class="group inline-flex items-center gap-2 text-muted-foreground transition-colors hover:text-foreground"
-		>
-			<ArrowLeft class="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-			<span class="font-mono text-[10px] tracking-widest">BACK TO ORGANIZATIONS</span>
-		</a>
-		<h1 class="font-display mt-6 text-2xl font-bold uppercase md:text-3xl">Create Organization</h1>
-		<p class="font-body mt-2 text-sm text-muted-foreground">
-			Add a new client organization to the system.
-		</p>
-	</section>
-
-	<!-- Form Section -->
-	<section class="border-b border-border bg-background px-6 py-8 md:px-12 lg:px-16">
-		{#if form?.error}
-			<div class="mb-6 max-w-2xl border border-destructive/50 bg-destructive/10 px-6 py-4">
-				<p class="font-mono text-sm text-destructive">{form.error}</p>
-			</div>
-		{/if}
-
-		<form method="POST" use:enhance={handleSubmit} class="max-w-2xl space-y-8">
+<CrudCreateLayout
+	title="Create Organization"
+	description="Add a new client organization to the system."
+	backHref="/admin/organizations"
+	errorMessage={form?.error}
+	successMessage={form?.success ? form.message : undefined}
+>
+	{#snippet children()}
+		<form method="POST" use:enhance={handleSubmit} class="space-y-8">
 			<!-- Organization Details -->
 			<div class="space-y-6">
 				<div class="flex items-center gap-3">
@@ -216,5 +200,34 @@
 				</Button>
 			</div>
 		</form>
-	</section>
-</div>
+	{/snippet}
+
+	{#snippet sidebar()}
+		<div class="space-y-6">
+			<div>
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">QUICK GUIDE</span>
+				<p class="font-body mt-2 text-sm text-muted-foreground">
+					Organizations represent client companies or groups. Each organization can have multiple members and projects.
+				</p>
+			</div>
+			
+			<div>
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">NEXT STEPS</span>
+				<ul class="font-body mt-2 space-y-2 text-sm text-muted-foreground">
+					<li class="flex gap-2">
+						<span>1.</span>
+						<span>Create the organization</span>
+					</li>
+					<li class="flex gap-2">
+						<span>2.</span>
+						<span>Add team members</span>
+					</li>
+					<li class="flex gap-2">
+						<span>3.</span>
+						<span>Set up projects</span>
+					</li>
+				</ul>
+			</div>
+		</div>
+	{/snippet}
+</CrudCreateLayout>

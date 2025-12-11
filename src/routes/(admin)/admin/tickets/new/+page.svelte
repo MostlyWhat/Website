@@ -2,12 +2,13 @@
 	/**
 	 * Admin - Create New Ticket Page
 	 */
-	import { ArrowLeft, Send, Loader2, AlertCircle } from '@lucide/svelte';
+	import { Send, Loader2, AlertTriangle, Flag } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import { RichTextEditor } from '$lib/components/ui/rich-text-editor';
 	import { toast } from 'svelte-sonner';
+	import CrudCreateLayout from '$lib/components/layout/CrudCreateLayout.svelte';
 	import type { PageData } from './$types';
 
 	type FormReturn = {
@@ -62,34 +63,14 @@
 	<title>New Ticket | Admin</title>
 </svelte:head>
 
-<div class="min-h-screen bg-background">
-	<!-- Header -->
-	<header class="border-b border-border bg-background px-6 py-6 lg:px-12">
-		<a
-			href="/admin/tickets"
-			class="group inline-flex items-center gap-2 text-muted-foreground transition-colors hover:text-foreground"
-		>
-			<ArrowLeft class="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-			<span class="font-mono text-[10px] tracking-widest">BACK TO TICKETS</span>
-		</a>
-		<h1 class="font-display mt-6 text-2xl font-bold uppercase md:text-3xl">Create Ticket</h1>
-		<p class="font-body mt-2 text-muted-foreground">
-			Create a new support ticket on behalf of a user.
-		</p>
-	</header>
-
-	<!-- Error Messages -->
-	{#if form?.error}
-		<div class="border-b border-red-500/20 bg-red-500/5 px-6 py-4 lg:px-12">
-			<div class="flex items-center gap-3">
-				<AlertCircle class="h-5 w-5 text-red-500" />
-				<p class="font-body text-sm text-red-500">{form.error}</p>
-			</div>
-		</div>
-	{/if}
-
-	<!-- Form -->
-	<main class="px-6 py-8 lg:px-12">
+<CrudCreateLayout
+	title="Create Ticket"
+	description="Create a new support ticket on behalf of a user."
+	backHref="/admin/tickets"
+	errorMessage={form?.error}
+	successMessage={form?.success ? form.message : undefined}
+>
+	{#snippet children()}
 		<form
 			method="POST"
 			action="?/createTicket"
@@ -100,7 +81,7 @@
 					loading = false;
 				};
 			}}
-			class="max-w-4xl space-y-8"
+			class="space-y-8"
 		>
 			<!-- Subject -->
 			<div class="space-y-2">
@@ -262,5 +243,50 @@
 				</Button>
 			</div>
 		</form>
-	</main>
-</div>
+	{/snippet}
+
+	{#snippet sidebar()}
+		<div class="space-y-6">
+			<!-- Priority Guide -->
+			<div>
+				<div class="flex items-center gap-2 mb-3">
+					<Flag class="h-4 w-4 text-primary" />
+					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">PRIORITY LEVELS</span>
+				</div>
+				<div class="space-y-3">
+					<div class="space-y-1">
+						<p class="font-ui text-xs font-semibold text-foreground">URGENT</p>
+						<p class="font-body text-xs text-muted-foreground">Critical issues requiring immediate attention. System down, data loss, security breach.</p>
+					</div>
+					<div class="space-y-1">
+						<p class="font-ui text-xs font-semibold text-foreground">HIGH</p>
+						<p class="font-body text-xs text-muted-foreground">Major functionality affected. Work blocked but system operational.</p>
+					</div>
+					<div class="space-y-1">
+						<p class="font-ui text-xs font-semibold text-foreground">MEDIUM</p>
+						<p class="font-body text-xs text-muted-foreground">Non-critical issues. Minor functionality impact with workarounds available.</p>
+					</div>
+					<div class="space-y-1">
+						<p class="font-ui text-xs font-semibold text-foreground">LOW</p>
+						<p class="font-body text-xs text-muted-foreground">Cosmetic issues, questions, or minor enhancements.</p>
+					</div>
+				</div>
+			</div>
+
+			<!-- Category Guide -->
+			<div class="border-t border-border pt-6">
+				<div class="flex items-center gap-2 mb-3">
+					<AlertTriangle class="h-4 w-4 text-primary" />
+					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CATEGORIES</span>
+				</div>
+				<ul class="font-body space-y-2 text-xs text-muted-foreground">
+					<li><strong>General:</strong> Questions and general inquiries</li>
+					<li><strong>Technical:</strong> Technical issues and errors</li>
+					<li><strong>Billing:</strong> Payment and billing issues</li>
+					<li><strong>Feature:</strong> Feature requests and suggestions</li>
+					<li><strong>Bug:</strong> Software bugs and defects</li>
+				</ul>
+			</div>
+		</div>
+	{/snippet}
+</CrudCreateLayout>

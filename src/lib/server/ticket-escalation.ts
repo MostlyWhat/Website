@@ -11,7 +11,7 @@
  */
 
 import { createDb } from '$lib/server/db';
-import { tickets, profiles, ticketEscalations, ticketComments, notifications } from '$lib/server/db/schema';
+import { tickets, profiles, ticketEscalations, ticketComments, userNotifications } from '$lib/server/db/schema';
 import { eq, and, lt, isNull, or, sql } from 'drizzle-orm';
 import { calculateSLAStatus } from './sla-calculator';
 import type { TicketPriority } from './db/schema';
@@ -157,13 +157,11 @@ async function checkEscalationRule(
 
         case 'sla_breach':
             if (!ticket.slaPolicyId) return false;
-            const slaStatus = calculateSLAStatus(
-                ticket.slaResponseDeadline,
-                ticket.slaResolutionDeadline,
-                ticket.firstResponseAt,
-                ticket.resolvedAt
-            );
-            return slaStatus.responseBreached || slaStatus.resolutionBreached;
+            // Check if SLA deadlines are breached
+            const now = new Date();
+            const responseBreached = ticket.slaResponseDeadline && !ticket.firstResponseAt && now > ticket.slaResponseDeadline;
+            const resolutionBreached = ticket.slaResolutionDeadline && !ticket.resolvedAt && now > ticket.slaResolutionDeadline;
+            return responseBreached || resolutionBreached;
 
         case 'high_priority_waiting':
             return ticket.priority === 'high' && ticket.status === 'waiting';
@@ -245,16 +243,14 @@ async function escalateTicket(db: any, ticket: any, rule: EscalationRule): Promi
             );
 
         for (const admin of admins) {
-            await db.insert(notifications).values({
+            await db.insert(userNotifications).values({
                 userId: admin.id,
-                type: 'ticket_escalated',
+                type: 'ticket_update',
                 title: 'Ticket Escalated',
                 message: `Ticket #${ticket.ticketNumber} - ${ticket.subject}`,
-                actionUrl: `/admin/tickets/${ticket.id}`,
-                metadata: {
-                    ticketId: ticket.id,
-                    reason: rule.condition
-                }
+                link: `/admin/tickets/${ticket.id}`,
+                entityType: 'ticket',
+                entityId: ticket.id
             });
         }
     }

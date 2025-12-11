@@ -5,6 +5,8 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
+	import { NativeSelect } from '$lib/components/ui/native-select';
+	import { Textarea } from '$lib/components/ui/textarea';
 	import * as Select from '$lib/components/ui/select';
 	import {
 		Plus,
@@ -243,15 +245,15 @@
 					</div>
 
 					<div class="grid grid-cols-2 gap-4">
-						<div>
-							<Label class="font-mono text-[10px] tracking-wider">TYPE</Label>
-							<select name="type" bind:value={formType} class="w-full border border-border bg-background px-3 py-2 font-mono text-sm">
-								<option value="info">Info</option>
-								<option value="warning">Warning</option>
-								<option value="success">Success</option>
-								<option value="error">Error</option>
-							</select>
-						</div>
+					<div>
+						<Label class="font-mono text-[10px] tracking-wider">TYPE</Label>
+						<NativeSelect name="type" bind:value={formType} class="w-full">
+							<option value="info">Info</option>
+							<option value="warning">Warning</option>
+							<option value="success">Success</option>
+							<option value="error">Error</option>
+						</NativeSelect>
+					</div>
 						<div>
 							<Label for="expiresAt" class="font-mono text-[10px] tracking-wider">EXPIRES AT</Label>
 							<Input
@@ -276,15 +278,13 @@
 					</div>
 
 					<div>
-						<Label class="font-mono text-[10px] tracking-wider">TARGET AUDIENCE</Label>
-						<select name="targetType" bind:value={formTargetType} class="w-full border border-border bg-background px-3 py-2 font-mono text-sm mb-2">
-							<option value="all">Everyone</option>
-							<option value="users">Specific Users</option>
-							<option value="staff_groups">Staff Groups</option>
-							<option value="organizations">Organizations</option>
-						</select>
-						
-						{#if formTargetType === 'users'}
+					<Label class="font-mono text-[10px] tracking-wider">TARGET AUDIENCE</Label>
+					<NativeSelect name="targetType" bind:value={formTargetType} class="w-full mb-2">
+						<option value="all">Everyone</option>
+						<option value="users">Specific Users</option>
+						<option value="staff_groups">Staff Groups</option>
+						<option value="organizations">Organizations</option>
+					</NativeSelect>						{#if formTargetType === 'users'}
 							<select name="targetIds" multiple bind:value={formTargetIds} class="w-full border border-border bg-background px-3 py-2 font-mono text-sm h-32">
 								{#each data.users as user}
 									<option value={user.id}>{user.displayName || user.email}</option>
@@ -345,27 +345,25 @@
 						/>
 					</div>
 
+				<div>
+					<Label for="edit-content" class="font-mono text-[10px] tracking-wider">CONTENT</Label>
+					<Textarea
+						id="edit-content"
+						name="content"
+						bind:value={formContent}
+						placeholder="Additional details (optional)"
+						class="resize-none"
+						rows={3}
+					></Textarea>
+				</div>				<div class="grid grid-cols-2 gap-4">
 					<div>
-						<Label for="edit-content" class="font-mono text-[10px] tracking-wider">CONTENT</Label>
-						<textarea
-							id="edit-content"
-							name="content"
-							bind:value={formContent}
-							placeholder="Additional details (optional)"
-							class="w-full border border-border bg-background px-3 py-2 font-mono text-sm resize-none"
-							rows="3"
-						></textarea>
-					</div>
-
-					<div class="grid grid-cols-2 gap-4">
-						<div>
-							<Label class="font-mono text-[10px] tracking-wider">TYPE</Label>
-							<select name="type" bind:value={formType} class="w-full border border-border bg-background px-3 py-2 font-mono text-sm">
-								<option value="info">Info</option>
-								<option value="warning">Warning</option>
-								<option value="success">Success</option>
-								<option value="error">Error</option>
-							</select>
+						<Label class="font-mono text-[10px] tracking-wider">TYPE</Label>
+						<NativeSelect name="type" bind:value={formType} class="w-full">
+							<option value="info">Info</option>
+							<option value="warning">Warning</option>
+							<option value="success">Success</option>
+							<option value="error">Error</option>
+						</NativeSelect>
 						</div>
 						<div>
 							<Label for="edit-expiresAt" class="font-mono text-[10px] tracking-wider">EXPIRES AT</Label>

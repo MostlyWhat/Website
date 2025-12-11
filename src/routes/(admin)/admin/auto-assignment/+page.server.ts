@@ -125,7 +125,7 @@ export const actions: Actions = {
 				.insert(ticketAutoAssignmentRules)
 				.values({
 					categoryId: categoryId || null,
-					priority: priority || null,
+					priority: (priority && ['low', 'medium', 'high', 'urgent'].includes(priority)) ? priority as 'low' | 'medium' | 'high' | 'urgent' : null,
 					keywords: keywords.length > 0 ? keywords : null,
 					staffGroupId,
 					assignmentStrategy: assignmentStrategy || 'round_robin',

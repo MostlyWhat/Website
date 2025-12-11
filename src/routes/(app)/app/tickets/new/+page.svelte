@@ -97,11 +97,6 @@
 			}
 		}
 	}
-	
-	// File handling
-	let selectedFiles = $state<SelectedFile[]>([]);
-	let dragActive = $state(false);
-	let fileInputRef: HTMLInputElement;
 
 	function formatFileSize(bytes: number): string {
 		if (bytes < 1024) return `${bytes} B`;

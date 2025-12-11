@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1765300532246,
-      "tag": "0000_groovy_photon",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1765301180732,
-      "tag": "0001_loud_cobalt_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1765302108769,
-      "tag": "0002_even_klaw",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1765345008907,
-      "tag": "0003_empty_gambit",
+      "when": 1765417177695,
+      "tag": "0000_dazzling_tinkerer",
       "breakpoints": true
     }
   ]

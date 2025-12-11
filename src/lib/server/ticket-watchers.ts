@@ -6,7 +6,7 @@
  */
 
 import { createDb } from '$lib/server/db';
-import { ticketWatchers, tickets, profiles, notifications } from '$lib/server/db/schema';
+import { ticketWatchers, tickets, profiles, userNotifications } from '$lib/server/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { logActivity } from './activity-logger';
 
@@ -43,15 +43,14 @@ export async function addTicketWatcher(
         });
 
         // Log activity
-        await logActivity(
-            'ticket',
-            ticketId,
-            'updated',
-            'Watcher added',
-            userId,
-            null,
-            { watcherId: userId }
-        );
+        await logActivity({
+            entityType: 'ticket',
+            entityId: ticketId,
+            activityType: 'updated',
+            description: 'Watcher added',
+            performedById: userId,
+            newValues: { watcherId: userId }
+        });
 
         return { success: true };
     } catch (error) {
@@ -83,15 +82,14 @@ export async function removeTicketWatcher(
             );
 
         // Log activity
-        await logActivity(
-            'ticket',
-            ticketId,
-            'updated',
-            'Watcher removed',
-            userId,
-            null,
-            { watcherId: userId }
-        );
+        await logActivity({
+            entityType: 'ticket',
+            entityId: ticketId,
+            activityType: 'updated',
+            description: 'Watcher removed',
+            performedById: userId,
+            newValues: { watcherId: userId }
+        });
 
         return { success: true };
     } catch (error) {
@@ -195,18 +193,14 @@ export async function notifyWatchers(
             // Skip if watcher is the updater
             if (watcher.userId === updatedById) continue;
 
-            await db.insert(notifications).values({
+            await db.insert(userNotifications).values({
                 userId: watcher.userId,
-                type: 'ticket_updated',
+                type: 'ticket_update',
                 title: notificationTitle,
                 message: notificationMessage,
-                actionUrl: `/admin/tickets/${ticketId}`,
-                metadata: {
-                    ticketId,
-                    ticketNumber: ticket.ticketNumber,
-                    updateType,
-                    ...details
-                }
+                link: `/admin/tickets/${ticketId}`,
+                entityType: 'ticket',
+                entityId: ticketId
             });
         }
     } catch (error) {

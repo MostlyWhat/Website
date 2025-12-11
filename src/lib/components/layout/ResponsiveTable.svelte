@@ -5,6 +5,8 @@
  */
 
 <script lang="ts">
+	import type { Snippet } from 'svelte';
+
 	interface Column {
 		key: string;
 		label: string;
@@ -20,6 +22,7 @@
 		keyField?: string;
 		emptyMessage?: string;
 		mobileCardMode?: boolean; // If true, show as cards on mobile instead of hiding columns
+		cell?: Snippet<[{ column: Column; item: any }]>; // Custom cell renderer
 	}
 
 	let {
@@ -27,7 +30,8 @@
 		data = [],
 		keyField = 'id',
 		emptyMessage = 'No data available',
-		mobileCardMode = true
+		mobileCardMode = true,
+		cell
 	}: Props = $props();
 
 	const highPriorityColumns = $derived(columns.filter((c) => c.priority === 'high' || !c.priority));
@@ -48,9 +52,11 @@
 							<div class="card-row">
 								<span class="card-label">{column.mobileLabel || column.label}:</span>
 								<span class="card-value">
-									<slot name="cell" {column} {item}>
+									{#if cell}
+										{@render cell({ column, item })}
+									{:else}
 										{item[column.key] ?? '-'}
-									</slot>
+									{/if}
 								</span>
 							</div>
 						{/each}
@@ -83,9 +89,11 @@
 							<tr>
 								{#each columns as column}
 									<td class="text-{column.align || 'left'}">
-										<slot name="cell" {column} {item}>
+										{#if cell}
+											{@render cell({ column, item })}
+										{:else}
 											{item[column.key] ?? '-'}
-										</slot>
+										{/if}
 									</td>
 								{/each}
 							</tr>
@@ -129,23 +137,29 @@
 							<tr>
 								{#each highPriorityColumns as column}
 									<td class="text-{column.align || 'left'}">
-										<slot name="cell" {column} {item}>
+										{#if cell}
+											{@render cell({ column, item })}
+										{:else}
 											{item[column.key] ?? '-'}
-										</slot>
+										{/if}
 									</td>
 								{/each}
 								{#each mediumPriorityColumns as column}
 									<td class="hidden md:table-cell text-{column.align || 'left'}">
-										<slot name="cell" {column} {item}>
+										{#if cell}
+											{@render cell({ column, item })}
+										{:else}
 											{item[column.key] ?? '-'}
-										</slot>
+										{/if}
 									</td>
 								{/each}
 								{#each lowPriorityColumns as column}
 									<td class="hidden lg:table-cell text-{column.align || 'left'}">
-										<slot name="cell" {column} {item}>
+										{#if cell}
+											{@render cell({ column, item })}
+										{:else}
 											{item[column.key] ?? '-'}
-										</slot>
+										{/if}
 									</td>
 								{/each}
 							</tr>
@@ -252,3 +266,4 @@
 		}
 	}
 </style>
+

@@ -11,6 +11,9 @@
 		Trash2, AlertCircle, CheckCircle
 	} from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { Input } from '$lib/components/ui/input';
+	import { Label } from '$lib/components/ui/label';
+	import { NativeSelect } from '$lib/components/ui/native-select';
 
 	let { data, form } = $props();
 
@@ -229,34 +232,34 @@
 							<div class="grid gap-4 p-6">
 								<div class="grid grid-cols-2 gap-4">
 									<div>
-										<label for="firstName" class="font-mono text-[10px] tracking-wider text-muted-foreground">FIRST NAME</label>
-										<input 
+										<Label for="firstName" class="font-mono text-[10px] tracking-wider text-muted-foreground">FIRST NAME</Label>
+										<Input 
 											id="firstName"
 											type="text" 
 											name="firstName"
 											bind:value={editedFirstName}
-											class="mt-1 w-full border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
+											class="mt-1"
 										/>
 									</div>
 									<div>
-										<label for="lastName" class="font-mono text-[10px] tracking-wider text-muted-foreground">LAST NAME</label>
-										<input 
+										<Label for="lastName" class="font-mono text-[10px] tracking-wider text-muted-foreground">LAST NAME</Label>
+										<Input 
 											id="lastName"
 											type="text" 
 											name="lastName"
 											bind:value={editedLastName}
-											class="mt-1 w-full border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
+											class="mt-1"
 										/>
 									</div>
 								</div>
 								<div>
-									<label for="phone" class="font-mono text-[10px] tracking-wider text-muted-foreground">PHONE</label>
-									<input 
+									<Label for="phone" class="font-mono text-[10px] tracking-wider text-muted-foreground">PHONE</Label>
+									<Input 
 										id="phone"
 										type="tel" 
 										name="phone"
 										bind:value={editedPhone}
-										class="mt-1 w-full border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
+										class="mt-1"
 									/>
 								</div>
 								<div class="flex justify-end gap-2">
@@ -468,17 +471,17 @@
 								isEditingRole = false;
 							};
 						}}>
-							<div class="p-6 space-y-4">
-								<select 
-									name="role"
-									bind:value={selectedRole}
-									class="w-full border border-border bg-background px-3 py-2 font-mono text-xs tracking-wider focus:border-primary focus:outline-none"
-								>
-									<option value="customer">CUSTOMER</option>
-									<option value="staff">STAFF</option>
-									<option value="admin">ADMIN</option>
-									<option value="super_admin">SUPER ADMIN</option>
-								</select>
+						<div class="p-6 space-y-4">
+							<NativeSelect 
+								name="role"
+								bind:value={selectedRole}
+								class="w-full"
+							>
+								<option value="customer">CUSTOMER</option>
+								<option value="staff">STAFF</option>
+								<option value="admin">ADMIN</option>
+								<option value="super_admin">SUPER ADMIN</option>
+							</NativeSelect>
 								<div class="flex justify-end gap-2">
 									<Button type="button" variant="outline" size="sm" onclick={cancelRoleEdit}>
 										<X class="mr-1 h-3 w-3" />

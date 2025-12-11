@@ -25,8 +25,6 @@
 	let isGlobal = $state(true);
 	let supportsVariables = $state(false);
 	let availableVariables = $state('');
-	let supportsVariables = $state(false);
-	let availableVariables = $state('');
 
 	const filteredResponses = $derived(
 		data.responses.filter(response => {
@@ -318,7 +316,7 @@
 					/>
 					{#if supportsVariables}
 						<p class="mt-2 text-xs text-muted-foreground">
-							Use variables like {{'{'}}{'{'}ticket.number{'}'}{'}}'}, {{'{'}}{'{'}customer.name{'}'}{'}}'}, {{'{'}}{'{'}assignee.name{'}'}{'}'}} in your content.
+							Use variables like {'{{ticket.number}}'}, {'{{customer.name}}'}, {'{{assignee.name}}'} in your content.
 						</p>
 					{/if}
 				</div>
@@ -344,14 +342,14 @@
 							<label for="availableVariables" class="font-mono text-[10px] tracking-widest text-muted-foreground">
 								AVAILABLE VARIABLES (COMMA-SEPARATED)
 							</label>
-							<Textarea
-								id="availableVariables"
-								name="availableVariables"
-								bind:value={availableVariables}
-								rows={3}
-								placeholder="{{'{'}}{'{'}ticket.number{'}'}{'}}'}, {{'{'}}{'{'}customer.name{'}'}{'}}'}, {{'{'}}{'{'}customer.email{'}'}{'}}'}, {{'{'}}{'{'}assignee.name{'}'}{'}}'}, {{'{'}}{'{'}ticket.subject{'}'}{'}}'}, {{'{'}}{'{'}ticket.category{'}'}{'}'}}" 
-								class="mt-2 resize-none font-mono text-xs"
-							/>
+						<Textarea
+							id="availableVariables"
+							name="availableVariables"
+							bind:value={availableVariables}
+							rows={3}
+							placeholder="ticket.number, customer.name, customer.email, assignee.name, ticket.subject, ticket.category" 
+							class="mt-2 resize-none font-mono text-xs"
+						/>
 							<p class="mt-2 text-xs text-muted-foreground">
 								Default variables: ticket.number, customer.name, customer.email, assignee.name, ticket.subject, ticket.category
 							</p>

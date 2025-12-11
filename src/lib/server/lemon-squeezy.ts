@@ -5,11 +5,20 @@
  * https://docs.lemonsqueezy.com/api
  */
 
-import { LEMON_SQUEEZY_API_KEY, LEMON_SQUEEZY_STORE_ID, LEMON_SQUEEZY_WEBHOOK_SECRET } from '$env/static/private';
-import { PUBLIC_SITE_URL } from '$env/static/public';
+import { env } from '$env/dynamic/private';
+import { env as publicEnv } from '$env/dynamic/public';
 import crypto from 'node:crypto';
 
 const LEMON_SQUEEZY_API_URL = 'https://api.lemonsqueezy.com/v1';
+
+// Get environment variables
+function getEnv(key: string, defaultValue = ''): string {
+	return env[key] || defaultValue;
+}
+
+function getPublicEnv(key: string, defaultValue = ''): string {
+	return (publicEnv as any)[key] || defaultValue;
+}
 
 interface LemonSqueezyCheckoutOptions {
 	invoiceId: string;
@@ -52,7 +61,7 @@ export async function createCheckout(
 			headers: {
 				'Accept': 'application/vnd.api+json',
 				'Content-Type': 'application/vnd.api+json',
-				'Authorization': `Bearer ${LEMON_SQUEEZY_API_KEY}`
+				'Authorization': `Bearer ${getEnv('LEMON_SQUEEZY_API_KEY')}`
 			},
 			body: JSON.stringify({
 				data: {
@@ -69,22 +78,22 @@ export async function createCheckout(
 						product_options: {
 							name: productName,
 							description: productDescription,
-							redirect_url: `${PUBLIC_SITE_URL}/app/invoices/${invoiceId}/success`,
+							redirect_url: `${getPublicEnv('PUBLIC_SITE_URL')}/app/invoices/${invoiceId}/success`,
 							receipt_button_text: 'View Invoice',
-							receipt_link_url: `${PUBLIC_SITE_URL}/app/invoices/${invoiceId}`,
+							receipt_link_url: `${getPublicEnv('PUBLIC_SITE_URL')}/app/invoices/${invoiceId}`,
 							receipt_thank_you_note: 'Thank you for your payment!'
 						},
 						checkout_options: {
 							button_color: '#3b82f6'
 						},
-						preview_url: `${PUBLIC_SITE_URL}/app/invoices/${invoiceId}`,
+						preview_url: `${getPublicEnv('PUBLIC_SITE_URL')}/app/invoices/${invoiceId}`,
 						test_mode: process.env.NODE_ENV !== 'production'
 					},
 					relationships: {
 						store: {
 							data: {
 								type: 'stores',
-								id: LEMON_SQUEEZY_STORE_ID
+								id: getEnv('LEMON_SQUEEZY_STORE_ID')
 							}
 						},
 						variant: {
@@ -99,7 +108,7 @@ export async function createCheckout(
 		});
 
 		if (!response.ok) {
-			const errorData = await response.json();
+			const errorData = await response.json() as any;
 			console.error('Lemon Squeezy API error:', errorData);
 			return {
 				success: false,
@@ -107,7 +116,7 @@ export async function createCheckout(
 			};
 		}
 
-		const data = await response.json();
+		const data = await response.json() as any;
 		const checkout = data.data;
 
 		return {
@@ -132,7 +141,7 @@ export function verifyWebhookSignature(
 	signature: string
 ): boolean {
 	try {
-		const hmac = crypto.createHmac('sha256', LEMON_SQUEEZY_WEBHOOK_SECRET);
+	const hmac = crypto.createHmac('sha256', getEnv('LEMON_SQUEEZY_WEBHOOK_SECRET'));
 		const digest = hmac.update(payload).digest('hex');
 
 		return crypto.timingSafeEqual(
@@ -153,17 +162,17 @@ export async function getOrder(orderId: string) {
 		const response = await fetch(`${LEMON_SQUEEZY_API_URL}/orders/${orderId}`, {
 			headers: {
 				'Accept': 'application/vnd.api+json',
-				'Authorization': `Bearer ${LEMON_SQUEEZY_API_KEY}`
+				'Authorization': `Bearer ${getEnv('LEMON_SQUEEZY_API_KEY')}`
 			}
 		});
 
 		if (!response.ok) {
-			const errorData = await response.json();
+			const errorData = await response.json() as any;
 			console.error('Lemon Squeezy API error:', errorData);
 			return null;
 		}
 
-		const data = await response.json();
+		const data = await response.json() as any;
 		return data.data;
 	} catch (error) {
 		console.error('Error fetching order:', error);
@@ -179,17 +188,17 @@ export async function getCustomer(customerId: string) {
 		const response = await fetch(`${LEMON_SQUEEZY_API_URL}/customers/${customerId}`, {
 			headers: {
 				'Accept': 'application/vnd.api+json',
-				'Authorization': `Bearer ${LEMON_SQUEEZY_API_KEY}`
+				'Authorization': `Bearer ${getEnv('LEMON_SQUEEZY_API_KEY')}`
 			}
 		});
 
 		if (!response.ok) {
-			const errorData = await response.json();
+			const errorData = await response.json() as any;
 			console.error('Lemon Squeezy API error:', errorData);
 			return null;
 		}
 
-		const data = await response.json();
+		const data = await response.json() as any;
 		return data.data;
 	} catch (error) {
 		console.error('Error fetching customer:', error);
@@ -207,18 +216,18 @@ export async function getOrCreateCustomer(
 ) {
 	try {
 		// First, try to find existing customer
-		const searchResponse = await fetch(
-			`${LEMON_SQUEEZY_API_URL}/customers?filter[email]=${encodeURIComponent(email)}&filter[store_id]=${LEMON_SQUEEZY_STORE_ID}`,
+		const response = await fetch(
+			`${LEMON_SQUEEZY_API_URL}/customers?filter[email]=${encodeURIComponent(email)}&filter[store_id]=${getEnv('LEMON_SQUEEZY_STORE_ID')}`,
 			{
 				headers: {
 					'Accept': 'application/vnd.api+json',
-					'Authorization': `Bearer ${LEMON_SQUEEZY_API_KEY}`
+					'Authorization': `Bearer ${getEnv('LEMON_SQUEEZY_API_KEY')}`
 				}
 			}
 		);
 
-		if (searchResponse.ok) {
-			const searchData = await searchResponse.json();
+		if (response.ok) {
+			const searchData = await response.json() as any;
 			if (searchData.data && searchData.data.length > 0) {
 				return searchData.data[0];
 			}
@@ -230,7 +239,7 @@ export async function getOrCreateCustomer(
 			headers: {
 				'Accept': 'application/vnd.api+json',
 				'Content-Type': 'application/vnd.api+json',
-				'Authorization': `Bearer ${LEMON_SQUEEZY_API_KEY}`
+				'Authorization': `Bearer ${getEnv('LEMON_SQUEEZY_API_KEY')}`
 			},
 			body: JSON.stringify({
 				data: {
@@ -246,7 +255,7 @@ export async function getOrCreateCustomer(
 						store: {
 							data: {
 								type: 'stores',
-								id: LEMON_SQUEEZY_STORE_ID
+								id: getEnv('LEMON_SQUEEZY_STORE_ID')
 							}
 						}
 					}
@@ -255,12 +264,12 @@ export async function getOrCreateCustomer(
 		});
 
 		if (!createResponse.ok) {
-			const errorData = await createResponse.json();
+			const errorData = await createResponse.json() as any;
 			console.error('Lemon Squeezy API error:', errorData);
 			return null;
 		}
 
-		const createData = await createResponse.json();
+		const createData = await createResponse.json() as any;
 		return createData.data;
 	} catch (error) {
 		console.error('Error creating/getting customer:', error);
@@ -281,7 +290,7 @@ export async function refundOrder(
 			headers: {
 				'Accept': 'application/vnd.api+json',
 				'Content-Type': 'application/vnd.api+json',
-				'Authorization': `Bearer ${LEMON_SQUEEZY_API_KEY}`
+				'Authorization': `Bearer ${getEnv('LEMON_SQUEEZY_API_KEY')}`
 			},
 			body: JSON.stringify({
 				data: {
@@ -292,7 +301,7 @@ export async function refundOrder(
 		});
 
 		if (!response.ok) {
-			const errorData = await response.json();
+			const errorData = await response.json() as any;
 			console.error('Lemon Squeezy API error:', errorData);
 			return {
 				success: false,
@@ -320,18 +329,18 @@ export async function listCustomerOrders(customerId: string) {
 			{
 				headers: {
 					'Accept': 'application/vnd.api+json',
-					'Authorization': `Bearer ${LEMON_SQUEEZY_API_KEY}`
+					'Authorization': `Bearer ${getEnv('LEMON_SQUEEZY_API_KEY')}`
 				}
 			}
 		);
 
 		if (!response.ok) {
-			const errorData = await response.json();
+			const errorData = await response.json() as any;
 			console.error('Lemon Squeezy API error:', errorData);
 			return [];
 		}
 
-		const data = await response.json();
+		const data = await response.json() as any;
 		return data.data || [];
 	} catch (error) {
 		console.error('Error fetching customer orders:', error);

@@ -1,6 +1,6 @@
 import { createDb } from '$lib/server/db';
 import { invoices, organizations, projects, organizationMembers, paymentEvidence, profiles } from '$lib/server/db/schema';
-import { eq, and, inArray, desc } from 'drizzle-orm';
+import { eq, and, inArray, desc, sql } from 'drizzle-orm';
 import { error, fail } from '@sveltejs/kit';
 import { invoiceActivity, getClientIp } from '$lib/server/activity-logger';
 import type { PageServerLoad, Actions } from './$types';
@@ -79,7 +79,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
             status: paymentEvidence.status,
             adminNotes: paymentEvidence.adminNotes,
             reviewedAt: paymentEvidence.reviewedAt,
-            reviewedByName: profiles.fullName,
+            reviewedByName: sql<string | null>`CASE WHEN ${profiles.firstName} IS NOT NULL AND ${profiles.lastName} IS NOT NULL THEN ${profiles.firstName} || ' ' || ${profiles.lastName} ELSE NULL END`,
             createdAt: paymentEvidence.createdAt
         })
         .from(paymentEvidence)
@@ -103,7 +103,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         paymentEvidence: evidenceList.map((e) => ({
             ...e,
             amount: e.amount ? parseFloat(e.amount) : null,
-            reviewedBy: e.reviewedByName
+            reviewedBy: e.reviewedByName ?? null
         }))
     };
 };

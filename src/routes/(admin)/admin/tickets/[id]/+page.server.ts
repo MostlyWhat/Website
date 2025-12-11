@@ -590,7 +590,7 @@ export const actions: Actions = {
         await ticketActivity.updated(
             params.id,
             ticketData.ticketNumber,
-            { tags: { added: tag } },
+            { tagsAdded: tag },
             locals.profile.id,
             getClientIp(request)
         );
@@ -616,7 +616,7 @@ export const actions: Actions = {
         const currentTags = ticketData?.tags ?? [];
 
         // Remove the tag
-        const newTags = currentTags.filter(t => t !== tag);
+        const newTags = currentTags.filter((t: string) => t !== tag);
 
         await db
             .update(tickets)
@@ -630,7 +630,7 @@ export const actions: Actions = {
         await ticketActivity.updated(
             params.id,
             ticketData.ticketNumber,
-            { tags: { removed: tag } },
+            { tagsRemoved: tag },
             locals.profile.id,
             getClientIp(request)
         );
@@ -743,11 +743,8 @@ export const actions: Actions = {
             params.id,
             sourceTicket.ticketNumber,
             {
-                merged: {
-                    into: targetTicket.ticketNumber,
-                    transferredComments: result.commentsTransferred,
-                    mergedTags: result.tagsMerged
-                }
+                mergedInto: targetTicket.ticketNumber,
+                transferredComments: result.mergedCommentCount ?? 0
             },
             locals.profile.id,
             getClientIp(request)
@@ -876,17 +873,15 @@ export const actions: Actions = {
             .from(tickets)
             .where(eq(tickets.id, params.id));
 
-        if (ticket) {
-            await ticketActivity.updated(
-                params.id,
-                ticket.ticketNumber,
-                { privateNote: 'added' },
-                locals.profile.id,
-                getClientIp(request)
-            );
-        }
-
-        return { success: true, message: 'Private note added successfully' };
+		if (ticket) {
+			await ticketActivity.updated(
+				params.id,
+				ticket.ticketNumber,
+				{ privateNoteAdded: true },
+				locals.profile.id,
+				getClientIp(request)
+			);
+		}        return { success: true, message: 'Private note added successfully' };
     },
 
     watchTicket: async ({ params, locals }) => {

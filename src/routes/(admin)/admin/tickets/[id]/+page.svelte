@@ -3,6 +3,7 @@
 	import { invalidateAll } from '$app/navigation';
 	import { ArrowLeft, User, Clock, Tag, AlertCircle, MessageSquare, Send, Trash2, Lock, AlertTriangle, MessageSquareText, ChevronDown, X, Plus, Paperclip, GitMerge, Search, Link2, Unlink, Star, ThumbsUp, ThumbsDown } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { Input } from '$lib/components/ui/input';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import FileUploader from '$lib/components/ui/FileUploader.svelte';
 	import { StaffAssignmentSelect } from '$lib/components/ui/staff-select';
@@ -194,7 +195,7 @@
 			body: formData
 		});
 		
-		const result = await response.json();
+		const result = (await response.json()) as { data?: { tickets?: any[] } };
 		searchResults = result.data?.tickets ?? [];
 		isSearching = false;
 	}
@@ -229,7 +230,7 @@
 			body: formData
 		});
 		
-		const result = await response.json();
+		const result = (await response.json()) as { data?: { tickets?: any[] } };
 		parentSearchResults = result.data?.tickets ?? [];
 		isSearchingParent = false;
 	}
@@ -302,7 +303,7 @@
 					<div class="p-6">
 						<div class="mb-4 flex items-center gap-3 text-sm text-muted-foreground">
 							<User class="h-4 w-4" />
-							<span>{data.ticket.createdBy.name}</span>
+							<span>{data.ticket.createdBy.displayName}</span>
 							<span>•</span>
 							<Clock class="h-4 w-4" />
 							<span>{formatDate(data.ticket.createdAt)}</span>
@@ -564,7 +565,7 @@
 						</div>
 						<div>
 							<span class="text-muted-foreground">Created By</span>
-							<p class="font-medium text-foreground">{data.ticket.createdBy.name}</p>
+							<p class="font-medium text-foreground">{data.ticket.createdBy.displayName}</p>
 							{#if data.ticket.createdBy.email}
 								<p class="text-xs text-muted-foreground">{data.ticket.createdBy.email}</p>
 							{/if}
@@ -1008,9 +1009,7 @@
 					</div>
 				{:else}
 					<div>
-						<label class="block font-mono text-xs tracking-widest text-muted-foreground mb-2">
-							TARGET TICKET
-						</label>
+						<div class="block font-mono text-xs tracking-widest text-muted-foreground mb-2">TARGET TICKET</div>
 						<div class="border border-border bg-muted/30 px-4 py-3">
 							<div class="flex items-center justify-between">
 								<div>
@@ -1138,9 +1137,7 @@
 					</div>
 				{:else}
 					<div>
-						<label class="block font-mono text-xs tracking-widest text-muted-foreground mb-2">
-							PARENT TICKET
-						</label>
+						<div class="block font-mono text-xs tracking-widest text-muted-foreground mb-2">PARENT TICKET</div>
 						<div class="border border-border bg-muted/30 px-4 py-3">
 							<div class="flex items-center justify-between">
 								<div>
@@ -1181,3 +1178,6 @@
 		</div>
 	</div>
 {/if}
+
+
+

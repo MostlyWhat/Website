@@ -6,6 +6,7 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
+	import { NativeSelect } from '$lib/components/ui/native-select';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
 	import {
@@ -617,13 +618,13 @@
 						<Label class="font-mono text-[9px] tracking-widest text-muted-foreground">EMAIL (OPTIONAL)</Label>
 						<Input name="email" type="email" bind:value={inviteEmail} placeholder="user@example.com" class="h-9 text-sm" />
 					</div>
-					<div class="space-y-1">
-						<Label class="font-mono text-[9px] tracking-widest text-muted-foreground">ROLE</Label>
-						<select name="role" bind:value={inviteRole} class="h-9 w-full border border-border bg-background px-3 text-sm">
-							<option value="member">Member</option>
-							<option value="admin">Admin</option>
-						</select>
-					</div>
+				<div class="space-y-1">
+					<Label class="font-mono text-[9px] tracking-widest text-muted-foreground">ROLE</Label>
+					<NativeSelect name="role" bind:value={inviteRole} class="h-9 w-full">
+						<option value="member">Member</option>
+						<option value="admin">Admin</option>
+					</NativeSelect>
+				</div>
 					<div class="space-y-1">
 						<Label class="font-mono text-[9px] tracking-widest text-muted-foreground">MAX USES</Label>
 						<Input name="maxUses" type="number" min="1" bind:value={inviteMaxUses} class="h-9 text-sm" />

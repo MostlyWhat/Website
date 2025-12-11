@@ -1,15 +1,18 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
-	import { Search, Filter, X, FileText, MessageSquare } from 'lucide-svelte';
+	import { Search, Filter, X, FileText, MessageSquare } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { NativeSelect } from '$lib/components/ui/native-select';
+	import { Label } from '$lib/components/ui/label';
+	import { Input } from '$lib/components/ui/input';
 	
 	const { data } = $props();
 	
 	let searchInput = $state(data.query);
-	let statusFilter = $state(data.filters.status);
-	let priorityFilter = $state(data.filters.priority);
-	let categoryFilter = $state(data.filters.category);
+	let statusFilter = $state(data.filters?.status);
+	let priorityFilter = $state(data.filters?.priority);
+	let categoryFilter = $state(data.filters?.category);
 	let showFilters = $state(false);
 	
 	function handleSearch(e: Event) {
@@ -102,55 +105,41 @@
 				</Button>
 			</div>
 
-			{#if showFilters}
-				<div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-border">
-					<div>
-						<label class="block text-xs font-medium mb-2">STATUS</label>
-						<select
-							bind:value={statusFilter}
-							onchange={applyFilters}
-							class="w-full px-3 py-2 bg-background border border-input focus:border-primary focus:outline-none"
-						>
-							<option value="">All Statuses</option>
-							<option value="open">Open</option>
-							<option value="in_progress">In Progress</option>
-							<option value="waiting">Waiting</option>
-							<option value="resolved">Resolved</option>
-							<option value="closed">Closed</option>
-						</select>
-					</div>
-
-					<div>
-						<label class="block text-xs font-medium mb-2">PRIORITY</label>
-						<select
-							bind:value={priorityFilter}
-							onchange={applyFilters}
-							class="w-full px-3 py-2 bg-background border border-input focus:border-primary focus:outline-none"
-						>
-							<option value="">All Priorities</option>
-							<option value="low">Low</option>
-							<option value="medium">Medium</option>
-							<option value="high">High</option>
-							<option value="urgent">Urgent</option>
-						</select>
-					</div>
-
-					<div>
-						<label class="block text-xs font-medium mb-2">CATEGORY</label>
-						<select
-							bind:value={categoryFilter}
-							onchange={applyFilters}
-							class="w-full px-3 py-2 bg-background border border-input focus:border-primary focus:outline-none"
-						>
-							<option value="">All Categories</option>
-							{#each data.categories as category}
-								<option value={category.id}>{category.name}</option>
-							{/each}
-						</select>
-					</div>
+		{#if showFilters}
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-border">
+				<div>
+					<Label class="block text-xs font-medium mb-2">STATUS</Label>
+					<NativeSelect bind:value={statusFilter} onchange={applyFilters} class="w-full">
+						<option value="">All Statuses</option>
+						<option value="open">Open</option>
+						<option value="in_progress">In Progress</option>
+						<option value="waiting">Waiting</option>
+						<option value="resolved">Resolved</option>
+						<option value="closed">Closed</option>
+					</NativeSelect>
 				</div>
 
-				{#if statusFilter || priorityFilter || categoryFilter}
+				<div>
+					<Label class="block text-xs font-medium mb-2">PRIORITY</Label>
+					<NativeSelect bind:value={priorityFilter} onchange={applyFilters} class="w-full">
+						<option value="">All Priorities</option>
+						<option value="low">Low</option>
+						<option value="medium">Medium</option>
+						<option value="high">High</option>
+						<option value="urgent">Urgent</option>
+					</NativeSelect>
+				</div>
+
+				<div>
+					<Label class="block text-xs font-medium mb-2">CATEGORY</Label>
+					<NativeSelect bind:value={categoryFilter} onchange={applyFilters} class="w-full">
+						<option value="">All Categories</option>
+						{#each data.categories as category}
+							<option value={category.id}>{category.name}</option>
+						{/each}
+					</NativeSelect>
+				</div>
+			</div>				{#if statusFilter || priorityFilter || categoryFilter}
 					<div class="flex justify-end pt-2">
 						<Button type="button" variant="ghost" onclick={clearFilters} class="text-sm">
 							<X class="h-3 w-3 mr-1" />
@@ -248,3 +237,6 @@
 		</div>
 	{/if}
 </div>
+
+
+

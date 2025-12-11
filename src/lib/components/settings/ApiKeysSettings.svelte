@@ -5,9 +5,9 @@
 	import { Label } from '$lib/components/ui/label';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '$lib/components/ui/dialog';
-	import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '$lib/components/ui/select';
+	import { Select, SelectContent, SelectItem, SelectTrigger } from '$lib/components/ui/select';
 	import { Checkbox } from '$lib/components/ui/checkbox';
-	import { Plus, Key, Trash2, Copy, Calendar } from 'lucide-svelte';
+	import { Plus, Key, Trash2, Copy, Calendar } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 
 	interface ApiKey {
@@ -35,7 +35,7 @@
 	let showCreateDialog = $state(false);
 	let newKeyName = $state('');
 	let newKeyScopes = $state<string[]>([]);
-	let newKeyExpiry = $state<number | null>(null);
+	let newKeyExpiry = $state<string | null>(null);
 	let generatedKey = $state<string | null>(null);
 
 	const availableScopes = [
@@ -52,11 +52,11 @@
 	];
 
 	const expiryOptions = [
-		{ value: null, label: 'Never' },
-		{ value: 30, label: '30 days' },
-		{ value: 90, label: '90 days' },
-		{ value: 180, label: '180 days' },
-		{ value: 365, label: '1 year' }
+		{ value: 'never', label: 'Never' },
+		{ value: '30', label: '30 days' },
+		{ value: '90', label: '90 days' },
+		{ value: '180', label: '180 days' },
+		{ value: '365', label: '1 year' }
 	];
 
 	function toggleScope(scope: string) {
@@ -71,13 +71,11 @@
 		if (!newKeyName.trim() || newKeyScopes.length === 0 || !onCreateKey) return;
 
 		try {
-			const key = await onCreateKey({
-				name: newKeyName,
-				scopes: newKeyScopes,
-				expiresIn: newKeyExpiry
-			});
-			
-			generatedKey = key;
+		const key = await onCreateKey({
+			name: newKeyName,
+			scopes: newKeyScopes,
+			expiresIn: newKeyExpiry === 'never' ? null : Number(newKeyExpiry)
+		});			generatedKey = key;
 			newKeyName = '';
 			newKeyScopes = [];
 			newKeyExpiry = null;
@@ -128,12 +126,12 @@
 	<CardContent class="space-y-4">
 		<!-- Create API Key Button -->
 		<Dialog bind:open={showCreateDialog}>
-			<DialogTrigger asChild let:builder>
-				<Button builders={[builder]} variant="outline" class="w-full">
-					<Plus class="h-4 w-4 mr-2" />
-					Create API Key
-				</Button>
-			</DialogTrigger>
+		<DialogTrigger>
+			<Button variant="outline" class="w-full">
+				<Plus class="h-4 w-4 mr-2" />
+				Create API Key
+			</Button>
+		</DialogTrigger>
 			<DialogContent class="sm:max-w-[500px]">
 				{#if generatedKey}
 					<!-- Show generated key -->
@@ -147,7 +145,7 @@
 						<div class="rounded-lg border bg-muted p-4">
 							<code class="text-sm break-all">{generatedKey}</code>
 						</div>
-						<Button onclick={() => copyKey(generatedKey)} class="w-full">
+						<Button onclick={() => generatedKey && copyKey(generatedKey)} class="w-full">
 							<Copy class="h-4 w-4 mr-2" />
 							Copy Key
 						</Button>
@@ -198,23 +196,22 @@
 							</div>
 						</div>
 
-						<div class="space-y-2">
-							<Label for="expiry">Expiry</Label>
-							<Select bind:value={newKeyExpiry}>
-								<SelectTrigger id="expiry">
-									<SelectValue placeholder="Select expiry" />
-								</SelectTrigger>
-								<SelectContent>
-									{#each expiryOptions as option}
-										<SelectItem value={option.value}>{option.label}</SelectItem>
-									{/each}
-								</SelectContent>
-							</Select>
-						</div>
+					<div class="space-y-2">
+						<Label for="expiry">Expiry</Label>
+						<select
+							id="expiry"
+							bind:value={newKeyExpiry}
+							class="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+						>
+							{#each expiryOptions as option}
+								<option value={option.value}>{option.label}</option>
+							{/each}
+						</select>
+					</div>
 
-						<Button
-							onclick={createKey}
-							disabled={!newKeyName.trim() || newKeyScopes.length === 0}
+					<Button
+						onclick={createKey}
+						disabled={!newKeyName.trim() || newKeyScopes.length === 0}
 							class="w-full"
 						>
 							Create Key

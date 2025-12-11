@@ -2,7 +2,7 @@
 	import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card';
 	import { Button } from '$lib/components/ui/button';
 	import { Alert, AlertDescription } from '$lib/components/ui/alert';
-	import { Copy, CheckCircle2, Upload } from 'lucide-svelte';
+	import { Copy, CheckCircle2, Upload } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 
 	interface Props {

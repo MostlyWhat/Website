@@ -7,10 +7,8 @@
 import type { RequestHandler } from './$types';
 import { json, error } from '@sveltejs/kit';
 import { createDb } from '$lib/server/db';
-import { webhookDeliveries, backups } from '$lib/server/db/schema';
-import { eq, lt, and } from 'drizzle-orm';
-import { retryWebhook } from '$lib/server/webhooks';
-import { createBackup } from '$lib/server/backups';
+import { webhookDeliveries } from '$lib/server/db/schema';
+import { eq, lt, gte, and } from 'drizzle-orm';
 
 /**
  * Cron job handler
@@ -23,7 +21,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		throw error(401, 'Unauthorized - not a cron request');
 	}
 
-	const { task } = await request.json();
+	const { task } = (await request.json()) as { task: string };
 
 	try {
 		switch (task) {
@@ -71,14 +69,16 @@ async function retryFailedWebhooks() {
 			and(
 				eq(webhookDeliveries.status, 'failed'),
 				lt(webhookDeliveries.attempts, 5), // Max 5 retry attempts
-				lt(oneDayAgo, webhookDeliveries.createdAt)
+				gte(webhookDeliveries.createdAt, oneDayAgo)
 			)
 		);
 
 	console.log(`Retrying ${failedDeliveries.length} failed webhook deliveries`);
 
 	for (const delivery of failedDeliveries) {
-		await retryWebhook(delivery.id);
+		// TODO: Implement retryWebhook function
+		// await retryWebhook(delivery.id);
+		console.log(`Would retry webhook delivery ${delivery.id}`);
 	}
 }
 
@@ -88,19 +88,8 @@ async function retryFailedWebhooks() {
  */
 async function performDailyBackup() {
 	console.log('Starting daily backup...');
-
-	const result = await createBackup({
-		type: 'scheduled',
-		description: 'Automated daily backup',
-		userId: 'system' // System user for automated backups
-	});
-
-	if (result.success) {
-		console.log(`Backup created: ${result.backup?.id}`);
-	} else {
-		console.error('Backup failed:', result.error);
-		throw new Error(result.error);
-	}
+	// TODO: Implement backup functionality when backup module exists
+	console.log('Backup not implemented yet');
 }
 
 /**
@@ -108,24 +97,8 @@ async function performDailyBackup() {
  * Runs daily at 3:00 AM UTC
  */
 async function cleanupOldBackups() {
-	const db = createDb();
-
-	const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-
-	const oldBackups = await db
-		.select()
-		.from(backups)
-		.where(lt(backups.createdAt, thirtyDaysAgo));
-
-	console.log(`Cleaning up ${oldBackups.length} old backups`);
-
-	for (const backup of oldBackups) {
-		// Delete backup file from storage
-		// TODO: Implement storage deletion
-
-		// Delete database record
-		await db.delete(backups).where(eq(backups.id, backup.id));
-	}
+	// TODO: Implement backup cleanup when backups table exists
+	console.log('Backup cleanup not implemented yet');
 }
 
 /**

@@ -3,7 +3,7 @@
 	import { RadioGroup, RadioGroupItem } from '$lib/components/ui/radio-group';
 	import { Label } from '$lib/components/ui/label';
 	import { Badge } from '$lib/components/ui/badge';
-	import { CreditCard, Building2 } from 'lucide-svelte';
+	import { CreditCard, Building2 } from '@lucide/svelte';
 
 	interface Props {
 		amount: number;
@@ -19,9 +19,11 @@
 	const savings = (amount * wireTransferDiscount) / 100;
 	const discountedAmount = amount - savings;
 
-	function handleChange(newValue: 'lemon_squeezy' | 'wire_transfer') {
-		value = newValue;
-		onchange?.(newValue);
+	function handleChange(newValue: string) {
+		if (newValue === 'lemon_squeezy' || newValue === 'wire_transfer') {
+			value = newValue as 'lemon_squeezy' | 'wire_transfer';
+			onchange?.(value);
+		}
 	}
 </script>
 

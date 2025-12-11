@@ -149,7 +149,7 @@
 										<EyeOff class="h-4 w-4 text-muted-foreground" />
 									{/if}
 									{#if template.isPublic}
-										<FileText class="h-4 w-4 text-blue-500" title="Public template" />
+										<FileText class="h-4 w-4 text-blue-500" />
 									{/if}
 								</div>
 							</div>
@@ -214,8 +214,8 @@
 
 <!-- Create/Edit Dialog -->
 {#if showDialog}
-	<div class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onclick={() => showDialog = false}>
-		<div class="bg-background border border-border max-w-2xl w-full max-h-[90vh] overflow-y-auto" onclick={(e) => e.stopPropagation()}>
+	<div class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" role="button" tabindex="0" onclick={() => showDialog = false} onkeydown={(e) => e.key === 'Escape' && (showDialog = false)}>
+		<div class="bg-background border border-border max-w-2xl w-full max-h-[90vh] overflow-y-auto" role="dialog" aria-modal="true" tabindex="-1" onclick={(e) => e.stopPropagation()} onkeydown={(e) => e.stopPropagation()}>
 			<div class="border-b border-border p-6">
 				<div class="flex items-center justify-between">
 					<h2 class="text-xl font-bold">
@@ -243,24 +243,23 @@
 					<input type="hidden" name="id" value={editingTemplate.id} />
 				{/if}
 
-				<div class="grid grid-cols-2 gap-4">
-					<div class="col-span-2">
-						<label class="text-xs font-medium">TEMPLATE NAME</label>
+			<div class="grid grid-cols-2 gap-4">
+				<div class="col-span-2">
+					<label for="template-name" class="text-xs font-medium">TEMPLATE NAME</label>
+					<input
+						id="template-name"
+						type="text"
+						name="name"
+						bind:value={formName}
+						oninput={generateSlug}
+						class="mt-1 h-10 w-full border border-border bg-card px-3 text-sm"
+						required
+					/>
+				</div>					<div class="col-span-2">
+						<label for="template-slug" class="text-xs font-medium">SLUG</label>
 						<input
 							type="text"
-							name="name"
-							bind:value={formName}
-							oninput={generateSlug}
-							class="mt-1 h-10 w-full border border-border bg-card px-3 text-sm"
-							required
-						/>
-					</div>
-
-					<div class="col-span-2">
-						<label class="text-xs font-medium">SLUG</label>
-						<input
-							type="text"
-							name="slug"
+							id="template-slug" name="slug"
 							bind:value={formSlug}
 							class="mt-1 h-10 w-full border border-border bg-card px-3 text-sm font-mono"
 							required
@@ -268,9 +267,9 @@
 					</div>
 
 					<div class="col-span-2">
-						<label class="text-xs font-medium">DESCRIPTION</label>
+						<label for="template-desc" class="text-xs font-medium">DESCRIPTION</label>
 						<Textarea
-							name="description"
+							id="template-desc" name="description"
 							bind:value={formDescription}
 							rows={2}
 							class="mt-1"
@@ -279,9 +278,9 @@
 					</div>
 
 					<div>
-						<label class="text-xs font-medium">CATEGORY</label>
+						<label for="template-category" class="text-xs font-medium">CATEGORY</label>
 						<select
-							name="categoryId"
+							id="template-category" name="categoryId"
 							bind:value={formCategoryId}
 							class="mt-1 h-10 w-full border border-border bg-card px-3 text-sm"
 						>
@@ -293,9 +292,9 @@
 					</div>
 
 					<div>
-						<label class="text-xs font-medium">DEFAULT PRIORITY</label>
+						<label for="template-priority" class="text-xs font-medium">DEFAULT PRIORITY</label>
 						<select
-							name="defaultPriority"
+							id="template-priority" name="defaultPriority"
 							bind:value={formPriority}
 							class="mt-1 h-10 w-full border border-border bg-card px-3 text-sm"
 							required
@@ -308,10 +307,10 @@
 					</div>
 
 					<div class="col-span-2">
-						<label class="text-xs font-medium">SUBJECT TEMPLATE</label>
+						<label for="template-subject" class="text-xs font-medium">SUBJECT TEMPLATE</label>
 						<input
 							type="text"
-							name="subjectTemplate"
+							id="template-subject" name="subjectTemplate"
 							bind:value={formSubject}
 							class="mt-1 h-10 w-full border border-border bg-card px-3 text-sm"
 							required
@@ -319,9 +318,9 @@
 					</div>
 
 					<div class="col-span-2">
-						<label class="text-xs font-medium">DESCRIPTION TEMPLATE</label>
+						<label for="template-desc-tmpl" class="text-xs font-medium">DESCRIPTION TEMPLATE</label>
 						<Textarea
-							name="descriptionTemplate"
+							id="template-desc-tmpl" name="descriptionTemplate"
 							bind:value={formBody}
 							rows={6}
 							class="mt-1"
@@ -330,9 +329,9 @@
 					</div>
 
 					<div>
-						<label class="text-xs font-medium">DEFAULT ASSIGNEE (OPTIONAL)</label>
+						<label for="template-assignee" class="text-xs font-medium">DEFAULT ASSIGNEE (OPTIONAL)</label>
 						<select
-							name="defaultAssigneeId"
+							id="template-assignee" name="defaultAssigneeId"
 							bind:value={formAssigneeId}
 							class="mt-1 h-10 w-full border border-border bg-card px-3 text-sm"
 						>
@@ -344,9 +343,9 @@
 					</div>
 
 					<div>
-						<label class="text-xs font-medium">DEFAULT STAFF GROUP (OPTIONAL)</label>
+						<label for="template-group" class="text-xs font-medium">DEFAULT STAFF GROUP (OPTIONAL)</label>
 						<select
-							name="defaultStaffGroupId"
+							id="template-group" name="defaultStaffGroupId"
 							bind:value={formGroupId}
 							class="mt-1 h-10 w-full border border-border bg-card px-3 text-sm"
 						>
@@ -358,10 +357,10 @@
 					</div>
 
 					<div class="col-span-2">
-						<label class="text-xs font-medium">TAGS (COMMA-SEPARATED)</label>
+						<label for="template-tags" class="text-xs font-medium">TAGS (COMMA-SEPARATED)</label>
 						<input
 							type="text"
-							name="tags"
+							id="template-tags" name="tags"
 							bind:value={formTags}
 							class="mt-1 h-10 w-full border border-border bg-card px-3 text-sm"
 							placeholder="bug, technical, urgent"
@@ -394,3 +393,5 @@
 		</div>
 	</div>
 {/if}
+
+
