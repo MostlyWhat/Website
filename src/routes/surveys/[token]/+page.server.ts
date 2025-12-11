@@ -1,5 +1,5 @@
 import { error, fail } from '@sveltejs/kit';
-import { getSurveyByToken, submitSatisfactionSurvey } from '$lib/server/ticket-relationships';
+import { getSurveyByToken, submitSatisfactionSurvey } from '$lib/server/tickets/relationships';
 import type { RequestEvent } from '@sveltejs/kit';
 
 export const load = async ({ params }: RequestEvent) => {

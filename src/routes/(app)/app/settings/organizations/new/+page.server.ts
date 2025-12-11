@@ -8,7 +8,7 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { createDb } from '$lib/server/db';
 import { organizations, organizationMembers } from '$lib/server/db/schema';
-import { generateOrgNumber } from '$lib/server/id-generator';
+import { generateOrgNumber } from '$lib/server/utils/id-generator';
 import crypto from 'node:crypto';
 
 export const load: PageServerLoad = async ({ locals }) => {

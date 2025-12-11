@@ -3,7 +3,7 @@ import { blogPosts, profiles } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { fail, redirect, error } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
-import { logActivity, getClientIp } from '$lib/server/activity-logger';
+import { logActivity, getClientIp } from '$lib/server/utils/activity-logger';
 
 // Calculate read time based on word count
 function calculateReadTime(content: string): string {

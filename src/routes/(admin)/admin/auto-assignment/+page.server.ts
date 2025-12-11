@@ -14,7 +14,7 @@ import {
 	profiles
 } from '$lib/server/db/schema';
 import { eq, desc, and } from 'drizzle-orm';
-import { logActivity } from '$lib/server/activity-logger';
+import { logActivity } from '$lib/server/utils/activity-logger';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (!locals.user || !locals.profile) {

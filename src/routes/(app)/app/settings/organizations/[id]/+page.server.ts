@@ -16,6 +16,7 @@ import {
     tickets
 } from '$lib/server/db/schema';
 import { eq, and, count, inArray, desc } from 'drizzle-orm';
+import { organizationActivity, getClientIp } from '$lib/server/utils/activity-logger';
 import crypto from 'node:crypto';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
@@ -298,6 +299,12 @@ export const actions: Actions = {
         }
 
         try {
+            // Get current role and user/org info for logging
+            const [currentMember] = await db.select({ role: organizationMembers.role }).from(organizationMembers).where(and(eq(organizationMembers.profileId, profileId), eq(organizationMembers.organizationId, params.id)));
+            const [org] = await db.select({ name: organizations.name }).from(organizations).where(eq(organizations.id, params.id));
+            const [user] = await db.select({ email: profiles.email }).from(profiles).where(eq(profiles.id, profileId));
+            const oldRole = currentMember?.role ?? 'unknown';
+
             await db
                 .update(organizationMembers)
                 .set({ role: newRole })
@@ -307,6 +314,9 @@ export const actions: Actions = {
                         eq(organizationMembers.organizationId, params.id)
                     )
                 );
+
+            // Log activity
+            await organizationActivity.roleUpdated(params.id, org?.name ?? 'Unknown', user?.email ?? 'Unknown', oldRole, newRole, locals.profile.id, getClientIp(request));
 
             return { success: true, message: 'Member role updated' };
         } catch (err) {

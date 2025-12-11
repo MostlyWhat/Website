@@ -1,6 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { logActivity, getClientIp } from '$lib/server/activity-logger';
+import { logActivity, getClientIp } from '$lib/server/utils/activity-logger';
 
 export const actions: Actions = {
     default: async ({ request, locals: { supabase } }) => {

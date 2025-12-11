@@ -1,6 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { createServiceRoleClient } from '$lib/server/supabase';
+import { createServiceRoleClient } from '$lib/server/auth/supabase';
 
 export const actions: Actions = {
     updateProfile: async ({ request, locals: { supabase, user } }) => {

@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { ArrowLeft, Download, CreditCard, Check, Clock, AlertTriangle } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
+	import PaymentMethodSelector from '$lib/components/payment/PaymentMethodSelector.svelte';
+	import WireTransferInstructions from '$lib/components/payment/WireTransferInstructions.svelte';
 
 	let { data } = $props();
 
@@ -8,6 +10,31 @@
 	const invoice = $derived(data.invoice);
 
 	let isPastDue = $derived(invoice.dueDate && new Date(invoice.dueDate) < new Date() && invoice.status !== 'paid');
+
+	// Payment method state
+	let paymentMethod = $state<'lemon_squeezy' | 'wire_transfer'>('lemon_squeezy');
+	
+	// Wire transfer instructions - use derived to ensure reactivity
+	let wireTransferInstructions = $derived(`Bank Name: Bangkok Bank
+Account Name: MostlyWhat Systems Co., Ltd.
+Account Number: 123-4-56789-0
+SWIFT Code: BKKBTHBK
+Branch: Silom Branch
+Reference: ${invoice.invoiceNumber}`);
+
+	function handlePayNow() {
+		if (paymentMethod === 'lemon_squeezy') {
+			// Redirect to Lemon Squeezy checkout
+			console.log('Redirecting to Lemon Squeezy checkout...');
+			// TODO: Implement Lemon Squeezy integration
+		}
+	}
+
+	function handleUploadReceipt() {
+		// Open file upload dialog
+		console.log('Opening receipt upload dialog...');
+		// TODO: Implement receipt upload
+	}
 
 	function formatCurrency(amount: number): string {
 		return new Intl.NumberFormat('en-US', { style: 'currency', currency: invoice.currency ?? 'USD' }).format(amount);
@@ -178,7 +205,7 @@
 					
 					{#if invoice.status !== 'paid'}
 						<div class="mt-6 space-y-3">
-							<Button class="font-ui w-full text-xs tracking-wider">
+							<Button class="font-ui w-full text-xs tracking-wider" onclick={handlePayNow}>
 								<CreditCard class="mr-2 h-4 w-4" />
 								PAY NOW
 							</Button>
@@ -215,6 +242,29 @@
 						</div>
 					{/if}
 				</div>
+
+				<!-- Payment Method Selection (only for unpaid invoices) -->
+				{#if invoice.status !== 'paid'}
+					<div class="mt-6">
+						<PaymentMethodSelector 
+							amount={invoice.amountDue}
+							currency={invoice.currency ?? 'USD'}
+							bind:value={paymentMethod}
+						/>
+					</div>
+					
+					{#if paymentMethod === 'wire_transfer'}
+						<div class="mt-6">
+							<WireTransferInstructions
+								instructions={wireTransferInstructions}
+								amount={invoice.amountDue}
+								currency={invoice.currency ?? 'USD'}
+								invoiceNumber={invoice.invoiceNumber}
+								onUploadReceipt={handleUploadReceipt}
+							/>
+						</div>
+					{/if}
+				{/if}
 
 				<!-- Payment Methods -->
 				<div class="mt-6 border border-border p-6">

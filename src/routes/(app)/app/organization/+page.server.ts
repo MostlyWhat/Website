@@ -2,7 +2,8 @@ import { redirect, fail } from '@sveltejs/kit';
 import { createDb } from '$lib/server/db';
 import { organizations, organizationMembers, organizationInvites, profiles, projects, tickets } from '$lib/server/db/schema';
 import { eq, and, count, inArray, desc } from 'drizzle-orm';
-import { generateOrgNumber } from '$lib/server/id-generator';
+import { generateOrgNumber } from '$lib/server/utils/id-generator';
+import { organizationActivity, getClientIp } from '$lib/server/utils/activity-logger';
 import crypto from 'node:crypto';
 import type { PageServerLoad, Actions } from './$types';
 
@@ -384,6 +385,12 @@ export const actions: Actions = {
         }
 
         try {
+            // Get current role and user/org info for logging
+            const [currentMember] = await db.select({ role: organizationMembers.role }).from(organizationMembers).where(and(eq(organizationMembers.profileId, profileId), eq(organizationMembers.organizationId, orgId)));
+            const [org] = await db.select({ name: organizations.name }).from(organizations).where(eq(organizations.id, orgId));
+            const [user] = await db.select({ email: profiles.email }).from(profiles).where(eq(profiles.id, profileId));
+            const oldRole = currentMember?.role ?? 'unknown';
+
             await db
                 .update(organizationMembers)
                 .set({ role: newRole })
@@ -393,6 +400,9 @@ export const actions: Actions = {
                         eq(organizationMembers.organizationId, orgId)
                     )
                 );
+
+            // Log activity
+            await organizationActivity.roleUpdated(orgId, org?.name ?? 'Unknown', user?.email ?? 'Unknown', oldRole, newRole, locals.user.id, getClientIp(request));
 
             return { success: true, message: 'Member role updated' };
         } catch (err) {

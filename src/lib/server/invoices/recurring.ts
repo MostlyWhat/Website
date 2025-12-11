@@ -10,7 +10,7 @@
 import { createDb } from '$lib/server/db';
 import { invoices, organizations, profiles, organizationMembers } from '$lib/server/db/schema';
 import { eq, and, lte, isNotNull, desc, sql } from 'drizzle-orm';
-import { sendPaymentReminderEmail, sendInvoiceEmail } from '$lib/server/email';
+import { sendPaymentReminderEmail, sendInvoiceEmail } from '$lib/server/notifications/email';
 
 // =============================================================================
 // TYPES

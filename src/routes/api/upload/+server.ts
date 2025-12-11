@@ -9,7 +9,7 @@ import { json, error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { createDb } from '$lib/server/db';
 import { fileUploads } from '$lib/server/db/schema';
-import { createSupabaseAdminClient } from '$lib/server/supabase';
+import { createSupabaseAdminClient } from '$lib/server/auth/supabase';
 
 // File size limit: 10MB
 const MAX_FILE_SIZE = 10 * 1024 * 1024;

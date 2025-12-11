@@ -2,7 +2,7 @@ import { createDb } from '$lib/server/db';
 import { blogPosts } from '$lib/server/db/schema';
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
-import { logActivity, getClientIp } from '$lib/server/activity-logger';
+import { logActivity, getClientIp } from '$lib/server/utils/activity-logger';
 
 // Calculate read time based on word count (average 200 words per minute)
 function calculateReadTime(content: string): string {

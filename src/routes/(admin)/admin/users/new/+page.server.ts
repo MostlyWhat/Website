@@ -8,8 +8,8 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { createDb } from '$lib/server/db';
 import { profiles } from '$lib/server/db/schema';
-import { createSupabaseAdminClient } from '$lib/server/supabase';
-import { userActivity, getClientIp } from '$lib/server/activity-logger';
+import { createSupabaseAdminClient } from '$lib/server/auth/supabase';
+import { userActivity, getClientIp } from '$lib/server/utils/activity-logger';
 
 export const load: PageServerLoad = async ({ locals }) => {
     // Verify admin access

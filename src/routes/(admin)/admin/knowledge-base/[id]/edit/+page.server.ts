@@ -3,7 +3,7 @@ import { supportArticles } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { fail, redirect, error } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
-import { logActivity, getClientIp } from '$lib/server/activity-logger';
+import { logActivity, getClientIp } from '$lib/server/utils/activity-logger';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
     if (!locals.user || !locals.profile) {

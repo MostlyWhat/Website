@@ -2,7 +2,7 @@ import { createDb } from '$lib/server/db';
 import { invoices, organizations, projects, organizationMembers, paymentEvidence, profiles } from '$lib/server/db/schema';
 import { eq, and, inArray, desc, sql } from 'drizzle-orm';
 import { error, fail } from '@sveltejs/kit';
-import { invoiceActivity, getClientIp } from '$lib/server/activity-logger';
+import { invoiceActivity, getClientIp } from '$lib/server/utils/activity-logger';
 import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ params, locals }) => {

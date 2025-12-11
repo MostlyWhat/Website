@@ -3,7 +3,7 @@ import type { PageServerLoad, Actions } from './$types';
 import { createDb } from '$lib/server/db';
 import { announcements, staffGroups, organizations, profiles } from '$lib/server/db/schema';
 import { eq, desc } from 'drizzle-orm';
-import { logActivity } from '$lib/server/activity-logger';
+import { logActivity } from '$lib/server/utils/activity-logger';
 
 export const load: PageServerLoad = async ({ locals }) => {
     const db = createDb();

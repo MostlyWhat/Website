@@ -8,7 +8,7 @@
  */
 
 import { json, type RequestHandler } from '@sveltejs/kit';
-import { handleRecurringInvoiceCron } from '$lib/server/recurring-invoices';
+import { handleRecurringInvoiceCron } from '$lib/server/invoices/recurring';
 import { env } from '$env/dynamic/private';
 
 /**

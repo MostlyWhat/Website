@@ -9,9 +9,9 @@ import type { Actions, PageServerLoad } from './$types';
 import { createDb } from '$lib/server/db';
 import { tickets, ticketComments, profiles, organizations, projects, organizationMembers } from '$lib/server/db/schema';
 import { eq, and, or } from 'drizzle-orm';
-import { sendTicketReplyEmail, sendTicketStatusChangeEmail } from '$lib/server/email';
+import { sendTicketReplyEmail, sendTicketStatusChangeEmail } from '$lib/server/notifications/email';
 import { env } from '$env/dynamic/private';
-import { ticketActivity, getClientIp } from '$lib/server/activity-logger';
+import { ticketActivity, getClientIp } from '$lib/server/utils/activity-logger';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
     const db = createDb();

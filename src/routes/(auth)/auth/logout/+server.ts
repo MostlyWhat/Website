@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { logLoginEvent, getClientIp } from '$lib/server/activity-logger';
+import { logLoginEvent, getClientIp } from '$lib/server/utils/activity-logger';
 
 /**
  * Logout Handler

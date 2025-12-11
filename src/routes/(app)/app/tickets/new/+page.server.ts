@@ -10,13 +10,13 @@ import { createDb } from '$lib/server/db';
 import { tickets, organizationMembers, organizations, projects, supportArticles, profiles, fileUploads, ticketCategories } from '$lib/server/db/schema';
 import { eq, and, or, desc } from 'drizzle-orm';
 import crypto from 'node:crypto';
-import { generateOrgNumber } from '$lib/server/id-generator';
-import { sendTicketCreatedEmail } from '$lib/server/email';
+import { generateOrgNumber } from '$lib/server/utils/id-generator';
+import { sendTicketCreatedEmail } from '$lib/server/notifications/email';
 import { env } from '$env/dynamic/private';
-import { ticketActivity, organizationActivity, getClientIp, logActivity } from '$lib/server/activity-logger';
-import { createSupabaseAdminClient } from '$lib/server/supabase';
-import { autoAssignTicket } from '$lib/server/ticket-auto-assignment';
-import { getTicketTemplates, incrementTemplateUsage } from '$lib/server/ticket-templates';
+import { ticketActivity, organizationActivity, getClientIp, logActivity } from '$lib/server/utils/activity-logger';
+import { createSupabaseAdminClient } from '$lib/server/auth/supabase';
+import { autoAssignTicket } from '$lib/server/tickets/auto-assignment';
+import { getTicketTemplates, incrementTemplateUsage } from '$lib/server/tickets/templates';
 
 // File size limit: 10MB
 const MAX_FILE_SIZE = 10 * 1024 * 1024;

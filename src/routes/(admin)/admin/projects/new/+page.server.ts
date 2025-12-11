@@ -2,7 +2,7 @@ import { createDb } from '$lib/server/db';
 import { projects, organizations, profiles } from '$lib/server/db/schema';
 import { eq, desc, sql } from 'drizzle-orm';
 import { fail, redirect } from '@sveltejs/kit';
-import { projectActivity, getClientIp } from '$lib/server/activity-logger';
+import { projectActivity, getClientIp } from '$lib/server/utils/activity-logger';
 import type { PageServerLoad, Actions } from './$types';
 
 // Generate project number (e.g., PRJ-2024-00001)

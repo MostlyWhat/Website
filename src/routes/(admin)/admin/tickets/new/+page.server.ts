@@ -10,7 +10,7 @@ import { createDb } from '$lib/server/db';
 import { tickets, organizations, profiles, projects } from '$lib/server/db/schema';
 import { eq, desc, ilike, or, and } from 'drizzle-orm';
 import crypto from 'node:crypto';
-import { ticketActivity, getClientIp } from '$lib/server/activity-logger';
+import { ticketActivity, getClientIp } from '$lib/server/utils/activity-logger';
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user || !locals.profile) {

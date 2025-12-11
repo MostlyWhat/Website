@@ -2,9 +2,9 @@ import { createDb } from '$lib/server/db';
 import { organizations, organizationMembers, profiles } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { fail, redirect } from '@sveltejs/kit';
-import { organizationActivity, getClientIp } from '$lib/server/activity-logger';
+import { organizationActivity, getClientIp } from '$lib/server/utils/activity-logger';
 import type { PageServerLoad, Actions } from './$types';
-import { generateOrgNumber } from '$lib/server/id-generator';
+import { generateOrgNumber } from '$lib/server/utils/id-generator';
 
 function generateSlug(name: string): string {
     return name

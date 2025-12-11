@@ -2,7 +2,7 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { getOrCreateProfile } from '$lib/server/auth';
 import { env } from '$env/dynamic/public';
-import { logLoginEvent, getClientIp } from '$lib/server/activity-logger';
+import { logLoginEvent, getClientIp } from '$lib/server/utils/activity-logger';
 
 export const actions: Actions = {
     /**

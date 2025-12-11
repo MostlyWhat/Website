@@ -20,7 +20,7 @@
  */
 
 import { json } from '@sveltejs/kit';
-import { handleEscalationCron } from '$lib/server/ticket-escalation';
+import { handleEscalationCron } from '$lib/server/tickets/escalation';
 import type { RequestHandler } from './$types';
 
 const CRON_SECRET = process.env.CRON_SECRET || 'change-me-in-production';

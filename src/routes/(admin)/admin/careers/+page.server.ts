@@ -4,7 +4,7 @@ import { eq, desc, and, count } from 'drizzle-orm';
 import type { PageServerLoad, Actions } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
 import { isRedirect } from '@sveltejs/kit';
-import { logActivity, getClientIp } from '$lib/server/activity-logger';
+import { logActivity, getClientIp } from '$lib/server/utils/activity-logger';
 
 export const load: PageServerLoad = async ({ url, locals }) => {
     const db = createDb();

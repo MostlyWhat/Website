@@ -8,7 +8,7 @@
 import { createDb } from '$lib/server/db';
 import { ticketWatchers, tickets, profiles, userNotifications } from '$lib/server/db/schema';
 import { eq, and } from 'drizzle-orm';
-import { logActivity } from './activity-logger';
+import { logActivity } from '../utils/activity-logger';
 
 /**
  * Add a watcher to a ticket

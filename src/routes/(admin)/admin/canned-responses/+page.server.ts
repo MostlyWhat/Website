@@ -3,7 +3,7 @@ import { cannedResponses, profiles } from '$lib/server/db/schema';
 import { eq, desc, or } from 'drizzle-orm';
 import { error, fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
-import { cannedResponseActivity, getClientIp } from '$lib/server/activity-logger';
+import { cannedResponseActivity, getClientIp } from '$lib/server/utils/activity-logger';
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user || !locals.profile) {

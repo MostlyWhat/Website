@@ -5,9 +5,9 @@
  * Handles in-app notifications and email delivery.
  */
 
-import { createDb } from './db';
-import { userNotifications, profiles } from './db/schema';
-import type { NotificationType } from './db/schema';
+import { createDb } from '../db';
+import { userNotifications, profiles } from '../db/schema';
+import type { NotificationType } from '../db/schema';
 import { eq, desc, and } from 'drizzle-orm';
 
 export interface NotificationPayload {

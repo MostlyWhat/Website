@@ -3,7 +3,7 @@ import { tickets, profiles, organizations, slaPolicies, slaOrganizationAssignmen
 import { eq, desc, sql, and, or, ilike, inArray } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 import { fail } from '@sveltejs/kit';
-import { calculateSLAStatus } from '$lib/server/sla-calculator';
+import { calculateSLAStatus } from '$lib/server/utils/sla-calculator';
 import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ locals, url }) => {

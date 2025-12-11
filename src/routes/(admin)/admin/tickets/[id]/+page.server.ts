@@ -3,10 +3,10 @@ import { tickets, profiles, organizations, ticketComments, projects, cannedRespo
 import { eq, desc, and, or, inArray, like, isNull } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 import { error, fail, redirect } from '@sveltejs/kit';
-import { ticketActivity, getClientIp } from '$lib/server/activity-logger';
-import { calculateSLAStatus } from '$lib/server/sla-calculator';
-import { mergeTickets, getMergedTickets, getChildTickets, getParentHierarchy, setParentTicket, createSatisfactionSurvey } from '$lib/server/ticket-relationships';
-import { addTicketWatcher, removeTicketWatcher, getTicketWatchers } from '$lib/server/ticket-watchers';
+import { ticketActivity, getClientIp } from '$lib/server/utils/activity-logger';
+import { calculateSLAStatus } from '$lib/server/utils/sla-calculator';
+import { mergeTickets, getMergedTickets, getChildTickets, getParentHierarchy, setParentTicket, createSatisfactionSurvey } from '$lib/server/tickets/relationships';
+import { addTicketWatcher, removeTicketWatcher, getTicketWatchers } from '$lib/server/tickets/watchers';
 import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ params, locals }) => {

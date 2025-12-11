@@ -3,7 +3,7 @@ import type { Actions, RequestEvent } from '@sveltejs/kit';
 import { completeOnboarding, getOrCreateProfile } from '$lib/server/auth';
 import { createDb } from '$lib/server/db';
 import { organizations, organizationMembers, organizationInvites, pendingOrganizationMembers } from '$lib/server/db/schema';
-import { generateOrgNumber } from '$lib/server/id-generator';
+import { generateOrgNumber } from '$lib/server/utils/id-generator';
 import { eq, and, sql } from 'drizzle-orm';
 
 /**

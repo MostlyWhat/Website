@@ -9,7 +9,7 @@ import {
 } from '$lib/server/db/schema';
 import { eq, desc, and, count } from 'drizzle-orm';
 import { error, fail } from '@sveltejs/kit';
-import { userActivity, getClientIp } from '$lib/server/activity-logger';
+import { userActivity, getClientIp } from '$lib/server/utils/activity-logger';
 import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ params }) => {

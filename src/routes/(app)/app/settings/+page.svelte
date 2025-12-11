@@ -6,9 +6,10 @@
 	 */
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
-	import { User, Loader2, AlertTriangle, Check } from '@lucide/svelte';
+	import { User, Loader2, AlertTriangle, Check, Key } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
+	import ApiKeysSettings from '$lib/components/settings/ApiKeysSettings.svelte';
 
 	let { data, form } = $props();
 
@@ -152,4 +153,21 @@
 			</Button>
 		</div>
 	</form>
+
+	<!-- API Keys Section -->
+	<div class="mt-16 border-t border-border pt-8">
+		<div class="flex items-center gap-4">
+			<div class="flex h-12 w-12 items-center justify-center border border-border bg-card">
+				<Key class="h-5 w-5 text-primary" />
+			</div>
+			<div>
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">API ACCESS</span>
+				<h2 class="font-ui text-lg font-semibold tracking-wider">API Keys</h2>
+			</div>
+		</div>
+
+		<div class="mt-8">
+			<ApiKeysSettings />
+		</div>
+	</div>
 </div>

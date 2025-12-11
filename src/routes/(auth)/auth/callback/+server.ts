@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 import type { RequestEvent } from '@sveltejs/kit';
 import { getOrCreateProfile } from '$lib/server/auth';
-import { logLoginEvent, getClientIp } from '$lib/server/activity-logger';
+import { logLoginEvent, getClientIp } from '$lib/server/utils/activity-logger';
 
 /**
  * Auth Callback Handler

@@ -3,7 +3,7 @@ import { projectRequests, profiles, organizations, projects } from '$lib/server/
 import { eq, desc, sql, and, ne } from 'drizzle-orm';
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
-import { projectRequestActivity, projectActivity, getClientIp } from '$lib/server/activity-logger';
+import { projectRequestActivity, projectActivity, getClientIp } from '$lib/server/utils/activity-logger';
 
 // Generate project number like PRJ-YYYY-XXXXX
 async function generateProjectNumber(db: ReturnType<typeof createDb>): Promise<string> {

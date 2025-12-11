@@ -3,7 +3,7 @@ import { systemSettings, profiles } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
-import { ActivityLogger } from '$lib/server/activity-logger';
+import { ActivityLogger } from '$lib/server/utils/activity-logger';
 
 // Default settings if none exist
 const defaultSettings = [

@@ -10,7 +10,7 @@ import {
 import { eq, desc, and, gt } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 import { error, fail, redirect } from '@sveltejs/kit';
-import { organizationActivity, getClientIp } from '$lib/server/activity-logger';
+import { organizationActivity, getClientIp } from '$lib/server/utils/activity-logger';
 import type { PageServerLoad, Actions } from './$types';
 
 // Generate a random invite code

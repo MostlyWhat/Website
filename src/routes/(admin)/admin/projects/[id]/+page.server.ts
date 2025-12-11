@@ -16,7 +16,7 @@ import {
 import { eq, desc, and, or } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 import { error, fail, redirect } from '@sveltejs/kit';
-import { projectActivity, getClientIp } from '$lib/server/activity-logger';
+import { projectActivity, getClientIp } from '$lib/server/utils/activity-logger';
 import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ params, locals }) => {

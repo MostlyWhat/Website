@@ -2,7 +2,7 @@ import { createDb } from '$lib/server/db';
 import { staffGroups, staffGroupMembers, profiles } from '$lib/server/db/schema';
 import { eq, and, inArray } from 'drizzle-orm';
 import { error, fail, redirect } from '@sveltejs/kit';
-import { logActivity } from '$lib/server/activity-logger';
+import { logActivity } from '$lib/server/utils/activity-logger';
 import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ params, locals }) => {

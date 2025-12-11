@@ -2,7 +2,7 @@ import { createDb } from '$lib/server/db';
 import { invoices, organizations, projects, profiles, payments, paymentEvidence } from '$lib/server/db/schema';
 import { eq, desc, sql } from 'drizzle-orm';
 import { error, fail, redirect } from '@sveltejs/kit';
-import { invoiceActivity, getClientIp } from '$lib/server/activity-logger';
+import { invoiceActivity, getClientIp } from '$lib/server/utils/activity-logger';
 import type { PageServerLoad, Actions } from './$types';
 
 // Helper function to generate next invoice number

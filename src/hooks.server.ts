@@ -7,7 +7,7 @@ import { env } from '$env/dynamic/public';
 import { createDb } from '$lib/server/db';
 import { profiles } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
-import { logLoginEvent, getClientIp } from '$lib/server/activity-logger';
+import { logLoginEvent, getClientIp } from '$lib/server/utils/activity-logger';
 
 /**
  * Paraglide i18n middleware

@@ -2,9 +2,9 @@ import { createDb } from '$lib/server/db';
 import { projectRequests, organizationMembers, organizations, profiles } from '$lib/server/db/schema';
 import { eq, desc, sql } from 'drizzle-orm';
 import { fail, redirect } from '@sveltejs/kit';
-import { generateOrgNumber } from '$lib/server/id-generator';
+import { generateOrgNumber } from '$lib/server/utils/id-generator';
 import type { PageServerLoad, Actions } from './$types';
-import { projectRequestActivity, getClientIp } from '$lib/server/activity-logger';
+import { projectRequestActivity, getClientIp } from '$lib/server/utils/activity-logger';
 
 // Generate request number like REQ-YYYY-XXXXX
 async function generateRequestNumber(): Promise<string> {

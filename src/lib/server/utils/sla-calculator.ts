@@ -4,7 +4,7 @@
  * Calculates SLA deadlines and breach status for tickets based on SLA policies.
  */
 
-import type { TicketPriority } from './db/schema';
+import type { TicketPriority } from '../db/schema';
 
 export interface SLAPolicy {
     urgentResponseHours: number;

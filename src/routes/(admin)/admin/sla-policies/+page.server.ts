@@ -3,7 +3,7 @@ import { slaPolicies, slaOrganizationAssignments, ticketCategories, organization
 import { eq, desc, asc } from 'drizzle-orm';
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
-import { slaActivity, getClientIp } from '$lib/server/activity-logger';
+import { slaActivity, getClientIp } from '$lib/server/utils/activity-logger';
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user || !locals.profile) {

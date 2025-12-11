@@ -13,8 +13,8 @@
 import { createDb } from '$lib/server/db';
 import { tickets, profiles, ticketEscalations, ticketComments, userNotifications } from '$lib/server/db/schema';
 import { eq, and, lt, isNull, or, sql } from 'drizzle-orm';
-import { calculateSLAStatus } from './sla-calculator';
-import type { TicketPriority } from './db/schema';
+import { calculateSLAStatus } from '../utils/sla-calculator';
+import type { TicketPriority } from '../db/schema';
 
 interface EscalationRule {
     condition: 'sla_breach' | 'high_priority_waiting' | 'urgent_unassigned' | 'long_open';

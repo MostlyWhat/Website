@@ -6,7 +6,7 @@
  */
 
 import { json, type RequestHandler } from '@sveltejs/kit';
-import { verifyWebhookSignature } from '$lib/server/lemon-squeezy';
+import { verifyWebhookSignature } from '$lib/server/integrations/lemon-squeezy';
 import { createDb } from '$lib/server/db';
 import { invoices } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';

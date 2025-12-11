@@ -3,7 +3,7 @@ import type { RequestHandler } from './$types';
 import { createDb } from '$lib/server/db';
 import { contactSubmissions } from '$lib/server/db/schema';
 import { siteConfig } from '$lib/config/site';
-import { logActivity } from '$lib/server/activity-logger';
+import { logActivity } from '$lib/server/utils/activity-logger';
 
 interface ContactFormData {
     name?: string;

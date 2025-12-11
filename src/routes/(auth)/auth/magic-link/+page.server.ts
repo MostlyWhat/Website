@@ -1,6 +1,6 @@
 import type { Actions, PageServerLoad } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
-import { ActivityLogger, getClientIp } from '$lib/server/activity-logger';
+import { ActivityLogger, getClientIp } from '$lib/server/utils/activity-logger';
 import { createDb } from '$lib/server/db';
 import { profiles } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
