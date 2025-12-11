@@ -141,7 +141,7 @@ export function verifyWebhookSignature(
 	signature: string
 ): boolean {
 	try {
-	const hmac = crypto.createHmac('sha256', getEnv('LEMON_SQUEEZY_WEBHOOK_SECRET'));
+		const hmac = crypto.createHmac('sha256', getEnv('LEMON_SQUEEZY_WEBHOOK_SECRET'));
 		const digest = hmac.update(payload).digest('hex');
 
 		return crypto.timingSafeEqual(

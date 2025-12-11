@@ -3,6 +3,7 @@ import type { RequestHandler } from './$types';
 import { createDb } from '$lib/server/db';
 import { contactSubmissions } from '$lib/server/db/schema';
 import { siteConfig } from '$lib/config/site';
+import { logActivity } from '$lib/server/activity-logger';
 
 interface ContactFormData {
     name?: string;
@@ -104,6 +105,23 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
             email,
             topic,
             timestamp: new Date().toISOString()
+        });
+
+        // Log activity
+        await logActivity({
+            entityType: 'user',
+            entityId: submission.id,
+            activityType: 'created',
+            description: `New ${topic} inquiry from ${name} (${email})`,
+            newValues: {
+                name,
+                email,
+                company,
+                topic,
+                subject
+            },
+            ipAddress: ipAddress ?? undefined,
+            userAgent: userAgent ?? undefined
         });
 
         // TODO: Send email notification to admin

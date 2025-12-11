@@ -101,121 +101,17 @@
 						<label for="description" class="font-mono text-[10px] tracking-widest text-muted-foreground">
 							DESCRIPTION
 						</label>
-						<Textarea
-							id="description"
-							name="description"
-							bind:value={description}
-							placeholder="Brief description of the project scope and goals..."
-							rows={4}
-							class="mt-2 border-border bg-card"
-						/>
-					</div>
-
-					<div>
-						<label for="organizationId" class="font-mono text-[10px] tracking-widest text-muted-foreground flex items-center gap-2">
-							<Building2 class="h-3 w-3" />
-							ORGANIZATION *
-						</label>
-						<select
-							id="organizationId"
-							name="organizationId"
-							bind:value={organizationId}
-							required
-							class="mt-2 w-full h-12 px-4 border border-border bg-card text-foreground focus:border-primary focus:outline-none"
-						>
-							<option value="">Select organization...</option>
-							{#each data.organizations as org}
-								<option value={org.id}>{org.name}</option>
-							{/each}
-						</select>
-					</div>
-
-					<div>
-						<label for="status" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-							STATUS
-						</label>
-						<select
-							id="status"
-							name="status"
-							bind:value={status}
-							class="mt-2 w-full h-12 px-4 border border-border bg-card text-foreground focus:border-primary focus:outline-none"
-						>
-							{#each statusOptions as option}
-								<option value={option.value}>{option.label}</option>
-							{/each}
-						</select>
-					</div>
+					<Textarea
+						id="description"
+						name="description"
+						bind:value={description}
+						placeholder="Brief description of the project scope and goals..."
+						rows={4}
+						class="mt-2 border-border bg-card"
+					/>
 				</div>
-			</div>
-
-			<!-- Assignment -->
-			<div class="space-y-6 border-t border-border pt-8">
-				<div class="flex items-center gap-3">
-					<div class="flex h-10 w-10 items-center justify-center border border-border bg-card">
-						<User class="h-5 w-5 text-primary" />
-					</div>
-					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">ASSIGNMENT</span>
 				</div>
-
-				<div>
-					<label for="assignedToId" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-						ASSIGNED TO
-					</label>
-					<select
-						id="assignedToId"
-						name="assignedToId"
-						bind:value={assignedToId}
-						class="mt-2 w-full h-12 px-4 border border-border bg-card text-foreground focus:border-primary focus:outline-none"
-					>
-						<option value="">Unassigned</option>
-						{#each data.staff as member}
-							<option value={member.id}>
-								{member.displayName || `${member.firstName ?? ''} ${member.lastName ?? ''}`.trim() || 'Unknown'}
-								({member.role})
-							</option>
-						{/each}
-					</select>
-				</div>
-			</div>
-
-			<!-- Timeline -->
-			<div class="space-y-6 border-t border-border pt-8">
-				<div class="flex items-center gap-3">
-					<div class="flex h-10 w-10 items-center justify-center border border-border bg-card">
-						<Calendar class="h-5 w-5 text-primary" />
-					</div>
-					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">TIMELINE</span>
-				</div>
-
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-					<div>
-						<label for="startDate" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-							START DATE
-						</label>
-						<Input
-							id="startDate"
-							name="startDate"
-							type="date"
-							bind:value={startDate}
-							class="mt-2 h-12 border-border bg-card"
-						/>
-					</div>
-					<div>
-						<label for="endDate" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-							END DATE
-						</label>
-						<Input
-							id="endDate"
-							name="endDate"
-							type="date"
-							bind:value={endDate}
-							class="mt-2 h-12 border-border bg-card"
-						/>
-					</div>
-				</div>
-			</div>
-
-			<!-- Budget -->
+			</div>			<!-- Budget -->
 			<div class="space-y-6 border-t border-border pt-8">
 				<div class="flex items-center gap-3">
 					<div class="flex h-10 w-10 items-center justify-center border border-border bg-card">
@@ -224,37 +120,20 @@
 					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">BUDGET</span>
 				</div>
 
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-					<div>
-						<label for="estimatedBudget" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-							ESTIMATED BUDGET
-						</label>
-						<Input
-							id="estimatedBudget"
-							name="estimatedBudget"
-							type="number"
-							step="0.01"
-							min="0"
-							bind:value={estimatedBudget}
-							placeholder="0.00"
-							class="mt-2 h-12 border-border bg-card"
-						/>
-					</div>
-					<div>
-						<label for="currency" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-							CURRENCY
-						</label>
-						<select
-							id="currency"
-							name="currency"
-							bind:value={currency}
-							class="mt-2 w-full h-12 px-4 border border-border bg-card text-foreground focus:border-primary focus:outline-none"
-						>
-							{#each currencyOptions as curr}
-								<option value={curr}>{curr}</option>
-							{/each}
-						</select>
-					</div>
+				<div>
+					<label for="estimatedBudget" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+						ESTIMATED BUDGET
+					</label>
+					<Input
+						id="estimatedBudget"
+						name="estimatedBudget"
+						type="number"
+						step="0.01"
+						min="0"
+						bind:value={estimatedBudget}
+						placeholder="0.00"
+						class="mt-2 h-12 border-border bg-card"
+					/>
 				</div>
 			</div>
 
@@ -278,25 +157,108 @@
 
 	{#snippet sidebar()}
 		<div class="space-y-6">
+			<!-- Organization -->
 			<div>
-				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">PROJECT STATUS</span>
-				<div class="mt-3 space-y-2">
-					<p class="font-body text-xs text-muted-foreground"><strong>Draft:</strong> Initial planning phase</p>
-					<p class="font-body text-xs text-muted-foreground"><strong>Proposal Sent:</strong> Awaiting client approval</p>
-					<p class="font-body text-xs text-muted-foreground"><strong>Proposal Accepted:</strong> Approved, ready to start</p>
-					<p class="font-body text-xs text-muted-foreground"><strong>In Progress:</strong> Active development</p>
-					<p class="font-body text-xs text-muted-foreground"><strong>On Hold:</strong> Temporarily paused</p>
+				<label for="organizationId" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+					ORGANIZATION *
+				</label>
+				<select
+					id="organizationId"
+					name="organizationId"
+					bind:value={organizationId}
+					required
+					class="mt-2 w-full h-10 px-3 text-sm border border-border bg-background text-foreground focus:border-primary focus:outline-none"
+				>
+					<option value="">Select organization...</option>
+					{#each data.organizations as org}
+						<option value={org.id}>{org.name}</option>
+					{/each}
+				</select>
+			</div>
+
+			<!-- Status -->
+			<div>
+				<label for="status" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+					STATUS
+				</label>
+				<select
+					id="status"
+					name="status"
+					bind:value={status}
+					class="mt-2 w-full h-10 px-3 text-sm border border-border bg-background text-foreground focus:border-primary focus:outline-none"
+				>
+					{#each statusOptions as option}
+						<option value={option.value}>{option.label}</option>
+					{/each}
+				</select>
+			</div>
+
+			<!-- Assigned To -->
+			<div>
+				<label for="assignedToId" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+					ASSIGNED TO
+				</label>
+				<select
+					id="assignedToId"
+					name="assignedToId"
+					bind:value={assignedToId}
+					class="mt-2 w-full h-10 px-3 text-sm border border-border bg-background text-foreground focus:border-primary focus:outline-none"
+				>
+					<option value="">Unassigned</option>
+					{#each data.staff as member}
+						<option value={member.id}>
+							{member.displayName || `${member.firstName ?? ''} ${member.lastName ?? ''}`.trim() || 'Unknown'}
+						</option>
+					{/each}
+				</select>
+			</div>
+
+			<!-- Timeline -->
+			<div class="border-t border-border pt-6">
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground mb-3 block">TIMELINE</span>
+				<div class="space-y-4">
+					<div>
+						<label for="startDate" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+							START DATE
+						</label>
+						<Input
+							id="startDate"
+							name="startDate"
+							type="date"
+							bind:value={startDate}
+							class="mt-2 h-10 text-sm border-border bg-background"
+						/>
+					</div>
+					<div>
+						<label for="endDate" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+							END DATE
+						</label>
+						<Input
+							id="endDate"
+							name="endDate"
+							type="date"
+							bind:value={endDate}
+							class="mt-2 h-10 text-sm border-border bg-background"
+						/>
+					</div>
 				</div>
 			</div>
 
+			<!-- Currency -->
 			<div class="border-t border-border pt-6">
-				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">NEXT STEPS</span>
-				<ul class="font-body mt-3 space-y-2 text-xs text-muted-foreground">
-					<li>1. Create the project</li>
-					<li>2. Add project milestones</li>
-					<li>3. Assign team members</li>
-					<li>4. Create initial tasks</li>
-				</ul>
+				<label for="currency" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+					CURRENCY
+				</label>
+				<select
+					id="currency"
+					name="currency"
+					bind:value={currency}
+					class="mt-2 w-full h-10 px-3 text-sm border border-border bg-background text-foreground focus:border-primary focus:outline-none"
+				>
+					{#each currencyOptions as curr}
+						<option value={curr}>{curr}</option>
+					{/each}
+				</select>
 			</div>
 		</div>
 	{/snippet}

@@ -118,7 +118,7 @@
 
 		<!-- Sidebar Area -->
 		{#if showSidebar && sidebar}
-			<div class="col-span-12 space-y-px bg-card lg:col-span-4">
+			<div class="col-span-12 space-y-6 bg-card px-6 py-8 lg:col-span-4">
 				{@render sidebar()}
 			</div>
 		{/if}

@@ -109,122 +109,8 @@
 				<RichTextEditor
 					bind:value={description}
 					placeholder="Detailed description of the issue..."
-					rows={8}
+					rows={12}
 				/>
-			</div>
-
-			<!-- Organization & Project Selection -->
-			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-				<div class="space-y-2">
-					<label for="organizationId" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-						ORGANIZATION *
-					</label>
-					<select
-						id="organizationId"
-						name="organizationId"
-						bind:value={organizationId}
-						required
-						class="font-body w-full border-b border-border bg-transparent py-3 text-foreground focus:border-primary focus:outline-none"
-					>
-						<option value="">Select an organization</option>
-						{#each data.organizations as org}
-							<option value={org.id}>{org.name}</option>
-						{/each}
-					</select>
-				</div>
-
-				<div class="space-y-2">
-					<label for="projectId" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-						PROJECT
-					</label>
-					<select
-						id="projectId"
-						name="projectId"
-						bind:value={projectId}
-						disabled={!organizationId}
-						class="font-body w-full border-b border-border bg-transparent py-3 text-foreground focus:border-primary focus:outline-none disabled:opacity-50"
-					>
-						<option value="">No project</option>
-						{#each filteredProjects as project}
-							<option value={project.id}>{project.name}</option>
-						{/each}
-					</select>
-				</div>
-			</div>
-
-			<!-- Created By & Assigned To -->
-			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-				<div class="space-y-2">
-					<label for="createdById" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-						CREATED BY
-					</label>
-					<select
-						id="createdById"
-						name="createdById"
-						bind:value={createdById}
-						class="font-body w-full border-b border-border bg-transparent py-3 text-foreground focus:border-primary focus:outline-none"
-					>
-						<option value="">Current user ({data.profile.displayName || data.profile.email})</option>
-						{#each data.users as user}
-							<option value={user.id}>{user.displayName || user.email}</option>
-						{/each}
-					</select>
-				</div>
-
-				<div class="space-y-2">
-					<label for="assignedToId" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-						ASSIGNED TO
-					</label>
-					<select
-						id="assignedToId"
-						name="assignedToId"
-						bind:value={assignedToId}
-						class="font-body w-full border-b border-border bg-transparent py-3 text-foreground focus:border-primary focus:outline-none"
-					>
-						<option value="">Unassigned</option>
-						{#each data.users.filter((u: User) => ['admin', 'super_admin', 'staff'].includes(u.role ?? '')) as user}
-							<option value={user.id}>{user.displayName || user.email}</option>
-						{/each}
-					</select>
-				</div>
-			</div>
-
-			<!-- Priority & Category -->
-			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-				<div class="space-y-2">
-					<label for="priority" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-						PRIORITY
-					</label>
-					<select
-						id="priority"
-						name="priority"
-						bind:value={priority}
-						class="font-body w-full border-b border-border bg-transparent py-3 text-foreground focus:border-primary focus:outline-none"
-					>
-						<option value="low">Low</option>
-						<option value="medium">Medium</option>
-						<option value="high">High</option>
-						<option value="urgent">Urgent</option>
-					</select>
-				</div>
-
-				<div class="space-y-2">
-					<label for="category" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-						CATEGORY
-					</label>
-					<select
-						id="category"
-						name="category"
-						bind:value={category}
-						class="font-body w-full border-b border-border bg-transparent py-3 text-foreground focus:border-primary focus:outline-none"
-					>
-						<option value="general">General</option>
-						<option value="technical">Technical</option>
-						<option value="billing">Billing</option>
-						<option value="feature">Feature Request</option>
-						<option value="bug">Bug Report</option>
-					</select>
-				</div>
 			</div>
 
 			<!-- Submit -->
@@ -247,45 +133,119 @@
 
 	{#snippet sidebar()}
 		<div class="space-y-6">
-			<!-- Priority Guide -->
+			<!-- Organization -->
 			<div>
-				<div class="flex items-center gap-2 mb-3">
-					<Flag class="h-4 w-4 text-primary" />
-					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">PRIORITY LEVELS</span>
-				</div>
-				<div class="space-y-3">
-					<div class="space-y-1">
-						<p class="font-ui text-xs font-semibold text-foreground">URGENT</p>
-						<p class="font-body text-xs text-muted-foreground">Critical issues requiring immediate attention. System down, data loss, security breach.</p>
-					</div>
-					<div class="space-y-1">
-						<p class="font-ui text-xs font-semibold text-foreground">HIGH</p>
-						<p class="font-body text-xs text-muted-foreground">Major functionality affected. Work blocked but system operational.</p>
-					</div>
-					<div class="space-y-1">
-						<p class="font-ui text-xs font-semibold text-foreground">MEDIUM</p>
-						<p class="font-body text-xs text-muted-foreground">Non-critical issues. Minor functionality impact with workarounds available.</p>
-					</div>
-					<div class="space-y-1">
-						<p class="font-ui text-xs font-semibold text-foreground">LOW</p>
-						<p class="font-body text-xs text-muted-foreground">Cosmetic issues, questions, or minor enhancements.</p>
-					</div>
-				</div>
+				<label for="organizationId" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+					ORGANIZATION *
+				</label>
+				<select
+					id="organizationId"
+					name="organizationId"
+					bind:value={organizationId}
+					required
+					class="mt-2 w-full h-10 px-3 text-sm border border-border bg-background text-foreground focus:border-primary focus:outline-none"
+				>
+					<option value="">Select organization...</option>
+					{#each data.organizations as org}
+						<option value={org.id}>{org.name}</option>
+					{/each}
+				</select>
 			</div>
 
-			<!-- Category Guide -->
+			<!-- Project -->
+			<div>
+				<label for="projectId" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+					PROJECT
+				</label>
+				<select
+					id="projectId"
+					name="projectId"
+					bind:value={projectId}
+					disabled={!organizationId}
+					class="mt-2 w-full h-10 px-3 text-sm border border-border bg-background text-foreground focus:border-primary focus:outline-none disabled:opacity-50"
+				>
+					<option value="">No project</option>
+					{#each filteredProjects as project}
+						<option value={project.id}>{project.name}</option>
+					{/each}
+				</select>
+			</div>
+
+			<!-- Priority -->
 			<div class="border-t border-border pt-6">
-				<div class="flex items-center gap-2 mb-3">
-					<AlertTriangle class="h-4 w-4 text-primary" />
-					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">CATEGORIES</span>
+				<label for="priority" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+					PRIORITY
+				</label>
+				<select
+					id="priority"
+					name="priority"
+					bind:value={priority}
+					class="mt-2 w-full h-10 px-3 text-sm border border-border bg-background text-foreground focus:border-primary focus:outline-none"
+				>
+					<option value="low">Low</option>
+					<option value="medium">Medium</option>
+					<option value="high">High</option>
+					<option value="urgent">Urgent</option>
+				</select>
+			</div>
+
+			<!-- Category -->
+			<div>
+				<label for="category" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+					CATEGORY
+				</label>
+				<select
+					id="category"
+					name="category"
+					bind:value={category}
+					class="mt-2 w-full h-10 px-3 text-sm border border-border bg-background text-foreground focus:border-primary focus:outline-none"
+				>
+					<option value="general">General</option>
+					<option value="technical">Technical</option>
+					<option value="billing">Billing</option>
+					<option value="feature">Feature Request</option>
+					<option value="bug">Bug Report</option>
+				</select>
+			</div>
+
+			<!-- Assignment -->
+			<div class="border-t border-border pt-6">
+				<span class="font-mono text-[10px] tracking-widest text-muted-foreground mb-3 block">ASSIGNMENT</span>
+				<div class="space-y-4">
+					<div>
+						<label for="createdById" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+							CREATED BY
+						</label>
+						<select
+							id="createdById"
+							name="createdById"
+							bind:value={createdById}
+							class="mt-2 w-full h-10 px-3 text-sm border border-border bg-background text-foreground focus:border-primary focus:outline-none"
+						>
+							<option value="">Current user</option>
+							{#each data.users as user}
+								<option value={user.id}>{user.displayName || user.email}</option>
+							{/each}
+						</select>
+					</div>
+
+					<div>
+						<label for="assignedToId" class="font-mono text-[10px] tracking-widest text-muted-foreground">
+							ASSIGNED TO
+						</label>
+						<select
+							id="assignedToId"
+							name="assignedToId"
+							bind:value={assignedToId}
+							class="mt-2 w-full h-10 px-3 text-sm border border-border bg-background text-foreground focus:border-primary focus:outline-none"
+						>
+							<option value="">Unassigned</option>
+							{#each data.users.filter((u: User) => ['admin', 'super_admin', 'staff'].includes(u.role ?? '')) as user}
+								<option value={user.id}>{user.displayName || user.email}</option>
+							{/each}
+						</select>
+					</div>
 				</div>
-				<ul class="font-body space-y-2 text-xs text-muted-foreground">
-					<li><strong>General:</strong> Questions and general inquiries</li>
-					<li><strong>Technical:</strong> Technical issues and errors</li>
-					<li><strong>Billing:</strong> Payment and billing issues</li>
-					<li><strong>Feature:</strong> Feature requests and suggestions</li>
-					<li><strong>Bug:</strong> Software bugs and defects</li>
-				</ul>
 			</div>
 		</div>
 	{/snippet}

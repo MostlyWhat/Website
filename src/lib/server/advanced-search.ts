@@ -222,11 +222,11 @@ export async function searchProjects(options: SearchOptions & {
         conditions.push(inArray(projects.phase, options.phases as any));
     }
 
-	// Customer filter
-	// TODO: Add customerId field to projects table
-	if (options.customerIds && options.customerIds.length > 0) {
-		// conditions.push(inArray(projects.customerId, options.customerIds));
-	}    // Budget range
+    // Customer filter
+    // TODO: Add customerId field to projects table
+    if (options.customerIds && options.customerIds.length > 0) {
+        // conditions.push(inArray(projects.customerId, options.customerIds));
+    }    // Budget range
     if (options.budgetRange) {
         if (options.budgetRange.min !== undefined) {
             conditions.push(gte(projects.estimatedBudget, options.budgetRange.min.toString()));
@@ -236,18 +236,18 @@ export async function searchProjects(options: SearchOptions & {
         }
     }
 
-	// Date range filter
-	if (options.dateRange) {
-		const dateField = projects[options.dateRange.field as keyof typeof projects] as any;
-		if (dateField) {
-			if (options.dateRange.start) {
-				conditions.push(gte(dateField, options.dateRange.start));
-			}
-			if (options.dateRange.end) {
-				conditions.push(lte(dateField, options.dateRange.end));
-			}
-		}
-	}    // Custom filters
+    // Date range filter
+    if (options.dateRange) {
+        const dateField = projects[options.dateRange.field as keyof typeof projects] as any;
+        if (dateField) {
+            if (options.dateRange.start) {
+                conditions.push(gte(dateField, options.dateRange.start));
+            }
+            if (options.dateRange.end) {
+                conditions.push(lte(dateField, options.dateRange.end));
+            }
+        }
+    }    // Custom filters
     if (options.filters) {
         conditions.push(...buildFilterConditions(projects, options.filters));
     }

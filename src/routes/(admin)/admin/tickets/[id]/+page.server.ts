@@ -873,15 +873,15 @@ export const actions: Actions = {
             .from(tickets)
             .where(eq(tickets.id, params.id));
 
-		if (ticket) {
-			await ticketActivity.updated(
-				params.id,
-				ticket.ticketNumber,
-				{ privateNoteAdded: true },
-				locals.profile.id,
-				getClientIp(request)
-			);
-		}        return { success: true, message: 'Private note added successfully' };
+        if (ticket) {
+            await ticketActivity.updated(
+                params.id,
+                ticket.ticketNumber,
+                { privateNoteAdded: true },
+                locals.profile.id,
+                getClientIp(request)
+            );
+        } return { success: true, message: 'Private note added successfully' };
     },
 
     watchTicket: async ({ params, locals }) => {
