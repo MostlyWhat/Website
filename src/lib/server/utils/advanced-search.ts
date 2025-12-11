@@ -132,7 +132,7 @@ export async function searchTickets(options: SearchOptions & {
 
     // Date range filter
     if (options.dateRange) {
-        const dateField = tickets[options.dateRange.field as keyof typeof tickets];
+        const dateField = tickets[options.dateRange.field as keyof typeof tickets] as any;
         if (dateField) {
             if (options.dateRange.start) {
                 conditions.push(gte(dateField, options.dateRange.start));
@@ -153,7 +153,7 @@ export async function searchTickets(options: SearchOptions & {
 
     // Sort
     if (options.sort) {
-        const sortField = tickets[options.sort.field as keyof typeof tickets];
+        const sortField = tickets[options.sort.field as keyof typeof tickets] as any;
         if (sortField) {
             query = query.orderBy(
                 options.sort.direction === 'desc' ? desc(sortField) : sortField

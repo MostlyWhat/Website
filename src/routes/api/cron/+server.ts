@@ -7,8 +7,8 @@
 import type { RequestHandler } from './$types';
 import { json, error } from '@sveltejs/kit';
 import { createDb } from '$lib/server/db';
-import { webhookDeliveries } from '$lib/server/db/schema';
-import { eq, lt, gte, and } from 'drizzle-orm';
+import { webhookDeliveries, webhooks } from '$lib/server/db/schema';
+import { eq, lt, gte, and, sql } from 'drizzle-orm';
 
 /**
  * Cron job handler
@@ -63,8 +63,15 @@ async function retryFailedWebhooks() {
 	const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
 	const failedDeliveries = await db
-		.select()
+		.select({
+			id: webhookDeliveries.id,
+			webhookId: webhookDeliveries.webhookId,
+			payload: webhookDeliveries.payload,
+			attempts: webhookDeliveries.attempts,
+			url: webhooks.url,
+		})
 		.from(webhookDeliveries)
+		.innerJoin(webhooks, eq(webhookDeliveries.webhookId, webhooks.id))
 		.where(
 			and(
 				eq(webhookDeliveries.status, 'failed'),
@@ -76,20 +83,77 @@ async function retryFailedWebhooks() {
 	console.log(`Retrying ${failedDeliveries.length} failed webhook deliveries`);
 
 	for (const delivery of failedDeliveries) {
-		// TODO: Implement retryWebhook function
-		// await retryWebhook(delivery.id);
-		console.log(`Would retry webhook delivery ${delivery.id}`);
+		try {
+			await retryWebhook(delivery.id, delivery.url, delivery.payload);
+			console.log(`Successfully retried webhook delivery ${delivery.id}`);
+		} catch (error) {
+			console.error(`Failed to retry webhook delivery ${delivery.id}:`, error);
+		}
+	}
+}
+
+/**
+ * Retry a failed webhook delivery
+ */
+async function retryWebhook(deliveryId: string, url: string, payload: any) {
+	const db = createDb();
+	
+	try {
+		const response = await fetch(url, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload),
+		});
+		
+		const status = response.ok ? 'delivered' : 'failed';
+		
+		await db.update(webhookDeliveries)
+			.set({
+				status,
+				attempts: sql`${webhookDeliveries.attempts} + 1`,
+				responseCode: response.status,
+				responseBody: await response.text().catch(() => null),
+				deliveredAt: status === 'delivered' ? new Date() : null,
+			})
+			.where(eq(webhookDeliveries.id, deliveryId));
+			
+		return status === 'delivered';
+	} catch (error) {
+		await db.update(webhookDeliveries)
+			.set({
+				status: 'failed',
+				attempts: sql`${webhookDeliveries.attempts} + 1`,
+				errorMessage: error instanceof Error ? error.message : 'Unknown error',
+			})
+			.where(eq(webhookDeliveries.id, deliveryId));
+			
+		throw error;
 	}
 }
 
 /**
  * Perform daily database backup
  * Runs at 2:00 AM UTC daily
+ * 
+ * Implementation Notes:
+ * - Use Supabase's pg_dump or backup API
+ * - Store backups in R2 bucket
+ * - Encrypt sensitive data
+ * - Track backup metadata in backups table
  */
 async function performDailyBackup() {
 	console.log('Starting daily backup...');
-	// TODO: Implement backup functionality when backup module exists
-	console.log('Backup not implemented yet');
+	
+	// When implementing, create a backups table with:
+	// - id, created_at, backup_size, storage_path, status, error_message
+	
+	// Example implementation:
+	// const backupData = await exportDatabaseSnapshot();
+	// const storageKey = `backups/db-${new Date().toISOString()}.sql.gz`;
+	// await uploadToR2(storageKey, backupData);
+	// await trackBackupRecord(storageKey, backupData.size);
+	
+	console.log('Backup functionality pending - requires backups table and R2 bucket setup');
 }
 
 /**
@@ -97,8 +161,17 @@ async function performDailyBackup() {
  * Runs daily at 3:00 AM UTC
  */
 async function cleanupOldBackups() {
-	// TODO: Implement backup cleanup when backups table exists
-	console.log('Backup cleanup not implemented yet');
+	console.log('Cleaning up old backups...');
+	
+	// When implementing:
+	// const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+	// const oldBackups = await db.select().from(backups).where(lt(backups.createdAt, thirtyDaysAgo));
+	// for (const backup of oldBackups) {
+	//   await deleteFromR2(backup.storagePath);
+	//   await db.delete(backups).where(eq(backups.id, backup.id));
+	// }
+	
+	console.log('Backup cleanup pending - requires backups table');
 }
 
 /**
