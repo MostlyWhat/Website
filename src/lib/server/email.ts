@@ -1,6 +1,8 @@
 import nodemailer from 'nodemailer';
 import type { SendMailOptions } from 'nodemailer';
 import { env } from '$env/dynamic/private';
+import { readFile } from 'fs/promises';
+import { join } from 'path';
 
 // Create reusable transporter using Office 365 SMTP configured in Supabase
 const transporter = nodemailer.createTransport({
@@ -19,6 +21,24 @@ interface EmailOptions {
 	html: string;
 	text?: string;
 	replyTo?: string;
+}
+
+/**
+ * Load email template from file and replace placeholders
+ */
+async function loadTemplate(templateName: string, replacements: Record<string, string>): Promise<string> {
+	const templatePath = join(process.cwd(), 'src', 'lib', 'server', 'templates', `${templateName}.html`);
+	let template = await readFile(templatePath, 'utf-8');
+	
+	// Replace all placeholders
+	for (const [key, value] of Object.entries(replacements)) {
+		template = template.replace(new RegExp(`{{${key}}}`, 'g'), value);
+	}
+	
+	// Always replace year
+	template = template.replace(/{{YEAR}}/g, new Date().getFullYear().toString());
+	
+	return template;
 }
 
 /**
@@ -69,31 +89,22 @@ export async function sendContactNotification(data: {
 	orderId?: string;
 	submissionId: number;
 }): Promise<void> {
-	const html = `
-		<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-			<h2 style="color: #333;">New Contact Form Submission</h2>
-			<div style="background-color: #f5f5f5; padding: 20px; border-radius: 5px; margin: 20px 0;">
-				<p><strong>From:</strong> ${data.name}</p>
-				<p><strong>Email:</strong> <a href="mailto:${data.email}">${data.email}</a></p>
-				${data.company ? `<p><strong>Company:</strong> ${data.company}</p>` : ''}
-				${data.phone ? `<p><strong>Phone:</strong> ${data.phone}</p>` : ''}
-				<p><strong>Topic:</strong> ${data.topic}</p>
-				${data.subject ? `<p><strong>Subject:</strong> ${data.subject}</p>` : ''}
-				${data.orderId ? `<p><strong>Order ID:</strong> ${data.orderId}</p>` : ''}
-			</div>
-			<div style="background-color: #fff; padding: 20px; border: 1px solid #ddd; border-radius: 5px;">
-				<h3 style="color: #333; margin-top: 0;">Message:</h3>
-				<p style="white-space: pre-wrap;">${data.message}</p>
-			</div>
-			<p style="margin-top: 20px; color: #666; font-size: 12px;">
-				Submission ID: ${data.submissionId} | 
-				<a href="https://mostlywhat.com/admin/messages">View in Dashboard</a>
-			</p>
-		</div>
-	`;
+	const replacements: Record<string, string> = {
+		NAME: data.name,
+		EMAIL: data.email,
+		TOPIC: data.topic,
+		MESSAGE: data.message,
+		SUBMISSION_ID: data.submissionId.toString(),
+		COMPANY: data.company ? `<p style="margin: 8px 0; color: #a3a3a3;"><span style="color: #6b7280; text-transform: uppercase; font-size: 10px; letter-spacing: 0.15em;">COMPANY:</span> <strong style="color: #ffffff;">${data.company}</strong></p>` : '',
+		PHONE: data.phone ? `<p style="margin: 8px 0; color: #a3a3a3;"><span style="color: #6b7280; text-transform: uppercase; font-size: 10px; letter-spacing: 0.15em;">PHONE:</span> <strong style="color: #ffffff;">${data.phone}</strong></p>` : '',
+		SUBJECT: data.subject ? `<p style="margin: 8px 0; color: #a3a3a3;"><span style="color: #6b7280; text-transform: uppercase; font-size: 10px; letter-spacing: 0.15em;">SUBJECT:</span> <strong style="color: #ffffff;">${data.subject}</strong></p>` : '',
+		ORDER_ID: data.orderId ? `<p style="margin: 8px 0; color: #a3a3a3;"><span style="color: #6b7280; text-transform: uppercase; font-size: 10px; letter-spacing: 0.15em;">ORDER ID:</span> <strong style="color: #ffffff;">${data.orderId}</strong></p>` : ''
+	};
+
+	const html = await loadTemplate('contact-notification', replacements);
 
 	await sendEmail({
-		to: env.SMTP_USER || 'admin@mostlywhat.com', // Send to admin email
+		to: env.SMTP_USER || 'admin@mostlywhat.com',
 		subject: `New ${data.topic} inquiry from ${data.name}`,
 		html,
 		replyTo: data.email
@@ -116,24 +127,12 @@ export async function sendPaymentConfirmation(data: {
 		currency: data.currency.toUpperCase()
 	}).format(data.amount / 100);
 
-	const html = `
-		<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-			<h2 style="color: #333;">Payment Confirmation</h2>
-			<p>Hi ${data.customerName},</p>
-			<p>Thank you for your payment! Your transaction has been completed successfully.</p>
-			<div style="background-color: #f5f5f5; padding: 20px; border-radius: 5px; margin: 20px 0;">
-				<h3 style="margin-top: 0;">Payment Details</h3>
-				<p><strong>Order ID:</strong> ${data.orderId}</p>
-				<p><strong>Product:</strong> ${data.productName}</p>
-				<p><strong>Amount:</strong> ${formattedAmount}</p>
-				<p><strong>Status:</strong> Paid</p>
-			</div>
-			<p>If you have any questions, please contact our support team.</p>
-			<p style="margin-top: 30px; color: #666; font-size: 12px;">
-				© ${new Date().getFullYear()} MostlyWhat Systems. All rights reserved.
-			</p>
-		</div>
-	`;
+	const html = await loadTemplate('payment-confirmation', {
+		CUSTOMER_NAME: data.customerName,
+		ORDER_ID: data.orderId,
+		PRODUCT_NAME: data.productName,
+		AMOUNT: formattedAmount
+	});
 
 	await sendEmail({
 		to: data.customerEmail,
@@ -158,25 +157,12 @@ export async function sendRefundNotification(data: {
 		currency: data.currency.toUpperCase()
 	}).format(data.amount / 100);
 
-	const html = `
-		<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-			<h2 style="color: #333;">Refund Processed</h2>
-			<p>Hi ${data.customerName},</p>
-			<p>Your refund has been processed successfully.</p>
-			<div style="background-color: #f5f5f5; padding: 20px; border-radius: 5px; margin: 20px 0;">
-				<h3 style="margin-top: 0;">Refund Details</h3>
-				<p><strong>Order ID:</strong> ${data.orderId}</p>
-				<p><strong>Amount:</strong> ${formattedAmount}</p>
-				${data.reason ? `<p><strong>Reason:</strong> ${data.reason}</p>` : ''}
-				<p><strong>Status:</strong> Refunded</p>
-			</div>
-			<p>The refund will appear in your account within 5-10 business days depending on your payment provider.</p>
-			<p>If you have any questions, please contact our support team.</p>
-			<p style="margin-top: 30px; color: #666; font-size: 12px;">
-				© ${new Date().getFullYear()} MostlyWhat Systems. All rights reserved.
-			</p>
-		</div>
-	`;
+	const html = await loadTemplate('refund-notification', {
+		CUSTOMER_NAME: data.customerName,
+		ORDER_ID: data.orderId,
+		AMOUNT: formattedAmount,
+		REASON: data.reason ? `<p style="margin: 8px 0; color: #a3a3a3;"><span style="color: #6b7280; text-transform: uppercase; font-size: 10px; letter-spacing: 0.15em;">REASON:</span> <strong style="color: #ffffff;">${data.reason}</strong></p>` : ''
+	});
 
 	await sendEmail({
 		to: data.customerEmail,
@@ -195,30 +181,24 @@ export async function sendNotificationEmail(data: {
 	notificationMessage: string;
 	actionUrl?: string;
 }): Promise<void> {
-	const html = `
-		<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-			<h2 style="color: #333;">${data.notificationTitle}</h2>
-			<p>Hi ${data.userName},</p>
-			<div style="background-color: #f5f5f5; padding: 20px; border-radius: 5px; margin: 20px 0;">
-				<p style="white-space: pre-wrap;">${data.notificationMessage}</p>
-			</div>
-			${data.actionUrl
-			? `
-				<div style="text-align: center; margin: 30px 0;">
-					<a href="${data.actionUrl}" 
-					   style="background-color: #007bff; color: white; padding: 12px 30px; 
-					          text-decoration: none; border-radius: 5px; display: inline-block;">
-						View Details
-					</a>
-				</div>
-			`
-			: ''
-		}
-			<p style="margin-top: 30px; color: #666; font-size: 12px;">
-				© ${new Date().getFullYear()} MostlyWhat Systems. All rights reserved.
-			</p>
-		</div>
-	`;
+	const actionButton = data.actionUrl
+		? `<div style="text-align: center; margin: 30px 0;">
+				<a href="${data.actionUrl}" 
+				   style="background-color: #4a9eff; color: #000814; padding: 12px 30px; 
+				          text-decoration: none; display: inline-block; 
+				          text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600;">
+					VIEW DETAILS
+				</a>
+			</div>`
+		: '';
+
+	const html = await loadTemplate('notification-email', {
+		USER_NAME: data.userName,
+		NOTIFICATION_TITLE: data.notificationTitle,
+		NOTIFICATION_MESSAGE: data.notificationMessage,
+		ACTION_BUTTON: actionButton,
+		UNSUBSCRIBE_URL: 'https://mostlywhat.com/app/settings/notifications'
+	});
 
 	await sendEmail({
 		to: data.userEmail,
@@ -239,27 +219,12 @@ export async function sendSurveyEmail(data: {
 }): Promise<void> {
 	const surveyUrl = `https://mostlywhat.com/survey/${data.surveyToken}`;
 
-	const html = `
-		<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-			<h2 style="color: #333;">How was your support experience?</h2>
-			<p>Hi ${data.customerName},</p>
-			<p>Your ticket <strong>#${data.ticketId} - ${data.ticketTitle}</strong> has been resolved.</p>
-			<p>We'd love to hear about your experience! Please take a moment to complete our brief survey.</p>
-			<div style="text-align: center; margin: 30px 0;">
-				<a href="${surveyUrl}" 
-				   style="background-color: #28a745; color: white; padding: 15px 40px; 
-				          text-decoration: none; border-radius: 5px; display: inline-block; font-size: 16px;">
-					Take Survey
-				</a>
-			</div>
-			<p style="color: #666; font-size: 14px;">
-				This survey link will expire in 30 days.
-			</p>
-			<p style="margin-top: 30px; color: #666; font-size: 12px;">
-				© ${new Date().getFullYear()} MostlyWhat Systems. All rights reserved.
-			</p>
-		</div>
-	`;
+	const html = await loadTemplate('survey-email', {
+		CUSTOMER_NAME: data.customerName,
+		TICKET_ID: data.ticketId.toString(),
+		TICKET_TITLE: data.ticketTitle,
+		SURVEY_URL: surveyUrl
+	});
 
 	await sendEmail({
 		to: data.customerEmail,
@@ -285,32 +250,16 @@ export async function sendWireTransferApprovalRequest(data: {
 
 	const approvalUrl = `https://mostlywhat.com/admin/invoices/${data.invoiceId}`;
 
-	const html = `
-		<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-			<h2 style="color: #333;">Wire Transfer Approval Required</h2>
-			<p>A new wire transfer payment proof has been uploaded and requires approval.</p>
-			<div style="background-color: #f5f5f5; padding: 20px; border-radius: 5px; margin: 20px 0;">
-				<h3 style="margin-top: 0;">Payment Details</h3>
-				<p><strong>Invoice ID:</strong> #${data.invoiceId}</p>
-				<p><strong>Customer:</strong> ${data.customerName}</p>
-				<p><strong>Amount:</strong> ${formattedAmount}</p>
-				<p><strong>Upload ID:</strong> ${data.uploadId}</p>
-			</div>
-			<div style="text-align: center; margin: 30px 0;">
-				<a href="${approvalUrl}" 
-				   style="background-color: #007bff; color: white; padding: 12px 30px; 
-				          text-decoration: none; border-radius: 5px; display: inline-block;">
-					Review & Approve
-				</a>
-			</div>
-			<p style="margin-top: 30px; color: #666; font-size: 12px;">
-				© ${new Date().getFullYear()} MostlyWhat Systems. All rights reserved.
-			</p>
-		</div>
-	`;
+	const html = await loadTemplate('wire-transfer-approval', {
+		INVOICE_ID: data.invoiceId.toString(),
+		CUSTOMER_NAME: data.customerName,
+		AMOUNT: formattedAmount,
+		UPLOAD_ID: data.uploadId,
+		APPROVAL_URL: approvalUrl
+	});
 
 	await sendEmail({
-		to: env.SMTP_USER || 'admin@mostlywhat.com', // Send to admin email
+		to: env.SMTP_USER || 'admin@mostlywhat.com',
 		subject: `Wire Transfer Approval Required - Invoice #${data.invoiceId}`,
 		html
 	});
@@ -331,23 +280,11 @@ export async function sendWireTransferConfirmation(data: {
 		currency: data.currency
 	}).format(data.amount);
 
-	const html = `
-		<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-			<h2 style="color: #28a745;">Payment Confirmed</h2>
-			<p>Hi ${data.customerName},</p>
-			<p>Your wire transfer payment has been confirmed and processed successfully.</p>
-			<div style="background-color: #f5f5f5; padding: 20px; border-radius: 5px; margin: 20px 0;">
-				<h3 style="margin-top: 0;">Payment Details</h3>
-				<p><strong>Invoice ID:</strong> #${data.invoiceId}</p>
-				<p><strong>Amount:</strong> ${formattedAmount}</p>
-				<p><strong>Status:</strong> Paid</p>
-			</div>
-			<p>Thank you for your payment!</p>
-			<p style="margin-top: 30px; color: #666; font-size: 12px;">
-				© ${new Date().getFullYear()} MostlyWhat Systems. All rights reserved.
-			</p>
-		</div>
-	`;
+	const html = await loadTemplate('wire-transfer-confirmation', {
+		CUSTOMER_NAME: data.customerName,
+		INVOICE_ID: data.invoiceId.toString(),
+		AMOUNT: formattedAmount
+	});
 
 	await sendEmail({
 		to: data.customerEmail,
@@ -365,28 +302,12 @@ export async function sendWireTransferRejection(data: {
 	invoiceId: number;
 	reason: string;
 }): Promise<void> {
-	const html = `
-		<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-			<h2 style="color: #dc3545;">Payment Verification Required</h2>
-			<p>Hi ${data.customerName},</p>
-			<p>We were unable to verify your wire transfer payment for Invoice #${data.invoiceId}.</p>
-			<div style="background-color: #fff3cd; padding: 20px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #ffc107;">
-				<h3 style="margin-top: 0; color: #856404;">Reason:</h3>
-				<p style="color: #856404;">${data.reason}</p>
-			</div>
-			<p>Please contact our support team or upload a new payment proof with the correct information.</p>
-			<div style="text-align: center; margin: 30px 0;">
-				<a href="https://mostlywhat.com/app/invoices/${data.invoiceId}" 
-				   style="background-color: #007bff; color: white; padding: 12px 30px; 
-				          text-decoration: none; border-radius: 5px; display: inline-block;">
-					View Invoice
-				</a>
-			</div>
-			<p style="margin-top: 30px; color: #666; font-size: 12px;">
-				© ${new Date().getFullYear()} MostlyWhat Systems. All rights reserved.
-			</p>
-		</div>
-	`;
+	const html = await loadTemplate('wire-transfer-rejection', {
+		CUSTOMER_NAME: data.customerName,
+		INVOICE_ID: data.invoiceId.toString(),
+		REASON: data.reason,
+		INVOICE_URL: `https://mostlywhat.com/app/invoices/${data.invoiceId}`
+	});
 
 	await sendEmail({
 		to: data.customerEmail,

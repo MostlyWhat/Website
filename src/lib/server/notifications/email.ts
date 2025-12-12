@@ -85,23 +85,29 @@ function baseTemplate(content: string): string {
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>MostlyWhat Systems</title>
 	<style>
-		body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #171717; margin: 0; padding: 0; background-color: #f5f5f5; }
+		body { font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', 'Courier New', monospace; line-height: 1.6; color: #e5e5e5; margin: 0; padding: 0; background-color: #000814; }
 		.container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
-		.card { background: #ffffff; border: 1px solid #e5e5e5; padding: 32px; }
-		.header { font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: #737373; margin-bottom: 24px; }
-		.logo { font-family: 'SF Mono', Monaco, monospace; font-size: 14px; font-weight: 600; letter-spacing: 0.1em; color: #171717; margin-bottom: 8px; }
-		h1 { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 24px; font-weight: 700; margin: 0 0 16px 0; text-transform: uppercase; letter-spacing: 0.05em; }
-		p { margin: 0 0 16px 0; color: #525252; }
-		.button { display: inline-block; background: #171717; color: #ffffff !important; padding: 12px 24px; text-decoration: none; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; border: none; }
-		.button:hover { background: #262626; }
-		.meta { font-family: 'SF Mono', Monaco, monospace; font-size: 12px; color: #737373; padding: 16px 0; border-top: 1px solid #e5e5e5; margin-top: 24px; }
-		.footer { text-align: center; padding: 24px 0; font-size: 12px; color: #a3a3a3; }
-		.footer a { color: #737373; text-decoration: none; }
-		.divider { height: 1px; background: #e5e5e5; margin: 24px 0; }
-		.highlight { background: #f5f5f5; padding: 16px; border-left: 2px solid #171717; margin: 16px 0; }
-		.detail-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f5f5f5; }
-		.detail-label { font-family: 'SF Mono', Monaco, monospace; font-size: 10px; letter-spacing: 0.1em; color: #737373; text-transform: uppercase; }
-		.detail-value { font-weight: 500; }
+		.card { background: #0f1419; border: 1px solid #1a2332; padding: 32px; }
+		.header { font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: #6b7280; margin-bottom: 24px; }
+		.logo { font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace; font-size: 14px; font-weight: 600; letter-spacing: 0.15em; color: #4a9eff; margin-bottom: 8px; }
+		h1 { font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace; font-size: 24px; font-weight: 700; margin: 0 0 16px 0; text-transform: uppercase; letter-spacing: 0.1em; color: #ffffff; }
+		p { margin: 0 0 16px 0; color: #a3a3a3; }
+		.button { display: inline-block; background: #4a9eff; color: #000814 !important; padding: 12px 24px; text-decoration: none; font-family: 'SF Mono', Monaco, monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; border: none; }
+		.button:hover { background: #6bb0ff; }
+		.button-secondary { background: transparent; border: 1px solid #4a9eff; color: #4a9eff !important; }
+		.meta { font-family: 'SF Mono', Monaco, monospace; font-size: 11px; color: #6b7280; padding: 16px 0; border-top: 1px solid #1a2332; margin-top: 24px; }
+		.footer { text-align: center; padding: 24px 0; font-size: 11px; color: #6b7280; }
+		.footer a { color: #6b7280; text-decoration: none; }
+		.footer a:hover { color: #4a9eff; }
+		.divider { height: 1px; background: #1a2332; margin: 24px 0; }
+		.highlight { background: #0a0f14; padding: 16px; border-left: 2px solid #4a9eff; margin: 16px 0; }
+		.detail-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #1a2332; }
+		.detail-label { font-family: 'SF Mono', Monaco, monospace; font-size: 10px; letter-spacing: 0.15em; color: #6b7280; text-transform: uppercase; }
+		.detail-value { font-weight: 500; color: #e5e5e5; }
+		.accent { color: #4a9eff; }
+		.accent-yellow { color: #ffd500; }
+		.accent-red { color: #ef4444; }
+		strong { color: #ffffff; }
 	</style>
 </head>
 <body>
@@ -398,7 +404,7 @@ export async function sendTicketStatusChangeEmail(data: TicketEmailData & { oldS
 			</div>
 			<div class="detail-row">
 				<span class="detail-label">New Status</span>
-				<span class="detail-value" style="color: #16a34a; font-weight: 600;">${data.newStatus}</span>
+				<span class="detail-value" style="color: #22c55e; font-weight: 600;">${data.newStatus}</span>
 			</div>
 		</div>
 		
@@ -555,7 +561,7 @@ export async function sendProjectStatusChangeEmail(data: ProjectEmailData & { ol
 			</div>
 			<div class="detail-row">
 				<span class="detail-label">New Status</span>
-				<span class="detail-value" style="color: #16a34a; font-weight: 600;">${data.newStatus}</span>
+				<span class="detail-value" style="color: #22c55e; font-weight: 600;">${data.newStatus}</span>
 			</div>
 		</div>
 		
@@ -647,7 +653,7 @@ export async function sendPaymentReminderEmail(data: InvoiceEmailData & { daysOv
 		<p>Hello ${data.recipientName},</p>
 		<p>This is a friendly reminder about an outstanding invoice for <strong>${data.organizationName}</strong>.</p>
 		
-		<div class="highlight" style="border-left-color: #dc2626;">
+		<div class="highlight" style="border-left-color: #ef4444;">
 			<div class="detail-row">
 				<span class="detail-label">Invoice</span>
 				<span class="detail-value">${data.invoiceNumber}</span>
@@ -662,12 +668,7 @@ export async function sendPaymentReminderEmail(data: InvoiceEmailData & { daysOv
 			</div>
 			<div class="detail-row">
 				<span class="detail-label">Days Overdue</span>
-				<span class="detail-value" style="color: #dc2626; font-weight: 600;">${data.daysOverdue} days</span>
-			</div>
-		</div>
-		
-		<p>Please process payment at your earliest convenience to avoid any service interruptions.</p>
-		
+				<span class="detail-value" style="color: #ef4444; font-weight: 600;">${data.daysOverdue} days</span>
 		<p style="text-align: center; margin: 32px 0;">
 			<a href="${data.invoiceUrl}" class="button">PAY NOW</a>
 		</p>

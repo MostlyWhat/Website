@@ -267,55 +267,57 @@
 				{:else}
 					<form onsubmit={handleSubmit} class="space-y-px">
 						<div class="grid grid-cols-2 gap-px border border-border bg-border">
-							<div class="bg-background p-4">
+							<div class="bg-card p-4">
 								<Label for="name" class="font-mono text-[10px] tracking-widest text-muted-foreground">NAME *</Label>
-								<Input id="name" bind:value={name} required placeholder="John Doe" class="font-body mt-2 border-0 bg-transparent p-0 text-sm focus-visible:ring-0" />
+								<Input id="name" bind:value={name} required placeholder="John Doe" class="font-mono mt-2 border-0 bg-transparent p-0 text-sm placeholder:text-muted-foreground/40 focus-visible:ring-0" />
 							</div>
-							<div class="bg-background p-4">
+							<div class="bg-card p-4">
 								<Label for="email" class="font-mono text-[10px] tracking-widest text-muted-foreground">EMAIL *</Label>
-								<Input id="email" type="email" bind:value={email} required placeholder="john@company.com" class="font-body mt-2 border-0 bg-transparent p-0 text-sm focus-visible:ring-0" />
+								<Input id="email" type="email" bind:value={email} required placeholder="john@company.com" class="font-mono mt-2 border-0 bg-transparent p-0 text-sm placeholder:text-muted-foreground/40 focus-visible:ring-0" />
 							</div>
 						</div>
-						<div class="border border-border bg-background p-4">
+						<div class="border border-border bg-card p-4">
 							<Label for="company" class="font-mono text-[10px] tracking-widest text-muted-foreground">COMPANY</Label>
-							<Input id="company" bind:value={company} placeholder="Company Inc. (optional)" class="font-body mt-2 border-0 bg-transparent p-0 text-sm focus-visible:ring-0" />
+							<Input id="company" bind:value={company} placeholder="Company Inc. (optional)" class="font-mono mt-2 border-0 bg-transparent p-0 text-sm placeholder:text-muted-foreground/40 focus-visible:ring-0" />
 						</div>
 						
 						<!-- Topic-specific fields -->
 						{#if selectedTopic === 'quote'}
 							<div class="grid grid-cols-3 gap-px border border-border bg-border">
-								<div class="bg-background p-4">
+								<div class="bg-card p-4">
 									<Label for="projectType" class="font-mono text-[10px] tracking-widest text-muted-foreground">PROJECT TYPE *</Label>
-									<Input id="projectType" bind:value={projectType} required placeholder="Website, Web App, etc." class="font-body mt-2 border-0 bg-transparent p-0 text-sm focus-visible:ring-0" />
+									<Input id="projectType" bind:value={projectType} required placeholder="Website, Web App, etc." class="font-mono mt-2 border-0 bg-transparent p-0 text-sm placeholder:text-muted-foreground/40 focus-visible:ring-0" />
 								</div>
-								<div class="bg-background p-4">
+								<div class="bg-card p-4">
 									<Label for="budget" class="font-mono text-[10px] tracking-widest text-muted-foreground">BUDGET RANGE</Label>
-									<Input id="budget" bind:value={budget} placeholder="$5k-10k, $10k-25k..." class="font-body mt-2 border-0 bg-transparent p-0 text-sm focus-visible:ring-0" />
+									<Input id="budget" bind:value={budget} placeholder="$5k-10k, $10k-25k..." class="font-mono mt-2 border-0 bg-transparent p-0 text-sm placeholder:text-muted-foreground/40 focus-visible:ring-0" />
 								</div>
-								<div class="bg-background p-4">
+								<div class="bg-card p-4">
 									<Label for="timeline" class="font-mono text-[10px] tracking-widest text-muted-foreground">TIMELINE</Label>
-									<Input id="timeline" bind:value={timeline} placeholder="2 weeks, 1 month..." class="font-body mt-2 border-0 bg-transparent p-0 text-sm focus-visible:ring-0" />
+									<Input id="timeline" bind:value={timeline} placeholder="2 weeks, 1 month..." class="font-mono mt-2 border-0 bg-transparent p-0 text-sm placeholder:text-muted-foreground/40 focus-visible:ring-0" />
 								</div>
 							</div>
 						{:else if selectedTopic === 'support'}
 							<div class="grid grid-cols-2 gap-px border border-border bg-border">
-								<div class="bg-background p-4">
+								<div class="bg-card p-4">
 									<Label for="orderId" class="font-mono text-[10px] tracking-widest text-muted-foreground">PROJECT/ORDER ID</Label>
-									<Input id="orderId" bind:value={orderId} placeholder="PRJ-XXXX" class="font-body mt-2 border-0 bg-transparent p-0 text-sm focus-visible:ring-0" />
+									<Input id="orderId" bind:value={orderId} placeholder="PRJ-XXXX" class="font-mono mt-2 border-0 bg-transparent p-0 text-sm placeholder:text-muted-foreground/40 focus-visible:ring-0" />
 								</div>
-								<div class="bg-background p-4">
+								<div class="bg-card p-4">
 									<Label for="urgency" class="font-mono text-[10px] tracking-widest text-muted-foreground">URGENCY</Label>
-									<Input id="urgency" bind:value={urgency} placeholder="Low, Medium, High, Critical" class="font-body mt-2 border-0 bg-transparent p-0 text-sm focus-visible:ring-0" />
+									<Input id="urgency" bind:value={urgency} placeholder="Low, Medium, High, Critical" class="font-mono mt-2 border-0 bg-transparent p-0 text-sm placeholder:text-muted-foreground/40 focus-visible:ring-0" />
 								</div>
 							</div>
 						{/if}
 						
-						<div class="border border-border bg-background p-4">
+						<div class="border border-border bg-card p-4">
 							<Label for="message" class="font-mono text-[10px] tracking-widest text-muted-foreground">MESSAGE *</Label>
-							<Textarea id="message" bind:value={message} required rows={6} placeholder={selectedTopic === 'quote' ? 'Describe your project, goals, and requirements...' : selectedTopic === 'support' ? 'Describe your issue in detail...' : 'What can we help you with?'} class="font-body mt-2 resize-none border-0 bg-transparent p-0 text-sm focus-visible:ring-0" />
+							<Textarea id="message" bind:value={message} required rows={6} placeholder={selectedTopic === 'quote' ? 'Describe your project, goals, and requirements...' : selectedTopic === 'support' ? 'Describe your issue in detail...' : 'What can we help you with?'} class="font-mono mt-2 resize-none border-0 bg-transparent p-0 text-sm placeholder:text-muted-foreground/40 focus-visible:ring-0" />
 						</div>
 						{#if error}
-							<div class="font-mono border border-red-500 bg-red-500/10 p-3 text-xs text-red-400">{error}</div>
+							<div class="font-mono border border-red-500/50 bg-red-500/10 p-4 text-xs tracking-wide text-red-400">
+								<span class="text-[10px] tracking-widest text-red-500/70">ERROR:</span> {error}
+							</div>
 						{/if}
 						<div class="flex gap-px pt-4">
 							<Button type="submit" size="lg" class="font-ui flex-1 tracking-wider" disabled={isSubmitting}>
