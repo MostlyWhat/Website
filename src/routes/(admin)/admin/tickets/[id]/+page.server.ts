@@ -374,7 +374,7 @@ export const actions: Actions = {
             if (oldStatus !== 'resolved') {
                 try {
                     const surveyResult = await createSatisfactionSurvey(params.id, currentTicket.createdById);
-                    
+
                     // Send email with survey link
                     if (surveyResult.success && surveyResult.surveyToken) {
                         const customer = await db.query.profiles.findFirst({

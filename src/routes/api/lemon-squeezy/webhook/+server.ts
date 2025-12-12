@@ -69,32 +69,32 @@ export const POST: RequestHandler = async ({ request }) => {
 						})
 						.where(eq(invoices.id, invoiceId));
 
-				// Send payment confirmation email
-				try {
-					const invoice = await db.query.invoices.findFirst({
-						where: eq(invoices.id, invoiceId)
-					});
-
-					if (invoice) {
-						const org = await db.query.organizations.findFirst({
-							where: eq(organizations.id, invoice.organizationId)
+					// Send payment confirmation email
+					try {
+						const invoice = await db.query.invoices.findFirst({
+							where: eq(invoices.id, invoiceId)
 						});
-						
-						if (org?.email) {
-							const { sendPaymentConfirmation } = await import('$lib/server/email');
-							await sendPaymentConfirmation({
-								customerEmail: org.email,
-								customerName: org.name || 'Customer',
-								amount: event.data.attributes.total,
-								currency: event.data.attributes.currency,
-								orderId: event.data.attributes.order_number,
-								productName: invoice.title || 'Invoice Payment'
+
+						if (invoice) {
+							const org = await db.query.organizations.findFirst({
+								where: eq(organizations.id, invoice.organizationId)
 							});
+
+							if (org?.email) {
+								const { sendPaymentConfirmation } = await import('$lib/server/email');
+								await sendPaymentConfirmation({
+									customerEmail: org.email,
+									customerName: org.name || 'Customer',
+									amount: event.data.attributes.total,
+									currency: event.data.attributes.currency,
+									orderId: event.data.attributes.order_number,
+									productName: invoice.title || 'Invoice Payment'
+								});
+							}
 						}
+					} catch (emailError) {
+						console.error('Failed to send payment confirmation email:', emailError);
 					}
-				} catch (emailError) {
-					console.error('Failed to send payment confirmation email:', emailError);
-				}
 
 					console.log(`Invoice ${invoiceId} marked as paid via Lemon Squeezy`);
 				}
@@ -115,31 +115,31 @@ export const POST: RequestHandler = async ({ request }) => {
 						})
 						.where(eq(invoices.id, invoiceId));
 
-				// Send refund notification email
-				try {
-					const invoice = await db.query.invoices.findFirst({
-						where: eq(invoices.id, invoiceId)
-					});
-
-					if (invoice) {
-						const org = await db.query.organizations.findFirst({
-							where: eq(organizations.id, invoice.organizationId)
+					// Send refund notification email
+					try {
+						const invoice = await db.query.invoices.findFirst({
+							where: eq(invoices.id, invoiceId)
 						});
-						
-						if (org?.email) {
-							const { sendRefundNotification } = await import('$lib/server/email');
-							await sendRefundNotification({
-								customerEmail: org.email,
-								customerName: org.name || 'Customer',
-								amount: event.data.attributes.refunded_amount || event.data.attributes.total,
-								currency: event.data.attributes.currency,
-								orderId: event.data.attributes.order_number
+
+						if (invoice) {
+							const org = await db.query.organizations.findFirst({
+								where: eq(organizations.id, invoice.organizationId)
 							});
+
+							if (org?.email) {
+								const { sendRefundNotification } = await import('$lib/server/email');
+								await sendRefundNotification({
+									customerEmail: org.email,
+									customerName: org.name || 'Customer',
+									amount: event.data.attributes.refunded_amount || event.data.attributes.total,
+									currency: event.data.attributes.currency,
+									orderId: event.data.attributes.order_number
+								});
+							}
 						}
+					} catch (emailError) {
+						console.error('Failed to send refund notification email:', emailError);
 					}
-				} catch (emailError) {
-					console.error('Failed to send refund notification email:', emailError);
-				}
 
 					console.log(`Invoice ${invoiceId} marked as refunded`);
 				}

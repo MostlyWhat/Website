@@ -109,7 +109,7 @@ export async function uploadWireTransferReceipt(
 			const org = await db.query.organizations.findFirst({
 				where: eq(organizations.id, invoice.organizationId)
 			});
-			
+
 			const { sendWireTransferApprovalRequest } = await import('$lib/server/email');
 			await sendWireTransferApprovalRequest({
 				invoiceId: parseInt(invoiceId),
@@ -157,7 +157,7 @@ export async function approveWireTransferPayment(
 			const org = await db.query.organizations.findFirst({
 				where: eq(organizations.id, invoice.organizationId)
 			});
-			
+
 			if (org?.email) {
 				const { sendWireTransferConfirmation } = await import('$lib/server/email');
 				await sendWireTransferConfirmation({
@@ -206,7 +206,7 @@ export async function rejectWireTransferPayment(
 			const org = await db.query.organizations.findFirst({
 				where: eq(organizations.id, invoice.organizationId)
 			});
-			
+
 			if (org?.email) {
 				const { sendWireTransferRejection } = await import('$lib/server/email');
 				await sendWireTransferRejection({

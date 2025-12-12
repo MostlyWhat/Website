@@ -202,9 +202,8 @@ export async function sendNotificationEmail(data: {
 			<div style="background-color: #f5f5f5; padding: 20px; border-radius: 5px; margin: 20px 0;">
 				<p style="white-space: pre-wrap;">${data.notificationMessage}</p>
 			</div>
-			${
-				data.actionUrl
-					? `
+			${data.actionUrl
+			? `
 				<div style="text-align: center; margin: 30px 0;">
 					<a href="${data.actionUrl}" 
 					   style="background-color: #007bff; color: white; padding: 12px 30px; 
@@ -213,8 +212,8 @@ export async function sendNotificationEmail(data: {
 					</a>
 				</div>
 			`
-					: ''
-			}
+			: ''
+		}
 			<p style="margin-top: 30px; color: #666; font-size: 12px;">
 				© ${new Date().getFullYear()} MostlyWhat Systems. All rights reserved.
 			</p>

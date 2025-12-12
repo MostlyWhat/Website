@@ -2,6 +2,18 @@
 
 > **Purpose**: This document provides a comprehensive guide to building full-stack SaaS applications using the **Horizon Architecture** - a production-ready stack built on SvelteKit, Supabase, and Cloudflare Workers. It is designed for LLM consumption to replicate or extend this architecture, and as a developer reference for building robust web applications.
 
+## 🎨 Customization Notice
+
+**This architecture is a foundation, not a template.** While the core patterns (authentication, database, deployment) are production-ready, the following should be customized for your specific use case:
+
+- **Styles & Design System**: Tailwind configuration, color palettes, typography, and component styling in `src/routes/css/` and `src/lib/components/ui/`
+- **Database Schema**: Tables, columns, relationships, and enums in `src/lib/server/db/schema.ts`
+- **Business Logic**: Domain-specific features, workflows, and validation rules
+- **Email Templates**: HTML email designs and content in `src/lib/server/email.ts`
+- **UI Components**: Build on top of `components/ui` (shadcn-svelte) - reuse and compose existing components rather than creating new ones unless necessary
+
+The architecture provides standardized **layout patterns**, **payment workflows**, and **email notification systems** as starting points. Extend and adapt them to your requirements.
+
 ---
 
 ## Quick Reference Links
@@ -35,12 +47,15 @@ This project uses Model Context Protocol (MCP) servers for AI-assisted developme
 4. [Authorization & Route Protection](#4-authorization--route-protection)
 5. [Database Architecture](#5-database-architecture)
 6. [Design System](#6-design-system)
-7. [Internationalization (i18n)](#7-internationalization-i18n)
-8. [Error Monitoring](#8-error-monitoring)
-9. [API Design](#9-api-design)
-10. [Security Principles](#10-security-principles)
-11. [Deployment Architecture](#11-deployment-architecture)
-12. [Common Patterns](#12-common-patterns)
+7. [Layout Components](#7-layout-components)
+8. [Email & Notifications](#8-email--notifications)
+9. [Payment Systems](#9-payment-systems)
+10. [Internationalization (i18n)](#10-internationalization-i18n)
+11. [Error Monitoring](#11-error-monitoring)
+12. [API Design](#12-api-design)
+13. [Security Principles](#13-security-principles)
+14. [Deployment Architecture](#14-deployment-architecture)
+15. [Common Patterns](#15-common-patterns)
 
 ---
 
@@ -100,16 +115,27 @@ src/
 │
 ├── lib/
 │   ├── components/
-│   │   ├── section/            # Section components (cta, features, hero)
-│   │   ├── layout/             # Layout components (headers, sidebars)
-│   │   └── ui/                 # UI components (buttons, forms, etc.)
+│   │   ├── layout/             # Layout components (organized by type)
+│   │   │   ├── page/           # Page layouts (Create, Detail, Edit, Slug)
+│   │   │   ├── section/        # Section components (Hero, CTA, Description)
+│   │   │   ├── navigation/     # Header, Footer, MobileNav
+│   │   │   ├── form/           # Form layouts and components
+│   │   │   └── index.ts        # Centralized exports
+│   │   ├── section/            # Legacy - use layout/section instead
+│   │   └── ui/                 # shadcn-svelte UI components
 │   ├── config/
 │   │   └── site.ts             # Site configuration
 │   ├── server/
 │   │   ├── auth.ts             # Auth helper functions
+│   │   ├── email.ts            # Email notification system
 │   │   ├── db/
-│   │   │   ├── index.ts        # Database client
+│   │   │   ├── index.ts        # Database client factory (createDb)
 │   │   │   └── schema.ts       # Drizzle schema definitions
+│   │   ├── invoices/           # Payment and invoicing logic
+│   │   │   ├── index.ts        # Invoice utilities
+│   │   │   ├── recurring.ts    # Recurring billing & reminders
+│   │   │   └── wire-transfer.ts # Wire transfer workflows
+│   │   ├── notifications/      # Notification templates
 │   │   └── activity-logger.ts  # Audit logging
 │   ├── stores/                 # Svelte stores
 │   ├── utils/                  # Utility functions
@@ -121,6 +147,9 @@ src/
 │   ├── (auth)/auth/            # Authentication routes (grouped)
 │   ├── (marketing)/            # Public marketing pages (grouped)
 │   ├── api/                    # API endpoints
+│   │   ├── contact/            # Contact form submissions
+│   │   ├── lemon-squeezy/      # Payment webhook handler
+│   │   └── cron/               # Scheduled tasks (invoices, reminders)
 │   ├── onboarding/             # Onboarding flow
 │   └── css/                    # Global CSS files
 │
@@ -687,7 +716,559 @@ src/lib/components/ui/
 
 ---
 
-## 7. Internationalization (i18n)
+## 7. Layout Components
+
+### Organized Structure
+Layout components are now organized into logical subdirectories for better maintainability and reusability:
+
+```
+src/lib/components/layout/
+├── page/              # Page-level layouts (standardized patterns)
+│   ├── CreatePageLayout.svelte    # For /new routes (forms)
+│   ├── DetailPageLayout.svelte    # For /[id] routes (view mode)
+│   ├── EditPageLayout.svelte      # For /[id]/edit routes
+│   ├── PageHeader.svelte          # Page header component
+│   └── SlugPageLayout.svelte      # For dynamic [slug] routes
+├── section/           # Reusable section components
+│   ├── HeroSection.svelte         # Hero/banner sections
+│   ├── DescriptionSection.svelte  # Content description blocks
+│   ├── CTASection.svelte          # Call-to-action sections
+│   ├── CapabilitiesSection.svelte # Feature showcases
+│   ├── LinkCTASection.svelte      # CTA with navigation links
+│   ├── WideNavSection.svelte      # Wide navigation sections
+│   ├── BackLinkSection.svelte     # Back navigation links
+│   ├── BackToSection.svelte       # Return navigation
+│   ├── SectionHeader.svelte       # Section headers
+│   ├── Section.svelte             # Generic section wrapper
+│   └── SidebarSection.svelte      # Sidebar sections
+├── navigation/        # Navigation components
+│   ├── Header.svelte              # Main site header
+│   ├── Footer.svelte              # Main site footer
+│   └── MobileNav.svelte           # Mobile navigation
+├── form/              # Form layouts and components
+│   ├── FormLayout.svelte          # Form wrapper layout
+│   ├── MobileForm.svelte          # Mobile-optimized forms
+│   └── FieldLabel.svelte          # Form field labels
+├── [utility components]           # Additional layout utilities
+└── index.ts                       # Centralized exports
+```
+
+### Usage Pattern
+
+**Always use named imports from the central index:**
+```typescript
+// ✅ Recommended: Import from index
+import { CreatePageLayout, HeroSection, Header } from '$lib/components/layout';
+
+// ❌ Avoid: Direct imports (harder to refactor)
+import CreatePageLayout from '$lib/components/layout/page/CreatePageLayout.svelte';
+```
+
+### Standardized Page Layouts
+
+#### CreatePageLayout (for `/new` routes)
+```svelte
+<script lang="ts">
+  import { CreatePageLayout } from '$lib/components/layout';
+</script>
+
+<CreatePageLayout
+  title="Create New Project"
+  description="Fill out the form below to create a new project"
+  backLink="/app/projects"
+  backLabel="Back to Projects"
+>
+  <!-- Form content goes here -->
+  <form method="POST">
+    <!-- ... -->
+  </form>
+</CreatePageLayout>
+```
+
+**Reference implementation:** `/admin/blog/new/+page.svelte`
+
+#### DetailPageLayout (for `/[id]` routes)
+```svelte
+<script lang="ts">
+  import { DetailPageLayout } from '$lib/components/layout';
+</script>
+
+<DetailPageLayout
+  title={project.name}
+  subtitle={project.description}
+  backLink="/app/projects"
+  editLink="/app/projects/{project.id}/edit"
+>
+  <!-- Detail content goes here -->
+</DetailPageLayout>
+```
+
+#### EditPageLayout (for `/[id]/edit` routes)
+```svelte
+<script lang="ts">
+  import { EditPageLayout } from '$lib/components/layout';
+</script>
+
+<EditPageLayout
+  title="Edit Project"
+  backLink="/app/projects/{project.id}"
+>
+  <!-- Edit form goes here -->
+</EditPageLayout>
+```
+
+### Component Composition Philosophy
+
+**Reuse before creating new components:**
+
+1. **Check `components/ui` first**: shadcn-svelte provides 60+ accessible, styled components
+2. **Compose existing components**: Combine UI components to create new patterns
+3. **Only create new components when**: Existing components can't achieve the desired functionality
+
+Example of good composition:
+```svelte
+<!-- Instead of creating a new "ProjectCard" component -->
+<Card.Root>
+  <Card.Header>
+    <Card.Title>{project.name}</Card.Title>
+    <Card.Description>{project.description}</Card.Description>
+  </Card.Header>
+  <Card.Content>
+    <Badge>{project.status}</Badge>
+  </Card.Content>
+  <Card.Footer>
+    <Button href="/app/projects/{project.id}">View Details</Button>
+  </Card.Footer>
+</Card.Root>
+```
+
+### Migration from CRUD Layouts
+
+**Deprecated components (removed):**
+- `CrudCreateLayout.svelte` → Use `CreatePageLayout`
+- `CrudDetailLayout.svelte` → Use `DetailPageLayout`
+- `CrudEditLayout.svelte` → Use `EditPageLayout`
+
+All routes have been migrated to use the new standardized layouts.
+
+---
+
+## 8. Email & Notifications
+
+### Email System Architecture
+
+The application uses **nodemailer** with Office 365 SMTP for reliable email delivery. All email functions are located in `src/lib/server/email.ts`.
+
+#### SMTP Configuration
+```typescript
+// src/lib/server/email.ts
+const transporter = nodemailer.createTransport({
+  host: env.SMTP_HOST || 'smtp.office365.com',
+  port: parseInt(env.SMTP_PORT || '587'),
+  secure: false, // Use TLS
+  auth: {
+    user: env.SMTP_USER,
+    pass: env.SMTP_PASSWORD
+  }
+});
+```
+
+**Environment variables required:**
+```bash
+SMTP_HOST=smtp.office365.com
+SMTP_PORT=587
+SMTP_USER=noreply@yourdomain.com
+SMTP_PASSWORD=your-password
+SMTP_FROM_NAME=Your Company Name
+SMTP_FROM_EMAIL=noreply@yourdomain.com
+```
+
+### Core Email Functions
+
+#### 1. Generic Email Sender
+```typescript
+export async function sendEmail(options: EmailOptions): Promise<void> {
+  const mailOptions: SendMailOptions = {
+    from: `${env.SMTP_FROM_NAME} <${env.SMTP_FROM_EMAIL}>`,
+    to: Array.isArray(options.to) ? options.to.join(', ') : options.to,
+    subject: options.subject,
+    html: options.html,
+    text: options.text || stripHtml(options.html),
+    replyTo: options.replyTo
+  };
+  
+  await transporter.sendMail(mailOptions);
+}
+```
+
+#### 2. Contact Form Notifications
+```typescript
+await sendContactNotification({
+  name: 'John Doe',
+  email: 'john@example.com',
+  company: 'Acme Corp',
+  phone: '+1234567890',
+  topic: 'General Inquiry',
+  message: 'I would like to discuss...',
+  submissionId: 123
+});
+```
+
+Sends formatted email to admin with:
+- Contact details
+- Message content
+- Link to admin dashboard
+- Reply-to set to customer's email
+
+#### 3. Payment Confirmations
+```typescript
+await sendPaymentConfirmation({
+  customerEmail: 'customer@example.com',
+  customerName: 'Jane Smith',
+  amount: 99.00,
+  currency: 'USD',
+  invoiceNumber: 'INV-001',
+  paymentDate: new Date(),
+  paymentMethod: 'Credit Card'
+});
+```
+
+Automated email sent after successful payment processing.
+
+#### 4. Wire Transfer Workflows
+
+**Approval Request (to admin):**
+```typescript
+await sendWireTransferApprovalRequest({
+  customerName: 'John Doe',
+  customerEmail: 'john@example.com',
+  invoiceNumber: 'INV-001',
+  amount: 5000.00,
+  currency: 'USD',
+  referenceNumber: 'WIRE-123',
+  transferDate: new Date(),
+  bankDetails: 'Account ending in 1234'
+});
+```
+
+**Confirmation (to customer):**
+```typescript
+await sendWireTransferConfirmation({
+  customerEmail: 'john@example.com',
+  customerName: 'John Doe',
+  invoiceNumber: 'INV-001',
+  amount: 5000.00,
+  currency: 'USD',
+  approvedDate: new Date(),
+  expectedProcessingDays: 3
+});
+```
+
+**Rejection (to customer):**
+```typescript
+await sendWireTransferRejection({
+  customerEmail: 'john@example.com',
+  customerName: 'John Doe',
+  invoiceNumber: 'INV-001',
+  amount: 5000.00,
+  currency: 'USD',
+  reason: 'Invalid bank details provided'
+});
+```
+
+#### 5. Notification Emails (In-App)
+```typescript
+await sendNotificationEmail({
+  to: 'user@example.com',
+  subject: 'New message received',
+  title: 'You have a new message',
+  message: 'John Doe sent you a message...',
+  actionUrl: 'https://app.example.com/messages/123',
+  actionLabel: 'View Message'
+});
+```
+
+Generic template for in-app notification emails with call-to-action button.
+
+#### 6. Survey Emails
+```typescript
+await sendSurveyEmail({
+  to: 'customer@example.com',
+  subject: 'How was your experience?',
+  message: 'We would love to hear your feedback',
+  surveyUrl: 'https://app.example.com/surveys/abc123'
+});
+```
+
+### Email Template Best Practices
+
+1. **HTML + Plain Text**: Always provide both HTML and plain text versions
+2. **Responsive Design**: Use inline styles and table layouts for email compatibility
+3. **Clear CTAs**: Single, prominent call-to-action button
+4. **Branding**: Include company logo and colors (customizable in template)
+5. **Mobile-First**: Test on mobile devices (60%+ of email opens)
+
+### Email Template Customization
+
+All email templates are in `src/lib/server/email.ts`. To customize:
+
+1. **Colors & Branding**: Update inline styles
+2. **Content**: Modify HTML strings in each function
+3. **Layout**: Adjust table structures for different designs
+4. **Footer**: Add company info, social links, unsubscribe options
+
+Example customization:
+```typescript
+const html = `
+  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+    <!-- Your custom branding header -->
+    <div style="background-color: #1a1a1a; padding: 20px; text-align: center;">
+      <img src="https://yourdomain.com/logo.png" alt="Logo" style="height: 40px;">
+    </div>
+    
+    <!-- Email content -->
+    <div style="padding: 40px 20px;">
+      ${content}
+    </div>
+    
+    <!-- Footer -->
+    <div style="background-color: #f5f5f5; padding: 20px; text-align: center;">
+      <p style="color: #666; font-size: 12px;">© 2025 Your Company</p>
+    </div>
+  </div>
+`;
+```
+
+---
+
+## 9. Payment Systems
+
+### Payment Architecture
+
+The application supports multiple payment methods with automated workflows:
+
+1. **LemonSqueezy Integration** - Primary payment gateway for credit card payments
+2. **Wire Transfers** - Manual approval workflow for large transactions
+3. **Recurring Billing** - Automated invoice generation and payment reminders
+
+### LemonSqueezy Webhook Handler
+
+Located at `src/routes/api/lemon-squeezy/webhook/+server.ts`:
+
+```typescript
+export const POST: RequestHandler = async ({ request }) => {
+  const signature = request.headers.get('x-signature');
+  
+  // 1. Verify webhook signature
+  const isValid = verifySignature(payload, signature, WEBHOOK_SECRET);
+  if (!isValid) {
+    error(401, 'Invalid signature');
+  }
+  
+  // 2. Handle event type
+  switch (event.meta.event_name) {
+    case 'order_created':
+      // Process new order
+      break;
+      
+    case 'subscription_created':
+      // Handle new subscription
+      break;
+      
+    case 'subscription_payment_success':
+      // Mark invoice as paid
+      await db.update(invoices)
+        .set({ 
+          status: 'paid',
+          paidAt: new Date()
+        })
+        .where(eq(invoices.id, invoiceId));
+      
+      // Send payment confirmation
+      await sendPaymentConfirmation({ ... });
+      break;
+  }
+  
+  return json({ received: true });
+};
+```
+
+**Security requirements:**
+- Verify webhook signature on every request
+- Use HTTPS-only endpoints
+- Store webhook secret in environment variables
+- Log all webhook events for audit trail
+
+### Wire Transfer Workflow
+
+Located in `src/lib/server/invoices/wire-transfer.ts`:
+
+#### 1. Customer Submits Wire Transfer
+```typescript
+import { submitWireTransfer } from '$lib/server/invoices/wire-transfer';
+
+const result = await submitWireTransfer({
+  invoiceId: 'uuid',
+  transferDate: new Date(),
+  amount: 5000.00,
+  currency: 'USD',
+  referenceNumber: 'WIRE-123',
+  bankDetails: 'Account ending in 1234',
+  attachmentUrl: 'path/to/receipt.pdf'  // Optional
+});
+```
+
+**Process:**
+- Creates `wire_transfer_request` record with `pending` status
+- Updates invoice to `pending_wire_transfer`
+- Sends approval request email to admin
+- Logs activity for audit trail
+
+#### 2. Admin Reviews & Approves/Rejects
+```typescript
+// Approve
+await approveWireTransfer({
+  requestId: 'uuid',
+  approvedById: adminUserId,
+  notes: 'Verified with bank'
+});
+
+// Reject
+await rejectWireTransfer({
+  requestId: 'uuid',
+  rejectedById: adminUserId,
+  reason: 'Invalid reference number'
+});
+```
+
+**Approval process:**
+- Updates request status to `approved`
+- Marks invoice as `paid`
+- Records payment date and method
+- Sends confirmation email to customer
+- Logs approval activity
+
+**Rejection process:**
+- Updates request status to `rejected`
+- Resets invoice to `sent` status
+- Sends rejection email with reason
+- Logs rejection activity
+
+### Recurring Billing System
+
+Located in `src/lib/server/invoices/recurring.ts`:
+
+#### Scheduled Tasks (Cron Jobs)
+
+**1. Generate Recurring Invoices:**
+```typescript
+// Run daily to generate invoices for upcoming billing dates
+await generateRecurringInvoices();
+```
+
+Process:
+- Queries active subscription invoices
+- Checks if next billing date is within 3 days
+- Creates new draft invoice for next period
+- Updates subscription's last and next invoice dates
+- Sends invoice email to customer
+
+**2. Send Payment Reminders:**
+```typescript
+// Run daily to remind customers of overdue invoices
+await sendPaymentReminders();
+```
+
+Reminder schedule:
+- **7 days overdue**: First reminder
+- **14 days overdue**: Second reminder
+- **30 days overdue**: Final reminder
+- Tracks sent reminders to avoid duplicates
+
+**3. Process Overdue Invoices:**
+```typescript
+// Run daily to handle overdue payment actions
+await processOverdueInvoices();
+```
+
+Actions:
+- Identifies invoices >30 days overdue
+- Suspends associated services
+- Sends suspension notification
+- Logs suspension activity
+
+#### Cron Endpoint
+
+Located at `src/routes/api/cron/invoices/+server.ts`:
+
+```typescript
+export const GET: RequestHandler = async ({ request }) => {
+  // Verify Cloudflare Cron trigger
+  const cronHeader = request.headers.get('cf-cron');
+  if (cronHeader !== CRON_SECRET) {
+    error(401, 'Unauthorized');
+  }
+  
+  // Run all recurring tasks
+  const results = await runRecurringTasks();
+  
+  return json(results);
+};
+```
+
+**Setup in Cloudflare:**
+```jsonc
+// wrangler.jsonc
+{
+  "triggers": {
+    "crons": ["0 0 * * *"]  // Daily at midnight UTC
+  }
+}
+```
+
+### Invoice Status Flow
+
+```
+draft → sent → (pending_wire_transfer) → paid
+                     ↓ (if rejected)
+                   sent → overdue → suspended
+```
+
+**Status definitions:**
+- `draft`: Invoice created, not sent to customer
+- `sent`: Invoice sent, awaiting payment
+- `pending_wire_transfer`: Wire transfer submitted, awaiting approval
+- `paid`: Payment received and confirmed
+- `overdue`: Past due date, reminders being sent
+- `cancelled`: Invoice cancelled by admin
+- `suspended`: Services suspended due to non-payment
+
+### Payment Email Integration
+
+All payment workflows automatically trigger appropriate emails:
+
+| Event | Email Function | Recipients |
+|-------|---------------|-----------|
+| Invoice created | `sendInvoiceEmail()` | Customer |
+| Payment received | `sendPaymentConfirmation()` | Customer |
+| Wire transfer submitted | `sendWireTransferApprovalRequest()` | Admin |
+| Wire transfer approved | `sendWireTransferConfirmation()` | Customer |
+| Wire transfer rejected | `sendWireTransferRejection()` | Customer |
+| Payment reminder | `sendPaymentReminderEmail()` | Customer |
+
+### Payment Customization
+
+To adapt payment systems for your use case:
+
+1. **Payment Methods**: Add/remove payment options in invoice creation forms
+2. **Approval Workflows**: Customize wire transfer approval logic
+3. **Reminder Schedule**: Adjust timing in `recurring.ts`
+4. **Status Actions**: Modify what happens when invoices become overdue
+5. **Email Templates**: Customize payment-related email content
+
+---
+
+## 10. Internationalization (i18n)
 
 ### Paraglide Setup
 ```json
@@ -741,7 +1322,7 @@ const handleParaglide: Handle = ({ event, resolve }) =>
 
 ---
 
-## 8. Error Monitoring
+## 11. Error Monitoring
 
 ### Sentry Integration for Cloudflare Workers
 ```typescript
@@ -788,7 +1369,7 @@ export default defineConfig({
 
 ---
 
-## 9. API Design
+## 12. API Design
 
 ### API Route Pattern
 ```typescript
@@ -852,7 +1433,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
 ---
 
-## 10. Security Principles
+## 13. Security Principles
 
 ### 1. Defense in Depth
 Protection at multiple layers:
@@ -913,9 +1494,20 @@ if (result.type === 'redirect') {
 }
 ```
 
+### 7. Webhook Security
+Always verify webhook signatures:
+```typescript
+// LemonSqueezy webhook example
+const signature = request.headers.get('x-signature');
+const isValid = verifySignature(payload, signature, WEBHOOK_SECRET);
+if (!isValid) {
+  error(401, 'Invalid signature');
+}
+```
+
 ---
 
-## 11. Deployment Architecture
+## 14. Deployment Architecture
 
 ### Cloudflare Workers
 ```jsonc
@@ -964,7 +1556,7 @@ SENTRY_AUTH_TOKEN=
 
 ---
 
-## 12. Common Patterns
+## 15. Common Patterns
 
 ### Form Actions with Superforms
 ```typescript
@@ -1296,5 +1888,578 @@ The **Horizon Architecture** is built on these key principles:
 
 ---
 
-*MostlyWhat Systems' Horizon Architecture - Documentation v2.0*
+## Best Practices for Future Projects
+
+### Architecture Principles
+
+1. **Start with the Foundation**: Use the core authentication, database, and route protection patterns as-is. These are production-tested and follow security best practices.
+
+2. **Customize the Domain Layer**: The database schema, business logic, and UI should be tailored to your specific use case. Don't try to use the example tables (projects, invoices, tickets) unless they match your needs.
+
+3. **Build on UI Components**: The `components/ui` library (shadcn-svelte) provides 60+ components. Always check if existing components can be composed to achieve your design before creating custom components.
+
+4. **Email Templates**: Use the email system structure (nodemailer + SMTP) but customize all templates for your brand and content. The provided templates are examples, not production-ready for all use cases.
+
+5. **Payment Workflows**: The payment patterns (webhook handlers, wire transfers, recurring billing) are reusable, but adapt the business logic (approval workflows, reminder schedules) to your requirements.
+
+### Development Workflow
+
+1. **Schema-First Development**: Design your database schema first, then generate TypeScript types with Drizzle. This ensures type safety throughout your application.
+
+2. **Layout-First Pages**: Use standardized layouts (CreatePageLayout, DetailPageLayout) for CRUD operations. This creates consistency and reduces development time.
+
+3. **Component Composition**: Before creating a new component:
+   ```typescript
+   // ✅ Good: Compose existing components
+   <Card.Root>
+     <Card.Header>
+       <Card.Title>Title</Card.Title>
+     </Card.Header>
+     <Card.Content>Content</Card.Content>
+   </Card.Root>
+   
+   // ❌ Avoid: Creating custom card component
+   <CustomCard title="Title">Content</CustomCard>
+   ```
+
+4. **Named Imports**: Always use named imports from central indices:
+   ```typescript
+   // ✅ Good
+   import { Header, Footer } from '$lib/components/layout';
+   
+   // ❌ Avoid
+   import Header from '$lib/components/layout/navigation/Header.svelte';
+   ```
+
+5. **Email Testing**: Test all email notifications in development before deploying. Use services like Mailtrap or ethereal.email for safe testing.
+
+### Customization Guidelines
+
+#### What to Keep As-Is
+- Authentication flow and middleware
+- Database connection patterns (per-request with `createDb()`)
+- Route protection and authorization logic
+- Error monitoring setup
+- Deployment configuration
+
+#### What to Customize
+- **Database schema**: Tables, columns, relationships specific to your domain
+- **Design system**: Colors, typography, spacing, component styles
+- **Email templates**: All HTML, branding, and content
+- **Business logic**: Workflows, validation rules, status transitions
+- **UI layouts**: Page structures and content organization
+
+#### What to Extend
+- **Payment methods**: Add new payment gateways alongside existing ones
+- **Notification channels**: Add SMS, push notifications, etc.
+- **User roles**: Add domain-specific roles beyond the base set
+- **Audit logging**: Add custom event types for your domain
+
+### Common Customization Patterns
+
+#### Adding a New Resource (e.g., "Products")
+
+1. **Define schema:**
+   ```typescript
+   // src/lib/server/db/schema.ts
+   export const products = pgTable('products', {
+     id: uuid('id').defaultRandom().primaryKey(),
+     organizationId: uuid('organization_id').references(() => organizations.id),
+     name: text('name').notNull(),
+     price: numeric('price', { precision: 10, scale: 2 }),
+     createdAt: timestamp('created_at').defaultNow()
+   }).enableRLS();
+   ```
+
+2. **Create routes:**
+   ```
+   src/routes/(app)/app/products/
+   ├── +page.svelte          # List view
+   ├── +page.server.ts       # Load products
+   ├── new/
+   │   ├── +page.svelte      # Use CreatePageLayout
+   │   └── +page.server.ts   # Form action
+   └── [id]/
+       ├── +page.svelte      # Use DetailPageLayout
+       └── +page.server.ts   # Load product
+   ```
+
+3. **Reuse layouts:**
+   ```svelte
+   <!-- new/+page.svelte -->
+   <script lang="ts">
+     import { CreatePageLayout } from '$lib/components/layout';
+   </script>
+   
+   <CreatePageLayout
+     title="Create Product"
+     backLink="/app/products"
+   >
+     <!-- Form here -->
+   </CreatePageLayout>
+   ```
+
+#### Customizing Email Templates
+
+1. **Create a new email function:**
+   ```typescript
+   // src/lib/server/email.ts
+   export async function sendCustomNotification(data: {
+     to: string;
+     customData: any;
+   }): Promise<void> {
+     const html = `
+       <div style="font-family: Arial, sans-serif; max-width: 600px;">
+         <!-- Your custom template -->
+       </div>
+     `;
+     
+     await sendEmail({
+       to: data.to,
+       subject: 'Your Custom Subject',
+       html
+     });
+   }
+   ```
+
+2. **Use consistent styling:**
+   - Max width: 600px
+   - Inline CSS only (no external stylesheets)
+   - Mobile-responsive tables
+   - Single CTA button
+   - Plain text fallback included
+
+#### Adding New Payment Methods
+
+1. **Create webhook handler:**
+   ```typescript
+   // src/routes/api/stripe/webhook/+server.ts
+   export const POST: RequestHandler = async ({ request }) => {
+     // Verify signature
+     // Process event
+     // Update invoice status
+     // Send confirmation email
+   };
+   ```
+
+2. **Integrate with invoice system:**
+   ```typescript
+   await db.update(invoices)
+     .set({ 
+       status: 'paid',
+       paymentMethod: 'stripe',
+       paidAt: new Date()
+     })
+     .where(eq(invoices.id, invoiceId));
+   ```
+
+3. **Add to payment options:**
+   ```svelte
+   <select name="paymentMethod">
+     <option value="credit_card">Credit Card (LemonSqueezy)</option>
+     <option value="stripe">Credit Card (Stripe)</option>
+     <option value="wire_transfer">Wire Transfer</option>
+   </select>
+   ```
+
+### Performance Optimization
+
+**Goal**: Ensure everything loads fast with optimal bundle sizes and runtime performance.
+
+#### 1. Import Strategy & Bundle Size
+
+**Central Module Imports:**
+
+The architecture uses central index exports (`src/lib/components/layout/index.ts`) for convenience. While this pattern doesn't impact load times when properly configured, it's important to understand how Vite handles bundling:
+
+```typescript
+// ✅ RECOMMENDED: Named imports (tree-shakeable)
+import { Header, Footer } from '$lib/components/layout';
+// Only Header and Footer are included in the bundle
+
+// ✅ ALSO GOOD: Direct imports (explicit)
+import Header from '$lib/components/layout/navigation/Header.svelte';
+// Same result: only Header is included
+
+// ❌ AVOID: Wildcard imports
+import * as Layout from '$lib/components/layout';
+// Imports everything, increases bundle size
+```
+
+**How Vite Optimizes:**
+
+1. **Tree-Shaking**: Vite automatically removes unused exports from central index files
+2. **Code Splitting**: Each route creates a separate chunk, shared dependencies are deduplicated
+3. **Dynamic Imports**: Use for heavy components that aren't needed immediately
+
+**Verifying Bundle Size:**
+
+```bash
+# Build and analyze bundle
+pnpm build
+
+# Check output sizes
+ls -lh .svelte-kit/output/client/_app/immutable/chunks/
+```
+
+**Bundle Size Best Practices:**
+
+- Keep central indices lean (only re-exports, no logic)
+- Use dynamic imports for large components:
+  ```typescript
+  // Heavy chart component loaded on-demand
+  const Chart = await import('$lib/components/Chart.svelte');
+  ```
+- Avoid importing entire icon libraries:
+  ```typescript
+  // ✅ Good: Import specific icons
+  import { User, Settings } from '@lucide/svelte';
+  
+  // ❌ Bad: Import all icons
+  import * as Icons from '@lucide/svelte';
+  ```
+
+#### 2. Database Query Optimization
+
+**Use Selective Queries:**
+```typescript
+// ✅ Good: Only fetch needed columns
+const users = await db.select({
+  id: profiles.id,
+  name: profiles.firstName,
+  email: profiles.email
+}).from(profiles);
+
+// ❌ Avoid: Fetching all columns when not needed
+const users = await db.query.profiles.findMany();
+```
+
+**Optimize Relations:**
+```typescript
+// ✅ Good: Eager load with joins
+const projects = await db.query.projects.findMany({
+  with: {
+    organization: {
+      columns: { name: true }
+    }
+  }
+});
+
+// ❌ Avoid: N+1 queries
+for (const project of projects) {
+  const org = await db.query.organizations.findFirst({
+    where: eq(organizations.id, project.organizationId)
+  });
+}
+```
+
+**Use Indexes:**
+```typescript
+// Add indexes in schema for frequently queried columns
+export const profiles = pgTable('profiles', {
+  // ...
+}, (table) => ({
+  emailIdx: index('email_idx').on(table.email),
+  orgIdx: index('org_idx').on(table.activeOrganizationId)
+}));
+```
+
+#### 3. Streaming Data & Progressive Loading
+
+**Use SvelteKit Streaming for Large Datasets:**
+
+```typescript
+// +page.server.ts
+export const load = async ({ locals }) => {
+  // Immediate data (fast)
+  const stats = await getStats();
+  
+  // Streamed data (slower, but page renders immediately)
+  return {
+    stats, // Available immediately
+    streamed: {
+      projects: loadProjects(), // Promise, not awaited
+      users: loadUsers()         // Promise, not awaited
+    }
+  };
+};
+```
+
+**Progressive UI Rendering:**
+```svelte
+<!-- Page renders immediately with skeleton -->
+{#await data.streamed.projects}
+  <Skeleton class="h-20 w-full" />
+{:then projects}
+  {#each projects as project}
+    <ProjectCard {project} />
+  {/each}
+{/await}
+```
+
+**Benefits:**
+- Time to First Byte (TTFB): < 200ms
+- First Contentful Paint (FCP): < 1s
+- User sees content immediately, not a blank screen
+
+#### 4. Asset Optimization
+
+**Image Optimization:**
+```svelte
+<!-- Use modern formats with fallbacks -->
+<picture>
+  <source srcset="/image.avif" type="image/avif">
+  <source srcset="/image.webp" type="image/webp">
+  <img src="/image.jpg" alt="Description" loading="lazy">
+</picture>
+```
+
+**Font Loading:**
+```css
+/* Preload critical fonts */
+<link rel="preload" href="/fonts/Hubot-Sans.woff2" as="font" type="font/woff2" crossorigin>
+
+/* Use font-display: swap to prevent invisible text */
+@font-face {
+  font-family: 'Hubot Sans';
+  src: url('/fonts/Hubot-Sans.woff2') format('woff2');
+  font-display: swap;
+}
+```
+
+**Cloudflare CDN:**
+- All static assets served from edge locations
+- Automatic compression (Brotli/Gzip)
+- Cache headers configured in `static/` folder
+
+#### 5. Edge Caching with Cloudflare Workers
+
+**Cache API Usage:**
+```typescript
+// Cache expensive computations
+export const load: PageServerLoad = async ({ fetch }) => {
+  const cacheKey = 'https://example.com/api/data';
+  const cache = caches.default;
+  
+  // Try cache first
+  let response = await cache.match(cacheKey);
+  
+  if (!response) {
+    // Fetch from origin
+    response = await fetch('/api/data');
+    
+    // Cache for 5 minutes
+    const res = response.clone();
+    await cache.put(cacheKey, res, {
+      headers: { 'Cache-Control': 'max-age=300' }
+    });
+  }
+  
+  return await response.json();
+};
+```
+
+**Cache Strategy:**
+- Static assets: 1 year (`immutable`)
+- API responses: 5-15 minutes (with revalidation)
+- User-specific data: No cache
+- Public pages: CDN cache with stale-while-revalidate
+
+#### 6. JavaScript Optimization
+
+**Reduce Client-Side JavaScript:**
+
+```typescript
+// ✅ Good: Server-side processing
+export const load: PageServerLoad = async ({ locals }) => {
+  // Heavy computation on server
+  const processedData = await processData(locals.db);
+  return { data: processedData };
+};
+
+// ❌ Avoid: Client-side heavy processing
+export const load: PageLoad = async ({ fetch }) => {
+  const data = await fetch('/api/raw-data');
+  // Heavy computation in browser
+  return { data: processDataInBrowser(data) };
+};
+```
+
+**Lazy Load Non-Critical Features:**
+```typescript
+// Load admin panel only when needed
+const loadAdminPanel = async () => {
+  const { AdminPanel } = await import('$lib/components/admin/AdminPanel.svelte');
+  return AdminPanel;
+};
+```
+
+#### 7. CSS Optimization
+
+**Tailwind JIT Mode:**
+```javascript
+// tailwind.config.js
+export default {
+  content: ['./src/**/*.{html,js,svelte,ts}'],
+  // JIT mode automatically enabled in v4
+  // Only CSS for used classes is generated
+}
+```
+
+**Critical CSS:**
+- Inline critical styles in `app.html`
+- Load non-critical CSS asynchronously
+- Use `media="print"` onload trick for deferred loading
+
+#### 8. Connection Pooling Strategy
+
+**Cloudflare Workers Settings:**
+```typescript
+const client = postgres(DATABASE_URL, {
+  max: 1,              // Single connection per Worker instance
+  idle_timeout: 20,    // Close idle connections quickly
+  connect_timeout: 10, // Fast fail for unresponsive database
+  prepare: false       // Required for Supavisor transaction mode
+});
+```
+
+**Why These Settings:**
+- `max: 1`: Workers are stateless, one connection per instance is optimal
+- Connection pooling handled by Supabase Supavisor
+- Workers scale horizontally (100-1000+ instances)
+- Each instance maintains minimal resources
+
+#### 9. Performance Monitoring
+
+**Core Web Vitals Targets:**
+- **LCP (Largest Contentful Paint)**: < 2.5s
+- **FID (First Input Delay)**: < 100ms
+- **CLS (Cumulative Layout Shift)**: < 0.1
+
+**Sentry Performance Monitoring:**
+```typescript
+// hooks.server.ts
+const initSentry = initCloudflareSentryHandle({
+  dsn: env.PUBLIC_SENTRY_DSN,
+  tracesSampleRate: 1.0, // Adjust based on traffic
+  profilesSampleRate: 0.1 // Profile 10% of transactions
+});
+```
+
+**Measure Custom Metrics:**
+```typescript
+// Track database query time
+const startTime = performance.now();
+const result = await db.query.projects.findMany();
+const duration = performance.now() - startTime;
+
+if (duration > 1000) {
+  console.warn(`Slow query: ${duration}ms`);
+}
+```
+
+#### 10. Performance Checklist
+
+- [ ] Bundle sizes analyzed and optimized (< 200KB for main bundle)
+- [ ] All images optimized and use modern formats (WebP/AVIF)
+- [ ] Fonts use `font-display: swap` and are preloaded
+- [ ] Critical CSS inlined, non-critical CSS deferred
+- [ ] Database queries use indexes and selective columns
+- [ ] Large datasets use streaming with skeleton UI
+- [ ] Heavy components use dynamic imports
+- [ ] No wildcard imports from icon libraries
+- [ ] API responses cached appropriately
+- [ ] Cloudflare CDN configured for static assets
+- [ ] Core Web Vitals measured and meet targets
+- [ ] Performance monitoring configured in Sentry
+
+#### 11. Performance Testing
+
+**Local Testing:**
+```bash
+# Build for production
+pnpm build
+
+# Preview production build
+pnpm preview
+
+# Test with Lighthouse
+npx lighthouse http://localhost:4173 --view
+```
+
+**Production Testing:**
+```bash
+# Test live site
+npx lighthouse https://yourdomain.com --view
+
+# Check bundle size
+npx bundlesize
+```
+
+**Load Testing:**
+```bash
+# Install k6
+brew install k6
+
+# Run load test
+k6 run load-test.js
+```
+
+**Monitoring Tools:**
+- **Lighthouse CI**: Automated performance testing
+- **WebPageTest**: Real-world performance metrics
+- **Sentry Performance**: Production monitoring
+- **Cloudflare Analytics**: Edge performance data
+
+### Security Checklist
+
+- [ ] All tables have RLS enabled (`.enableRLS()`)
+- [ ] All API routes validate authentication
+- [ ] All webhook handlers verify signatures
+- [ ] All user inputs are validated (Zod schemas)
+- [ ] All sensitive operations are logged to activity_log
+- [ ] All environment variables are properly scoped (public vs private)
+- [ ] All redirects use absolute paths to prevent open redirects
+- [ ] All database queries use parameterized statements (Drizzle handles this)
+
+### Deployment Checklist
+
+- [ ] Environment variables set in Cloudflare dashboard
+- [ ] Supabase project configured with proper RLS policies
+- [ ] SMTP credentials verified and tested
+- [ ] Payment webhooks configured with correct URLs
+- [ ] Cron jobs scheduled (if using recurring billing)
+- [ ] Sentry project created and DSN configured
+- [ ] Custom domain configured in Cloudflare
+- [ ] SSL/TLS certificates active
+- [ ] Database backups configured in Supabase
+
+### Troubleshooting Common Issues
+
+See the main [Troubleshooting](#troubleshooting) section for database connection and redirect loop issues.
+
+**Additional common issues:**
+
+#### Email Delivery Failures
+- Verify SMTP credentials are correct
+- Check Office 365 security settings allow SMTP
+- Ensure sender email matches SMTP_USER
+- Test with simple email first before complex templates
+
+#### Payment Webhook Not Receiving Events
+- Verify webhook URL is publicly accessible (HTTPS)
+- Check webhook signature verification logic
+- Ensure webhook is registered in payment provider dashboard
+- Review logs for failed verification attempts
+
+#### Cron Jobs Not Running
+- Verify cron trigger is configured in wrangler.jsonc
+- Check Cloudflare dashboard for cron execution logs
+- Ensure cron secret header is correctly validated
+- Test cron endpoint manually with curl
+
+---
+
+*MostlyWhat Systems' Horizon Architecture - Documentation v3.0*
 *Built with SvelteKit, Supabase, and Cloudflare Workers*
+*Updated: December 2025*
