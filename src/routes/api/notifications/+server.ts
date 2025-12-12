@@ -12,15 +12,15 @@ export const GET: RequestHandler = async ({ locals, url, request }) => {
         return json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-	// Rate limiting - 100 API requests per minute per user
-	const clientIP = getClientIP(request, request.headers);
-	const rateLimitKey = `${clientIP}:${locals.user.id}`;
-	const rateLimitResult = await rateLimiters.api.check(rateLimitKey);
+    // Rate limiting - 100 API requests per minute per user
+    const clientIP = getClientIP(request, request.headers);
+    const rateLimitKey = `${clientIP}:${locals.user.id}`;
+    const rateLimitResult = await rateLimiters.api.check(rateLimitKey);
 
-	if (!rateLimitResult.success) {
-		const resetInSeconds = Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000);
-		return json({ error: `Too many requests. Please try again in ${resetInSeconds} seconds.` }, { status: 429 });
-	}
+    if (!rateLimitResult.success) {
+        const resetInSeconds = Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000);
+        return json({ error: `Too many requests. Please try again in ${resetInSeconds} seconds.` }, { status: 429 });
+    }
 
     const limit = parseInt(url.searchParams.get('limit') || '20');
 
@@ -49,15 +49,15 @@ export const PATCH: RequestHandler = async ({ locals, url, request }) => {
         return json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-	// Rate limiting - 100 API requests per minute per user
-	const clientIP = getClientIP(request, request.headers);
-	const rateLimitKey = `${clientIP}:${locals.user.id}`;
-	const rateLimitResult = await rateLimiters.api.check(rateLimitKey);
+    // Rate limiting - 100 API requests per minute per user
+    const clientIP = getClientIP(request, request.headers);
+    const rateLimitKey = `${clientIP}:${locals.user.id}`;
+    const rateLimitResult = await rateLimiters.api.check(rateLimitKey);
 
-	if (!rateLimitResult.success) {
-		const resetInSeconds = Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000);
-		return json({ error: `Too many requests. Please try again in ${resetInSeconds} seconds.` }, { status: 429 });
-	}
+    if (!rateLimitResult.success) {
+        const resetInSeconds = Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000);
+        return json({ error: `Too many requests. Please try again in ${resetInSeconds} seconds.` }, { status: 429 });
+    }
 
     const notificationId = url.searchParams.get('id');
     const action = url.searchParams.get('action');

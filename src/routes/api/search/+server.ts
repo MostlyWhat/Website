@@ -273,36 +273,36 @@ function search(query: string, filter?: string, limit = 20): Array<{
 }
 
 export const GET: RequestHandler = async ({ url, request }) => {
-	// Rate limiting - 30 searches per minute per IP
-	const clientIP = getClientIP(request, request.headers);
-	const rateLimitResult = await rateLimiters.search.check(clientIP);
+    // Rate limiting - 30 searches per minute per IP
+    const clientIP = getClientIP(request, request.headers);
+    const rateLimitResult = await rateLimiters.search.check(clientIP);
 
-	if (!rateLimitResult.success) {
-		const resetInSeconds = Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000);
-		error(429, `Too many search requests. Please try again in ${resetInSeconds} seconds.`);
-	}
+    if (!rateLimitResult.success) {
+        const resetInSeconds = Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000);
+        error(429, `Too many search requests. Please try again in ${resetInSeconds} seconds.`);
+    }
 
-	// Validate and parse query parameters
-	const params = {
-		query: url.searchParams.get('q') || '',
-		type: url.searchParams.get('filter') || 'all',
-		limit: parseInt(url.searchParams.get('limit') || '20', 10)
-	};
+    // Validate and parse query parameters
+    const params = {
+        query: url.searchParams.get('q') || '',
+        type: url.searchParams.get('filter') || 'all',
+        limit: parseInt(url.searchParams.get('limit') || '20', 10)
+    };
 
-	// Validate input
-	const validation = searchSchema.safeParse(params);
-	if (!validation.success) {
-		const errorMessages = validation.error.issues.map((issue: { message: string }) => issue.message).join(', ');
-		error(400, `Invalid search parameters: ${errorMessages}`);
-	}
+    // Validate input
+    const validation = searchSchema.safeParse(params);
+    if (!validation.success) {
+        const errorMessages = validation.error.issues.map((issue: { message: string }) => issue.message).join(', ');
+        error(400, `Invalid search parameters: ${errorMessages}`);
+    }
 
-	const { query, type, limit } = validation.data;
-	const filter = type === 'all' ? 'all' : type;
-	const results = search(query, filter, limit);
+    const { query, type, limit } = validation.data;
+    const filter = type === 'all' ? 'all' : type;
+    const results = search(query, filter, limit);
 
-	return json({
-		query,
-		results,
-		total: results.length
-	});
+    return json({
+        query,
+        results,
+        total: results.length
+    });
 };

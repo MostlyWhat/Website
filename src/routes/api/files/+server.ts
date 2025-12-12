@@ -22,15 +22,15 @@ export const GET: RequestHandler = async ({ url, locals, request }) => {
         error(403, 'Please complete onboarding first');
     }
 
-	// Rate limiting - 100 API requests per minute per user
-	const clientIP = getClientIP(request, request.headers);
-	const rateLimitKey = `${clientIP}:${locals.user.id}`;
-	const rateLimitResult = await rateLimiters.api.check(rateLimitKey);
+    // Rate limiting - 100 API requests per minute per user
+    const clientIP = getClientIP(request, request.headers);
+    const rateLimitKey = `${clientIP}:${locals.user.id}`;
+    const rateLimitResult = await rateLimiters.api.check(rateLimitKey);
 
-	if (!rateLimitResult.success) {
-		const resetInSeconds = Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000);
-		error(429, `Too many requests. Please try again in ${resetInSeconds} seconds.`);
-	}
+    if (!rateLimitResult.success) {
+        const resetInSeconds = Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000);
+        error(429, `Too many requests. Please try again in ${resetInSeconds} seconds.`);
+    }
 
     // Create per-request database connection
     const db = createDb();

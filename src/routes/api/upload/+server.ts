@@ -51,7 +51,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     const clientIP = getClientIP(request, request.headers);
     const rateLimitKey = `${clientIP}:${locals.user.id}`;
     const rateLimitResult = await rateLimiters.upload.check(rateLimitKey);
-    
+
     if (!rateLimitResult.success) {
         const resetInMinutes = Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000 / 60);
         error(429, `Too many uploads. Please try again in ${resetInMinutes} minute${resetInMinutes > 1 ? 's' : ''}.`);
@@ -86,10 +86,10 @@ export const POST: RequestHandler = async ({ request, locals }) => {
         }
 
         // Comprehensive file validation (content, size, type)
-        const allowedTypes = fileCategory === 'image' 
-            ? ALLOWED_FILE_TYPES.images 
+        const allowedTypes = fileCategory === 'image'
+            ? ALLOWED_FILE_TYPES.images
             : [...ALLOWED_FILE_TYPES.documents, ...ALLOWED_FILE_TYPES.archives];
-            
+
         const fileValidation = await validateUploadedFile(file, {
             allowedTypes,
             category: fileCategory

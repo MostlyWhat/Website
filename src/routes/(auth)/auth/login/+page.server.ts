@@ -10,14 +10,14 @@ export const actions: Actions = {
      * Email/Password Login
      */
     login: async ({ request, locals: { supabase } }) => {
-		// Rate limiting - 5 login attempts per 15 minutes per IP
-		const clientIP = getClientIP(request, request.headers);
-		const rateLimitResult = await rateLimiters.auth.check(clientIP);
+        // Rate limiting - 5 login attempts per 15 minutes per IP
+        const clientIP = getClientIP(request, request.headers);
+        const rateLimitResult = await rateLimiters.auth.check(clientIP);
 
-		if (!rateLimitResult.success) {
-			const resetInMinutes = Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000 / 60);
-			return fail(429, { error: `Too many login attempts. Please try again in ${resetInMinutes} minute${resetInMinutes > 1 ? 's' : ''}.` });
-		}
+        if (!rateLimitResult.success) {
+            const resetInMinutes = Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000 / 60);
+            return fail(429, { error: `Too many login attempts. Please try again in ${resetInMinutes} minute${resetInMinutes > 1 ? 's' : ''}.` });
+        }
 
         const formData = await request.formData();
         const email = formData.get('email') as string;
@@ -72,14 +72,14 @@ export const actions: Actions = {
      * Magic Link Login
      */
     magicLink: async ({ request, locals: { supabase }, url }) => {
-		// Rate limiting - 5 magic link requests per 15 minutes per IP
-		const clientIP = getClientIP(request, request.headers);
-		const rateLimitResult = await rateLimiters.auth.check(clientIP);
+        // Rate limiting - 5 magic link requests per 15 minutes per IP
+        const clientIP = getClientIP(request, request.headers);
+        const rateLimitResult = await rateLimiters.auth.check(clientIP);
 
-		if (!rateLimitResult.success) {
-			const resetInMinutes = Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000 / 60);
-			return fail(429, { error: `Too many magic link requests. Please try again in ${resetInMinutes} minute${resetInMinutes > 1 ? 's' : ''}.` });
-		}
+        if (!rateLimitResult.success) {
+            const resetInMinutes = Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000 / 60);
+            return fail(429, { error: `Too many magic link requests. Please try again in ${resetInMinutes} minute${resetInMinutes > 1 ? 's' : ''}.` });
+        }
 
         const formData = await request.formData();
         const email = formData.get('email') as string;

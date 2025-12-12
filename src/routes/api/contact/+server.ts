@@ -27,15 +27,15 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
         // Rate limiting - 5 requests per 10 minutes
         const clientIP = getClientIP(request, request.headers);
         const rateLimitResult = await rateLimiters.contact.check(clientIP);
-        
+
         if (!rateLimitResult.success) {
             const resetInMinutes = Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000 / 60);
             return json(
-                { 
+                {
                     error: `Too many requests. Please try again in ${resetInMinutes} minute${resetInMinutes > 1 ? 's' : ''}.`,
                     retryAfter: rateLimitResult.resetTime
                 },
-                { 
+                {
                     status: 429,
                     headers: {
                         'X-RateLimit-Remaining': '0',
@@ -46,7 +46,7 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
         }
 
         const body = await request.json() as ContactFormData;
-        
+
         // Validate request with Zod schema
         const validation = await validateRequest(contactSchema, {
             name: body.name,
@@ -57,18 +57,18 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
             company: body.company,
             orderId: body.orderId
         });
-        
+
         if (!validation.success) {
             const errors = validation.errors.issues.map((err: any) => `${err.path.join('.')}: ${err.message}`);
             return json(
-                { 
+                {
                     error: 'Validation failed',
                     details: errors
                 },
                 { status: 400 }
             );
         }
-        
+
         const validatedData = validation.data;
         const name = validatedData.name;
         const email = validatedData.email;
@@ -77,7 +77,7 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
         const message = validatedData.message;
         const subject = validatedData.subject;
         const orderId = validatedData.orderId;
-        
+
         const topic = body.topic || 'general';
         const projectType = body.projectType;
         const budget = body.budget;

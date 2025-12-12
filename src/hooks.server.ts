@@ -121,33 +121,33 @@ const handleSupabase: Handle = async ({ event, resolve }) => {
 			return name === 'content-range' || name === 'x-supabase-api-version';
 		}
 	});
-	
+
 	// Add security headers to all responses
 	const headers = new Headers(response.headers);
-	
+
 	// Strict-Transport-Security: Force HTTPS
 	headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
-	
+
 	// X-Frame-Options: Prevent clickjacking
 	headers.set('X-Frame-Options', 'SAMEORIGIN');
-	
+
 	// X-Content-Type-Options: Prevent MIME sniffing
 	headers.set('X-Content-Type-Options', 'nosniff');
-	
+
 	// Referrer-Policy: Control referer information
 	headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-	
+
 	// Permissions-Policy: Control browser features
 	headers.set(
 		'Permissions-Policy',
 		'camera=(), microphone=(), geolocation=(), interest-cohort=()'
 	);
-	
+
 	// Content-Security-Policy: Mitigate XSS and injection attacks
 	const isDev = event.url.hostname === 'localhost' || event.url.hostname === '127.0.0.1';
 	const cspDirectives = [
 		"default-src 'self'",
-		isDev 
+		isDev
 			? "script-src 'self' 'unsafe-inline' 'unsafe-eval'" // Dev needs eval for HMR
 			: "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com",
 		"style-src 'self' 'unsafe-inline'",
@@ -162,7 +162,7 @@ const handleSupabase: Handle = async ({ event, resolve }) => {
 		"upgrade-insecure-requests"
 	];
 	headers.set('Content-Security-Policy', cspDirectives.join('; '));
-	
+
 	return new Response(response.body, {
 		status: response.status,
 		statusText: response.statusText,
