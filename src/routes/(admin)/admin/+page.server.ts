@@ -18,7 +18,7 @@ async function safeCount<T>(query: Promise<T[]>, defaultValue = 0): Promise<numb
 // Async function to load admin dashboard data
 async function loadAdminDashboardData() {
     const db = createDb();
-// Get counts in parallel with error handling
+    // Get counts in parallel with error handling
     const [
         usersCount,
         orgsCount,

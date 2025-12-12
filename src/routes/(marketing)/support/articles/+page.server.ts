@@ -26,7 +26,7 @@ function parseArticle(raw: string, slug: string): SupportArticle {
 export const load: PageServerLoad = async ({ setHeaders }) => {
     // Set cache headers for support articles (10min cache, content rarely changes)
     setCacheHeaders(setHeaders, CachePresets.STATIC_LONG);
-    
+
     const articles = Object.entries(articleFiles)
         .map(([path, raw]) => {
             const slug = extractSlugFromPath(path);

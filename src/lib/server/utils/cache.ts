@@ -10,17 +10,17 @@ export interface CacheConfig {
      * Maximum age in seconds that the content can be cached
      */
     maxAge: number;
-    
+
     /**
      * Time in seconds that stale content can be served while revalidating
      */
     staleWhileRevalidate?: number;
-    
+
     /**
      * Whether the cache is public (can be cached by CDNs) or private (browser only)
      */
     visibility?: 'public' | 'private';
-    
+
     /**
      * Whether the content is immutable (never changes)
      */
@@ -40,7 +40,7 @@ export const CachePresets = {
         staleWhileRevalidate: 3600,
         visibility: 'public'
     } as CacheConfig,
-    
+
     /**
      * Dynamic content that changes occasionally (e.g., blog posts, projects)
      * Cache for 5 minutes, allow stale content for up to 30 minutes
@@ -50,7 +50,7 @@ export const CachePresets = {
         staleWhileRevalidate: 1800,
         visibility: 'public'
     } as CacheConfig,
-    
+
     /**
      * Real-time content that changes frequently (e.g., status page, notifications)
      * Cache for 1 minute, allow stale content for up to 5 minutes
@@ -60,7 +60,7 @@ export const CachePresets = {
         staleWhileRevalidate: 300,
         visibility: 'public'
     } as CacheConfig,
-    
+
     /**
      * API responses that can be cached
      * Cache for 5 minutes, allow stale content for up to 10 minutes
@@ -70,7 +70,7 @@ export const CachePresets = {
         staleWhileRevalidate: 600,
         visibility: 'public'
     } as CacheConfig,
-    
+
     /**
      * Authenticated/personalized content (no CDN caching)
      * Cache in browser only for 5 minutes
@@ -79,7 +79,7 @@ export const CachePresets = {
         maxAge: 300,
         visibility: 'private'
     } as CacheConfig,
-    
+
     /**
      * No caching at all (always fetch fresh)
      */
@@ -87,7 +87,7 @@ export const CachePresets = {
         maxAge: 0,
         visibility: 'private'
     } as CacheConfig,
-    
+
     /**
      * Immutable assets (hashed filenames that never change)
      * Cache for 1 year
@@ -104,27 +104,27 @@ export const CachePresets = {
  */
 export function buildCacheHeader(config: CacheConfig): string {
     const parts: string[] = [];
-    
+
     // Visibility
     parts.push(config.visibility || 'public');
-    
+
     // Max age
     if (config.maxAge === 0) {
         parts.push('no-cache', 'no-store', 'must-revalidate');
     } else {
         parts.push(`max-age=${config.maxAge}`);
     }
-    
+
     // Stale while revalidate
     if (config.staleWhileRevalidate && config.staleWhileRevalidate > 0) {
         parts.push(`stale-while-revalidate=${config.staleWhileRevalidate}`);
     }
-    
+
     // Immutable
     if (config.immutable) {
         parts.push('immutable');
     }
-    
+
     return parts.join(', ');
 }
 
@@ -177,7 +177,7 @@ export interface CacheMetrics {
 
 export function createCacheTimer(key: string) {
     const start = performance.now();
-    
+
     return {
         hit: (): CacheMetrics => ({
             hit: true,

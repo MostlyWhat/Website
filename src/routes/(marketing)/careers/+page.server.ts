@@ -22,7 +22,7 @@ const positionFiles = import.meta.glob('/src/lib/content/careers/*.md', { eager:
 
 export const load: PageServerLoad = async ({ setHeaders }) => {
     const db = createDb();
-    
+
     // Set cache headers for careers page (5min cache)
     setCacheHeaders(setHeaders, CachePresets.DYNAMIC_MEDIUM);
 
