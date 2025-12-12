@@ -5,10 +5,12 @@
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import { localizeHref } from '$lib/paraglide/runtime';
-	import { Save, FileText, Image, Tag, Settings } from '@lucide/svelte';
+	import { Save, FileText, Image, Tag, Settings, Clock, Eye } from '@lucide/svelte';
+	import * as Card from '$lib/components/ui/card';
+	import { TextField, TextareaField, SelectField, CheckboxField } from '$lib/components/ui/form-fields';
 	import { RichTextEditor } from '$lib/components/ui/rich-text-editor';
 	import { toast } from 'svelte-sonner';
-	import CrudCreateLayout from '$lib/components/layout/CrudCreateLayout.svelte';
+	import CreatePageLayout from '$lib/components/layout/CreatePageLayout.svelte';
 
 	let { data, form } = $props();
 
@@ -52,7 +54,7 @@
 	<title>New Blog Post | Admin | MostlyWhat Systems</title>
 </svelte:head>
 
-<CrudCreateLayout
+<CreatePageLayout
 	title="New Blog Post"
 	description="Create a new blog post for the website."
 	backHref={localizeHref('/admin/blog')}
@@ -318,4 +320,4 @@
 			</div>
 		</div>
 	{/snippet}
-</CrudCreateLayout>
+</CreatePageLayout>

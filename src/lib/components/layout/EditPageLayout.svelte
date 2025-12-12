@@ -2,6 +2,11 @@
 	import type { Snippet } from 'svelte';
 	import { enhance } from '$app/forms';
 	import { ArrowLeft, AlertCircle, CheckCircle, AlertTriangle, Save, Trash2, ExternalLink } from '@lucide/svelte';
+	import * as Card from '$lib/components/ui/card';
+	import { Button } from '$lib/components/ui/button';
+	import * as AlertDialog from '$lib/components/ui/alert-dialog';
+	import { InfoCard } from '$lib/components/ui/data-display';
+	import { Breadcrumbs } from '$lib/components/ui/navigation';
 
 	/**
 	 * CrudEditLayout - Standardized layout for editing existing entities

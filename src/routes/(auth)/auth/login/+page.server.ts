@@ -3,12 +3,22 @@ import type { Actions } from './$types';
 import { getOrCreateProfile } from '$lib/server/auth';
 import { env } from '$env/dynamic/public';
 import { logLoginEvent, getClientIp } from '$lib/server/utils/activity-logger';
+import { rateLimiters, getClientIP } from '$lib/server/utils/rate-limiter';
 
 export const actions: Actions = {
     /**
      * Email/Password Login
      */
     login: async ({ request, locals: { supabase } }) => {
+		// Rate limiting - 5 login attempts per 15 minutes per IP
+		const clientIP = getClientIP(request, request.headers);
+		const rateLimitResult = await rateLimiters.auth.check(clientIP);
+
+		if (!rateLimitResult.success) {
+			const resetInMinutes = Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000 / 60);
+			return fail(429, { error: `Too many login attempts. Please try again in ${resetInMinutes} minute${resetInMinutes > 1 ? 's' : ''}.` });
+		}
+
         const formData = await request.formData();
         const email = formData.get('email') as string;
         const password = formData.get('password') as string;
@@ -62,6 +72,15 @@ export const actions: Actions = {
      * Magic Link Login
      */
     magicLink: async ({ request, locals: { supabase }, url }) => {
+		// Rate limiting - 5 magic link requests per 15 minutes per IP
+		const clientIP = getClientIP(request, request.headers);
+		const rateLimitResult = await rateLimiters.auth.check(clientIP);
+
+		if (!rateLimitResult.success) {
+			const resetInMinutes = Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000 / 60);
+			return fail(429, { error: `Too many magic link requests. Please try again in ${resetInMinutes} minute${resetInMinutes > 1 ? 's' : ''}.` });
+		}
+
         const formData = await request.formData();
         const email = formData.get('email') as string;
         const redirectTo = formData.get('redirectTo') as string ?? '/app';

@@ -10,8 +10,7 @@
 	} from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Skeleton } from '$lib/components/ui/skeleton';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';	import { PageHeader, EmptyState, LoadingState } from '$lib/components/ui/layouts';
 	let { data } = $props();
 	
 	let searchQuery = $state('');
@@ -55,15 +54,11 @@
 <div class="min-h-[calc(100dvh-4rem)]">
 	<!-- Header Section -->
 	<section class="border-b border-border bg-background px-6 py-8 md:px-12 lg:px-16">
-		<div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-			<div>
-				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// USER MANAGEMENT</span>
-				<h1 class="font-display mt-2 text-2xl font-bold uppercase md:text-3xl">Users</h1>
-				<p class="font-body mt-1 text-sm text-muted-foreground">
-					Manage user accounts, roles, and permissions.
-				</p>
-			</div>
-			<div class="flex items-center gap-3">
+		<PageHeader 
+			title="Users" 
+			description="Manage user accounts, roles, and permissions."
+		>
+			{#snippet actions()}
 				<Button variant="outline" size="sm" class="font-ui text-xs tracking-wider">
 					<Download class="mr-2 h-4 w-4" />
 					EXPORT
@@ -72,8 +67,8 @@
 					<Plus class="mr-2 h-4 w-4" />
 					ADD USER
 				</Button>
-			</div>
-		</div>
+			{/snippet}
+		</PageHeader>
 	</section>
 
 	<!-- Filters Bar -->

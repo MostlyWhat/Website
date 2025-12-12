@@ -2,9 +2,19 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { getOrCreateProfile } from '$lib/server/auth';
 import { logActivity, getClientIp } from '$lib/server/utils/activity-logger';
+import { rateLimiters, getClientIP } from '$lib/server/utils/rate-limiter';
 
 export const actions: Actions = {
     default: async ({ request, locals: { supabase }, url }) => {
+		// Rate limiting - 5 registration attempts per 15 minutes per IP
+		const clientIP = getClientIP(request, request.headers);
+		const rateLimitResult = await rateLimiters.auth.check(clientIP);
+
+		if (!rateLimitResult.success) {
+			const resetInMinutes = Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000 / 60);
+			return fail(429, { error: `Too many registration attempts. Please try again in ${resetInMinutes} minute${resetInMinutes > 1 ? 's' : ''}.` });
+		}
+
         const formData = await request.formData();
         const ipAddress = getClientIp(request);
         const userAgent = request.headers.get('user-agent') ?? undefined;

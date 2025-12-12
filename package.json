@@ -89,6 +89,7 @@
 		"jspdf-autotable": "^5.0.2",
 		"marked": "^17.0.1",
 		"postgres": "^3.4.7",
+		"zod": "^4.1.13",
 		"zod-form-data": "^3.0.1"
 	}
 }

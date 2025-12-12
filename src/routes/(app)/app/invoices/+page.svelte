@@ -4,6 +4,7 @@
 	 */
 	import { Receipt, Clock, CheckCircle, AlertCircle, Calendar, ChevronRight, DollarSign, CreditCard } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { PageHeader, EmptyState } from '$lib/components/ui/layouts';
 
 	let { data } = $props();
 
@@ -52,10 +53,11 @@
 	<!-- Header Section -->
 	<section class="border-b border-border bg-background px-6 py-8 md:px-12 lg:px-16">
 		<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// BILLING</span>
-		<h1 class="font-display mt-2 text-2xl font-bold uppercase md:text-3xl">Invoices</h1>
-		<p class="font-body mt-1 text-sm text-muted-foreground">
-			View and pay your invoices.
-		</p>
+		<PageHeader
+			title="Invoices"
+			description="View and pay your invoices."
+			class="mt-2"
+		/>
 	</section>
 
 	<!-- Outstanding Balance Alert -->

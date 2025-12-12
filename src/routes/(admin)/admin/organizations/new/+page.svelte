@@ -6,13 +6,15 @@
 	 */
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
-	import { Building2, Loader2 } from '@lucide/svelte';
+	import { Building2, Loader2, User, Mail } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
+	import * as Card from '$lib/components/ui/card';
+	import { TextField, SelectField } from '$lib/components/ui/form-fields';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import * as Select from '$lib/components/ui/select';
 	import { toast } from 'svelte-sonner';
-	import CrudCreateLayout from '$lib/components/layout/CrudCreateLayout.svelte';
+	import CreatePageLayout from '$lib/components/layout/CreatePageLayout.svelte';
 
 	let { data, form } = $props();
 
@@ -48,7 +50,7 @@
 	<title>Create Organization | Admin | MostlyWhat Systems</title>
 </svelte:head>
 
-<CrudCreateLayout
+<CreatePageLayout
 	title="Create Organization"
 	description="Add a new client organization to the system."
 	backHref="/admin/organizations"
@@ -230,4 +232,4 @@
 			</div>
 		</div>
 	{/snippet}
-</CrudCreateLayout>
+</CreatePageLayout>

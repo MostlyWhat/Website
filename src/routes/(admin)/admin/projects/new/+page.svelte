@@ -1,20 +1,18 @@
 <script lang="ts">
 	/**
-	 * Admin New Project Page
-	 * 
-	 * Create a new project for an organization.
+	 * Admin New Project Page - Refactored with standardized components
 	 */
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
-	import { 
-		FolderKanban, Save, Loader2, Building2, User,
-		Calendar, DollarSign, AlertCircle
-	} from '@lucide/svelte';
-	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
-	import { Textarea } from '$lib/components/ui/textarea';
+	import { FolderKanban, Save, Loader2, Building2, User, Calendar, DollarSign } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
-	import CrudCreateLayout from '$lib/components/layout/CrudCreateLayout.svelte';
+	import { CreatePageLayout } from '$lib/components/layout';
+	import * as Card from '$lib/components/ui/card';
+	import { Button } from '$lib/components/ui/button';
+	import { TextField, TextareaField } from '$lib/components/ui/form-fields';
+	import { NativeSelect, NativeSelectOption } from '$lib/components/ui/native-select';
+	import { Label } from '$lib/components/ui/label';
+	import { Input } from '$lib/components/ui/input';
 
 	let { data, form } = $props();
 	
@@ -39,24 +37,27 @@
 
 	const currencyOptions = ['USD', 'EUR', 'GBP', 'THB', 'JPY'];
 
-	// Handle success toast and redirect
 	$effect(() => {
 		if (form?.success && form?.message) {
 			toast.success(form.message);
-			window.scrollTo({ top: 0, behavior: 'smooth' });
 			setTimeout(() => goto('/admin/projects'), 1500);
 		}
 	});
 </script>
 
 <svelte:head>
-	<title>New Project | Admin | MostlyWhat Systems</title>
+	<title>New Project | Admin</title>
 </svelte:head>
 
-<CrudCreateLayout
+<CreatePageLayout
 	title="New Project"
-	description="Create a new project for an organization."
+	description="Create a new project for an organization"
 	backHref="/admin/projects"
+	breadcrumbs={[
+		{ label: 'Admin', href: '/admin' },
+		{ label: 'Projects', href: '/admin/projects' },
+		{ label: 'New', href: '/admin/projects/new' }
+	]}
 	errorMessage={form?.error}
 	successMessage={form?.success ? form.message : undefined}
 >
@@ -70,196 +71,154 @@
 					await update();
 				};
 			}}
-			class="space-y-8"
+			class="space-y-6"
 		>
-			<!-- Basic Information -->
-			<div class="space-y-6">
-				<div class="flex items-center gap-3">
-					<div class="flex h-10 w-10 items-center justify-center border border-border bg-card">
+			<Card.Root>
+				<Card.Header>
+					<div class="flex items-center gap-3">
 						<FolderKanban class="h-5 w-5 text-primary" />
+						<div>
+							<Card.Title>Basic Information</Card.Title>
+							<Card.Description>Enter the project details</Card.Description>
+						</div>
 					</div>
-					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">BASIC INFORMATION</span>
-				</div>
+				</Card.Header>
+				<Card.Content class="space-y-4">
+					<TextField
+						name="name"
+						label="Project Name"
+						bind:value={name}
+						placeholder="e.g., Website Redesign"
+						required
+					/>
+					<TextareaField
+						name="description"
+						label="Description"
+						bind:value={description}
+						placeholder="Describe the project scope..."
+						rows={4}
+					/>
+				</Card.Content>
+			</Card.Root>
 
-				<div class="space-y-6">
-					<div>
-						<label for="name" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-							PROJECT NAME *
-						</label>
+			<Card.Root>
+				<Card.Header>
+					<div class="flex items-center gap-3">
+						<DollarSign class="h-5 w-5 text-primary" />
+						<Card.Title>Budget</Card.Title>
+					</div>
+				</Card.Header>
+				<Card.Content>
+					<div class="space-y-2">
+						<Label for="estimatedBudget">Estimated Budget</Label>
 						<Input
-							id="name"
-							name="name"
-							type="text"
-							bind:value={name}
-							placeholder="e.g., Website Redesign"
-							required
-							class="mt-2 h-12 border-border bg-card"
+							id="estimatedBudget"
+							name="estimatedBudget"
+							type="number"
+							step="0.01"
+							bind:value={estimatedBudget}
+							placeholder="0.00"
 						/>
 					</div>
+				</Card.Content>
+			</Card.Root>
 
-					<div>
-						<label for="description" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-							DESCRIPTION
-						</label>
-					<Textarea
-						id="description"
-						name="description"
-						bind:value={description}
-						placeholder="Brief description of the project scope and goals..."
-						rows={4}
-						class="mt-2 border-border bg-card"
-					/>
-				</div>
-				</div>
-			</div>			<!-- Budget -->
-			<div class="space-y-6 border-t border-border pt-8">
-				<div class="flex items-center gap-3">
-					<div class="flex h-10 w-10 items-center justify-center border border-border bg-card">
-						<DollarSign class="h-5 w-5 text-primary" />
-					</div>
-					<span class="font-mono text-[10px] tracking-widest text-muted-foreground">BUDGET</span>
-				</div>
-
-				<div>
-					<label for="estimatedBudget" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-						ESTIMATED BUDGET
-					</label>
-					<Input
-						id="estimatedBudget"
-						name="estimatedBudget"
-						type="number"
-						step="0.01"
-						min="0"
-						bind:value={estimatedBudget}
-						placeholder="0.00"
-						class="mt-2 h-12 border-border bg-card"
-					/>
-				</div>
-			</div>
-
-			<!-- Actions -->
-			<div class="flex items-center gap-4 border-t border-border pt-8">
-				<Button type="submit" disabled={isSubmitting} size="lg">
+			<div class="flex gap-4">
+				<Button type="submit" disabled={isSubmitting}>
 					{#if isSubmitting}
 						<Loader2 class="mr-2 h-4 w-4 animate-spin" />
 						Creating...
 					{:else}
 						<Save class="mr-2 h-4 w-4" />
-						Create Project
+						Create
 					{/if}
 				</Button>
-				<Button href="/admin/projects" variant="outline" size="lg">
-					Cancel
-				</Button>
+				<Button href="/admin/projects" variant="outline">Cancel</Button>
 			</div>
 		</form>
 	{/snippet}
 
 	{#snippet sidebar()}
 		<div class="space-y-6">
-			<!-- Organization -->
-			<div>
-				<label for="organizationId" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-					ORGANIZATION *
-				</label>
-				<select
-					id="organizationId"
-					name="organizationId"
-					bind:value={organizationId}
-					required
-					class="mt-2 w-full h-10 px-3 text-sm border border-border bg-background text-foreground focus:border-primary focus:outline-none"
-				>
-					<option value="">Select organization...</option>
-					{#each data.organizations as org}
-						<option value={org.id}>{org.name}</option>
-					{/each}
-				</select>
-			</div>
-
-			<!-- Status -->
-			<div>
-				<label for="status" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-					STATUS
-				</label>
-				<select
-					id="status"
-					name="status"
-					bind:value={status}
-					class="mt-2 w-full h-10 px-3 text-sm border border-border bg-background text-foreground focus:border-primary focus:outline-none"
-				>
-					{#each statusOptions as option}
-						<option value={option.value}>{option.label}</option>
-					{/each}
-				</select>
-			</div>
-
-			<!-- Assigned To -->
-			<div>
-				<label for="assignedToId" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-					ASSIGNED TO
-				</label>
-				<select
-					id="assignedToId"
-					name="assignedToId"
-					bind:value={assignedToId}
-					class="mt-2 w-full h-10 px-3 text-sm border border-border bg-background text-foreground focus:border-primary focus:outline-none"
-				>
-					<option value="">Unassigned</option>
-					{#each data.staff as member}
-						<option value={member.id}>
-							{member.displayName || `${member.firstName ?? ''} ${member.lastName ?? ''}`.trim() || 'Unknown'}
-						</option>
-					{/each}
-				</select>
-			</div>
-
-			<!-- Timeline -->
-			<div class="border-t border-border pt-6">
-				<span class="font-mono text-[10px] tracking-widest text-muted-foreground mb-3 block">TIMELINE</span>
-				<div class="space-y-4">
-					<div>
-						<label for="startDate" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-							START DATE
-						</label>
-						<Input
-							id="startDate"
-							name="startDate"
-							type="date"
-							bind:value={startDate}
-							class="mt-2 h-10 text-sm border-border bg-background"
-						/>
+			<Card.Root>
+				<Card.Header>
+					<div class="flex items-center gap-3">
+						<Building2 class="h-5 w-5 text-primary" />
+						<Card.Title>Organization</Card.Title>
 					</div>
-					<div>
-						<label for="endDate" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-							END DATE
-						</label>
-						<Input
-							id="endDate"
-							name="endDate"
-							type="date"
-							bind:value={endDate}
-							class="mt-2 h-10 text-sm border-border bg-background"
-						/>
+				</Card.Header>
+				<Card.Content>
+					<div class="space-y-2">
+						<Label for="organizationId">Organization *</Label>
+						<NativeSelect id="organizationId" name="organizationId" bind:value={organizationId} required>
+							<NativeSelectOption value="">Select...</NativeSelectOption>
+							{#each data.organizations as org}
+								<NativeSelectOption value={org.id}>{org.name}</NativeSelectOption>
+							{/each}
+						</NativeSelect>
 					</div>
-				</div>
-			</div>
+				</Card.Content>
+			</Card.Root>
 
-			<!-- Currency -->
-			<div class="border-t border-border pt-6">
-				<label for="currency" class="font-mono text-[10px] tracking-widest text-muted-foreground">
-					CURRENCY
-				</label>
-				<select
-					id="currency"
-					name="currency"
-					bind:value={currency}
-					class="mt-2 w-full h-10 px-3 text-sm border border-border bg-background text-foreground focus:border-primary focus:outline-none"
-				>
-					{#each currencyOptions as curr}
-						<option value={curr}>{curr}</option>
-					{/each}
-				</select>
-			</div>
+			<Card.Root>
+				<Card.Header>
+					<Card.Title>Status & Assignment</Card.Title>
+				</Card.Header>
+				<Card.Content class="space-y-4">
+					<div class="space-y-2">
+						<Label for="status">Status</Label>
+						<NativeSelect id="status" name="status" bind:value={status}>
+							{#each statusOptions as option}
+								<NativeSelectOption value={option.value}>{option.label}</NativeSelectOption>
+							{/each}
+						</NativeSelect>
+					</div>
+					<div class="space-y-2">
+						<Label for="assignedToId">Assigned To</Label>
+						<NativeSelect id="assignedToId" name="assignedToId" bind:value={assignedToId}>
+							<NativeSelectOption value="">Unassigned</NativeSelectOption>
+							{#each data.staff as member}
+								<NativeSelectOption value={member.id}>
+									{member.displayName || 'Unknown'}
+								</NativeSelectOption>
+							{/each}
+						</NativeSelect>
+					</div>
+				</Card.Content>
+			</Card.Root>
+
+			<Card.Root>
+				<Card.Header>
+					<Calendar class="h-5 w-5 text-primary" />
+					<Card.Title>Timeline</Card.Title>
+				</Card.Header>
+				<Card.Content class="space-y-4">
+					<div class="space-y-2">
+						<Label for="startDate">Start Date</Label>
+						<Input id="startDate" name="startDate" type="date" bind:value={startDate} />
+					</div>
+					<div class="space-y-2">
+						<Label for="endDate">End Date</Label>
+						<Input id="endDate" name="endDate" type="date" bind:value={endDate} />
+					</div>
+				</Card.Content>
+			</Card.Root>
+
+			<Card.Root>
+				<Card.Header>
+					<Card.Title>Currency</Card.Title>
+				</Card.Header>
+				<Card.Content>
+					<div class="space-y-2">
+						<Label for="currency">Currency</Label>
+						<NativeSelect id="currency" name="currency" bind:value={currency}>
+							{#each currencyOptions as curr}
+								<NativeSelectOption value={curr}>{curr}</NativeSelectOption>
+							{/each}
+						</NativeSelect>
+					</div>
+				</Card.Content>
+			</Card.Root>
 		</div>
 	{/snippet}
-</CrudCreateLayout>
+</CreatePageLayout>

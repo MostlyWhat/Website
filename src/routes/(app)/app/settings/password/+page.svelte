@@ -8,6 +8,7 @@
 	import { KeyRound, Loader2, AlertTriangle, Check } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
+	import { PageSection } from '$lib/components/ui/layouts';
 
 	let { form } = $props();
 

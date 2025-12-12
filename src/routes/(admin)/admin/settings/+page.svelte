@@ -13,6 +13,7 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import * as Card from '$lib/components/ui/card';
+	import { PageHeader, PageSection } from '$lib/components/ui/layouts';
 
 	let { data } = $props();
 	

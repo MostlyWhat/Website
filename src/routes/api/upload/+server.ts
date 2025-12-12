@@ -1,7 +1,10 @@
 /**
  * File Upload API
  * 
- * Handles file uploads to Supabase Storage.
+ * Handles file uploads to Supabase Storage with security:
+ * - Rate limiting: 10 uploads per hour per user
+ * - File content validation (magic number checks)
+ * - Size and type restrictions
  * Files are organized by entity type (ticket, project, etc.)
  */
 
@@ -10,6 +13,8 @@ import type { RequestHandler } from './$types';
 import { createDb } from '$lib/server/db';
 import { fileUploads } from '$lib/server/db/schema';
 import { createSupabaseAdminClient } from '$lib/server/auth/supabase';
+import { rateLimiters, getClientIP } from '$lib/server/utils/rate-limiter';
+import { validateUploadedFile, sanitizeFilename, ALLOWED_FILE_TYPES } from '$lib/server/utils/file-security';
 
 // File size limit: 10MB
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
@@ -42,6 +47,16 @@ export const POST: RequestHandler = async ({ request, locals }) => {
         error(403, 'Please complete onboarding first');
     }
 
+    // Rate limiting - 10 uploads per hour per user
+    const clientIP = getClientIP(request, request.headers);
+    const rateLimitKey = `${clientIP}:${locals.user.id}`;
+    const rateLimitResult = await rateLimiters.upload.check(rateLimitKey);
+    
+    if (!rateLimitResult.success) {
+        const resetInMinutes = Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000 / 60);
+        error(429, `Too many uploads. Please try again in ${resetInMinutes} minute${resetInMinutes > 1 ? 's' : ''}.`);
+    }
+
     try {
         const formData = await request.formData();
         const file = formData.get('file') as File | null;
@@ -62,19 +77,31 @@ export const POST: RequestHandler = async ({ request, locals }) => {
             error(400, 'Invalid entity type');
         }
 
-        // Validate file size
-        if (file.size > MAX_FILE_SIZE) {
-            error(400, `File too large. Maximum size is ${MAX_FILE_SIZE / 1024 / 1024}MB`);
+        // Determine file category for validation
+        let fileCategory: 'image' | 'document' | 'archive' = 'document';
+        if (file.type.startsWith('image/')) {
+            fileCategory = 'image';
+        } else if (file.type.includes('zip') || file.type.includes('compressed')) {
+            fileCategory = 'archive';
         }
 
-        // Validate file type
-        if (!ALLOWED_TYPES.includes(file.type)) {
-            error(400, 'File type not allowed. Supported types: images, PDF, documents, spreadsheets, ZIP');
+        // Comprehensive file validation (content, size, type)
+        const allowedTypes = fileCategory === 'image' 
+            ? ALLOWED_FILE_TYPES.images 
+            : [...ALLOWED_FILE_TYPES.documents, ...ALLOWED_FILE_TYPES.archives];
+            
+        const fileValidation = await validateUploadedFile(file, {
+            allowedTypes,
+            category: fileCategory
+        });
+
+        if (!fileValidation.valid) {
+            error(400, `File validation failed: ${fileValidation.errors.join(', ')}`);
         }
 
-        // Create unique file path
+        // Sanitize filename to prevent path traversal attacks
+        const sanitizedFileName = sanitizeFilename(file.name);
         const timestamp = Date.now();
-        const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
         const storagePath = `${entityType}/${entityId}/${timestamp}_${sanitizedFileName}`;
 
         // Get file buffer

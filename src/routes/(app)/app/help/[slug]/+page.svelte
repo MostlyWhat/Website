@@ -8,6 +8,7 @@
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import { renderStyledMarkdown } from '$lib/utils/markdown';
 	import { ArrowLeft, ThumbsUp, ThumbsDown, Clock, FileText, ArrowRight, Tag } from '@lucide/svelte';
+	import { PageHeader } from '$lib/components/ui/layouts';
 
 	let { data, form } = $props();
 

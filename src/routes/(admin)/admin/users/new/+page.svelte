@@ -4,10 +4,12 @@
 	 */
 	import { User, Shield, Mail, Phone, Save, Loader2 } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
+	import * as Card from '$lib/components/ui/card';
+	import { TextField } from '$lib/components/ui/form-fields';
 	import { enhance } from '$app/forms';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
-	import CrudCreateLayout from '$lib/components/layout/CrudCreateLayout.svelte';
+	import CreatePageLayout from '$lib/components/layout/CreatePageLayout.svelte';
 
 	type FormReturn = {
 		error?: string;
@@ -45,7 +47,7 @@
 	<title>Add User | Admin | MostlyWhat Systems</title>
 </svelte:head>
 
-<CrudCreateLayout
+<CreatePageLayout
 	title="Add New User"
 	description="Create a new user account and assign their role."
 	backHref="/admin/users"
@@ -229,4 +231,4 @@
 			</div>
 		</div>
 	{/snippet}
-</CrudCreateLayout>
+</CreatePageLayout>

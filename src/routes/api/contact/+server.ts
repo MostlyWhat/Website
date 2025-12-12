@@ -4,6 +4,8 @@ import { createDb } from '$lib/server/db';
 import { contactSubmissions } from '$lib/server/db/schema';
 import { siteConfig } from '$lib/config/site';
 import { logActivity } from '$lib/server/utils/activity-logger';
+import { rateLimiters, getClientIP } from '$lib/server/utils/rate-limiter';
+import { contactSchema, validateRequest } from '$lib/server/utils/validation';
 
 interface ContactFormData {
     name?: string;
@@ -22,38 +24,65 @@ interface ContactFormData {
 
 export const POST: RequestHandler = async ({ request, getClientAddress }) => {
     try {
+        // Rate limiting - 5 requests per 10 minutes
+        const clientIP = getClientIP(request, request.headers);
+        const rateLimitResult = await rateLimiters.contact.check(clientIP);
+        
+        if (!rateLimitResult.success) {
+            const resetInMinutes = Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000 / 60);
+            return json(
+                { 
+                    error: `Too many requests. Please try again in ${resetInMinutes} minute${resetInMinutes > 1 ? 's' : ''}.`,
+                    retryAfter: rateLimitResult.resetTime
+                },
+                { 
+                    status: 429,
+                    headers: {
+                        'X-RateLimit-Remaining': '0',
+                        'X-RateLimit-Reset': new Date(rateLimitResult.resetTime).toISOString()
+                    }
+                }
+            );
+        }
+
         const body = await request.json() as ContactFormData;
-        const {
-            name,
-            email,
-            company,
-            phone,
-            message,
-            topic = 'general',
-            subject,
-            projectType,
-            budget,
-            timeline,
-            orderId,
-            urgency
-        } = body;
-
-        // Validate required fields
-        if (!name || !email || !message) {
+        
+        // Validate request with Zod schema
+        const validation = await validateRequest(contactSchema, {
+            name: body.name,
+            email: body.email,
+            subject: body.subject || body.topic || 'General inquiry',
+            message: body.message,
+            phone: body.phone,
+            company: body.company,
+            orderId: body.orderId
+        });
+        
+        if (!validation.success) {
+            const errors = validation.errors.issues.map((err: any) => `${err.path.join('.')}: ${err.message}`);
             return json(
-                { error: 'Missing required fields: name, email, and message are required' },
+                { 
+                    error: 'Validation failed',
+                    details: errors
+                },
                 { status: 400 }
             );
         }
-
-        // Validate email format
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            return json(
-                { error: 'Invalid email format' },
-                { status: 400 }
-            );
-        }
+        
+        const validatedData = validation.data;
+        const name = validatedData.name;
+        const email = validatedData.email;
+        const company = validatedData.company;
+        const phone = validatedData.phone;
+        const message = validatedData.message;
+        const subject = validatedData.subject;
+        const orderId = validatedData.orderId;
+        
+        const topic = body.topic || 'general';
+        const projectType = body.projectType;
+        const budget = body.budget;
+        const timeline = body.timeline;
+        const urgency = body.urgency;
 
         // Validate topic if provided
         const validTopics = ['quote', 'support', 'general', 'partnership', 'feedback'];
@@ -135,6 +164,11 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
             success: true,
             message: 'Thank you for your message. We will get back to you within 24 hours!',
             submissionId: submission.id
+        }, {
+            headers: {
+                'X-RateLimit-Remaining': String(rateLimitResult.remaining),
+                'X-RateLimit-Reset': new Date(rateLimitResult.resetTime).toISOString()
+            }
         });
     } catch (error) {
         console.error('Contact form error:', error);

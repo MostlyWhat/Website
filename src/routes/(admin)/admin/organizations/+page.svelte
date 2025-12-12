@@ -7,6 +7,7 @@
 		ChevronRight, Globe, Mail, Phone, Filter
 	} from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { PageHeader, EmptyState } from '$lib/components/ui/layouts';
 
 	let { data } = $props();
 	
@@ -40,19 +41,19 @@
 <div class="min-h-[calc(100dvh-4rem)]">
 	<!-- Header Section -->
 	<section class="border-b border-border bg-background px-6 py-8 md:px-12 lg:px-16">
-		<div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-			<div>
-				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// ORGANIZATION MANAGEMENT</span>
-				<h1 class="font-display mt-2 text-2xl font-bold uppercase md:text-3xl">Organizations</h1>
-				<p class="font-body mt-1 text-sm text-muted-foreground">
-					Manage client companies and their members.
-				</p>
-			</div>
-			<Button href="/admin/organizations/new" size="sm" class="font-ui text-xs tracking-wider">
-				<Plus class="mr-2 h-4 w-4" />
-				ADD ORGANIZATION
-			</Button>
-		</div>
+		<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// ORGANIZATION MANAGEMENT</span>
+		<PageHeader
+			title="Organizations"
+			description="Manage client companies and their members."
+			class="mt-2"
+		>
+			{#snippet actions()}
+				<Button href="/admin/organizations/new" size="sm" class="font-ui text-xs tracking-wider">
+					<Plus class="mr-2 h-4 w-4" />
+					ADD ORGANIZATION
+				</Button>
+			{/snippet}
+		</PageHeader>
 	</section>
 
 	<!-- Search Bar -->

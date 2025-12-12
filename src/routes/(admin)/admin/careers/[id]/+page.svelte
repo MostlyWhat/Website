@@ -28,6 +28,7 @@
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { NativeSelect } from '$lib/components/ui/native-select';
 	import type { PageData } from './$types';
+	import { PageHeader, ActionButtons } from '$lib/components/ui/layouts';
 
 	let { data }: { data: PageData } = $props();
 

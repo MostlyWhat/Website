@@ -7,6 +7,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { PhaseBadge, PhaseTimeline } from '$lib/components/ui/phase-badge';
 	import { cn } from '$lib/utils';
+	import { PageHeader, PageSection } from '$lib/components/ui/layouts';
 
 	let { data } = $props();
 

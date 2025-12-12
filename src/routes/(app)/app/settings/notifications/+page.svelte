@@ -8,6 +8,7 @@
 	import { Bell, Mail, Loader2, Check, AlertTriangle, Ticket, FolderKanban, Receipt, Megaphone } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Switch } from '$lib/components/ui/switch';
+	import { PageSection } from '$lib/components/ui/layouts';
 
 	let { data, form } = $props();
 

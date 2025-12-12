@@ -10,6 +10,7 @@
 		TrendingUp, Clock, CheckCircle, AlertCircle, ArrowRight, Plus, Activity
 	} from '@lucide/svelte';
 	import { Skeleton } from '$lib/components/ui/skeleton';
+	import { PageHeader } from '$lib/components/ui/layouts';
 
 	let { data } = $props();
 

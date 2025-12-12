@@ -8,6 +8,7 @@
 	import { ShieldCheck, Smartphone, Loader2, AlertTriangle, Check, Copy, Key, X, Info } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
+	import { PageSection } from '$lib/components/ui/layouts';
 
 	let { data, form } = $props();
 

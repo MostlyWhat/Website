@@ -7,6 +7,7 @@
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import { FolderKanban, FileText, Receipt, Ticket, Clock, CheckCircle, ArrowRight, Plus } from '@lucide/svelte';
 	import { Skeleton } from '$lib/components/ui/skeleton';
+	import { PageHeader } from '$lib/components/ui/layouts';
 
 	let { data } = $props();
 

@@ -5,6 +5,7 @@
 	import { Ticket, Plus, Clock, CheckCircle, MessageSquare, ChevronRight, AlertTriangle, User } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Skeleton } from '$lib/components/ui/skeleton';
+	import { PageHeader, EmptyState, LoadingState } from '$lib/components/ui/layouts';
 
 	let { data } = $props();
 
@@ -56,19 +57,17 @@
 <div class="min-h-[calc(100dvh-4rem)]">
 	<!-- Header Section -->
 	<section class="border-b border-border bg-background px-6 py-8 md:px-12 lg:px-16">
-		<div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-			<div>
-				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// SUPPORT</span>
-				<h1 class="font-display mt-2 text-2xl font-bold uppercase md:text-3xl">Support Tickets</h1>
-				<p class="font-body mt-1 text-sm text-muted-foreground">
-					Get help with your projects and services.
-				</p>
-			</div>
-			<Button href="/app/tickets/new" size="sm" class="font-ui text-xs tracking-wider">
-				<Plus class="mr-2 h-4 w-4" />
-				NEW TICKET
-			</Button>
-		</div>
+		<PageHeader 
+			title="Support Tickets" 
+			description="Get help with your projects and services."
+		>
+			{#snippet actions()}
+				<Button href="/app/tickets/new" size="sm" class="font-ui text-xs tracking-wider">
+					<Plus class="mr-2 h-4 w-4" />
+					NEW TICKET
+				</Button>
+			{/snippet}
+		</PageHeader>
 	</section>
 
 	<!-- Response Needed Alert -->
@@ -194,19 +193,13 @@
 					{/each}
 				</div>
 			{:else}
-				<div class="flex flex-col items-center justify-center py-16">
-					<div class="flex h-16 w-16 items-center justify-center border border-border bg-card">
-						<Ticket class="h-8 w-8 text-muted-foreground/50" />
-					</div>
-					<h3 class="font-ui mt-6 text-lg font-semibold tracking-wider">NO TICKETS YET</h3>
-					<p class="font-body mt-2 text-sm text-muted-foreground">
-						Need help? Create a support ticket.
-					</p>
-					<Button href="/app/tickets/new" class="mt-6 font-ui text-xs tracking-wider">
-						<Plus class="mr-2 h-4 w-4" />
-						NEW TICKET
-					</Button>
-				</div>
+				<EmptyState
+					icon={Ticket}
+					title="NO TICKETS YET"
+					description="Need help? Create a support ticket."
+					actionText="NEW TICKET"
+					onAction={() => window.location.href = '/app/tickets/new'}
+				/>
 			{/if}
 		</section>
 	{/await}

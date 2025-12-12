@@ -9,8 +9,7 @@
 	import { User, Loader2, AlertTriangle, Check, Key } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
-	import ApiKeysSettings from '$lib/components/settings/ApiKeysSettings.svelte';
-
+	import ApiKeysSettings from '$lib/components/settings/ApiKeysSettings.svelte';	import { PageSection } from '$lib/components/ui/layouts';
 	let { data, form } = $props();
 
 	let profileLoading = $state(false);

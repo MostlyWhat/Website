@@ -115,11 +115,58 @@ const handleSupabase: Handle = async ({ event, resolve }) => {
 		event.locals.profile = null;
 	}
 
-	return resolve(event, {
+	const response = await resolve(event, {
 		filterSerializedResponseHeaders(name) {
 			// Supabase libraries use these headers
 			return name === 'content-range' || name === 'x-supabase-api-version';
 		}
+	});
+	
+	// Add security headers to all responses
+	const headers = new Headers(response.headers);
+	
+	// Strict-Transport-Security: Force HTTPS
+	headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+	
+	// X-Frame-Options: Prevent clickjacking
+	headers.set('X-Frame-Options', 'SAMEORIGIN');
+	
+	// X-Content-Type-Options: Prevent MIME sniffing
+	headers.set('X-Content-Type-Options', 'nosniff');
+	
+	// Referrer-Policy: Control referer information
+	headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+	
+	// Permissions-Policy: Control browser features
+	headers.set(
+		'Permissions-Policy',
+		'camera=(), microphone=(), geolocation=(), interest-cohort=()'
+	);
+	
+	// Content-Security-Policy: Mitigate XSS and injection attacks
+	const isDev = event.url.hostname === 'localhost' || event.url.hostname === '127.0.0.1';
+	const cspDirectives = [
+		"default-src 'self'",
+		isDev 
+			? "script-src 'self' 'unsafe-inline' 'unsafe-eval'" // Dev needs eval for HMR
+			: "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com",
+		"style-src 'self' 'unsafe-inline'",
+		"img-src 'self' data: https: blob:",
+		"font-src 'self' data:",
+		"connect-src 'self' https://*.supabase.co wss://*.supabase.co https://challenges.cloudflare.com",
+		"frame-src 'self' https://challenges.cloudflare.com",
+		"object-src 'none'",
+		"base-uri 'self'",
+		"form-action 'self'",
+		"frame-ancestors 'self'",
+		"upgrade-insecure-requests"
+	];
+	headers.set('Content-Security-Policy', cspDirectives.join('; '));
+	
+	return new Response(response.body, {
+		status: response.status,
+		statusText: response.statusText,
+		headers
 	});
 };
 

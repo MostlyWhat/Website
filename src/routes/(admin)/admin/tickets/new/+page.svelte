@@ -2,14 +2,17 @@
 	/**
 	 * Admin - Create New Ticket Page
 	 */
-	import { Send, Loader2, AlertTriangle, Flag } from '@lucide/svelte';
+	import { Send, Loader2, AlertTriangle, Flag, Building2, User as UserIcon } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
+	import * as Card from '$lib/components/ui/card';
+	import { TextField, TextareaField, SelectField } from '$lib/components/ui/form-fields';
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import { RichTextEditor } from '$lib/components/ui/rich-text-editor';
 	import { toast } from 'svelte-sonner';
-	import CrudCreateLayout from '$lib/components/layout/CrudCreateLayout.svelte';
+	import CreatePageLayout from '$lib/components/layout/CreatePageLayout.svelte';
 	import type { PageData } from './$types';
+	import { ActionButtons } from '$lib/components/ui/layouts';
 
 	type FormReturn = {
 		error?: string;
@@ -63,7 +66,7 @@
 	<title>New Ticket | Admin</title>
 </svelte:head>
 
-<CrudCreateLayout
+<CreatePageLayout
 	title="Create Ticket"
 	description="Create a new support ticket on behalf of a user."
 	backHref="/admin/tickets"
@@ -249,4 +252,4 @@
 			</div>
 		</div>
 	{/snippet}
-</CrudCreateLayout>
+</CreatePageLayout>

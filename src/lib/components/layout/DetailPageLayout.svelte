@@ -1,15 +1,13 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import { ArrowLeft } from '@lucide/svelte';
+	import { Button } from '$lib/components/ui/button';
+	import { Breadcrumbs } from '$lib/components/ui/navigation';
 
 	/**
-	 * CrudDetailLayout - Standardized layout for viewing entity details
+	 * DetailPageLayout - Standardized layout for viewing entity details
 	 * 
-	 * Features:
-	 * - Flexible header area with custom content
-	 * - Main content + Sidebar layout
-	 * - Responsive stacking
-	 * - Consistent spacing
+	 * Uses standardized ui components for consistency
 	 * 
 	 * @example
 	 * <CrudDetailLayout
@@ -23,7 +21,7 @@
 	 *     <div>Ticket details...</div>
 	 *   {/snippet}
 	 *   {#snippet sidebar()}
-	 *     <SidebarSection title="Metadata">...</SidebarSection>
+	 *     <Card.Root>...</Card.Root>
 	 *   {/snippet}
 	 * </CrudDetailLayout>
 	 */
@@ -34,6 +32,8 @@
 		backHref: string;
 		/** Back button label */
 		backLabel?: string;
+		/** Breadcrumbs for navigation */
+		breadcrumbs?: Array<{ label: string; href: string }>;
 		/** Show sidebar (default: true) */
 		showSidebar?: boolean;
 		/** Custom header content (badges, breadcrumbs, etc.) */
@@ -50,6 +50,7 @@
 		title,
 		backHref,
 		backLabel,
+		breadcrumbs,
 		showSidebar = true,
 		header,
 		children,
@@ -72,14 +73,21 @@
 <div class="min-h-[calc(100dvh-4rem)] {className}">
 	<!-- Header Section -->
 	<header class="border-b border-border bg-background px-6 py-8 md:px-12 lg:px-16">
-		<a
-			href={backHref}
-			class="group inline-flex items-center gap-2 text-muted-foreground transition-colors hover:text-foreground"
-		>
-			<ArrowLeft class="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-			<span class="font-mono text-[10px] tracking-widest uppercase">{autoBackLabel()}</span>
-		</a>
-		<h1 class="font-display mt-6 text-2xl font-bold uppercase md:text-3xl">{title}</h1>
+		{#if breadcrumbs}
+			<Breadcrumbs items={breadcrumbs} showBackButton class="mb-4" />
+		{:else}
+			<Button
+				href={backHref}
+				variant="ghost"
+				size="sm"
+				class="mb-4 gap-2"
+			>
+				<ArrowLeft class="h-4 w-4" />
+				{autoBackLabel()}
+			</Button>
+		{/if}
+		
+		<h1 class="font-display text-3xl font-bold uppercase md:text-4xl">{title}</h1>
 		
 		{#if header}
 			<div class="mt-4">

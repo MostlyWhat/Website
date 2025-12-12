@@ -5,8 +5,7 @@
 	import { FolderKanban, Clock, CheckCircle, Calendar, User, ChevronRight, AlertCircle, Pause, Plus, FileText, Eye, X } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { PhaseBadge, PhaseTimeline } from '$lib/components/ui/phase-badge';
-	import { Skeleton } from '$lib/components/ui/skeleton';
-
+	import { Skeleton } from '$lib/components/ui/skeleton';	import { PageHeader, EmptyState } from '$lib/components/ui/layouts';
 	let { data } = $props();
 
 	// Access streamed data
@@ -42,19 +41,17 @@
 <div class="min-h-[calc(100dvh-4rem)]">
 	<!-- Header Section -->
 	<section class="border-b border-border bg-background px-6 py-8 md:px-12 lg:px-16">
-		<div class="flex items-start justify-between gap-4">
-			<div>
-				<span class="font-mono text-[10px] tracking-widest text-muted-foreground">// YOUR PROJECTS</span>
-				<h1 class="font-display mt-2 text-2xl font-bold uppercase md:text-3xl">Projects</h1>
-				<p class="font-body mt-1 text-sm text-muted-foreground">
-					View and track all your active and completed projects.
-				</p>
-			</div>
-			<Button href="/app/projects/new" class="font-ui text-xs tracking-wider">
-				<Plus class="mr-2 h-4 w-4" />
-				REQUEST PROJECT
-			</Button>
-		</div>
+		<PageHeader 
+			title="Projects" 
+			description="View and track all your active and completed projects."
+		>
+			{#snippet actions()}
+				<Button href="/app/projects/new" class="font-ui text-xs tracking-wider">
+					<Plus class="mr-2 h-4 w-4" />
+					REQUEST PROJECT
+				</Button>
+			{/snippet}
+		</PageHeader>
 	</section>
 
 	{#await streamedData}

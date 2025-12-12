@@ -7,13 +7,16 @@
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import { localizeHref } from '$lib/paraglide/runtime';
-	import { Save, Users, Shield, Globe } from '@lucide/svelte';
-	import { RichTextEditor } from '$lib/components/ui/rich-text-editor';
+	import { Save, Users, Shield, Globe, FileText } from '@lucide/svelte';
+	import * as Card from '$lib/components/ui/card';
+	import { TextField, TextareaField, SelectField, CheckboxField, SwitchField } from '$lib/components/ui/form-fields';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { Textarea } from '$lib/components/ui/textarea';
+	import { RichTextEditor } from '$lib/components/ui/rich-text-editor';
 	import { toast } from 'svelte-sonner';
-	import CrudCreateLayout from '$lib/components/layout/CrudCreateLayout.svelte';
+	import CreatePageLayout from '$lib/components/layout/CreatePageLayout.svelte';
+	import { ActionButtons } from '$lib/components/ui/layouts';
 
 	let { data, form } = $props<{
 		data: { categories?: string[]; defaultCategories?: string[] };
@@ -69,7 +72,7 @@
 	<title>New Article | Knowledge Base | Admin | MostlyWhat Systems</title>
 </svelte:head>
 
-<CrudCreateLayout
+<CreatePageLayout
 	title="Create Article"
 	description="Add a new article to the knowledge base."
 	backHref={localizeHref('/admin/knowledge-base')}
@@ -309,4 +312,4 @@
 			</div>
 		</div>
 	{/snippet}
-</CrudCreateLayout>
+</CreatePageLayout>

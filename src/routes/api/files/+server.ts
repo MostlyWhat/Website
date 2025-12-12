@@ -9,8 +9,9 @@ import type { RequestHandler } from './$types';
 import { createDb } from '$lib/server/db';
 import { fileUploads, profiles } from '$lib/server/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
+import { rateLimiters, getClientIP } from '$lib/server/utils/rate-limiter';
 
-export const GET: RequestHandler = async ({ url, locals }) => {
+export const GET: RequestHandler = async ({ url, locals, request }) => {
     // Verify authentication
     if (!locals.user || !locals.profile) {
         error(401, 'Authentication required');
@@ -20,6 +21,16 @@ export const GET: RequestHandler = async ({ url, locals }) => {
     if (!locals.profile.onboardingCompleted) {
         error(403, 'Please complete onboarding first');
     }
+
+	// Rate limiting - 100 API requests per minute per user
+	const clientIP = getClientIP(request, request.headers);
+	const rateLimitKey = `${clientIP}:${locals.user.id}`;
+	const rateLimitResult = await rateLimiters.api.check(rateLimitKey);
+
+	if (!rateLimitResult.success) {
+		const resetInSeconds = Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000);
+		error(429, `Too many requests. Please try again in ${resetInSeconds} seconds.`);
+	}
 
     // Create per-request database connection
     const db = createDb();

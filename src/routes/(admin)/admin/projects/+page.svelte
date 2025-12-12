@@ -10,6 +10,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { PhaseBadge, PhaseTimeline, PHASES_ORDER, getPhaseConfig } from '$lib/components/ui/phase-badge';
 	import type { ProjectPhase } from '$lib/server/db/schema';
+	import { PageHeader, EmptyState } from '$lib/components/ui/layouts';
 
 	let { data } = $props();
 	

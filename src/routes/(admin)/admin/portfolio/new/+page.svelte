@@ -5,10 +5,13 @@
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import { localizeHref } from '$lib/paraglide/runtime';
-	import { Save, Briefcase, Image, Tag, Settings, Link } from '@lucide/svelte';
+	import { Save, Briefcase, Image, Tag, Settings, Link, Globe } from '@lucide/svelte';
+	import * as Card from '$lib/components/ui/card';
+	import { TextField, TextareaField, SelectField, CheckboxField } from '$lib/components/ui/form-fields';
 	import { RichTextEditor } from '$lib/components/ui/rich-text-editor';
 	import { toast } from 'svelte-sonner';
-	import CrudCreateLayout from '$lib/components/layout/CrudCreateLayout.svelte';
+	import CreatePageLayout from '$lib/components/layout/CreatePageLayout.svelte';
+	import { ActionButtons } from '$lib/components/ui/layouts';
 
 	let { data, form } = $props();
 
@@ -54,7 +57,7 @@
 	<title>New Portfolio Project | Admin | MostlyWhat Systems</title>
 </svelte:head>
 
-<CrudCreateLayout
+<CreatePageLayout
 	title="New Portfolio Project"
 	description="Showcase a new project in your portfolio."
 	backHref={localizeHref('/admin/portfolio')}
@@ -353,4 +356,4 @@
 			</div>
 		</div>
 	{/snippet}
-</CrudCreateLayout>
+</CreatePageLayout>

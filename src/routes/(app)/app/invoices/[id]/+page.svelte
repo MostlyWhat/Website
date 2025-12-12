@@ -3,6 +3,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import PaymentMethodSelector from '$lib/components/payment/PaymentMethodSelector.svelte';
 	import WireTransferInstructions from '$lib/components/payment/WireTransferInstructions.svelte';
+	import { PageHeader, ActionButtons } from '$lib/components/ui/layouts';
 
 	let { data } = $props();
 

@@ -1,7 +1,9 @@
-import { json } from '@sveltejs/kit';
+import { json, error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { parseFrontmatter, extractSlugFromPath, generateExcerpt } from '$lib/utils/markdown';
 import { siteConfig } from '$lib/config/site';
+import { rateLimiters, getClientIP } from '$lib/server/utils/rate-limiter';
+import { searchSchema } from '$lib/server/utils/validation';
 
 // Content index - built at startup
 interface ContentItem {
@@ -270,16 +272,37 @@ function search(query: string, filter?: string, limit = 20): Array<{
     });
 }
 
-export const GET: RequestHandler = async ({ url }) => {
-    const query = url.searchParams.get('q') || '';
-    const filter = url.searchParams.get('filter') || 'all';
-    const limit = parseInt(url.searchParams.get('limit') || '20', 10);
+export const GET: RequestHandler = async ({ url, request }) => {
+	// Rate limiting - 30 searches per minute per IP
+	const clientIP = getClientIP(request, request.headers);
+	const rateLimitResult = await rateLimiters.search.check(clientIP);
 
-    const results = search(query, filter, limit);
+	if (!rateLimitResult.success) {
+		const resetInSeconds = Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000);
+		error(429, `Too many search requests. Please try again in ${resetInSeconds} seconds.`);
+	}
 
-    return json({
-        query,
-        results,
-        total: results.length
-    });
+	// Validate and parse query parameters
+	const params = {
+		query: url.searchParams.get('q') || '',
+		type: url.searchParams.get('filter') || 'all',
+		limit: parseInt(url.searchParams.get('limit') || '20', 10)
+	};
+
+	// Validate input
+	const validation = searchSchema.safeParse(params);
+	if (!validation.success) {
+		const errorMessages = validation.error.issues.map((issue: { message: string }) => issue.message).join(', ');
+		error(400, `Invalid search parameters: ${errorMessages}`);
+	}
+
+	const { query, type, limit } = validation.data;
+	const filter = type === 'all' ? 'all' : type;
+	const results = search(query, filter, limit);
+
+	return json({
+		query,
+		results,
+		total: results.length
+	});
 };

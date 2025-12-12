@@ -97,16 +97,16 @@ async function retryFailedWebhooks() {
  */
 async function retryWebhook(deliveryId: string, url: string, payload: any) {
 	const db = createDb();
-	
+
 	try {
 		const response = await fetch(url, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(payload),
 		});
-		
+
 		const status = response.ok ? 'delivered' : 'failed';
-		
+
 		await db.update(webhookDeliveries)
 			.set({
 				status,
@@ -116,7 +116,7 @@ async function retryWebhook(deliveryId: string, url: string, payload: any) {
 				deliveredAt: status === 'delivered' ? new Date() : null,
 			})
 			.where(eq(webhookDeliveries.id, deliveryId));
-			
+
 		return status === 'delivered';
 	} catch (error) {
 		await db.update(webhookDeliveries)
@@ -126,7 +126,7 @@ async function retryWebhook(deliveryId: string, url: string, payload: any) {
 				errorMessage: error instanceof Error ? error.message : 'Unknown error',
 			})
 			.where(eq(webhookDeliveries.id, deliveryId));
-			
+
 		throw error;
 	}
 }
@@ -143,16 +143,16 @@ async function retryWebhook(deliveryId: string, url: string, payload: any) {
  */
 async function performDailyBackup() {
 	console.log('Starting daily backup...');
-	
+
 	// When implementing, create a backups table with:
 	// - id, created_at, backup_size, storage_path, status, error_message
-	
+
 	// Example implementation:
 	// const backupData = await exportDatabaseSnapshot();
 	// const storageKey = `backups/db-${new Date().toISOString()}.sql.gz`;
 	// await uploadToR2(storageKey, backupData);
 	// await trackBackupRecord(storageKey, backupData.size);
-	
+
 	console.log('Backup functionality pending - requires backups table and R2 bucket setup');
 }
 
@@ -162,7 +162,7 @@ async function performDailyBackup() {
  */
 async function cleanupOldBackups() {
 	console.log('Cleaning up old backups...');
-	
+
 	// When implementing:
 	// const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 	// const oldBackups = await db.select().from(backups).where(lt(backups.createdAt, thirtyDaysAgo));
@@ -170,7 +170,7 @@ async function cleanupOldBackups() {
 	//   await deleteFromR2(backup.storagePath);
 	//   await db.delete(backups).where(eq(backups.id, backup.id));
 	// }
-	
+
 	console.log('Backup cleanup pending - requires backups table');
 }
 

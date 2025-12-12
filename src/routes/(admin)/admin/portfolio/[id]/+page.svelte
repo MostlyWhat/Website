@@ -6,6 +6,7 @@
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import { ChevronLeft, Save, Trash2, Eye, ExternalLink, Briefcase, Image, Tag, Settings, Link, Upload } from '@lucide/svelte';
 	import { RichTextEditor } from '$lib/components/ui/rich-text-editor';
+	import { PageHeader, ActionButtons } from '$lib/components/ui/layouts';
 
 	let { data, form } = $props();
 

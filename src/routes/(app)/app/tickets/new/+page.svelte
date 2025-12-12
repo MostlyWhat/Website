@@ -5,8 +5,7 @@
 	import { ArrowLeft, Send, Loader2, Paperclip, AlertTriangle, AlertCircle, BookOpen, ChevronRight, X, Upload, File as FileIcon, Image, FileText } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { enhance } from '$app/forms';
-	import { RichTextEditor } from '$lib/components/ui/rich-text-editor';
-
+	import { RichTextEditor } from '$lib/components/ui/rich-text-editor';	import { PageHeader, ActionButtons } from '$lib/components/ui/layouts';
 	type FormReturn = {
 		error?: string;
 		subject?: string;

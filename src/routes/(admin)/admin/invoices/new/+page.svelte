@@ -9,7 +9,8 @@
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import { Save, Plus, Trash2, DollarSign, Calendar, RefreshCw } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
-	import CrudCreateLayout from '$lib/components/layout/CrudCreateLayout.svelte';
+	import CreatePageLayout from '$lib/components/layout/CreatePageLayout.svelte';
+	import { ActionButtons } from '$lib/components/ui/layouts';
 
 	let { data, form } = $props();
 
@@ -107,7 +108,7 @@
 	<title>New Invoice | Admin | MostlyWhat Systems</title>
 </svelte:head>
 
-<CrudCreateLayout
+<CreatePageLayout
 	title="Create Invoice"
 	description="Generate a new invoice for a client or project."
 	backHref={localizeHref('/admin/invoices')}
@@ -473,4 +474,4 @@
 			</div>
 		</div>
 	{/snippet}
-</CrudCreateLayout>
+</CreatePageLayout>

@@ -7,6 +7,7 @@
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import { page } from '$app/state';
 	import { BookOpen, Search, HelpCircle, FileText, Rocket, CreditCard, Settings, MessageCircle, ArrowRight, ExternalLink, Wrench, ChevronLeft, X } from '@lucide/svelte';
+	import { PageHeader } from '$lib/components/ui/layouts';
 
 	let { data } = $props();
 

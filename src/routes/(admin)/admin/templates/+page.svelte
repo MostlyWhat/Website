@@ -6,6 +6,7 @@
 	import { ArrowLeft, Plus, Edit2, Trash2, Eye, EyeOff, FileText, TrendingUp, X } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Textarea } from '$lib/components/ui/textarea';
+	import { PageHeader, EmptyState } from '$lib/components/ui/layouts';
 
 	let { data, form } = $props();
 
