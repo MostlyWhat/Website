@@ -2234,36 +2234,198 @@ export const load = async ({ locals }) => {
 
 #### 5. Edge Caching with Cloudflare Workers
 
+**Multi-Layer Caching Strategy:**
+
+The architecture implements caching at multiple levels for maximum speed:
+
+1. **Browser Cache** → 2. **Cloudflare Edge Cache** → 3. **Origin Server**
+
 **Cache API Usage:**
 ```typescript
-// Cache expensive computations
-export const load: PageServerLoad = async ({ fetch }) => {
-  const cacheKey = 'https://example.com/api/data';
+// src/routes/api/data/+server.ts
+export const GET: RequestHandler = async ({ request, setHeaders }) => {
+  const cacheKey = new Request(request.url, request);
   const cache = caches.default;
   
-  // Try cache first
+  // Try edge cache first (sub-millisecond response)
   let response = await cache.match(cacheKey);
   
   if (!response) {
-    // Fetch from origin
-    response = await fetch('/api/data');
+    // Cache miss - fetch from database
+    const db = createDb();
+    const data = await db.query.items.findMany();
     
-    // Cache for 5 minutes
-    const res = response.clone();
-    await cache.put(cacheKey, res, {
-      headers: { 'Cache-Control': 'max-age=300' }
+    // Create response with cache headers
+    response = new Response(JSON.stringify(data), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=300, s-maxage=300', // 5 minutes
+        'CDN-Cache-Control': 'max-age=300',
+        'Cloudflare-CDN-Cache-Control': 'max-age=300'
+      }
     });
+    
+    // Store in edge cache
+    await cache.put(cacheKey, response.clone());
   }
   
-  return await response.json();
+  return response;
 };
 ```
 
-**Cache Strategy:**
-- Static assets: 1 year (`immutable`)
-- API responses: 5-15 minutes (with revalidation)
-- User-specific data: No cache
-- Public pages: CDN cache with stale-while-revalidate
+**Page Load Caching:**
+```typescript
+// src/routes/(marketing)/blog/+page.server.ts
+export const load: PageServerLoad = async ({ fetch, setHeaders }) => {
+  const cacheKey = 'blog-posts-list';
+  const cache = caches.default;
+  
+  // Try cache
+  let cached = await cache.match(cacheKey);
+  
+  if (!cached) {
+    const db = createDb();
+    const posts = await db.query.blogPosts.findMany({
+      where: eq(blogPosts.status, 'published'),
+      orderBy: (posts, { desc }) => [desc(posts.publishedAt)],
+      limit: 20
+    });
+    
+    cached = new Response(JSON.stringify(posts), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=600' // 10 minutes
+      }
+    });
+    
+    await cache.put(cacheKey, cached.clone());
+  }
+  
+  const posts = await cached.json();
+  
+  // Set cache headers for browser
+  setHeaders({
+    'Cache-Control': 'public, max-age=300, stale-while-revalidate=600'
+  });
+  
+  return { posts };
+};
+```
+
+**Cache Invalidation:**
+```typescript
+// Invalidate cache after creating new post
+export const actions = {
+  create: async ({ request }) => {
+    const db = createDb();
+    const formData = await request.formData();
+    
+    // Create post
+    await db.insert(blogPosts).values({ ... });
+    
+    // Invalidate cache
+    const cache = caches.default;
+    await cache.delete('blog-posts-list');
+    
+    return { success: true };
+  }
+};
+```
+
+**Advanced Caching Patterns:**
+
+**1. Stale-While-Revalidate (SWR):**
+```typescript
+// Serve cached content immediately, refresh in background
+setHeaders({
+  'Cache-Control': 'public, max-age=60, stale-while-revalidate=300'
+});
+// Browser: Use cache for 60s, then fetch new data while serving stale for 300s
+```
+
+**2. Cache Warming:**
+```typescript
+// Warm cache during deployment
+export const GET: RequestHandler = async () => {
+  const cache = caches.default;
+  const urls = [
+    '/api/popular-posts',
+    '/api/categories',
+    '/api/featured-projects'
+  ];
+  
+  for (const url of urls) {
+    const response = await fetch(url);
+    await cache.put(url, response.clone());
+  }
+  
+  return json({ warmed: urls.length });
+};
+```
+
+**3. User-Specific Cache Keys:**
+```typescript
+// Cache per organization
+const cacheKey = `projects-${locals.profile.activeOrganizationId}`;
+```
+
+**4. Conditional Caching:**
+```typescript
+// Only cache successful responses
+if (response.ok && !locals.user) {
+  // Cache for anonymous users only
+  await cache.put(cacheKey, response.clone());
+}
+```
+
+**Cache Strategy by Content Type:**
+
+| Content Type | Browser Cache | Edge Cache | Revalidation |
+|--------------|---------------|------------|--------------|
+| **Static Assets** (`/static/`, `/_app/`) | 1 year | 1 year | Never (immutable) |
+| **Public Pages** (marketing, blog) | 5 minutes | 10 minutes | SWR 30 minutes |
+| **API Responses** (public data) | 2 minutes | 5 minutes | SWR 15 minutes |
+| **User Dashboard** | No cache | No cache | Always fresh |
+| **Images/Fonts** | 1 year | 1 year | Never |
+| **API (auth required)** | No cache | No cache | Always fresh |
+
+**Cache Headers Cheat Sheet:**
+
+```typescript
+// Immutable assets (fonts, images with hashed names)
+'Cache-Control': 'public, max-age=31536000, immutable'
+
+// Public content, fast updates
+'Cache-Control': 'public, max-age=300, s-maxage=600, stale-while-revalidate=1800'
+
+// Private user content
+'Cache-Control': 'private, no-cache, no-store, must-revalidate'
+
+// No cache (auth pages, forms)
+'Cache-Control': 'no-store'
+
+// Edge cache only (bypass browser cache)
+'Cache-Control': 'public, max-age=0, s-maxage=300'
+```
+
+**Performance Impact:**
+
+With proper caching:
+- **Static assets**: ~5ms response time (edge cache hit)
+- **Public pages**: ~20-50ms response time (edge cache hit)
+- **API calls**: ~100-200ms response time (database query)
+- **Cache miss**: Add edge cache overhead (~10ms) then full request
+
+**Best Practices:**
+
+1. **Cache what doesn't change often**: Blog posts, product catalogs, docs
+2. **Don't cache user-specific data**: Dashboards, settings, private info
+3. **Use appropriate TTLs**: Short for frequently changing, long for stable
+4. **Implement cache invalidation**: Clear cache when data updates
+5. **Monitor cache hit ratio**: Aim for >80% hit rate on public content
+6. **Use cache keys wisely**: Include version/hash in keys for safe updates
+7. **Set browser cache**: Reduce requests for repeat visitors
+8. **Leverage SWR**: Serve fast, update in background
 
 #### 6. JavaScript Optimization
 
