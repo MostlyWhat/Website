@@ -3,8 +3,7 @@
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import HeroSection from '$lib/components/layout/HeroSection.svelte';
-	import DescriptionSection from '$lib/components/layout/DescriptionSection.svelte';
+	import { HeroSection, DescriptionSection } from '$lib/components/layout';
 	import { ArrowRight, ArrowUpRight, Target, Lightbulb, Users, Rocket } from '@lucide/svelte';
 	import { siteConfig, getMailtoLink } from '$lib/config/site';
 

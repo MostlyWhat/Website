@@ -6,8 +6,7 @@
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import { Search, ArrowRight, FileText, Briefcase, BookOpen, HelpCircle, Filter, Loader2, X } from '@lucide/svelte';
 	import { onMount } from 'svelte';
-	import HeroSection from '$lib/components/layout/HeroSection.svelte';
-	import DescriptionSection from '$lib/components/layout/DescriptionSection.svelte';
+	import { HeroSection, DescriptionSection } from '$lib/components/layout';
 
 	// Search result type
 	interface SearchResult {

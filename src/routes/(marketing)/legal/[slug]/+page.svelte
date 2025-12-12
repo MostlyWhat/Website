@@ -3,7 +3,7 @@
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import MarkdownRenderer from '$lib/components/layout/MarkdownRenderer.svelte';
-	import WideNavSection from '$lib/components/layout/WideNavSection.svelte';
+	import { WideNavSection } from '$lib/components/layout';
 	import { ArrowLeft } from '@lucide/svelte';
 	import type { PageData } from './$types';
 

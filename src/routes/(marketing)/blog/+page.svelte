@@ -3,9 +3,7 @@
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import HeroSection from '$lib/components/layout/HeroSection.svelte';
-	import DescriptionSection from '$lib/components/layout/DescriptionSection.svelte';
-	import CTASection from '$lib/components/layout/CTASection.svelte';
+	import { HeroSection, DescriptionSection, CTASection } from '$lib/components/layout';
 	import { Skeleton } from '$lib/components/ui/skeleton';
 	import { ArrowRight, ChevronRight } from '@lucide/svelte';
 	import type { PageData } from './$types';

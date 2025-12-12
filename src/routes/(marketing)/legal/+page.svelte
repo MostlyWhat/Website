@@ -2,8 +2,7 @@
 	import * as m from '$lib/paraglide/messages';
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
-	import HeroSection from '$lib/components/layout/HeroSection.svelte';
-	import DescriptionSection from '$lib/components/layout/DescriptionSection.svelte';
+	import { HeroSection, DescriptionSection } from '$lib/components/layout';
 	import { ChevronRight } from '@lucide/svelte';
 	import { siteConfig, getMailtoLink } from '$lib/config/site';
 	import type { PageData } from './$types';

@@ -11,8 +11,12 @@ Before diving into the architecture, these resources are essential for getting s
 | Resource | Purpose | Link |
 |----------|---------|------|
 | **Cloudflare Workers + Svelte** | Edge deployment guide | [developers.cloudflare.com/workers/framework-guides/web-apps/svelte](https://developers.cloudflare.com/workers/framework-guides/web-apps/svelte/) |
+| **Supabase Svelte Server-Side Setup** | Setting Up Supabase | [supabase.com/docs/guides/auth/server-side/creating-a-client](https://supabase.com/docs/guides/auth/server-side/creating-a-client?queryGroups=package-manager&package-manager=pnpm&queryGroups=framework&framework=sveltekit) |
 | **Supabase + SvelteKit Tutorial** | Authentication & database setup | [Davis-Media/supabase-sveltekit-2024-tutorial](https://github.com/Davis-Media/supabase-sveltekit-2024-tutorial) |
 | **shadcn-svelte** | UI component library | [shadcn-svelte.com/docs/installation/sveltekit](https://www.shadcn-svelte.com/docs/installation/sveltekit) |
+| **Drizzle ORM** | Type-safe database access | [drizzle-orm.com/docs/usage/sveltekit](https://drizzle-orm.com/docs/usage/sveltekit) |
+| **Paraglide (inlang)** | Type-safe internationalization | [inlang.com/docs/getting-started/sveltekit](https://inlang.com/docs/getting-started/sveltekit) |
+| **Sentry for SvelteKit** | Error monitoring setup for SvelteKit with Cloudflare | [docs.sentry.io/platforms/javascript/guides/cloudflare/frameworks/sveltekit](https://docs.sentry.io/platforms/javascript/guides/cloudflare/frameworks/sveltekit/) |
 
 ### MCP Server Tools
 
@@ -96,6 +100,7 @@ src/
 │
 ├── lib/
 │   ├── components/
+│   │   ├── section/            # Section components (cta, features, hero)
 │   │   ├── layout/             # Layout components (headers, sidebars)
 │   │   └── ui/                 # UI components (buttons, forms, etc.)
 │   ├── config/
@@ -392,7 +397,7 @@ type UserRole = 'super_admin' | 'admin' | 'staff' | 'customer';
 Users must complete onboarding before accessing the app:
 
 1. **Profile Creation**: Handled by `getOrCreateProfile()` during auth
-2. **Onboarding Form**: Collects name, preferences, organization choice
+2. **Onboarding Form**: Collects name, preferences
 3. **Completion**: Sets `onboardingCompleted: true` in database
 
 **Critical Fix**: After form submission, use full page reload to refresh `locals.profile`:
@@ -547,6 +552,9 @@ declare global {
 ```typescript
 // src/lib/server/db/schema.ts
 
+// NOTE: Import authUsers from Supabase auth schema in drizzle
+import { authUsers } from 'drizzle-orm/supabase';
+
 // 1. Define enums
 export const userRoleEnum = pgEnum('user_role', [
   'super_admin', 'admin', 'staff', 'customer'
@@ -581,7 +589,7 @@ The database schema follows a multi-tenant pattern where resources are scoped to
 ├─────────────────────────────────────────────────────────────────────────┤
 │ profiles              - User data (extends Supabase auth.users)         │
 │ organizations         - Tenant/workspace entities                       │
-│ organization_members  - Many-to-many: users ↔ organizations (with role)│
+│ organization_members  - Many-to-many: users ↔ organizations (with role) │
 ├─────────────────────────────────────────────────────────────────────────┤
 │                        BUSINESS DOMAIN TABLES                           │
 ├─────────────────────────────────────────────────────────────────────────┤
@@ -878,13 +886,7 @@ if (error) {
 ```
 
 ### 4. Row Level Security
-Enable RLS on all tables and create appropriate policies:
-```sql
--- Example: Users can only see their own profiles
-CREATE POLICY "Users can view own profile" 
-  ON profiles FOR SELECT 
-  USING (auth.uid() = id);
-```
+Enable RLS on all tables and never create policies for client-side access. All database access must go through server-side code.
 
 ### 5. Audit Logging
 Log all sensitive actions:

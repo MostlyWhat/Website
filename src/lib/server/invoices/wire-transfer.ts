@@ -5,7 +5,7 @@
  */
 
 import { createDb } from '$lib/server/db';
-import { invoices } from '$lib/server/db/schema';
+import { invoices, organizations } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 
 export interface WireTransferDetails {
@@ -99,7 +99,30 @@ export async function uploadWireTransferReceipt(
 		})
 		.where(eq(invoices.id, invoiceId));
 
-	// TODO: Send notification to admins for approval
+	// Send notification to admins for approval
+	try {
+		const invoice = await db.query.invoices.findFirst({
+			where: eq(invoices.id, invoiceId)
+		});
+
+		if (invoice) {
+			const org = await db.query.organizations.findFirst({
+				where: eq(organizations.id, invoice.organizationId)
+			});
+			
+			const { sendWireTransferApprovalRequest } = await import('$lib/server/email');
+			await sendWireTransferApprovalRequest({
+				invoiceId: parseInt(invoiceId),
+				customerName: org?.name || 'Customer',
+				amount: parseFloat(invoice.total),
+				currency: invoice.currency || 'USD',
+				uploadId: receiptUrl.split('/').pop() || 'unknown'
+			});
+		}
+	} catch (emailError) {
+		console.error('Failed to send wire transfer approval email:', emailError);
+	}
+
 	console.log(`Wire transfer receipt uploaded for invoice ${invoiceId}`);
 }
 
@@ -124,7 +147,32 @@ export async function approveWireTransferPayment(
 		})
 		.where(eq(invoices.id, invoiceId));
 
-	// TODO: Send payment confirmation email to customer
+	// Send payment confirmation email to customer
+	try {
+		const invoice = await db.query.invoices.findFirst({
+			where: eq(invoices.id, invoiceId)
+		});
+
+		if (invoice) {
+			const org = await db.query.organizations.findFirst({
+				where: eq(organizations.id, invoice.organizationId)
+			});
+			
+			if (org?.email) {
+				const { sendWireTransferConfirmation } = await import('$lib/server/email');
+				await sendWireTransferConfirmation({
+					customerEmail: org.email,
+					customerName: org.name || 'Customer',
+					invoiceId: parseInt(invoiceId),
+					amount: parseFloat(invoice.total),
+					currency: invoice.currency || 'USD'
+				});
+			}
+		}
+	} catch (emailError) {
+		console.error('Failed to send wire transfer confirmation email:', emailError);
+	}
+
 	console.log(`Wire transfer payment approved for invoice ${invoiceId}`);
 }
 
@@ -148,7 +196,31 @@ export async function rejectWireTransferPayment(
 		})
 		.where(eq(invoices.id, invoiceId));
 
-	// TODO: Send rejection email to customer with reason
+	// Send rejection email to customer with reason
+	try {
+		const invoice = await db.query.invoices.findFirst({
+			where: eq(invoices.id, invoiceId)
+		});
+
+		if (invoice) {
+			const org = await db.query.organizations.findFirst({
+				where: eq(organizations.id, invoice.organizationId)
+			});
+			
+			if (org?.email) {
+				const { sendWireTransferRejection } = await import('$lib/server/email');
+				await sendWireTransferRejection({
+					customerEmail: org.email,
+					customerName: org.name || 'Customer',
+					invoiceId: parseInt(invoiceId),
+					reason
+				});
+			}
+		}
+	} catch (emailError) {
+		console.error('Failed to send wire transfer rejection email:', emailError);
+	}
+
 	console.log(`Wire transfer payment rejected for invoice ${invoiceId}: ${reason}`);
 }
 

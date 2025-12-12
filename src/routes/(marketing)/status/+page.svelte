@@ -2,9 +2,7 @@
 	import * as m from '$lib/paraglide/messages';
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
-	import HeroSection from '$lib/components/layout/HeroSection.svelte';
-	import SectionHeader from '$lib/components/layout/SectionHeader.svelte';
-	import LinkCTASection from '$lib/components/layout/LinkCTASection.svelte';
+	import { HeroSection, SectionHeader, LinkCTASection } from '$lib/components/layout';
 	import { CheckCircle, AlertTriangle, XCircle, Clock, ChevronDown } from '@lucide/svelte';
 	import type { PageData } from './$types';
 

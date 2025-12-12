@@ -5,8 +5,7 @@
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import * as Select from '$lib/components/ui/select';
 	import { loadDocsByCategory } from '$lib/content';
-	import Header from '$lib/components/layout/Header.svelte';
-	import Footer from '$lib/components/layout/Footer.svelte';
+	import { Header, Footer } from '$lib/components/layout';
 	import { 
 		Palette, 
 		Type, 

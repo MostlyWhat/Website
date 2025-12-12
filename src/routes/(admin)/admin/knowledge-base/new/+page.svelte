@@ -15,7 +15,7 @@
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { RichTextEditor } from '$lib/components/ui/rich-text-editor';
 	import { toast } from 'svelte-sonner';
-	import CreatePageLayout from '$lib/components/layout/CreatePageLayout.svelte';
+	import { CreatePageLayout } from '$lib/components/layout';
 	import { ActionButtons } from '$lib/components/ui/layouts';
 
 	let { data, form } = $props<{

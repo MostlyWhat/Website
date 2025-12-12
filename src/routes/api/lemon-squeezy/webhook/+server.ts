@@ -8,7 +8,7 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
 import { verifyWebhookSignature } from '$lib/server/integrations/lemon-squeezy';
 import { createDb } from '$lib/server/db';
-import { invoices } from '$lib/server/db/schema';
+import { invoices, organizations } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 
 export const POST: RequestHandler = async ({ request }) => {
@@ -69,7 +69,33 @@ export const POST: RequestHandler = async ({ request }) => {
 						})
 						.where(eq(invoices.id, invoiceId));
 
-					// TODO: Send payment confirmation email
+				// Send payment confirmation email
+				try {
+					const invoice = await db.query.invoices.findFirst({
+						where: eq(invoices.id, invoiceId)
+					});
+
+					if (invoice) {
+						const org = await db.query.organizations.findFirst({
+							where: eq(organizations.id, invoice.organizationId)
+						});
+						
+						if (org?.email) {
+							const { sendPaymentConfirmation } = await import('$lib/server/email');
+							await sendPaymentConfirmation({
+								customerEmail: org.email,
+								customerName: org.name || 'Customer',
+								amount: event.data.attributes.total,
+								currency: event.data.attributes.currency,
+								orderId: event.data.attributes.order_number,
+								productName: invoice.title || 'Invoice Payment'
+							});
+						}
+					}
+				} catch (emailError) {
+					console.error('Failed to send payment confirmation email:', emailError);
+				}
+
 					console.log(`Invoice ${invoiceId} marked as paid via Lemon Squeezy`);
 				}
 				break;
@@ -89,7 +115,32 @@ export const POST: RequestHandler = async ({ request }) => {
 						})
 						.where(eq(invoices.id, invoiceId));
 
-					// TODO: Send refund notification email
+				// Send refund notification email
+				try {
+					const invoice = await db.query.invoices.findFirst({
+						where: eq(invoices.id, invoiceId)
+					});
+
+					if (invoice) {
+						const org = await db.query.organizations.findFirst({
+							where: eq(organizations.id, invoice.organizationId)
+						});
+						
+						if (org?.email) {
+							const { sendRefundNotification } = await import('$lib/server/email');
+							await sendRefundNotification({
+								customerEmail: org.email,
+								customerName: org.name || 'Customer',
+								amount: event.data.attributes.refunded_amount || event.data.attributes.total,
+								currency: event.data.attributes.currency,
+								orderId: event.data.attributes.order_number
+							});
+						}
+					}
+				} catch (emailError) {
+					console.error('Failed to send refund notification email:', emailError);
+				}
+
 					console.log(`Invoice ${invoiceId} marked as refunded`);
 				}
 				break;

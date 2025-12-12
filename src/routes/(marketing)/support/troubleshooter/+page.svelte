@@ -3,9 +3,7 @@
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import HeroSection from '$lib/components/layout/HeroSection.svelte';
-	import DescriptionSection from '$lib/components/layout/DescriptionSection.svelte';
-	import WideNavSection from '$lib/components/layout/WideNavSection.svelte';
+	import { HeroSection, DescriptionSection, WideNavSection } from '$lib/components/layout';
 	import {
 		ArrowLeft,
 		ArrowRight,

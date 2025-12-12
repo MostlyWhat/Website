@@ -3,7 +3,7 @@
 	import * as m from '$lib/paraglide/messages';
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
-	import WideNavSection from '$lib/components/layout/WideNavSection.svelte';
+	import { WideNavSection } from '$lib/components/layout';
 	import MarkdownRenderer from '$lib/components/layout/MarkdownRenderer.svelte';
 	import { ArrowLeft, ArrowRight, FileText } from '@lucide/svelte';
 

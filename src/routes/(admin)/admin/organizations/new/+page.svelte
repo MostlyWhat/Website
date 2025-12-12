@@ -14,7 +14,7 @@
 	import { Label } from '$lib/components/ui/label';
 	import * as Select from '$lib/components/ui/select';
 	import { toast } from 'svelte-sonner';
-	import CreatePageLayout from '$lib/components/layout/CreatePageLayout.svelte';
+	import { CreatePageLayout } from '$lib/components/layout';
 
 	let { data, form } = $props();
 

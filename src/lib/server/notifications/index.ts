@@ -40,13 +40,26 @@ export async function createNotification(payload: NotificationPayload): Promise<
         })
         .returning({ id: userNotifications.id });
 
-    // TODO: Send email notification if user has email notifications enabled
-    // const profile = await db.query.profiles.findFirst({
-    //     where: eq(profiles.id, payload.userId)
-    // });
-    // if (profile?.preferences?.emailNotifications) {
-    //     await sendEmailNotification(profile.email, payload);
-    // }
+    // Send email notification if user has email notifications enabled
+    try {
+        const profile = await db.query.profiles.findFirst({
+            where: eq(profiles.id, payload.userId)
+        });
+
+        if (profile?.email && profile?.preferences?.emailNotifications) {
+            const { sendNotificationEmail } = await import('$lib/server/email');
+            await sendNotificationEmail({
+                userEmail: profile.email,
+                userName: profile.displayName || profile.firstName || 'User',
+                notificationTitle: payload.title,
+                notificationMessage: payload.message,
+                actionUrl: payload.link ? `https://mostlywhat.com${payload.link}` : undefined
+            });
+        }
+    } catch (emailError) {
+        console.error('Failed to send notification email:', emailError);
+        // Don't fail the notification if email fails
+    }
 
     return notification.id;
 }

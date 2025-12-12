@@ -9,8 +9,7 @@
 	import { beforeNavigate, afterNavigate, onNavigate } from '$app/navigation';
 	import { page } from '$app/state';
 	import favicon from '$lib/assets/favicon.svg';
-	import Header from '$lib/components/layout/Header.svelte';
-	import Footer from '$lib/components/layout/Footer.svelte';
+	import { Header, Footer } from '$lib/components/layout';
 	import CookieConsent from '$lib/components/layout/CookieConsent.svelte';
 	import { setNavigating, getRandomDelay } from '$lib/stores/navigation.svelte';
 

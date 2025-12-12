@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
-	import VideoBackground from './VideoBackground.svelte';
+	import VideoBackground from '../VideoBackground.svelte';
 	import { GlitchText } from '$lib/components/ui/glitch-text';
 	import { MARATHON_VIDEO } from '$lib/constants';
 	import type { Snippet } from 'svelte';

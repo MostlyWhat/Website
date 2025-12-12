@@ -352,6 +352,7 @@ export const actions: Actions = {
         const [currentTicket] = await db
             .select({
                 ticketNumber: tickets.ticketNumber,
+                title: tickets.title,
                 status: tickets.status,
                 createdById: tickets.createdById
             })
@@ -372,12 +373,27 @@ export const actions: Actions = {
             // Create satisfaction survey if transitioning to resolved
             if (oldStatus !== 'resolved') {
                 try {
-                    await createSatisfactionSurvey(params.id, currentTicket.createdById);
-                    // TODO: Send email with survey link
-                    // The survey token is stored in the database and can be used to generate the link
-                    // Survey URL: /surveys/{token}
+                    const surveyResult = await createSatisfactionSurvey(params.id, currentTicket.createdById);
+                    
+                    // Send email with survey link
+                    if (surveyResult.success && surveyResult.surveyToken) {
+                        const customer = await db.query.profiles.findFirst({
+                            where: eq(profiles.id, currentTicket.createdById)
+                        });
+
+                        if (customer?.email) {
+                            const { sendSurveyEmail } = await import('$lib/server/email');
+                            await sendSurveyEmail({
+                                customerEmail: customer.email,
+                                customerName: customer.displayName || customer.firstName || 'Customer',
+                                ticketId: parseInt(params.id),
+                                ticketTitle: currentTicket.title || 'Support Ticket',
+                                surveyToken: surveyResult.surveyToken
+                            });
+                        }
+                    }
                 } catch (error) {
-                    console.error('Failed to create satisfaction survey:', error);
+                    console.error('Failed to create satisfaction survey or send email:', error);
                     // Don't fail the status update if survey creation fails
                 }
             }

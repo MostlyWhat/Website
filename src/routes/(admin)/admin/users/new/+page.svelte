@@ -9,7 +9,7 @@
 	import { enhance } from '$app/forms';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
-	import CreatePageLayout from '$lib/components/layout/CreatePageLayout.svelte';
+	import { CreatePageLayout } from '$lib/components/layout';
 
 	type FormReturn = {
 		error?: string;

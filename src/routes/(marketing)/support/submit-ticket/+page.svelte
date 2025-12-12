@@ -5,9 +5,7 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { Input } from '$lib/components/ui/input';
 	import { Textarea } from '$lib/components/ui/textarea';
-	import HeroSection from '$lib/components/layout/HeroSection.svelte';
-	import DescriptionSection from '$lib/components/layout/DescriptionSection.svelte';
-	import WideNavSection from '$lib/components/layout/WideNavSection.svelte';
+	import { HeroSection, DescriptionSection, WideNavSection } from '$lib/components/layout';
 	import { siteConfig, getMailtoLink } from '$lib/config/site';
 	import {
 		Send,

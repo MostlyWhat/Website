@@ -153,12 +153,24 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
             userAgent: userAgent ?? undefined
         });
 
-        // TODO: Send email notification to admin
-        // This can be implemented using:
-        // 1. Supabase Edge Functions with Resend/SendGrid
-        // 2. Direct SMTP via Nodemailer
-        // 3. A webhook to a notification service
-        // For now, we rely on admin dashboard to view new submissions
+        // Send email notification to admin
+        try {
+            const { sendContactNotification } = await import('$lib/server/email');
+            await sendContactNotification({
+                name,
+                email,
+                company: company || undefined,
+                phone: phone || undefined,
+                topic,
+                subject: subject || undefined,
+                message,
+                orderId: orderId || undefined,
+                submissionId: Number(submission.id)
+            });
+        } catch (emailError) {
+            console.error('Failed to send contact notification email:', emailError);
+            // Don't fail the request if email fails
+        }
 
         return json({
             success: true,

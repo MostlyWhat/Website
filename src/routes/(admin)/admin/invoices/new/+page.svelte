@@ -9,7 +9,7 @@
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import { Save, Plus, Trash2, DollarSign, Calendar, RefreshCw } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
-	import CreatePageLayout from '$lib/components/layout/CreatePageLayout.svelte';
+	import { CreatePageLayout } from '$lib/components/layout';
 	import { ActionButtons } from '$lib/components/ui/layouts';
 
 	let { data, form } = $props();

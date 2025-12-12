@@ -3,9 +3,9 @@
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import HeroSection from '$lib/components/layout/HeroSection.svelte';
+	import { HeroSection } from '$lib/components/layout';
 	import { ArrowRight, ArrowUpRight, Compass, Palette, Layout, Code, Database, TrendingUp, Check } from '@lucide/svelte';
-	import DescriptionSection from '$lib/components/layout/DescriptionSection.svelte';
+	import { DescriptionSection } from '$lib/components/layout';
 	import { siteConfig, getMailtoLink } from '$lib/config/site';
 
 	const services = [

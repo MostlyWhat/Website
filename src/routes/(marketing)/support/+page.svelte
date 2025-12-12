@@ -2,9 +2,7 @@
 	import * as m from '$lib/paraglide/messages';
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
-	import HeroSection from '$lib/components/layout/HeroSection.svelte';
-	import DescriptionSection from '$lib/components/layout/DescriptionSection.svelte';
-	import CTASection from '$lib/components/layout/CTASection.svelte';
+	import { HeroSection, DescriptionSection, CTASection } from '$lib/components/layout';
 	import * as Accordion from '$lib/components/ui/accordion';
 	import { siteConfig, getMailtoLink } from '$lib/config/site';
 	import {

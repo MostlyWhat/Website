@@ -10,7 +10,7 @@
 	import { goto } from '$app/navigation';
 	import { RichTextEditor } from '$lib/components/ui/rich-text-editor';
 	import { toast } from 'svelte-sonner';
-	import CreatePageLayout from '$lib/components/layout/CreatePageLayout.svelte';
+	import { CreatePageLayout } from '$lib/components/layout';
 	import type { PageData } from './$types';
 	import { ActionButtons } from '$lib/components/ui/layouts';
 

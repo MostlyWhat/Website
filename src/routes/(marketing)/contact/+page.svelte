@@ -7,8 +7,7 @@
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { Label } from '$lib/components/ui/label';
 	import * as Accordion from '$lib/components/ui/accordion';
-	import CTASection from '$lib/components/layout/CTASection.svelte';
-	import HeroSection from '$lib/components/layout/HeroSection.svelte';
+	import { CTASection, HeroSection } from '$lib/components/layout';
 	import { siteConfig, getMailtoLink } from '$lib/config/site';
 	import { 
 		Send, CheckCircle, MessageSquare, FileText, HelpCircle, Headphones,

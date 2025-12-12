@@ -4,8 +4,7 @@
 	import { scrollAnimate } from '$lib/actions/scroll-animate';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import Header from '$lib/components/layout/Header.svelte';
-	import Footer from '$lib/components/layout/Footer.svelte';
+	import { Header, Footer } from '$lib/components/layout';
 	import { Home, ArrowLeft, ArrowRight, AlertTriangle, FileQuestion, ExternalLink } from '@lucide/svelte';
 </script>
 

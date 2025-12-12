@@ -23,8 +23,6 @@ export default defineConfig({
 			'tailwind-merge',
 			'bits-ui',
 			'@supabase/supabase-js',
-			'drizzle-orm',
-			'marked',
 			'svelte-sonner',
 			'mode-watcher',
 			'@lucide/svelte'
@@ -52,12 +50,8 @@ export default defineConfig({
 				manualChunks: {
 					// Group UI components together
 					'ui': ['bits-ui', 'svelte-sonner', 'mode-watcher'],
-					// Group database libraries (excluding @supabase/supabase-js as it's external)
-					'data': ['drizzle-orm'],
 					// Group icons separately
-					'icons': ['@lucide/svelte'],
-					// Group markdown processing
-					'markdown': ['marked']
+					'icons': ['@lucide/svelte']
 				}
 			}
 		},
