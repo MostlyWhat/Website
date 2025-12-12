@@ -1,5 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { parseFrontmatter, extractSlugFromPath } from '$lib/utils/markdown';
+import { CachePresets, setCacheHeaders } from '$lib/server/utils/cache';
 
 interface SupportArticle {
     slug: string;
@@ -22,7 +23,10 @@ function parseArticle(raw: string, slug: string): SupportArticle {
     };
 }
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ setHeaders }) => {
+    // Set cache headers for support articles (10min cache, content rarely changes)
+    setCacheHeaders(setHeaders, CachePresets.STATIC_LONG);
+    
     const articles = Object.entries(articleFiles)
         .map(([path, raw]) => {
             const slug = extractSlugFromPath(path);

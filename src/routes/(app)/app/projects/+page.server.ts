@@ -2,6 +2,7 @@ import { createDb } from '$lib/server/db';
 import { projects, organizationMembers, profiles, projectRequests } from '$lib/server/db/schema';
 import { eq, inArray, desc, and, ne } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
+import { CachePresets, setCacheHeaders } from '$lib/server/utils/cache';
 
 // Async function to load projects data
 async function loadProjectsData(profileId: string) {
@@ -83,7 +84,10 @@ async function loadProjectsData(profileId: string) {
     };
 }
 
-export const load: PageServerLoad = async ({ locals }) => {
+export const load: PageServerLoad = async ({ locals, setHeaders }) => {
+    // Private browser-only caching for personalized projects (no CDN caching)
+    setCacheHeaders(setHeaders, CachePresets.PRIVATE);
+
     if (!locals.user || !locals.profile) {
         return {
             streamed: {

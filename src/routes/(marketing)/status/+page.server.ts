@@ -2,9 +2,13 @@ import { createDb } from '$lib/server/db';
 import { statusServices, statusIncidents, statusIncidentUpdates, profiles } from '$lib/server/db/schema';
 import { eq, desc, and, gte, isNotNull } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
+import { CachePresets, setCacheHeaders } from '$lib/server/utils/cache';
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ setHeaders }) => {
     const db = createDb();
+    
+    // Set cache headers for status page (1min cache for near real-time updates)
+    setCacheHeaders(setHeaders, CachePresets.REALTIME_SHORT);
 
     try {
         // Fetch all active services

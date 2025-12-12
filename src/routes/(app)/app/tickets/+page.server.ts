@@ -2,6 +2,7 @@ import { createDb } from '$lib/server/db';
 import { tickets, ticketComments, profiles, organizations, organizationMembers } from '$lib/server/db/schema';
 import { eq, and, desc, sql, inArray } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
+import { CachePresets, setCacheHeaders } from '$lib/server/utils/cache';
 
 // Async function to load tickets data
 async function loadTicketsData(profileId: string) {
@@ -73,7 +74,10 @@ async function loadTicketsData(profileId: string) {
     }));
 }
 
-export const load: PageServerLoad = async ({ locals }) => {
+export const load: PageServerLoad = async ({ locals, setHeaders }) => {
+    // Private browser-only caching for personalized tickets (no CDN caching)
+    setCacheHeaders(setHeaders, CachePresets.PRIVATE);
+
     if (!locals.user || !locals.profile) {
         return { streamed: { tickets: Promise.resolve([]) } };
     }

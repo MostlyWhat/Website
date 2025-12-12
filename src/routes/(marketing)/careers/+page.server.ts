@@ -3,6 +3,7 @@ import { jobPostings } from '$lib/server/db/schema';
 import { eq, and, desc, or, isNull, gte } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 import { parseFrontmatter, extractSlugFromPath } from '$lib/utils/markdown';
+import { CachePresets, setCacheHeaders } from '$lib/server/utils/cache';
 
 interface Position {
     id: string;
@@ -19,8 +20,11 @@ interface Position {
 // Fallback: Import all markdown files from the careers folder
 const positionFiles = import.meta.glob('/src/lib/content/careers/*.md', { eager: true, query: '?raw', import: 'default' });
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ setHeaders }) => {
     const db = createDb();
+    
+    // Set cache headers for careers page (5min cache)
+    setCacheHeaders(setHeaders, CachePresets.DYNAMIC_MEDIUM);
 
     try {
         // First, try to load from database

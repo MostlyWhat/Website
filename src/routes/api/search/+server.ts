@@ -4,6 +4,7 @@ import { parseFrontmatter, extractSlugFromPath, generateExcerpt } from '$lib/uti
 import { siteConfig } from '$lib/config/site';
 import { rateLimiters, getClientIP } from '$lib/server/utils/rate-limiter';
 import { searchSchema } from '$lib/server/utils/validation';
+import { CachePresets, setCacheHeaders } from '$lib/server/utils/cache';
 
 // Content index - built at startup
 interface ContentItem {
@@ -272,7 +273,7 @@ function search(query: string, filter?: string, limit = 20): Array<{
     });
 }
 
-export const GET: RequestHandler = async ({ url, request }) => {
+export const GET: RequestHandler = async ({ url, request, setHeaders }) => {
     // Rate limiting - 30 searches per minute per IP
     const clientIP = getClientIP(request, request.headers);
     const rateLimitResult = await rateLimiters.search.check(clientIP);
@@ -299,6 +300,9 @@ export const GET: RequestHandler = async ({ url, request }) => {
     const { query, type, limit } = validation.data;
     const filter = type === 'all' ? 'all' : type;
     const results = search(query, filter, limit);
+
+    // Cache search results for 5 minutes (content index is static)
+    setCacheHeaders(setHeaders, CachePresets.API_RESPONSE);
 
     return json({
         query,

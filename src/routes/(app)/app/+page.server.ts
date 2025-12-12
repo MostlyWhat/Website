@@ -2,6 +2,7 @@ import { createDb } from '$lib/server/db';
 import { projects, proposals, invoices, tickets, organizationMembers } from '$lib/server/db/schema';
 import { eq, and, inArray, desc, sql, or, ne } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
+import { CachePresets, setCacheHeaders } from '$lib/server/utils/cache';
 
 // Async function to load dashboard data
 async function loadDashboardData(profileId: string) {
@@ -168,7 +169,10 @@ async function loadDashboardData(profileId: string) {
     };
 }
 
-export const load: PageServerLoad = async ({ locals }) => {
+export const load: PageServerLoad = async ({ locals, setHeaders }) => {
+    // Private browser-only caching for personalized dashboard (no CDN caching)
+    setCacheHeaders(setHeaders, CachePresets.PRIVATE);
+
     if (!locals.user || !locals.profile) {
         return {
             streamed: {

@@ -2,9 +2,13 @@ import { createDb } from '$lib/server/db';
 import { portfolioProjects, profiles } from '$lib/server/db/schema';
 import { eq, desc } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
+import { CachePresets, setCacheHeaders } from '$lib/server/utils/cache';
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ setHeaders }) => {
     const db = createDb();
+    
+    // Set cache headers for public page (5min cache, 30min stale-while-revalidate)
+    setCacheHeaders(setHeaders, CachePresets.DYNAMIC_MEDIUM);
 
     // Load published portfolio projects from database
     async function loadProjects() {

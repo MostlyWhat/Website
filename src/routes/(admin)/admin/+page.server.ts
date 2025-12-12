@@ -2,6 +2,7 @@ import { createDb } from '$lib/server/db';
 import { profiles, organizations, projects, proposals, invoices, tickets } from '$lib/server/db/schema';
 import { eq, sql, or, desc } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
+import { CachePresets, setCacheHeaders } from '$lib/server/utils/cache';
 
 // Helper to safely execute a count query
 async function safeCount<T>(query: Promise<T[]>, defaultValue = 0): Promise<number> {
@@ -150,7 +151,10 @@ async function loadAdminDashboardData() {
     };
 }
 
-export const load: PageServerLoad = async ({ locals }) => {
+export const load: PageServerLoad = async ({ locals, setHeaders }) => {
+    // No caching for admin dashboard (sensitive real-time data)
+    setCacheHeaders(setHeaders, CachePresets.NO_CACHE);
+
     if (!locals.user || !locals.profile) {
         return {
             streamed: {
