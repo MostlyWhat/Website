@@ -29,15 +29,15 @@ interface EmailOptions {
 async function loadTemplate(templateName: string, replacements: Record<string, string>): Promise<string> {
 	const templatePath = join(process.cwd(), 'src', 'lib', 'server', 'templates', `${templateName}.html`);
 	let template = await readFile(templatePath, 'utf-8');
-	
+
 	// Replace all placeholders
 	for (const [key, value] of Object.entries(replacements)) {
 		template = template.replace(new RegExp(`{{${key}}}`, 'g'), value);
 	}
-	
+
 	// Always replace year
 	template = template.replace(/{{YEAR}}/g, new Date().getFullYear().toString());
-	
+
 	return template;
 }
 
