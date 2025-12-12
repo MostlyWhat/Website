@@ -1,0 +1,163 @@
+/* ============================================
+   MOSTLYWHAT SYSTEMS DESIGN TOKENS
+   ============================================ */
+
+:root {
+	/* Remove all rounded corners - Sharp industrial aesthetic */
+	--radius: 0;
+
+	/* === COLOR PALETTE === */
+	/* Primary: Cobalt Blue - deeper and richer */
+	--cobalt-50: oklch(0.97 0.02 230);
+	--cobalt-100: oklch(0.93 0.04 230);
+	--cobalt-200: oklch(0.85 0.08 230);
+	--cobalt-300: oklch(0.75 0.12 230);
+	--cobalt-400: oklch(0.65 0.16 230);
+	--cobalt-500: oklch(0.58 0.20 230); /* Deeper cobalt */
+	--cobalt-600: oklch(0.48 0.18 230);
+	--cobalt-700: oklch(0.38 0.14 230);
+	--cobalt-800: oklch(0.28 0.10 230);
+	--cobalt-900: oklch(0.20 0.06 230);
+
+	/* Accent: Yellow from old site #FFD500 */
+	--yellow-400: oklch(0.90 0.16 95);
+	--yellow-500: oklch(0.87 0.18 95);
+	--yellow-600: oklch(0.78 0.16 95);
+
+	/* Accent: Red from old site #EF4444 */
+	--red-400: oklch(0.68 0.22 25);
+	--red-500: oklch(0.63 0.24 25);
+	--red-600: oklch(0.55 0.22 25);
+
+	/* Background: Deep Black from old site #000814 */
+	--black-950: oklch(0.06 0.02 260);
+	--black-900: oklch(0.10 0.02 260);
+	--black-800: oklch(0.14 0.02 260);
+	--black-700: oklch(0.18 0.02 260);
+	--black-600: oklch(0.22 0.02 260);
+
+	/* Text colors */
+	--white: oklch(1 0 0);
+	--gray-50: oklch(0.98 0.005 260);
+	--gray-100: oklch(0.95 0.008 260);
+	--gray-200: oklch(0.88 0.01 260);
+	--gray-300: oklch(0.75 0.01 260);
+	--gray-400: oklch(0.60 0.01 260);
+	--gray-500: oklch(0.50 0.01 260);
+
+	/* === SEMANTIC TOKENS (Dark-first design) === */
+	--background: var(--black-950);
+	--foreground: var(--gray-100);
+	--card: var(--black-800);
+	--card-foreground: var(--gray-100);
+	--popover: var(--black-800);
+	--popover-foreground: var(--gray-100);
+	--primary: var(--cobalt-500);
+	--primary-foreground: var(--white);
+	--secondary: var(--black-700);
+	--secondary-foreground: var(--gray-100);
+	--muted: var(--black-700);
+	--muted-foreground: var(--gray-400);
+	--accent: var(--yellow-500);
+	--accent-foreground: var(--black-950);
+	--destructive: var(--red-500);
+	--destructive-foreground: var(--white);
+	--border: var(--black-600);
+	--input: var(--black-700);
+	--ring: var(--cobalt-500);
+
+	/* Chart colors */
+	--chart-1: var(--cobalt-500);
+	--chart-2: var(--yellow-500);
+	--chart-3: var(--red-500);
+	--chart-4: var(--cobalt-300);
+	--chart-5: var(--gray-400);
+
+	/* Sidebar */
+	--sidebar: var(--black-900);
+	--sidebar-foreground: var(--gray-100);
+	--sidebar-primary: var(--cobalt-500);
+	--sidebar-primary-foreground: var(--white);
+	--sidebar-accent: var(--black-700);
+	--sidebar-accent-foreground: var(--gray-100);
+	--sidebar-border: var(--black-600);
+	--sidebar-ring: var(--cobalt-500);
+
+	/* === SPACING SYSTEM (p-4 = 16px as base) === */
+	--space-1: 0.25rem;
+	--space-2: 0.5rem;
+	--space-3: 0.75rem;
+	--space-4: 1rem;
+	--space-5: 1.25rem;
+	--space-6: 1.5rem;
+	--space-8: 2rem;
+	--space-10: 2.5rem;
+	--space-12: 3rem;
+	--space-16: 4rem;
+	--space-20: 5rem;
+	--space-24: 6rem;
+
+	/* === TYPOGRAPHY === */
+	--font-display: "Tourney", system-ui, sans-serif;
+	--font-body: "Hubot Sans Variable", system-ui, sans-serif;
+	--font-ui: "Chakra Petch", system-ui, sans-serif;
+	--font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+}
+
+@theme inline {
+	/* Remove all rounded corners */
+	--radius-sm: 0;
+	--radius-md: 0;
+	--radius-lg: 0;
+	--radius-xl: 0;
+	--radius-2xl: 0;
+	--radius-full: 0;
+
+	/* Colors */
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-destructive: var(--destructive);
+	--color-destructive-foreground: var(--destructive-foreground);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+	--color-chart-1: var(--chart-1);
+	--color-chart-2: var(--chart-2);
+	--color-chart-3: var(--chart-3);
+	--color-chart-4: var(--chart-4);
+	--color-chart-5: var(--chart-5);
+	--color-sidebar: var(--sidebar);
+	--color-sidebar-foreground: var(--sidebar-foreground);
+	--color-sidebar-primary: var(--sidebar-primary);
+	--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+	--color-sidebar-accent: var(--sidebar-accent);
+	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+	--color-sidebar-border: var(--sidebar-border);
+	--color-sidebar-ring: var(--sidebar-ring);
+
+	/* Custom brand colors */
+	--color-cobalt: var(--cobalt-500);
+	--color-cobalt-light: var(--cobalt-400);
+	--color-cobalt-dark: var(--cobalt-700);
+	--color-brand-yellow: var(--yellow-500);
+	--color-brand-red: var(--red-500);
+	--color-brand-black: var(--black-950);
+
+	/* Font families */
+	--font-family-display: var(--font-display);
+	--font-family-body: var(--font-body);
+	--font-family-ui: var(--font-ui);
+	--font-family-mono: var(--font-mono);
+}

@@ -1,0 +1,20 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* Font Imports */
+@import "@fontsource/tourney/900.css";
+@import "@fontsource-variable/hubot-sans";
+@import "@fontsource/chakra-petch/400.css";
+@import "@fontsource/chakra-petch/500.css";
+@import "@fontsource/chakra-petch/600.css";
+@import "@fontsource/chakra-petch/700.css";
+@import "@fontsource-variable/jetbrains-mono";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Split CSS modules */
+@import "./css/tokens.css";
+@import "./css/base.css";
+@import "./css/animations.css";
+@import "./css/components.css";
+@import "./css/markdown.css";

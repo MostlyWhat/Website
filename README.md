@@ -1,236 +1,230 @@
-# 🚀 MostlyWhat Systems
+# MostlyWhat Systems - CRM Platform
 
-<img src="lighthouse-score.png" align="right"
-     alt="AstroWind Lighthouse Score" width="100" height="358">
+A comprehensive Customer Relationship Management (CRM) platform built with SvelteKit, featuring ticket management, project tracking, invoicing, and more.
 
-**Introducting** the next-generation website for the [MostlyWhat Systems](https://mostlywhat.systems) company.
+## 🚀 Tech Stack
 
-## Features
+- **Framework**: SvelteKit 5 with TypeScript
+- **UI Components**: shadcn-svelte (Radix UI primitives)
+- **Database**: Supabase (PostgreSQL) with Drizzle ORM
+- **Authentication**: Supabase Auth
+- **Styling**: TailwindCSS with custom design system
+- **Deployment**: Cloudflare Pages with Workers
+- **Email**: Resend API
+- **Payments**: Lemon Squeezy
 
-- ✅ Integration with **Tailwind CSS** ([@astrojs/tailwind](https://docs.astro.build/en/guides/integrations-guide/tailwind/)) supporting **Dark mode**.
-- ✅ **Production-ready** scores in [Lighthouse](https://web.dev/measure/) and [PageSpeed Insights](https://pagespeed.web.dev/) reports.
-- ✅ **Fast and SEO friendly blog** with automatic **RSS feed** ([@astrojs/rss](https://docs.astro.build/en/guides/rss/)), [**MDX** support](https://docs.astro.build/en/guides/integrations-guide/mdx/), **Categories & Tags**, **Social Share** buttons, ...
-- ✅ **Image optimization** ([@astrojs/images](https://docs.astro.build/en/guides/integrations-guide/image/)) and **Font optimization**.
-- ✅ Generation of **project sitemap** based on your routes ([@astrojs/sitemap](https://docs.astro.build/en/guides/integrations-guide/sitemap/)).
-- ✅ **Open Graph tags** for social media sharing.
-- ✅ **Analytics** built-in Google Analytics, and Splitbee integration.
+## ✨ Features
 
-<br>
+### Core CRM Functionality
+- **Ticket Management** - Full-featured support ticket system with SLA tracking
+- **Project Management** - Project tracking with phases, milestones, and time tracking
+- **Customer Management** - Organization and contact management
+- **Invoicing** - Invoice generation with multiple payment methods
+- **Knowledge Base** - Help articles and documentation system
+- **Notifications** - Real-time in-app and email notifications
 
-[![License](https://img.shields.io/github/license/onwidget/astrowind?style=flat-square&color=eeeeee&labelColor=000000)](https://github.com/onwidget/astrowind/blob/main/LICENSE.md)
-[![Maintained](https://img.shields.io/badge/maintained%3F-yes-brightgreen.svg?style=flat-square)](https://github.com/onwidget)
-[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat-square)](https://github.com/onwidget/astrowind#contributing)
-[![Known Vulnerabilities](https://snyk.io/test/github/onwidget/astrowind/badge.svg?style=flat-square)](https://snyk.io/test/github/onwidget/astrowind)
-![Prettier](https://img.shields.io/badge/prettier-1A2C34?style=flat-square&logo=prettier&logoColor=F7BA3E)
-![Eslint](https://img.shields.io/badge/eslint-3A33D1?style=flat-square&logo=eslint&logoColor=white)
+### Advanced Features
+- **Role-Based Access Control** - Fine-grained permissions system
+- **Activity Logging** - Comprehensive audit trail
+- **Webhook System** - Event-driven integrations
+- **API Keys** - RESTful API with key-based authentication
+- **Automated Workflows** - Ticket auto-assignment and escalation
+- **Search** - Advanced search with filters and saved searches
+- **Reporting** - Analytics and custom reports
 
-<br>
+## 📚 Documentation
 
-<details open>
-<summary>Table of Contents</summary>
+Comprehensive documentation is available in the [`docs/`](docs/) folder:
 
-- [Demo](#demo)
-- [Getting started](#getting-started)
-  - [Project structure](#project-structure)
-  - [Commands](#commands)
-  - [Configuration](#configuration)
-  - [Deploy](#deploy)
-- [Roadmap](#roadmap)
-- [Frequently Asked Questions](#frequently-asked-questions)
-- [Contributing](#contributing)
-- [Acknowledgements](#acknowledgements)
-- [License](#license)
+- **[Documentation Index](docs/INDEX.md)** - Start here for complete documentation navigation
+- **[System Architecture](docs/architecture/SYSTEM_ARCHITECTURE.md)** - Technical architecture overview
+- **[API Documentation](docs/guides/API_DOCUMENTATION.md)** - API endpoints and usage
+- **[Quick Reference](docs/guides/QUICK_REFERENCE.md)** - Common tasks and patterns
 
-</details>
+## 🛠️ Development
 
-<br>
+### Prerequisites
 
-## Getting started
+- Node.js 20+ 
+- pnpm 9+
+- Supabase account (for database)
+- Cloudflare account (for deployment)
 
-### Project structure
+### Setup
 
-Inside, you'll see the following folders and files:
+1. **Clone the repository**
+```bash
+git clone <repository-url>
+cd Website
+```
+
+2. **Install dependencies**
+```bash
+pnpm install
+```
+
+3. **Set up environment variables**
+```bash
+cp .env.example .env
+```
+
+Edit `.env` with your configuration:
+```env
+PUBLIC_SUPABASE_URL=your_supabase_url
+PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+RESEND_API_KEY=your_resend_api_key
+# ... see .env.example for full list
+```
+
+4. **Set up the database**
+```bash
+# Run Supabase migrations
+pnpm drizzle-kit push
+```
+
+See [Supabase Setup Guide](docs/guides/SUPABASE_SETUP.md) for detailed instructions.
+
+5. **Start development server**
+```bash
+pnpm dev
+```
+
+Visit `http://localhost:5173` to see the app.
+
+### Development Commands
+
+```bash
+# Development server
+pnpm dev
+
+# Type checking
+pnpm check
+
+# Build for production
+pnpm build
+
+# Preview production build
+pnpm preview
+
+# Run tests
+pnpm test
+
+# Lint and format
+pnpm lint
+pnpm format
+
+# Database operations
+pnpm db:push       # Push schema changes
+pnpm db:studio     # Open Drizzle Studio
+pnpm db:generate   # Generate migrations
+```
+
+## 🏗️ Project Structure
 
 ```
-/
-├── data/
-|   └── blog/
-|       ├── post-slug-1.md
-|       ├── post-slug-2.mdx
-|       └── ...
-├── public/
-│   ├── robots.txt
-│   └── favicon.ico
+Website/
 ├── src/
-│   ├── assets/
-│   │   ├── images/
-|   |   └── styles/
-|   |       └── base.css
-│   ├── components/
-│   │   ├── atoms/
-│   │   ├── blog/
-│   │   ├── core/
-|   |   └── widgets/
-|   |       ├── Header.astro
-|   |       ├── Footer.astro
-|   |       └── ...
-│   ├── layouts/
-│   |   |── BaseLayout.astro
-│   |   └── ...
-│   ├── pages/
-│   |   ├── [...blog]/
-|   |   |   ├── [...page].astro
-|   |   |   └── [slug].astro
-│   |   ├── [...categories]/
-|   |   |   └── [category]/
-|   |   |       └── [...page].astro
-│   |   ├── [...tags]/
-|   |   |   └── [tag]/
-|   |   |       └── [...page].astro
-│   |   ├── index.astro
-|   |   ├── 404.astro
-|   |   └-- rss.xml.js
-│   ├── utils/
-│   └── config.mjs
-├── package.json
-└── ...
+│   ├── lib/
+│   │   ├── components/      # Reusable UI components
+│   │   │   ├── ui/          # shadcn-svelte components
+│   │   │   ├── layout/      # Layout components
+│   │   │   ├── settings/    # Settings components
+│   │   │   └── payment/     # Payment components
+│   │   ├── server/          # Server-side code
+│   │   │   ├── auth/        # Authentication
+│   │   │   ├── db/          # Database schema & client
+│   │   │   ├── tickets/     # Ticket management
+│   │   │   ├── invoices/    # Invoice management
+│   │   │   ├── projects/    # Project management
+│   │   │   ├── integrations/# External integrations
+│   │   │   ├── notifications/# Notification system
+│   │   │   └── utils/       # Shared utilities
+│   │   ├── stores/          # Svelte stores
+│   │   └── utils/           # Client utilities
+│   ├── routes/              # SvelteKit routes
+│   │   ├── (app)/           # Authenticated app routes
+│   │   ├── (admin)/         # Admin-only routes
+│   │   ├── (auth)/          # Authentication routes
+│   │   ├── (marketing)/     # Public marketing pages
+│   │   └── api/             # API endpoints
+│   └── app.html             # HTML template
+├── docs/                    # Documentation
+│   ├── architecture/        # System architecture docs
+│   ├── guides/              # Developer guides
+│   ├── implementation/      # Implementation details
+│   └── reports/             # Completion reports
+├── static/                  # Static assets
+├── supabase/                # Database migrations
+└── tests/                   # Test files
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## 🚀 Deployment
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+### Cloudflare Pages
 
-Any static assets, like images, can be placed in the `public/` directory if they do not require any transformation or in the `assets/` directory if they are imported directly.
-
-[![Edit on CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://githubbox.com/mostlywhat/website/tree/main)
-
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Update `config.mjs` and contents. Have fun!
-
-<br>
-
-### Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command               | Action                                             |
-| :-------------------- | :------------------------------------------------- |
-| `npm install`         | Installs dependencies                              |
-| `npm run host`        | Starts the development server at current ip        |
-| `npm run dev`         | Starts local dev server at `localhost:3000`        |
-| `npm run build`       | Build your production site to `./dist/`            |
-| `npm run preview`     | Preview your build locally, before deploying       |
-| `npm run format`      | Format codes with Prettier                         |
-| `npm run lint:eslint` | Run Eslint                                         |
-| `npm run astro ...`   | Run CLI commands like `astro add`, `astro preview` |
-
-<br>
-
-### Configuration
-
-Basic configuration file: `./src/config.mjs`
-
-```javascript
-export const SITE = {
-  name: 'Example',
-
-  origin: 'https://example.com',
-  basePathname: '/', // Change this if you need to deploy to Github Pages, for example
-  trailingSlash: false, // Generate permalinks with or without "/" at the end
-
-  title: 'Example - This is the homepage title of Example',
-  description: 'This is the homepage description of Example',
-
-  googleAnalyticsId: false, // or "G-XXXXXXXXXX",
-  googleSiteVerificationId: false, // or some value,
-};
-
-export const BLOG = {
-  disabled: false,
-  postsPerPage: 4,
-
-  blog: {
-    disabled: false,
-    pathname: 'blog', // blog main path, you can change this to "articles" (/articles)
-  },
-
-  post: {
-    disabled: false,
-    pathname: '', // empty for /some-post, value for /pathname/some-post
-  },
-
-  category: {
-    disabled: false,
-    pathname: 'category', // set empty to change from /category/some-category to /some-category
-  },
-
-  tag: {
-    disabled: false,
-    pathname: 'tag', // set empty to change from /tag/some-tag to /some-tag
-  },
-};
+1. **Build the project**
+```bash
+pnpm build
 ```
 
-<br>
-
-### Deploy
-
-#### Deploy to production (manual)
-
-You can create an optimized production build with:
-
-```shell
-npm run build
+2. **Deploy to Cloudflare**
+```bash
+pnpm deploy
 ```
 
-Now, your website is ready to be deployed. All generated files are located at
-`dist` folder, which you can deploy the folder to any hosting service you
-prefer.
+See [Testing & Deployment Checklist](docs/guides/TESTING_DEPLOYMENT_CHECKLIST.md) for complete deployment guide.
 
-#### Deploy to Netlify
+## 🔐 Security
 
-Clone this repository on own GitHub account and deploy to Netlify:
+- All sensitive operations require authentication
+- Role-based access control (RBAC) for admin features
+- Row-Level Security (RLS) enabled on all database tables
+- API keys with scope-based permissions
+- Activity logging for audit trails
+- GDPR compliance features built-in
 
-[![Netlify Deploy button](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/mostlywhat/website)
+See [Security Recommendations](docs/guides/SECURITY_RECOMMENDATIONS.md) for details.
 
-#### Deploy to Vercel
+## 🧪 Testing
 
-Clone this repository on own GitHub account and deploy to Vercel:
+```bash
+# Run all tests
+pnpm test
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fmostlywhatt%2Fwebsite)
+# Run tests in watch mode
+pnpm test:watch
 
-<br>
+# Run specific test file
+pnpm test path/to/test.ts
+```
 
-## Roadmap
+## 📝 Code Style
 
-- _Project_:
-  - Create simple and clear strategy for updates
-- _Blog_:
-  - Improve blog design
-  - Create component or utilities for related posts
-  - Add more _shortcodes_ or _embed_ functions to posts in Markdown: (eg video, tweet...)
-- _More widgets_:
-  - Add more Tailwind components useful for most scenarios (Features, Contact, Call to Actions, Content, FAQs ...)
-  - Create external library or place with useful Tailwind components
-- _More Examples_: Add commonly used example pages (Ex: About, Terms, Services...)
-- _Documentation_: Create detailed documentation with best practices and redesign tips
+This project uses:
+- **TypeScript** for type safety
+- **ESLint** for code linting
+- **Prettier** for code formatting
+- **Svelte 5** runes for reactivity
 
-<br>
+## 🤝 Contributing
 
-## Frequently Asked Questions
+1. Follow the existing code style
+2. Write tests for new features
+3. Update documentation as needed
+4. Ensure all type checks pass (`pnpm check`)
+5. Follow [Design System](docs/architecture/DESIGN_SYSTEM.md) guidelines
 
-- None
+## 📄 License
 
-<br>
+[Your License Here]
 
-## Contributing
+## 🆘 Support
 
-If you have any idea, suggestions or find any bugs, feel free to open a discussion, an issue or create a pull request.
-That would be very useful for all of us and we would be happy to listen and take action.
+- **Documentation**: Check the [docs](docs/) folder
+- **Issues**: Open an issue on GitHub
+- **Quick Reference**: See [Quick Reference](docs/guides/QUICK_REFERENCE.md)
 
-## Acknowledgements
+---
 
-Initially created by [onWidget](https://onwidget.com) and maintained by a community of [contributors](https://github.com/onwidget/astrowind/graphs/contributors).
-
-## License
-
-**This website** is licensed under the AGPL-3 license — see the [LICENSE](https://github.com/mostlywhat/website/blob/main/LICENSE.md) file for details.
+Built with ❤️ using SvelteKit

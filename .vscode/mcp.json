@@ -1,0 +1,11 @@
+{
+  "servers": {
+    "svelte": {
+      "url": "https://mcp.svelte.dev/mcp"
+    },
+    "Sentry": {
+      "url": "https://mcp.sentry.dev/mcp/mostlywhat/website",
+      "type": "http"
+    }
+  }
+}

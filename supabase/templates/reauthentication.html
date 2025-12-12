@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reauthentication Required</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', 'Courier New', Consolas, monospace;
+            line-height: 1.6;
+            color: #e5e5e5;
+            background-color: #000814;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .card {
+            background-color: #0f1419;
+            border: 1px solid #1a2332;
+        }
+
+        .header {
+            padding: 32px 40px;
+            border-bottom: 1px solid #1a2332;
+        }
+
+        .logo {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.15em;
+            color: #4a9eff;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .section-marker {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            color: #6b7280;
+            margin-bottom: 16px;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .title {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
+            font-size: 24px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 16px;
+            color: #ffffff;
+        }
+
+        .text {
+            color: #a3a3a3;
+            margin-bottom: 24px;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 14px 28px;
+            background-color: #4a9eff;
+            color: #000814 !important;
+            text-decoration: none;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            border: 1px solid #4a9eff;
+        }
+
+        .alt-link {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #1a2332;
+        }
+
+        .alt-link p {
+            color: #6b7280;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .alt-link a {
+            color: #4a9eff;
+            font-size: 12px;
+            word-break: break-all;
+        }
+
+        .footer {
+            padding: 24px 40px;
+            border-top: 1px solid #1a2332;
+            background-color: #0a0f14;
+        }
+
+        .footer p {
+            color: #6b7280;
+            font-size: 11px;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
+            letter-spacing: 0.025em;
+        }
+
+        .meta {
+            margin-top: 24px;
+            text-align: center;
+        }
+
+        .meta p {
+            color: #6b7280;
+            font-size: 11px;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
+        }
+
+        .meta a {
+            color: #4a9eff;
+            text-decoration: none;
+        }
+
+        .meta a:hover {
+            text-decoration: underline;
+        }
+
+        .warning {
+            background-color: #0a0f14;
+            border-left: 2px solid #ffd500;
+            padding: 16px;
+            margin-top: 24px;
+        }
+
+        .warning p {
+            color: #ffd500;
+            font-size: 12px;
+            margin: 0;
+        }
+
+        strong {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        @media only screen and (max-width: 600px) {
+            .container {
+                padding: 20px 10px;
+            }
+
+            .header,
+            .content,
+            .footer {
+                padding: 24px 20px;
+            }
+
+            .title {
+                font-size: 20px;
+            }
+
+            .button {
+                display: block;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <span class="logo">MOSTLYWHAT SYSTEMS</span>
+            </div>
+            <div class="content">
+                <p class="section-marker">// SECURITY VERIFICATION</p>
+                <h1 class="title">Reauthentication Required</h1>
+                <p class="text">
+                    To complete a sensitive action on your account, we need to verify your identity. Click the button
+                    below to reauthenticate.
+                </p>
+                <a href="{{ .ConfirmationURL }}" class="button">Verify Identity</a>
+                <div class="alt-link">
+                    <p>If the button doesn't work, copy and paste this link into your browser:</p>
+                    <a href="{{ .ConfirmationURL }}">{{ .ConfirmationURL }}</a>
+                </div>
+                <div class="warning">
+                    <p>If you didn't initiate this action, please secure your account immediately by changing your
+                        password.</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p>This link expires in 10 minutes. For your security, it can only be used once.</p>
+            </div>
+        </div>
+        <div class="meta">
+            <p>© {{ now | date: "%Y" }} MostlyWhat Systems. All rights reserved.</p>
+            <p style="margin-top: 8px;"><a href="https://www.mostlywhat.com">mostlywhat.com</a> · <a
+                    href="https://www.mostlywhat.com/legal/privacy">Privacy</a> · <a
+                    href="https://www.mostlywhat.com/legal/terms">Terms</a></p>
+        </div>
+    </div>
+</body>
+
+</html>
