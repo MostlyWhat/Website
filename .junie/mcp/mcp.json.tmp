@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "laravel-boost": {
+      "command": "C:\\Users\\venot\\.config\\herd-lite\\bin\\php.exe",
+      "args": [
+        "C:\\Users\\venot\\Projects\\GitHub\\website\\artisan",
+        "boost:mcp"
+      ]
+    },
+    "phpstorm": {
+      "url": "http://127.0.0.1:64442/stream",
+      "type": "http"
+    }
+  }
+}
