@@ -1,11 +1,11 @@
 <script lang="ts">
     import type { Snippet } from 'svelte';
-    import AuthLayout from '@/layouts/auth/AuthSimpleLayout.svelte';
+    import AuthLayout from '@/layouts/auth/AuthCardLayout.svelte';
 
     let {
         title = '',
         description = '',
-        children,
+        children
     }: {
         title?: string;
         description?: string;
@@ -13,6 +13,6 @@
     } = $props();
 </script>
 
-<AuthLayout {title} {description}>
+<AuthLayout {description} {title}>
     {@render children?.()}
 </AuthLayout>

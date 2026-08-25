@@ -1,11 +1,11 @@
 <script lang="ts">
     import type { Snippet } from 'svelte';
-    import AppLayout from '@/layouts/app/AppSidebarLayout.svelte';
+    import AppLayout from '@/layouts/app/AppHeaderLayout.svelte';
     import type { BreadcrumbItem } from '@/types';
 
     let {
         breadcrumbs = [],
-        children,
+        children
     }: {
         breadcrumbs?: BreadcrumbItem[];
         children?: Snippet;

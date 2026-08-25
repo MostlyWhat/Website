@@ -3,13 +3,13 @@
 
     let {
         title = '',
-        children,
+        children
     }: {
         title?: string;
         children?: Snippet;
     } = $props();
 
-    const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+    const appName = import.meta.env.VITE_APP_NAME || 'MostlyWhat Systems';
     const fullTitle = $derived(title ? `${title} - ${appName}` : appName);
 </script>
 

@@ -1,15 +1,15 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/svelte-starter-kit",
+    "name": "mostlywhat/website",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "Official Website for MostlyWhat Systems",
     "keywords": [
         "laravel",
         "framework"
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.3",
+        "php": "^8.4",
         "inertiajs/inertia-laravel": "^3.0",
         "laravel/chisel": "^0.1.0",
         "laravel/fortify": "^1.37.2",
